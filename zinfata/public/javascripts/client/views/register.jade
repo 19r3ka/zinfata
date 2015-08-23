@@ -1,0 +1,16 @@
+block content
+  div.container(ng-controller="userCtrl")
+    h1 User Registration Form
+    form(name="userForm")
+      input(type="text" name="fName" placeholder="First Name" ng-model="user.firstName" required autofocus)
+      input(type="text" name="lName" placeholder="Last Name" ng-model="user.lastName" required)
+      input(type="text" name="handle" minlength=3 placeholder="Identifiant" ng-model="user.handle" required)
+      input(type="email" name="email" placeholder="Email" ng-model="user.email" required)
+      input(type="password" name="password" minlength=8 placeholder="Password" ng-model="user.password" required)
+      button(ng-show="!editing" ng-click="save()") Register!
+      button(ng-show="editing" ng-click="update(editing)") Update!
+    h3 List of Registered User
+    ul
+      li(ng-repeat='u in users') {{u._id}}: {{u.firstName}} / {{u.password}}
+        button(ng-click="edit(u._id)") Edit
+        button(ng-click="delete(u._id)") Delete
