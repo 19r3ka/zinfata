@@ -4,16 +4,16 @@ var router   = express.Router();
 var mongoose = require('mongoose');
 var User     = require('../models/User.js');
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
+var passport = require('../config/passport.js');
+
+router.route('/')
+.get(function(req, res, next) { /* GET users listing. */
   User.find(function(err, users) {
     if(err) return next(err);
     res.json(users);
   });
-});
-
-/* POST new user */
-router.post('/', function(req, res, next) {
+})
+.post(function(req, res, next) { /* POST new user */
   var user = new User(req.body);
   user.save(function(err, new_user){
     if(err) return res.json(err);
@@ -28,17 +28,15 @@ router.param('id', function(req, res, next, id) {
   next();
 });
 
-/* GET specific user */
-router.get('/:id', function(req, res, next) {
+router.route('/:id')
+.get(function(req, res, next) { /* GET specific user */
   User.findById(req.params.id, function(err, user) {
     if(err) return next(err);
     res.json(user);
   });
-});
-
-/* UPDATE specific user */
-router.put('/:id', function(req, res, next) {
-  User.findById(req.params.id, req.body, function(err, user) {
+})
+.put(passport.authenticate('local'), function(req, res, next) { /* UPDATE specific user */
+  User.findById(req.user.id, req.body, function(err, user) {
     if(err) return next(err);
     for(var key in req.body) {
       user[key] = req.body[key];
@@ -48,13 +46,11 @@ router.put('/:id', function(req, res, next) {
       res.json(updated_user);
     });
   });
-});
-
-/* DELETE specific user */
-router.delete('/:id', function(req, res, next) {
-  User.findByIdAndRemove(req.params.id, req.body, function(err, user) {
+})
+.delete(passport.authenticate('local'), function(req, res, next) { /* DELETE specific user */
+  User.findByIdAndRemove(req.params.id, req.body, function(err, deleted_user) {
     if(err) return next(err);
-    res.json(user);
+    res.json(deleted_user);
   });
 });
 

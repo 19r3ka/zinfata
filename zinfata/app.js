@@ -10,6 +10,10 @@ var expressSession = require('express-session');
 
 var routes = require('./routes/index');
 var users  = require('./routes/users');
+var albums = require('./routes/albums');
+var tracks = require('./routes/tracks');
+var playlists = require('./routes/playlists');
+
 var dbConfig = require('./db.js');
 
 var app = express();
@@ -32,6 +36,9 @@ app.use(passport.session());
 // Define the routes to use in the app
 app.use('/', routes);
 app.use('/users', users);
+app.use('/albums', albums);
+app.use('/tracks', tracks);
+app.use('/playlists', playlists);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

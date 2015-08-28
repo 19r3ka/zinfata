@@ -1,11 +1,9 @@
 var mongoose = require('mongoose'),
-    TrackSchema = require('./Track.js');
+    Track = require('./Track.js');
 
 var AlbumSchema = new mongoose.Schema( {
-  title:      { type: String, required: true },
+  title:      { type: String, required: true, lowercase: true },
   artist_id:  { type: String, required: true },
-  feat:       { type: Array, required: true }, //for the IDs of all contributing artists
-  tracks:     [ TrackSchema ],
   updated_at: { type: Date, default: Date.now }
 });
 
