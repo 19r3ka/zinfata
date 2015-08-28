@@ -15,7 +15,7 @@ router.route('/')
 })
 .post(passport.authenticate('local'), function(req, res, next) { // POST new album
   new_playlist = new Playlist(req.body);
-  new_playlist.owner = req.user.id;
+  new_playlist.owner_id = req.user.id;
   new_playlist.save(function(err, playlist) {
     if(err) return next(err);
     res.json(playlist);
@@ -32,6 +32,8 @@ router.route('/:id')
 .put(passport.authenticate('local'), function(req, res, next) { // UPDATE album info by ID
   Playlist.findOne({ _id: req.params.id }, function(err, playlist) {
     if(err) return next(err);
+    if(!playlist) return next(new Error('not found'));
+    if(req.user.id !== playlist.owner_id) return next(new Error('forbidden'));
     for(var key in req.body) {
       playlist[key] = req.body[key];
     }
@@ -44,7 +46,9 @@ router.route('/:id')
 .delete(passport.authenticate('local'), function(req, res, next) { // DELETE album by ID
   Playlist.findById(req.params.id, function(err, playlist) {
     if(err) return next(err);
-    album.remove(function(err, deleted_playlist) {
+    if(!playlist) return next(new Error('not found'));
+    if(req.user.id !== playlist.owner_id) return next(new Error('forbidden'));
+    playlist.remove(function(err, deleted_playlist) {
       if(err) return next(err);
       res.json(deleted_playlist);
     });

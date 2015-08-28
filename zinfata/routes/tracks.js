@@ -35,6 +35,8 @@ router.route('/:id')
 .put(passport.authenticate('local'), function(req, res, next) { // UPDATE album info by ID
   Track.findById(req.params.id, function(err, track) {
     if(err) return next(err);
+    if(!track) return next(new Error('not found'));
+    if(req.user.id !== track.artist_id) return next(new Error('forbidden'));
     for(var key in req.body) {
       track[key] = req.body[key];
     }
@@ -47,6 +49,8 @@ router.route('/:id')
 .delete(passport.authenticate('local'), function(req, res, next) { // DELETE album by ID
   Track.findById(req.params.id, function(err, track) {
     if(err) return next(err);
+    if(!track) return next(new Error('not found'));
+    if(req.user.id !== track.artist_id) return next(new Error('forbidden'));
     track.remove(function(err, deleted_track){
       if(err) return next(err);
       res.json(deleted_track);

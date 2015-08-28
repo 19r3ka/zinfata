@@ -26,10 +26,14 @@ app.set('view engine', 'jade');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(expressSession({secret: 'ElYemo'}));
+app.use(expressSession({
+  secret: 'ElYemo',
+  resave: false,
+  saveUninitialized: false
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -48,50 +52,68 @@ app.use(function(req, res, next) {
 });
 
 // error handlers
-/*
-// CRUD error handler
-app.use(function crudErrorHandler(err, req, res, next){
-  crudError = new Error('Unable to complete this operation');
 
-  switch(err.name) {
-    case 'ValidationError':
-      crudError.status = 400;
-      crudError.name   = 'Bad Input Parameter';
-      break;
-    default:
-      crudError.status = err.status;
-      crudError.name   = err.name;
-  }
-
-  crudError.error_details= ''
-  for(var key in err.errors) {
-    crudError.error_details += err.errors[key].message + ' / ';
-  }
-  res.status(crudError.status).json(crudError);
-  next();
-});
-*/
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    console.error(err);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
-}
-
-// production error handler
-// no stacktraces leaked to user
+// custom error handler
 app.use(function(err, req, res, next) {
+  var caughtIt = false,
+      status   = 500,
+      message  = 'Something went wrong!',
+      details  = '';
+  if(err.name === 'ValidationError') {
+    caughtIt = true;
+    status   = 400;
+    message  = 'Bad Input Parameter';
+    details  = '';
+    for(var key in err.errors) {
+      details += err.errors[key].message + '|';
+    };
+  }
+  if(err.message === 'not found'){
+    caughtIt = true;
+    status   = 404;
+    message  = 'Item Not Found';
+    details  = '';
+  }
+  if(err.message === 'forbidden'){
+    caughtIt = true;
+    status   = 403;
+    message  = 'Forbidden';
+    details  = 'You do not have access to the requested resource!';
+  }
+  if(/^duplicate/.test(err.message)) {
+    caughtIt = true;
+    var status  = 400;
+    var message = 'Bad Input Parameter';
+    var details = '';
+    if(/handle$/.test(err.message)) {
+      details += 'handle is already in use';
+    }
+    if(/email$/.test(err.message)) {
+      details += 'email is already in use';
+    }
+  }
+
+  if(caughtIt) {
+    error = new Error();
+    error.status  = status;
+    error.message = message;
+    error.details = details;
+    console.error(error);
+    res.status(error.status).json(error).end;
+    return next('route');
+  } else {
+    return next(err);
+  }
+});
+
+// catch-all error handler
+app.use(function(err, req, res, next) {
+  console.error(err);
   res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
+  if(app.get('env') !== 'development') {
+    delete err.stack;
+  }
+  res.json(err);
 });
 
 //Connect to Mongoose (Mongo DB driver)

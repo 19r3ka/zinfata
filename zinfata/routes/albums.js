@@ -32,6 +32,8 @@ router.route('/:id')
 .put(passport.authenticate('local'), function(req, res, next) { // UPDATE album info by ID
   Album.findOne({ _id: req.params.id }, function(err, album) {
     if(err) return next(err);
+    if(!album) return next(new Error('not found'));
+    if(req.user.id !== album.artist_id) return next(new Error('forbidden'));
     for(var key in req.body) {
       album[key] = req.body[key];
     }
@@ -44,6 +46,9 @@ router.route('/:id')
 .delete(passport.authenticate('local'), function(req, res, next) { // DELETE album by ID
   Album.findById(req.params.id, function(err, album) {
     if(err) return next(err);
+    if(err) return next(err);
+    if(!album) return next(new Error('not found'));
+    if(req.user.id !== album.artist_id) return next(new Error('forbidden'));
     album.remove(function(err, deleted_album) {
       if(err) return next(err);
       res.json(deleted_album);

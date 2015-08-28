@@ -3,7 +3,7 @@ var mongoose = require('mongoose'),
 
 var PlaylistSchema = new mongoose.Schema( {
   title:      { type: String, required: true },
-  owner:      { type: String, required: true },
+  owner_id:   { type: String, required: true },
   tracks:     { type: Array},
   updated_at: { type: Date, default: Date.now }
 });

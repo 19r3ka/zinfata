@@ -15,8 +15,16 @@ router.route('/')
 })
 .post(function(req, res, next) { /* POST new user */
   var user = new User(req.body);
+  User.findOne({handle: req.body.handle}, function(err, user) {
+    if(err) return next(err);
+    if(user) return next(new Error('duplicate: handle'));
+  });
+  User.findOne({email: req.body.email}, function(err, user) {
+    if(err) return next(err);
+    if(user) return next(new Error('duplicate: email'));
+  });
   user.save(function(err, new_user){
-    if(err) return res.json(err);
+    if(err) return next(err);
     res.json(new_user);
   });
 });
@@ -38,6 +46,8 @@ router.route('/:id')
 .put(passport.authenticate('local'), function(req, res, next) { /* UPDATE specific user */
   User.findById(req.user.id, req.body, function(err, user) {
     if(err) return next(err);
+    if(!user) return next(new Error('not found'));
+    if(req.user.id !== user.id) return next(new Error('forbidden'));
     for(var key in req.body) {
       user[key] = req.body[key];
     }
@@ -48,9 +58,13 @@ router.route('/:id')
   });
 })
 .delete(passport.authenticate('local'), function(req, res, next) { /* DELETE specific user */
-  User.findByIdAndRemove(req.params.id, req.body, function(err, deleted_user) {
+  User.findById(req.params.id, req.body, function(err, deleted_user) {
     if(err) return next(err);
-    res.json(deleted_user);
+    if(!deleted_user) return next(new Error('not found'));
+    if(req.user.id !== deleted_user.id) return next(new Error('forbidden'));
+    deleted_user.remove(function(err, user) {
+      res.json(deleted_user);
+    });
   });
 });
 
