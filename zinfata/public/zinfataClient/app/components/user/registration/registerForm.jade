@@ -1,0 +1,17 @@
+div(ng-controller='registerCtrl')
+  form(name='registerForm', role='form')
+    .form-group
+      input.form-control(type='text', name='fName', placeholder='First Name', ng-model='user.firstName', required, autofocus)
+    .form-group
+      input.form-control(type='text', name='lName', placeholder='Last Name', ng-model='user.lastName', required)
+    .form-group
+      input.form-control(type='text', name='handle', minlength=3, placeholder='Identifiant', ng-model='user.handle', required)
+    .form-group
+      input.form-control(type='email', name='email', placeholder='Email', ng-model='user.email', required)
+    .form-group
+      input.form-control(type='password', name='password', minlength=8, placeholder='Password', ng-model='user.password', required)
+    .form-group
+      button.btn(type='submit', ng-click='register()', class=['btn-primary', 'form-control']) Register
+
+append scripts
+  script(src='../zinfataClient/app/components/users/registration/registerController.js')

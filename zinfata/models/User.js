@@ -1,20 +1,22 @@
-var mongoose = require('mongoose'),
-    Album    = require('./Album.js'),
-    bcrypt   = require('bcrypt'),
-    emailRegex = new RegExp("^[-a-z0-9~!$%^&*_=+}{\\'?]+(\\.[-a-z0-9~" +
+var mongoose    = require('mongoose'),
+    Album       = require('./Album.js'),
+    bcrypt      = require('bcrypt'),
+    emailRegex  = new RegExp("^[-a-z0-9~!$%^&*_=+}{\\'?]+(\\.[-a-z0-9~" +
                             "!$%^&*_=+}{\\'?]+)*@([a-z0-9_][a-z0-9_]*" +
                             "(\\.[-a-z0-9_]+)*\\.(aero|arpa|biz|com|coop|" +
                             "edu|gov|info|int|mil|museum|name|net|org|" +
                             "pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\\." +
-                            "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,5})?$",'i');
+                            "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,5})?$",'i'),
+    handleRegex = new RegExp("^[a-z0-9_]{3,}$");
+
 
 var UserSchema = new mongoose.Schema( {
   firstName:  { type: String, required: true, lowercase: true },
   lastName:   { type: String, required: true, lowercase: true },
-  handle:     { type: String, minlength: 3, required: true, lowercase: true, index: {unique: true}},
+  handle:     { type: String, minlength: 3, match: handleRegex, required: true, lowercase: true, index: {unique: true}},
   email:      { type: String, match: emailRegex, required: true, unique: true, lowercase: true},
   password:   { type: String, required: true },
-  isArtist:   Boolean,
+  isArtist:   { type: Boolean, default: false },
   updated_at: { type: Date, default: Date.now }
 });
 

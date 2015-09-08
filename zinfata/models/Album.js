@@ -3,6 +3,7 @@ var mongoose = require('mongoose'),
 
 var AlbumSchema = new mongoose.Schema( {
   title:      { type: String, required: true, lowercase: true },
+  img_url:     { type: String },
   artist_id:  { type: String, required: true },
   updated_at: { type: Date, default: Date.now }
 });

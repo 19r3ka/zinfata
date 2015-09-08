@@ -19,7 +19,7 @@ var dbConfig = require('./db.js');
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, 'public/zinfataClient/'));
 app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
@@ -68,7 +68,7 @@ app.use(function(err, req, res, next) {
       details += err.errors[key].message + '|';
     };
   }
-  if(err.message === 'not found'){
+  if(err.message === 'not found' || err.name === 'CastError'){
     caughtIt = true;
     status   = 404;
     message  = 'Item Not Found';

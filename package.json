@@ -1,0 +1,21 @@
+{
+  "name": "zinfata",
+  "version": "1.0.0",
+  "description": "The one spot for Togolese music lovers on the internet.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "togo",
+    "music",
+    "promotion",
+    "database",
+    "soundcloud"
+  ],
+  "author": "Yem Ahiatsi <yemahiatsi@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.13.3"
+  }
+}

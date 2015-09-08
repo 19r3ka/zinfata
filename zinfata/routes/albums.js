@@ -7,10 +7,12 @@ var Album    = require('../models/Album.js');
 var passport = require('../config/passport.js');
 
 router.route('/')
-.get(function(req, res, next) { // GET user's albums listing.
-  Album.find({ artist_id: req.query.u_id }, function(err, album) {
+.get(function(req, res, next) { // GET all albums listing.
+  var query = {};
+  if(req.query.u_id) query.artist_id = req.query.u_id;
+  Album.find(function(err, albums) {
     if(err) return next(err);
-    res.json(album);
+    res.json(albums);
   });
 })
 .post(passport.authenticate('local'), function(req, res, next) { // POST new album

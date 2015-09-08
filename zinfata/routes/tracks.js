@@ -8,12 +8,20 @@ var Track    = require('../models/Track.js');
 var passport = require('../config/passport.js');
 
 router.route('/')
-.get(function(req, res, next) { // GET user's songs listing.
-  Track.find({ artist_id: req.query.u_id }, function(err, tracks) {
+.get(function(req, res, next) { // GET all songs listing if query is empty.
+  var query = {};
+  if(req.query.u_id) { // GET all songs for user with u_id
+    query.artist_id = req.query.u_id;
+  }
+  if(req.query.a_id) { // GET all songs for album with a_id
+    query.album_id = req.query.a_id;
+  }
+
+  Track.find(query, function(err, tracks) {
     if(err) return next(err);
     res.json(tracks);
   });
-  // TODO: handle the case when querying tracks by album_id
+
 })
 .post(passport.authenticate('local'), function(req, res, next) { // POST new song
   new_track = new Track(req.body);

@@ -25,15 +25,8 @@ router.route('/')
   });
   user.save(function(err, new_user){
     if(err) return next(err);
-    res.json(new_user);
+    res.status(201).json(new_user);
   });
-});
-
-/* Route middleware to validate id */
-router.param('id', function(req, res, next, id) {
-  // TODO: Make sure to sanitize and clean up the param here
-  req.id = id;
-  next();
 });
 
 router.route('/:id')

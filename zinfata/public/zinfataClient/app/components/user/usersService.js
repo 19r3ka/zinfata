@@ -1,0 +1,17 @@
+app.factory('UsersService', function(Users) {
+  var service = {
+    create: function(user) {
+      var new_user = new Users;
+      for(var key in user) {
+        new_user[key] = user[key];
+      }
+      new_user.$save(function() {
+        users = getUsers();
+        users.push(new_user);
+        setUsers(users);
+      });
+      return new_user;
+    }
+  };
+  return service;
+});
