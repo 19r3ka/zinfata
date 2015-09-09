@@ -3,11 +3,13 @@ nav.navbar(class='navbar-inverse', role='navigation', ng-controller='headerCtrl'
     a.navbar-brand(href='#') ZINFATA
   ul.nav(class=['navbar-right', 'navbar-nav'])
     li.dropdown
-      a.dropdown-toggle(href='#', data-toggle='dropdown')
-        {{ user.name }}
+      a.dropdown-toggle(data-toggle='dropdown')
+        | {{ user.name }}
         b.caret
       ul.dropdown-menu
         li.menu-item: a(href='#') Profile
         li.menu-item: a(href='#') Settings
     li: a(href='#') Log In
     li: a(href='#') Register
+
+script(src='/zinfataClient/app/shared/header/headerController.js')
