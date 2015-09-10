@@ -20,6 +20,7 @@ app.factory('Tracks', function($resource) {
 });
 app.factory('Login', function($http) {
   return function(user) {
+    console.log('entered Login factory');
     return $http.post('/login', user);
   };
 });

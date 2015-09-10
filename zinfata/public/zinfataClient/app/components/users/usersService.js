@@ -1,4 +1,4 @@
-app.factory('UsersService', function(Users) {
+app.factory('UsersService', function(Users, Login, Logout) {
   var service = {
     create: function(user) {
       var new_user = new Users;
@@ -13,7 +13,7 @@ app.factory('UsersService', function(Users) {
       return new_user;
     },
     login: function(user) {
-      // return Login(user);
+      return Login(user);
     },
     logout: function() {
       // return Logout();

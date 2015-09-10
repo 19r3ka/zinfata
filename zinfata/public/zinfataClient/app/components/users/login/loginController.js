@@ -1,7 +1,9 @@
-app.controller('loginCtrl', function($scope) {
-  $scope.handle   = '';
-  $scope.password = '';
-  $scope.login    = function() {
-    alert('we entered the login function');
-  }
+app.controller('loginCtrl', function($scope, UsersService) {
+  $scope.login   = {
+    handle:   '',
+    password: ''
+  };
+  $scope.authenticate    = function() {
+    UsersService.login($scope.login);
+  };
 })
