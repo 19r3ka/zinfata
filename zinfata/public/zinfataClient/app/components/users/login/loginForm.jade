@@ -1,8 +1,13 @@
 div(ng-controller='loginCtrl')
-  form(name='loginForm', role='form', ng-submit='login')
+  form(name='loginForm', role='form')
     .form-group
       input.form-control(type='text', name='handle', placeholder='Handle', ng-model='handle', required, autofocus)
     .form-group
       input.form-control(type='password', name='password', placeholder='Password', ng-model='password', required)
     .form-group
-      button.btn(type='submit', class=['btn-primary', 'form-control']) Log In!
+      button.btn(type='submit', class=['btn-primary', 'form-control'], ng-click='login') Log In!
+
+  p {{ handle }}
+
+append scripts
+  script(src='/zinfataClient/app/components/users/login/loginController.js')

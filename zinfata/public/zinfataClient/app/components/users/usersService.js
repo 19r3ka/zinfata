@@ -11,6 +11,12 @@ app.factory('UsersService', function(Users) {
         setUsers(users);
       });
       return new_user;
+    },
+    login: function(user) {
+      // return Login(user);
+    },
+    logout: function() {
+      // return Logout();
     }
   };
   return service;

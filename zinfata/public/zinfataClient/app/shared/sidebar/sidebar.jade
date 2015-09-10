@@ -1,30 +1,30 @@
-ul.nav(class=['nav-tabs', 'nav-stacked'], role='navigation')
-  li: a(href='#')
-    span.glyphicon(class='glyphicon-search')
-    |  Searcn
-  li: a(href='#')
-    span.glyphicon(class='glyphicon-globe')
-    |  Discover
-  li: a(href='#')
-    span.glyphicon(class='glyphicon-heart')
-    |  Follow
-  li: a(href='#')
-    span.glyphicon(class='glyphicon-star')
-    |  Starred
-  li: a(href='#')
-    span.glyphicon(class='glyphicon-list-alt')
-    |  Play Queue
-  li: a(href='#')
-    span.glyphicon(class='glyphicon-music')
-    |  My Music
-  li.dropdown(ng-controller='sidebarCtrl')
-    a.dropdown-toggle(data-toggle='dropdown')
-      span.glyphicon(class='glyphicon-list')
-      |  My Playlists
-    ul.dropdown-menu
-        li.menu-item: a(href='#')
-          span.glyphicon(class='glyphicon-plus')
-          |  Add New Playlist
-        // Add Playlist directive here
+div(ng-controller='sidebarCtrl')
+  ul.nav(class=['nav-tabs', 'nav-stacked'], role='navigation')
+    li: a(href='#')
+      span.glyphicon(class='glyphicon-search')
+      |  Searcn
+    li: a(href='#')
+      span.glyphicon(class='glyphicon-globe')
+      |  Discover
+    li: a(href='#')
+      span.glyphicon(class='glyphicon-heart')
+      |  Follow
+    li: a(href='#')
+      span.glyphicon(class='glyphicon-star')
+      |  Starred
+    li: a(href='#')
+      span.glyphicon(class='glyphicon-list-alt')
+      |  Play Queue
+    li: a(href='#')
+      span.glyphicon(class='glyphicon-music')
+      |  My Music
+    li.dropdown
+      a.dropdown-toggle(data-toggle='dropdown')
+        span.glyphicon(class='glyphicon-list')
+        |  My Playlists
+      ul.dropdown-menu
+          li.menu-item: a(href='#')
+            span.glyphicon(class='glyphicon-plus')
+            |  Add New Playlist
 
-script(src='/zinfataClient/app/shared/sidebar/sidebarController')
+script(src='/zinfataClient/app/shared/sidebar/sidebarController.js')

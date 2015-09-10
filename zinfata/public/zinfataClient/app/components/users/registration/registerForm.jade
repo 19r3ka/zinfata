@@ -13,5 +13,7 @@ div(ng-controller='registerCtrl')
     .form-group
       button.btn(type='submit', ng-click='register()', class=['btn-primary', 'form-control']) Register
 
+  h5 {{user.firstName}}
+
 append scripts
   script(src='../zinfataClient/app/components/users/registration/registerController.js')
