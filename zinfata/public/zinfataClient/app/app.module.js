@@ -1,1 +1,1 @@
-var app = angular.module('zinfataClient', ['ngRoute', 'ngResource']);
+var app = angular.module('zinfataClient', ['ngRoute', 'ngResource', 'ngMessages']);
