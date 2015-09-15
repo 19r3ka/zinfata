@@ -21,7 +21,7 @@ div(ng-controller='registerCtrl')
       .help-block(ng-messages='registerForm.password.$error', ng-show='registerForm.password.$touched')
         div(ng-messages-include='zinfataClient/app/shared/messages/formMessages.jade')
     .form-group
-      button.btn(type='submit', ng-click='register()', class=['btn-primary', 'form-control']) Register
+      button.btn(type='submit', ng-click='register()', class=['btn-primary', 'form-control'], ng-disabled='registerForm.$invalid') Register
 
   h5 {{user.firstName}}
 

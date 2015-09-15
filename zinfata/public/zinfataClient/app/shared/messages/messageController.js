@@ -1,4 +1,4 @@
-app.controller('messageCtrl', ['$scope', 'messageSvc', function($scope, messageSvc) {
-  $scope.messages = messageSvc.messages;
-  messageSvc.clearQueue();
+app.controller('messageCtrl', ['$scope', 'MessageSvc', function($scope, MessageSvc) {
+  $scope.messages = MessageSvc.messages;
+  MessageSvc.clearQueue();
 }]);

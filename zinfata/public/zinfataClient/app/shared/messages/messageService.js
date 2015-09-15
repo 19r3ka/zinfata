@@ -1,4 +1,4 @@
-app.service('messageSvc', function() {
+app.service('MessageSvc', function() {
   this.messages = [];
   this.addMsg = function(type, text) {
     var message = {

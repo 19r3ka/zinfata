@@ -1,6 +1,6 @@
-app.controller('registerCtrl', function($scope, UsersService) {
+app.controller('registerCtrl', function($scope, UsersSvc) {
   $scope.user     = {};
   $scope.register = function() {
-    UsersService.create($scope.user);
+    UsersSvc.create($scope.user);
   };
 });

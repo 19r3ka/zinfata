@@ -18,14 +18,13 @@ app.factory('Tracks', function($resource) {
     'update': {method:'PUT'}
   });
 });
-app.factory('Login', function($http) {
-  return function(user) {
-    console.log('entered Login factory');
-    return $http.post('/login', user);
-  };
-});
-app.factory('Logout', function($http) {
-  return function() {
-    return $http.get('/logout');
+app.factory('Auth', function($http) {
+  return {
+    login: function(user) {
+      return $http.post('/login', user);
+    },
+    logout: function() {
+      return $http.get('/logout');
+    }
   };
 });
