@@ -1,5 +1,5 @@
 app.service('UsersSvc', ['Users', 'Auth', 'MessageSvc', function(Users, Auth, MessageSvc) {
-  this.users  = []
+  this.users  = Users.query();
   this.create = function(user) {
     var new_user = new Users;
     for(var key in user) {
