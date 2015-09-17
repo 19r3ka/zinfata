@@ -9,15 +9,20 @@ app.service('UsersSvc', ['Users', 'Auth', 'MessageSvc', function(Users, Auth, Me
       // this.users = getUsers();
       // this.users.push(saved_user);
       // setUsers(users);
-      MessageSvc.addMsg('success', 'Welcome to Zinfata, ' + saved_user.firstName | uppercase);
-    },
-    function(error) {
+      MessageSvc.addMsg('success', 'Welcome to Zinfata, ' + saved_user.firstName);
+    }, function(error) {
       console.error('Unable to save user: ' + error);
       MessageSvc.addMsg('danger', 'Oops, we were unable to register you!');
     });
   };
   this.login = function(user) {
-    return Auth.login(user);
+    Auth.login(user).then(function(data) {
+      alert('Logged user in!');
+      MessageSvc.addMsg('success', 'You are now logged in as ');
+    }, function(error) {
+      console.error('Unable to log user in: ' + error);
+      MessageSvc.addMsg('danger', 'We were unable to log you in!');
+    });
   };
   this.logout = function() {
     // return Auth.logout();

@@ -7,7 +7,7 @@ div(ng-controller='loginCtrl')
     .form-group
       button.btn(type='submit', class=['btn-primary', 'form-control'], ng-click='authenticate()') Log In!
 
-  p {{ login.handle }}
+  p {{ login | json }}
 
 append scripts
   script(src='/zinfataClient/app/components/users/login/loginController.js')

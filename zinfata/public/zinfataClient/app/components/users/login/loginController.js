@@ -1,9 +1,9 @@
-app.controller('loginCtrl', function($scope, UsersService) {
-  $scope.login   = {
+app.controller('loginCtrl', ['$scope', 'UsersSvc', function($scope, UsersSvc) {
+  $scope.login = {
     handle:   '',
     password: ''
   };
-  $scope.authenticate    = function() {
-    UsersService.login($scope.login);
+  $scope.authenticate = function() {
+    UsersSvc.login($scope.login);
   };
-})
+}]);
