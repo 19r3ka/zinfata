@@ -1,5 +1,4 @@
-app.controller('headerCtrl', function($scope) {
-  $scope.user = {
-    name: 'Guest'
-  };
-});
+app.controller('headerCtrl', ['$scope', 'UsersSvc', function($scope, UsersSvc) {
+  $scope.user  = UsersSvc.currentUser;
+  $scope.loggedIn = UsersSvc.loggedIn;
+}]);

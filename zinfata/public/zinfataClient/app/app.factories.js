@@ -25,6 +25,9 @@ app.factory('Auth', function($http) {
     },
     logout: function() {
       return $http.get('/logout');
+    },
+    currentUser: function() {
+      return $http.get('/currentuser');
     }
   };
 });
