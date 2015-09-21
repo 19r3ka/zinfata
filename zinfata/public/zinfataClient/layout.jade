@@ -1,6 +1,7 @@
 doctype
 html.no-js
   head
+    base(href='/')
     meta(charset='utf-8')
     meta(http-equiv='X-UA-Compatible', content='IE=edge')
     title= title
@@ -8,6 +9,7 @@ html.no-js
     meta(name='viewport', content='width=device-width, initial-scale=1')
     link(rel='stylesheet', href='/zinfataClient/assets/libs/bootstrap-3.3.5/css/bootstrap.css')
     block scripts
+      script(src='/zinfataClient/assets/libs/jquery/jquery-2.1.4.min.js')
       script(src='/zinfataClient/assets/libs/bootstrap-3.3.5/js/bootstrap.js')
       script(src='/zinfataClient/assets/libs/angular-1.4.5/angular.js')
   body.container(ng-app='zinfataClient')

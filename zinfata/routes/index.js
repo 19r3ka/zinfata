@@ -8,8 +8,10 @@ function isLoggedIn(req, res, next) {
 }
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Zinfata' });
+
+router.get('/partials/:name', function (req, res) {
+  var name = req.params.name;
+  res.render('app/components/' + name + '/' + name);
 });
 
 router.post('/login', passport.authenticate('local'), function(req, res) {
@@ -23,6 +25,10 @@ router.get('/logout', isLoggedIn, function(req, res) {
 router.get('/currentuser', function(req, res) {
   if(req.isAuthenticated) res.json(req.user);
   res.status(404);
+});
+
+router.get('/', function(req, res, next) {
+  res.render('index', { title: 'Zinfata' });
 });
 
 module.exports = router;
