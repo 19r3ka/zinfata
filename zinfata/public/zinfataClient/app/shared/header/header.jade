@@ -10,7 +10,5 @@ nav.navbar(class='navbar-inverse', role='navigation', ng-controller='headerCtrl'
         li.menu-item: a(href='#') Profile
         li.menu-item: a(href='#') Settings
     li: a(href='#', ng-show='loggedIn') Log Out
-    li: a(href='#', ng-hide='loggedIn') Log In
-    li: a(href='#', ng-hide='loggedIn') Register
-
-script(src='/zinfataClient/app/shared/header/headerController.js')
+    li: a(href='login', ng-hide='loggedIn') Log In
+    li: a(href='register', ng-hide='loggedIn') Register

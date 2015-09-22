@@ -2,7 +2,15 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
   $routeProvider.
     when('/', {
       templateUrl: '/partials/dashboard',
-      controller: 'dashboardCtrl'
+      controller:  'dashboardCtrl'
+    }).
+    when('/register', {
+      templateUrl: '/partials/registration',
+      controller:  'registerCtrl'
+    }).
+    when('/login', {
+      templateUrl: '/partials/login',
+      controller:  'loginCtrl'
     }).
     otherwise({redirectTo: '/'});
 

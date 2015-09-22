@@ -31,4 +31,8 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Zinfata' });
 });
 
+router.get('*', function(req, res, next) {
+  res.render('index', { title: 'Zinfata' });
+});
+
 module.exports = router;
