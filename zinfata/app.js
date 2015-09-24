@@ -38,11 +38,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Define the routes to use in the app
+app.use('/api/users', users);
+app.use('/api/albums', albums);
+app.use('/api/tracks', tracks);
+app.use('/api/playlists', playlists);
 app.use('/', routes);
-app.use('/users', users);
-app.use('/albums', albums);
-app.use('/tracks', tracks);
-app.use('/playlists', playlists);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

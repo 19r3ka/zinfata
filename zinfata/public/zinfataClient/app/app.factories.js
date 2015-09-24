@@ -1,20 +1,20 @@
 app.factory('Users', function($resource) {
-  return $resource('/users/:id', null, {
+  return $resource('/api/users/:id', null, {
     'update': {method:'PUT'}
   });
 });
 app.factory('Albums', function($resource) {
-  return $resource('/albums/:id', null, {
+  return $resource('/api/albums/:id', null, {
     'update': {method:'PUT'}
   });
 });
 app.factory('Playlists', function($resource) {
-  return $resource('/playlists/:id', null, {
+  return $resource('/api/playlists/:id', null, {
     'update': {method:'PUT'}
   });
 });
 app.factory('Tracks', function($resource) {
-  return $resource('/tracks/:id', null, {
+  return $resource('/api/tracks/:id', null, {
     'update': {method:'PUT'}
   });
 });

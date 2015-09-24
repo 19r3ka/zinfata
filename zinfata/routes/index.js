@@ -31,7 +31,8 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Zinfata' });
 });
 
-router.get('*', function(req, res, next) {
+router.get(/^\/(?!(api|partials))/, function(req, res, next) {
+  console.log('we entered the regex route');
   res.render('index', { title: 'Zinfata' });
 });
 
