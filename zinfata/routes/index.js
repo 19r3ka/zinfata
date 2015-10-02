@@ -20,11 +20,12 @@ router.post('/login', passport.authenticate('local'), function(req, res) {
 
 router.get('/logout', isLoggedIn, function(req, res) {
   req.logout();
+  res.sendStatus(204);
 });
 
 router.get('/currentuser', function(req, res) {
   if(req.isAuthenticated) res.json(req.user);
-  res.status(404);
+  res.sendStatus(404);
 });
 
 router.get('/', function(req, res, next) {

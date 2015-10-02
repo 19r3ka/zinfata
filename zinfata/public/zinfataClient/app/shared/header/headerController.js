@@ -1,5 +1,5 @@
-app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH_EVENTS', 'UsersSvc', 'Auth', '$log',
-                              function($scope, $rootScope, AUTH_EVENTS, UsersSvc, Auth, $log) {
+app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH_EVENTS', 'UsersSvc', 'MessageSvc', 'Auth', '$log',
+                              function($scope, $rootScope, AUTH_EVENTS, UsersSvc, MessageSvc, Auth, $log) {
   $scope.loggedIn = Auth.isAuthenticated();
   $scope.username = UsersSvc.getCurrentUser().firstName;
 
@@ -16,7 +16,13 @@ app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH_EVENTS', 'UsersSvc',
   });
 
   $scope.logout = function() {
-    Auth.logout();
-    $rootScope.$broadcast(AUTH_EVENTS.logoutSuccess);
+    Auth.logout(function(data) {
+      MessageSvc.addMsg('success', 'You have been successfully logged out!');
+      UsersSvc.currentUser = {}; //reset currentUser if successfully logged out!
+      $rootScope.$broadcast(AUTH_EVENTS.logoutSuccess);
+    }, function() {
+      MessageSvc.addMsg('danger', 'We couldn\'t log you out. Try again later!');
+      $rootScope.$broadcast(AUTH_EVENTS.logoutSuccess);
+    });
   };
 }]);

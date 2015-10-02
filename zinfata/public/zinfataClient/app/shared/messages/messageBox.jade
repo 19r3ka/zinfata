@@ -3,4 +3,3 @@
     .alert(class=['alert-{{msg.type}}', 'alert-dismissable'], role='alert')
       button.close(type='button', data-dismiss='alert', aria-hidden='true') &times;
       | {{msg.text}}
-  p {{ messages | json }}

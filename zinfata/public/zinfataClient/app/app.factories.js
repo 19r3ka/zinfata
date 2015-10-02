@@ -20,21 +20,22 @@ app.factory('Users', function($resource) {
 })
 .factory('Auth', ['$http', '$rootScope', 'Session', 'MessageSvc', '$log', function($http, $rootScope, Session, MessageSvc, $log) {
   return {
-    login: function(credentials) {
+    login: function(credentials, success, failure) {
       return $http.post('/login', credentials).then(function(res) {
         Session.create(res.data.id, res.data.role);
-        return res.data;
+        return success(res.data);
       }, function(err) {
-        $log.error('Unable to log user in: ' + err);
-        return false;
+        $log.error('Unable to log user in: ' + angular.toJson(err));
+        return failure(err);
       });
     },
-    logout: function() {
+    logout: function(success, failure) {
       return $http.get('/logout').then(function() {
         Session.destroy;
-        MessageSvc.addMsg('success', 'You have been successfully logged out!');
-      }, function() {
-        MessageSvc.addMsg('danger', 'We couldn\'t log you out. Try again later!');
+        return success();
+      }, function(err) {
+        $log.error('Unable to log user out: ' + angular.toJson(err));
+        return failure(err);
       });
     },
     currentUser: function() {
