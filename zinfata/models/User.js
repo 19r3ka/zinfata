@@ -17,7 +17,7 @@ var UserSchema = new mongoose.Schema( {
   handle:     { type: String, minlength: 3, match: handleRegex, required: true, lowercase: true, index: {unique: true}},
   email:      { type: String, match: emailRegex, required: true, unique: true, lowercase: true},
   password:   { type: String, required: true },
-  isArtist:   { type: Boolean, default: false },
+  role:       { type: String, default: 'user' },
   updated_at: { type: Date, default: Date.now }
 });
 

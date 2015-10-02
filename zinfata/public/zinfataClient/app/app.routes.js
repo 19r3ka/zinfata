@@ -12,6 +12,10 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       templateUrl: '/partials/login',
       controller:  'loginCtrl'
     }).
+    when('/user/:userId', {
+      templateUrl: '/partials/userProfile',
+      controller:  'userProfileCtrl'
+    }).
     otherwise({redirectTo: '/'});
 
   $locationProvider.html5Mode(true);
