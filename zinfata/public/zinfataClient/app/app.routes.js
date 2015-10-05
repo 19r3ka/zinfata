@@ -14,9 +14,18 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
     }).
     when('/user/:userId', {
       templateUrl: '/partials/userProfile',
-      controller:  'userProfileCtrl'
+      controller:  'userProfileCtrl',
+      data: {
+        memberOnly: true,
+        authorizedRoles: ['all']
+      }
     }).
     otherwise({redirectTo: '/'});
 
   $locationProvider.html5Mode(true);
-}]);
+}]).
+run(function(Auth, $log, UsersSvc, Session) {
+  Auth.currentUser(function(user) {
+    UsersSvc.setCurrentUser(user);
+  });
+});

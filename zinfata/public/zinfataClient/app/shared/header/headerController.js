@@ -5,14 +5,15 @@ app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH_EVENTS', 'UsersSvc',
 
   $scope.$watch(function() { return UsersSvc.getCurrentUser(); }, function(newVal, oldVal) {
     $scope.username = UsersSvc.getCurrentUser().firstName;
+    $scope.loggedIn = Auth.isAuthenticated();
   });
 
   $scope.$on(AUTH_EVENTS.loginSuccess, function() {
-    $scope.loggedIn = true;
+    $scope.loggedIn = Auth.isAuthenticated();
   });
 
   $scope.$on(AUTH_EVENTS.logoutSuccess, function() {
-    $scope.loggedIn = false;
+    $scope.loggedIn = Auth.isAuthenticated();
   });
 
   $scope.logout = function() {

@@ -22,7 +22,7 @@ app.factory('Users', function($resource) {
   return {
     login: function(credentials, success, failure) {
       return $http.post('/login', credentials).then(function(res) {
-        Session.create(res.data.id, res.data.role);
+        Session.create(res.data._id, res.data.role);
         return success(res.data);
       }, function(err) {
         $log.error('Unable to log user in: ' + angular.toJson(err));
@@ -31,15 +31,21 @@ app.factory('Users', function($resource) {
     },
     logout: function(success, failure) {
       return $http.get('/logout').then(function() {
-        Session.destroy;
+        Session.destroy();
         return success();
       }, function(err) {
         $log.error('Unable to log user out: ' + angular.toJson(err));
         return failure(err);
       });
     },
-    currentUser: function() {
-      return $http.get('/currentuser');
+    currentUser: function(success, failure) {
+      return $http.get('/currentuser').then(function(res) {
+        Session.create(res.data._id, res.data.role);
+        return success(res.data);
+      }, function(err) {
+        $log.error('No current user session found on server: ' + angular.toJson(err));
+        return failure(err);
+      });
     },
     isAuthenticated: function() {
       return !!Session.userId;

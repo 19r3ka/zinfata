@@ -23,9 +23,8 @@ router.get('/logout', isLoggedIn, function(req, res) {
   res.sendStatus(204);
 });
 
-router.get('/currentuser', function(req, res) {
-  if(req.isAuthenticated) res.json(req.user);
-  res.sendStatus(404);
+router.get('/currentuser', isLoggedIn, function(req, res) {
+  return res.json(req.user);
 });
 
 router.get('/', function(req, res, next) {
@@ -33,7 +32,6 @@ router.get('/', function(req, res, next) {
 });
 
 router.get(/^\/(?!(api|partials))/, function(req, res, next) {
-  console.log('we entered the regex route');
   res.render('index', { title: 'Zinfata' });
 });
 
