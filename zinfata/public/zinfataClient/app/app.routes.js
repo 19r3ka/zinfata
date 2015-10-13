@@ -12,6 +12,14 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       templateUrl: '/partials/login',
       controller:  'loginCtrl'
     }).
+    when('/forgot', {
+      templateUrl: '/partials/forgot',
+      controller:  'forgotCtrl'
+    }).
+    when('/reset', {
+      templateUrl: '/partials/passwordReset',
+      controller:  'passwordResetCtrl'
+    }).
     when('/user/:userId', {
       templateUrl: '/partials/userProfile',
       controller:  'userProfileCtrl',

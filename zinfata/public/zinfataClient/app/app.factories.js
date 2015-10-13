@@ -1,6 +1,8 @@
 app.factory('Users', function($resource) {
-  return $resource('/api/users/:id', null, {
-    'update': {method:'PUT'}
+  return $resource('/api/users/:id', {id: '@_id'}, {
+    'update': {method:'PUT'},
+    'resetPassword': {method:'GET', url: 'api/users/reset-password/:email'},
+    'verifyToken': {method:'GET', url: 'api/users/reset-password/validate-token/:token', params: {get_user: '@get_user'}}
   });
 })
 .factory('Albums', function($resource) {
@@ -44,7 +46,6 @@ app.factory('Users', function($resource) {
         return success(res.data);
       }, function(err) {
         $log.error('No current user session found on server: ' + angular.toJson(err));
-        return failure(err);
       });
     },
     isAuthenticated: function() {

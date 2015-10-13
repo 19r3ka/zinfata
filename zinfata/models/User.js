@@ -1,6 +1,7 @@
 var mongoose    = require('mongoose'),
     Album       = require('./Album.js'),
     bcrypt      = require('bcrypt'),
+    crypto      = require('crypto'),
     emailRegex  = new RegExp("^[-a-z0-9~!$%^&*_=+}{\\'?]+(\\.[-a-z0-9~" +
                             "!$%^&*_=+}{\\'?]+)*@([a-z0-9_][a-z0-9_]*" +
                             "(\\.[-a-z0-9_]+)*\\.(aero|arpa|biz|com|coop|" +
@@ -45,8 +46,5 @@ UserSchema.pre('save', function(next) {
 UserSchema.methods.verifyPassword = function verifyPassword(login, cb) {
   return bcrypt.compare(login, this.password, cb);
 };
-
-
-
 
 module.exports = mongoose.model('User', UserSchema);

@@ -3,7 +3,7 @@ var router   = express.Router();
 
 var mongoose = require('mongoose');
 var User     = require('../models/User.js');
-
+var PwdToken = require('../models/PasswordToken.js');
 var passport = require('../config/passport.js');
 
 router.route('/')
@@ -36,11 +36,12 @@ router.route('/:id')
     res.json(user);
   });
 })
-.put(passport.authenticate('local'), function(req, res, next) { /* UPDATE specific user */
-  User.findById(req.user.id, req.body, function(err, user) {
+.put(function(req, res, next) { /* UPDATE specific user */ //Must be protected somehow
+  console.log(req.body);
+  User.findById(req.params.id, function(err, user) {
     if(err) return next(err);
     if(!user) return next(new Error('not found'));
-    if(req.user.id !== user.id) return next(new Error('forbidden'));
+    //if(req.user.id !== user.id) return next(new Error('forbidden'));
     for(var key in req.body) {
       user[key] = req.body[key];
     }
@@ -60,5 +61,39 @@ router.route('/:id')
     });
   });
 });
+router.route('/reset-password/:email')
+.get(function(req, res, next) {
+  User.findOne({email: req.params.email}, function(err, user) {
+    if(err) return next(err);
+    if(!user) return next(new Error('not found'));
+    PwdToken.generateToken(function(token) {
+      var pwdToken = new PwdToken({
+        user_id: user._id,
+        token: token,
+      });
+      pwdToken.save(function(err, token) {
+        if(err) return next(err);
+        // TODO: here is where we send out the email
+        // or Whatsapp message
+        // with the generated token.
+        console.log('Here is the generated token: ' + token);
+        res.sendStatus(204);
+      });
+      return;
+    });
+  });
+})
+router.route('/reset-password/validate-token/:token')
+.get(function(req, res, next) {
+  PwdToken.findOne({token: req.params.token}, function(err, token) {
+    if(err) return next(err);
+    if(!token) return next(new Error('not found'));
+    if(req.query.get_user) {
+      res.json(token);
+    } else {
+      res.sendStatus(204);
+    }
+  });
+})
 
 module.exports = router;
