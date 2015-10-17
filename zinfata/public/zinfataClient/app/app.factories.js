@@ -46,6 +46,7 @@ app.factory('Users', function($resource) {
         return success(res.data);
       }, function(err) {
         $log.error('No current user session found on server: ' + angular.toJson(err));
+        return {};
       });
     },
     isAuthenticated: function() {

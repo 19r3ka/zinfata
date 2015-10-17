@@ -14,11 +14,12 @@ var mongoose    = require('mongoose'),
 var UserSchema = new mongoose.Schema( {
   firstName:  { type: String, required: true, lowercase: true },
   lastName:   { type: String, required: true, lowercase: true },
-  avatar:     { type: String, default: '/public/zinfataClient/assets/images/user-avatar-placeholder.png'},
+  avatar:     { type: String, default: 'assets/images/user-avatar-placeholder.png'},
   handle:     { type: String, minlength: 3, match: handleRegex, required: true, lowercase: true, index: {unique: true}},
   email:      { type: String, match: emailRegex, required: true, unique: true, lowercase: true},
   password:   { type: String, required: true },
   role:       { type: String, default: 'user' },
+  whatsapp:   { type: String, index: {unique: true}},
   updated_at: { type: Date, default: Date.now }
 });
 

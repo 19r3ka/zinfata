@@ -1,14 +1,14 @@
 nav.navbar(class='navbar-inverse', role='navigation', ng-controller='headerCtrl')
   .navbar-header
-    a.navbar-brand(href='#') ZINFATA
+    a.navbar-brand(href='/') ZINFATA
   ul.nav(class=['navbar-right', 'navbar-nav'])
     li.dropdown(ng-show='loggedIn')
       a.dropdown-toggle(data-toggle='dropdown')
-        | {{ username }}
+        | {{ user.firstName }}
         b.caret
       ul.dropdown-menu
-        li.menu-item: a(href='#') Profile
-        li.menu-item: a(href='#') Settings
+        li.menu-item: a(href= '{{ userProfile(user) }}' ) Profile
+        li.menu-item: a(href= '{{ userSettings(user) }}') Settings
     li: a(href='#', ng-show='loggedIn', ng-click='logout()') Log Out
     li: a(href='login', ng-hide='loggedIn') Log In
     li: a(href='register', ng-hide='loggedIn') Register

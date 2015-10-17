@@ -1,10 +1,10 @@
 app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH_EVENTS', 'UsersSvc', 'MessageSvc', 'Auth', '$log',
                               function($scope, $rootScope, AUTH_EVENTS, UsersSvc, MessageSvc, Auth, $log) {
   $scope.loggedIn = Auth.isAuthenticated();
-  $scope.username = UsersSvc.getCurrentUser().firstName;
+  $scope.user     = UsersSvc.getCurrentUser();
 
   $scope.$watch(function() { return UsersSvc.getCurrentUser(); }, function(newVal, oldVal) {
-    $scope.username = UsersSvc.getCurrentUser().firstName;
+    $scope.user = UsersSvc.getCurrentUser();
     $scope.loggedIn = Auth.isAuthenticated();
   });
 
@@ -15,6 +15,14 @@ app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH_EVENTS', 'UsersSvc',
   $scope.$on(AUTH_EVENTS.logoutSuccess, function() {
     $scope.loggedIn = Auth.isAuthenticated();
   });
+
+  $scope.userProfile     = function(user) {
+    return 'user/' + user._id;
+  };
+
+  $scope.userSettings    = function(user) {
+    return '#';
+  };
 
   $scope.logout = function() {
     Auth.logout(function(data) {
