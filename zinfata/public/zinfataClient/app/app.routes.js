@@ -28,6 +28,10 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
         authorizedRoles: ['all']
       }
     }).
+    when('/album/new', {
+      templateUrl: '/partials/album',
+      controller:  'newAlbumCtrl'
+    }).
     otherwise({redirectTo: '/'});
 
   $locationProvider.html5Mode(true);

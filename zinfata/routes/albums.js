@@ -5,6 +5,15 @@ var mongoose = require('mongoose');
 var Album    = require('../models/Album.js');
 
 var passport = require('../config/passport.js');
+var multer   = require('multer');
+var upload   = multer(
+    { dest: 'public/images/uploads'}
+);
+
+function isLoggedIn(req, res, next) {
+  if(req.isAuthenticated()) return next();
+  return next(new Error('forbidden'));
+}
 
 router.route('/')
 .get(function(req, res, next) { // GET all albums listing.
@@ -15,9 +24,16 @@ router.route('/')
     res.json(albums);
   });
 })
-.post(passport.authenticate('local'), function(req, res, next) { // POST new album
-  new_album = new Album(req.body);
-  new_album.artist_id = req.user.id;
+.post(upload.single('cover_art'), function(req, res, next) { // POST new album
+  var data = req.body;
+  console.log('we made it into Express ' + !!req)
+  var new_album = new Album({
+        title:                 data.title,
+        artist_id:           data.artist_id,
+        release_date:    data.release_date
+      });
+  if(!!req.user) new_album.artist_id = req.user.id;
+  new_album.image_url = req.file.path;
   new_album.save(function(err, album) {
     if(err) return next(err);
     res.json(album);

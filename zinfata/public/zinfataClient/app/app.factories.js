@@ -6,8 +6,22 @@ app.factory('Users', function($resource) {
   });
 })
 .factory('Albums', function($resource) {
-  return $resource('/api/albums/:id', null, {
-    'update': {method:'PUT'}
+  return $resource('/api/albums/:id', {id: '@_id'}, {
+    'update': {method:'PUT'},
+    'save':     {
+            method: 'POST',
+            transformRequest: function(data) {
+                    var fd = new FormData();
+                    angular.forEach(data, function(value, key) {
+                            fd.append(key, value);
+                    })
+                    return fd;
+            },
+            headers: {
+                    'Content-Type': undefined,
+                    enctype:           'multipart/form-data'
+            }
+    }
   });
 })
 .factory('Playlists', function($resource) {
