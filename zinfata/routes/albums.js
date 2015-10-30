@@ -26,13 +26,13 @@ router.route('/')
 })
 .post(upload.single('cover_art'), function(req, res, next) { // POST new album
   var data = req.body;
-  console.log('we made it into Express ' + !!req)
   var new_album = new Album({
         title:                 data.title,
         artist_id:           data.artist_id,
         release_date:    data.release_date
       });
   if(!!req.user) new_album.artist_id = req.user.id;
+  console.log(req.file.path);
   new_album.image_url = req.file.path;
   new_album.save(function(err, album) {
     if(err) return next(err);

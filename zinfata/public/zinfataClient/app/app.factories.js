@@ -1,22 +1,45 @@
+function FileDataObject(data) {
+        var fd = new FormData();
+        angular.forEach(data, function(value, key) {
+            fd.append(key, value);
+        })
+        return fd;
+}
 app.factory('Users', function($resource) {
   return $resource('/api/users/:id', {id: '@_id'}, {
-    'update': {method:'PUT'},
+     'update': {
+            method: 'PUT',
+            transformRequest: FileDataObject ,
+            headers: {
+                    'Content-Type': undefined,
+                    enctype:           'multipart/form-data'
+            }
+    },
+    'save':     {
+            method: 'POST',
+            transformRequest: FileDataObject,
+            headers: {
+                    'Content-Type': undefined,
+                    enctype:           'multipart/form-data'
+            }
+    },
     'resetPassword': {method:'GET', url: 'api/users/reset-password/:email'},
     'verifyToken': {method:'GET', url: 'api/users/reset-password/validate-token/:token', params: {get_user: '@get_user'}}
   });
 })
 .factory('Albums', function($resource) {
   return $resource('/api/albums/:id', {id: '@_id'}, {
-    'update': {method:'PUT'},
+    'update': {
+            method:'PUT',
+            transformRequest: FileDataObject ,
+            headers: {
+                    'Content-Type': undefined,
+                    enctype:           'multipart/form-data'
+            }
+    },
     'save':     {
             method: 'POST',
-            transformRequest: function(data) {
-                    var fd = new FormData();
-                    angular.forEach(data, function(value, key) {
-                            fd.append(key, value);
-                    })
-                    return fd;
-            },
+            transformRequest: FileDataObject,
             headers: {
                     'Content-Type': undefined,
                     enctype:           'multipart/form-data'
