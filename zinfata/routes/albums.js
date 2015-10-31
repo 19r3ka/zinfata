@@ -33,7 +33,7 @@ router.route('/')
       });
   if(!!req.user) new_album.artist_id = req.user.id;
   console.log(req.file.path);
-  new_album.image_url = req.file.path;
+  if(!!req.file) new_album.image_url = req.file.path;
   new_album.save(function(err, album) {
     if(err) return next(err);
     res.json(album);
@@ -53,7 +53,7 @@ router.route('/:id')
     if(!album) return next(new Error('not found'));
     if(req.user.id !== album.artist_id) return next(new Error('forbidden'));
     for(var key in req.body) {
-      album[key] = req.body[key];
+      if(!!req.body[key]) album[key] = req.body[key];
     }
     album.save(function(err, updated_album) {
       if(err) return next(err);

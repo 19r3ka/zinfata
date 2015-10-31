@@ -6,6 +6,11 @@ var User     = require('../models/User.js');
 var PwdToken = require('../models/PasswordToken.js');
 var passport = require('../config/passport.js');
 
+var multer   = require('multer');
+var upload   = multer(
+    { dest: 'public/images/uploads'}
+);
+
 router.route('/')
 .get(function(req, res, next) { /* GET users listing. */
   User.find(function(err, users) {
@@ -36,15 +41,16 @@ router.route('/:id')
     res.json(user);
   });
 })
-.put(function(req, res, next) { /* UPDATE specific user */ //Must be protected somehow
-  console.log(req.body);
+.put(upload.single('avatar'), function(req, res, next) { /* UPDATE specific user */ //Must be protected somehow
   User.findById(req.params.id, function(err, user) {
     if(err) return next(err);
     if(!user) return next(new Error('not found'));
     //if(req.user.id !== user.id) return next(new Error('forbidden'));
-    for(var key in req.body) {
-      user[key] = req.body[key];
+    for(var key in user) {
+      if(!!req.body[key]) user[key] = req.body[key];
     }
+    if(!!req.file) user.avatarUrl = req.file.path;
+    console.log(user);
     user.save(function(err, updated_user){
       if(err) return next(err);
       res.json(updated_user);

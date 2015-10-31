@@ -15,14 +15,6 @@ app.factory('Users', function($resource) {
                     enctype:           'multipart/form-data'
             }
     },
-    'save':     {
-            method: 'POST',
-            transformRequest: FileDataObject,
-            headers: {
-                    'Content-Type': undefined,
-                    enctype:           'multipart/form-data'
-            }
-    },
     'resetPassword': {method:'GET', url: 'api/users/reset-password/:email'},
     'verifyToken': {method:'GET', url: 'api/users/reset-password/validate-token/:token', params: {get_user: '@get_user'}}
   });
