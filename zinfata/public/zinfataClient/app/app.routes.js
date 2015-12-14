@@ -32,6 +32,22 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       templateUrl: '/partials/album',
       controller:  'newAlbumCtrl'
     }).
+    when('/album/:albumId', {
+        templateUrl: '/partials/album',
+        controller:  'albumCtrl'
+    }).
+    when('/track/new', {
+      templateUrl: '/partials/track',
+      controller:  'trackCtrl'
+    }).
+    when('/track/:trackId', {
+      templateUrl: '/partials/track',
+      controller:  'trackCtrl'
+    }).
+    when('/track/:trackId/edit', {
+      templateUrl: '/partials/track',
+      controller:  'trackCtrl'
+    }).
     otherwise({redirectTo: '/'});
 
   $locationProvider.html5Mode(true);

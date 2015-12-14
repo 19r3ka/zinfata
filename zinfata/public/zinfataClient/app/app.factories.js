@@ -26,7 +26,7 @@ app.factory('Users', function($resource) {
             transformRequest: FileDataObject ,
             headers: {
                     'Content-Type': undefined,
-                    enctype:           'multipart/form-data'
+                    enctype:        'multipart/form-data'
             }
     },
     'save':     {
@@ -34,8 +34,14 @@ app.factory('Users', function($resource) {
             transformRequest: FileDataObject,
             headers: {
                     'Content-Type': undefined,
-                    enctype:           'multipart/form-data'
+                    enctype:        'multipart/form-data'
             }
+    },
+    'getByUser': {
+			method:'GET',
+			url: '/api/albums/user/:user_id',
+			params: {user_id: '@_id'},
+			isArray: true
     }
   });
 })
@@ -45,8 +51,23 @@ app.factory('Users', function($resource) {
   });
 })
 .factory('Tracks', function($resource) {
-  return $resource('/api/tracks/:id', null, {
-    'update': {method:'PUT'}
+  return $resource('/api/tracks/:id', {id: '@_id'}, {
+    'update': {
+            method:'PUT',
+            transformRequest: FileDataObject ,
+            headers: {
+                    'Content-Type': undefined,
+                    enctype:        'multipart/form-data'
+            }
+    },
+    'save':     {
+            method: 'POST',
+            transformRequest: FileDataObject,
+            headers: {
+                    'Content-Type': undefined,
+                    enctype:        'multipart/form-data'
+            }
+    }
   });
 })
 .factory('Auth', ['$http', '$rootScope', 'Session', 'MessageSvc', '$log', function($http, $rootScope, Session, MessageSvc, $log) {

@@ -1,12 +1,11 @@
-var mongoose = require('mongoose'),
-    Track = require('./Track.js');
+var mongoose = require('mongoose');
 
 var AlbumSchema = new mongoose.Schema({
-  title:               { type: String, required: true, lowercase: true },
-  image_url:       { type: String },
-  artist_id:         { type: String, required: true },
-  release_date:  { type: Date, required: true },
-  updated_at:    { type: Date, default: Date.now }
+  title:        { type: String, required: true, lowercase: true },
+  imageUrl:     { type: String },
+  artistId:     { type: String, required: true },
+  releaseDate:  { type: Date, required: true },
+  updated_at:   { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model('Album', AlbumSchema);

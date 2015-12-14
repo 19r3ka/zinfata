@@ -50,7 +50,6 @@ router.route('/:id')
       if(!!req.body[key]) user[key] = req.body[key];
     }
     if(!!req.file) user.avatarUrl = req.file.path;
-    console.log(user);
     user.save(function(err, updated_user){
       if(err) return next(err);
       res.json(updated_user);

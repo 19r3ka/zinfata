@@ -14,7 +14,7 @@ var mongoose    = require('mongoose'),
 var UserSchema = new mongoose.Schema( {
   firstName:    { type: String, required: true, lowercase: true },
   lastName:     { type: String, required: true, lowercase: true },
-  avatarUrl:     { type: String, default: 'assets/images/user-avatar-placeholder.png'},
+  avatarUrl:     { type: String, default: 'zinfataClient/assets/images/user-avatar-placeholder.png'},
   handle:         { type: String, minlength: 3, match: handleRegex, required: true, lowercase: true, index: {unique: true}},
   email:           { type: String, match: emailRegex, required: true, unique: true, lowercase: true},
   password:     { type: String, required: true },

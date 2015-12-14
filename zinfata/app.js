@@ -80,6 +80,12 @@ app.use(function(err, req, res, next) {
     message  = 'Forbidden';
     details  = 'You do not have access to the requested resource!';
   }
+  if(err.message === 'bad_param') {
+    caughtIt = true;
+    status   = 400;
+    message  = 'Bad Input Parameter';
+    details  = 'One or more parameters are invalid!';
+  }
   if(/^duplicate/.test(err.message)) {
     caughtIt = true;
     var status  = 400;
