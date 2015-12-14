@@ -1,0 +1,12 @@
+form(name='resetPasswordForm', role='form', novalidate)
+    h3 Forgot Your Password?
+    p
+    | Please enter your email. We will send you a verification code
+    | so you can renew your password.
+    br
+    .form-group(ng-class="{ 'has-error': resetPasswordForm.resetEmail.$touched && resetPasswordForm.resetEmail.$invalid }")
+        input.form-control(type='email', name='resetEmail', placeholder='Email address', ng-model='email', required)
+        .help-block(ng-messages='resetPasswordForm.resetEmail.$error', ng-show='resetPasswordForm.resetEmail.$touched')
+                div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
+    .form-group
+        button.btn(type='submit', class=['btn-primary', 'form-control'], ng-disabled='resetPasswordForm.$invalid', ng-click='reset(email)') Reset!

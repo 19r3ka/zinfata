@@ -1,0 +1,41 @@
+form(name='trackInfo', role='form', novalidate)
+    .form-group
+        div(.imageBox)
+            img.img-circle(name='covertArt', height='200', width='auto', ng-src='{{ track.coverArt }}')
+        div(ng-show='creating || (editing && canEdit())')
+            label
+                input(type='checkbox', name='coverArtToggle', ng-model='uniqueCover', ng-change='updateCoverArt()')
+            |  This Track Has Its Own Cover Art!
+        div(ng-show='uniqueCover && (creating || (editing && canEdit()))')
+            label Cover Art:
+                input.form-control(type='file', name='avatar', accept='image/*', onchange='angular.element(this).scope().readFile(this)')
+    .form-group
+        input.form-control(type='text', name='title', placeholder='Title', ng-model='track.title', ng-disabled='!editing && !creating' ng-required)
+        div(ng-if='!creating || !editing')
+            p
+                span(#albumTitle)
+                    | from
+                    strong
+                        a(href='/album/{{ track.album.id }}')   {{ track.album.title }}
+                span(#artistName)
+                    |  by
+                    em
+                        a(href='/user/{{ track.artist.id }}')   {{ track.artist.handle }}
+    div(ng-if='creating || (editing && canEdit())')
+        .form-group
+            label Track:
+                input.form-control(type='file', name='music', accept='audio/*', onchange='angular.element(this).scope().getFile(this)', ng-required='creating')
+                // div(ng-if='track.streamUrl')
+                    audio(ng-src='{{ track.streamUrl }}', preload='auto', loop='true', controls)
+                        |  Your browser does not support this type of audio file !
+        .form-group
+            label(for='album') Album:	
+                select.form-control(name='album', ng-model='track.album.id', ng-options='album._id as album.title for album in albums', ng-disabled='!editing && !creating' ng-required)
+        .form-group
+            label(for='releaseDate') Release Year:
+            input.form-control(type='date', name='releaseDate', ng-model='track.releaseDate', ng-disabled='!editing && !creating', ng-required=creating)
+    .form-group
+        button.btn-primary(class='form-control', type='submit', ng-click='create(track)', ng-show='creating', ng-disabled='trackInfo.$invalid') Add This Track!
+        button.btn-primary(class='form-control', type='submit', ng-click='edit()', ng-show='canEdit() && !editing') Edit Info
+        button.btn-primary(class='form-control', type='submit', ng-click='update(track)', ng-show='canEdit() && editing', ng-disabled='trackInfo.$invalid') Save Changes!
+        button.btn-danger(class='form-control', type='submit', ng-click='delete(track)', ng-show='canEdit() && !creating') Delete This Track!

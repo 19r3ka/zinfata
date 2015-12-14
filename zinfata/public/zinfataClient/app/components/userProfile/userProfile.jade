@@ -1,0 +1,27 @@
+form(name='userProfile', role='form', novalidate)
+	.form-group
+		img.img-circle(name= 'avatar', ng-src='{{ user.avatarUrl }}')
+		div(ng-show='canEdit')
+			input.form-control(type='file', name='avatar', accept='image/*', onchange='angular.element(this).scope().readFile(this)')
+	.form-group
+		input.form-control(type='text', name='firstName', placeholder='First Name', ng-model='user.firstName', ng-disabled='!editing' required)
+	.form-group
+		input.form-control(type='text', name='lastName', placeholder='Last Name', ng-model='user.lastName', ng-disabled='!editing' required)
+	.form-group
+		input.form-control(type='text', name='handle', placeholder='Handle', ng-model='user.handle', ng-disabled='!editing' required)
+	.form-group
+		input.form-control(type='email', name='email', placeholder='Email', ng-model='user.email', ng-disabled='!editing' required)
+	.form-group
+		input.form-control(type='tel', name='whatsapp', placeholder='Whatsapp N*', ng-model='user.whatsapp', ng-disabled='!editing')
+	.form-group
+		button.btn-primary(class='form-control', type='submit', ng-click='edit()', ng-show='canEdit() && !editing') Edit Info
+		button.btn-primary(class='form-control', type='submit', ng-click='update()', ng-show='editing', ng-disabled='userProfile.$invalid') Update!
+		button.btn-danger(class='form-control', type='submit', ng-click='delete()', ng-show='canEdit()') Delete Account!
+
+h3 Albums
+div(ng-if="noAlbum")
+	p
+		a(href='/album/new') Add your first album now!
+ul(ng-repeat='album in user.albums')
+	li
+		a(href='/album/{{album._id}}') {{album.title}}

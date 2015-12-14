@@ -1,0 +1,25 @@
+form(name='albumForm', enctype= 'multipart/form-data', role='form', novalidate)
+    .form-group
+        img(name='coverArt', ng-src='{{album.imageUrl}}')
+        div(ng-show='editing || creating')
+            label(for='coverArt') Cover Art:
+                input.form-control(type='file', name='coverArt', accept='image/*', ng-model='album.coverArt', onchange='angular.element(this).scope().readFile(this)')
+    .form-group
+        input.form-control(type='text', name='title', placeholder='Title', ng-model='album.title', ng-disabled='!editing', required)
+    .form-group
+        label(for='releaseDate') Release Year:
+        input.form-control(type='date', name='releaseDate', ng-model='album.releaseDate', ng-disabled='!editing', required)
+    .form-group
+        button.btn(type='submit', ng-click='edit()', ng-show='canEdit && !editing', class=['btn-primary', 'form-control']) Edit Album!
+        button.btn(type='submit', ng-click='create(album)', ng-show='creating', class=['btn-primary', 'form-control'], ng-disabled='albumForm.$invalid') Create Album!
+        button.btn(type='submit', ng-click='update(album)', ng-show='editing', class=['btn-primary', 'form-control'], ng-disabled='albumForm.$invalid') Update!
+        button.btn(type='submit', ng-click='delete(album)', ng-show='!creating && canEdit', class=['btn-danger', 'form-control']) Delete Album!
+
+
+H3 Tracks
+div(ng-if="noTrack")
+    p
+        a(href='/track/new') Add a track to this empty album!
+ul(ng-repeat='track in album.tracks')
+    li
+        a(href='/track/{{track._id}}') {{track.title}
