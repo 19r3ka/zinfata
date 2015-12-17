@@ -93,7 +93,7 @@ router.route('/:id')
     }
     if(!!req.files['imageFile']) new_track.coverArt  = req.files['imageFile'][0].path;
     if(!!req.files['audioFile']) new_track.streamUrl = req.files['audioFile'][0].path;
-    console.log(track);
+    
     track.save(function(err, updated_track) {
       if(err) return next(err);
       res.json(updated_track);

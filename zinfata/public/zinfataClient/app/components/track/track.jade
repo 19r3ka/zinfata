@@ -11,7 +11,7 @@ form(name='trackInfo', role='form', novalidate)
                 input.form-control(type='file', name='avatar', accept='image/*', onchange='angular.element(this).scope().readFile(this)')
     .form-group
         input.form-control(type='text', name='title', placeholder='Title', ng-model='track.title', ng-disabled='!editing && !creating' ng-required)
-        div(ng-if='!creating || !editing')
+        div(ng-if='!creating && !editing')
             p
                 span(#albumTitle)
                     | from
@@ -21,6 +21,15 @@ form(name='trackInfo', role='form', novalidate)
                     |  by
                     em
                         a(href='/user/{{ track.artist.id }}')   {{ track.artist.handle }}
+            div.dropdown(class='pull-right')
+                a.dropdown-toggle(data-toggle='dropdown')
+                    span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
+                ul.dropdown-menu
+                    li: a(href='/playlist/new') Create new playlist
+                    li.divider(role='separator') 
+                    li(ng-repeat='playlist in playlists', ng-click='addToPlaylist(playlist)')
+                        a(href='#'): {{ playlist.title }}
+                            
     div(ng-if='creating || (editing && canEdit())')
         .form-group
             label Track:

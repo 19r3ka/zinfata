@@ -1,9 +1,9 @@
-app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$routeParams', '$log', 'UsersSvc', 'TracksSvc', 'TRACK_EVENTS', 'AlbumsSvc', 'MessageSvc',
-							function($scope, $sce, $rootScope, $location, $routeParams, $log, UsersSvc, TracksSvc, TRACK_EVENTS, AlbumsSvc, MessageSvc) {
+app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$routeParams', '$log', 'UsersSvc', 'TracksSvc', 'PlaylistsSvc', 'TRACK_EVENTS', 'AlbumsSvc', 'MessageSvc',
+							function($scope, $sce, $rootScope, $location, $routeParams, $log, UsersSvc, TracksSvc, PlaylistsSvc, TRACK_EVENTS, AlbumsSvc, MessageSvc) {
 	var userAddedFile = '',
         coverArts     = {};
 
-    $scope.track 	= {
+    $scope.track 	  = {
         title:       '',
         album:  {
             id:      '',
@@ -17,6 +17,12 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
         coverArt:    '',
         releaseDate: ''
     };
+    /* This is a temporary fix playlist listing get its own directive
+    ** with its own controller and factory. */
+    PlaylistsSvc.find({a_id: UsersSvc.getCurrentUser()._id}, function(data) {
+        $scope.playlists = data;
+    }, function(err) {});
+
 	$scope.albums 	   = {};
 	$scope.editing     = false;
 	$scope.creating    = false;
@@ -110,6 +116,11 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
     */
     $scope.getFile = function(elem) {
         $scope.track.audioFile = elem.files[0];
+    };
+
+    $scope.addToPlaylist = function(playlist) {
+        $log.debug('we entered the addToPlaylist function');
+        PlaylistsSvc.addTrack(playlist, $scope.track)
     };
 
     $scope.create = function(track) {

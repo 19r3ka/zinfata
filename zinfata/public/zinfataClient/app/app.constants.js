@@ -40,4 +40,11 @@ app.constant('AUTH_EVENTS', {
   creationFailed:       'track-creation-failed',
   deleteSuccess:        'track-delete-success',
   deleteFailed:         'track-delete-failed'
+}).constant('PLAYLIST_EVENTS', {
+  updateSuccess:        'playlist-update-success',
+  updateFailed:         'playlist-update-failed',
+  creationSuccess:      'playlist-creation-success',
+  creationFailed:       'playlist-creation-failed',
+  deleteSuccess:        'playlist-delete-success',
+  deleteFailed:         'playlist-delete-failed'
 });

@@ -46,8 +46,9 @@ app.factory('Users', function($resource) {
   });
 })
 .factory('Playlists', function($resource) {
-  return $resource('/api/playlists/:id', null, {
-    'update': {method:'PUT'}
+  return $resource('/api/playlists/:id', {id: '@_id'}, {
+    'update': {method: 'PUT'},
+    'find':   {method: 'GET', isArray: true }
   });
 })
 .factory('Tracks', function($resource) {

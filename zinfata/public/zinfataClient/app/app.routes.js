@@ -36,6 +36,10 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
         templateUrl: '/partials/album',
         controller:  'albumCtrl'
     }).
+    when('/album/:albumId/edit', {
+        templateUrl: '/partials/album',
+        controller:  'albumCtrl'
+    }).
     when('/track/new', {
       templateUrl: '/partials/track',
       controller:  'trackCtrl'
@@ -47,6 +51,18 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
     when('/track/:trackId/edit', {
       templateUrl: '/partials/track',
       controller:  'trackCtrl'
+    }).
+    when('/playlist/new', {
+      templateUrl: '/partials/playlist',
+      controller:  'playlistCtrl'
+    }).
+    when('/playlist/:playlistId', {
+      templateUrl: '/partials/playlist',
+      controller:  'playlistCtrl'
+    }).
+    when('/playlist/:playlistId/edit', {
+      templateUrl: '/partials/playlist',
+      controller:  'playlistCtrl'
     }).
     otherwise({redirectTo: '/'});
 

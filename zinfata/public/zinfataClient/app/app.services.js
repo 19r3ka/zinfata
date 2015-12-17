@@ -41,10 +41,10 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
           delete userToUpdate.avatarUrl;
       }
       userToUpdate.$update(function(updatedUser) {
-        success(updatedUser);
+        return success(updatedUser);
       }, function(err) {
         $log.error('Profile update failed: ' + err);
-        failure(err);
+        return failure(err);
       });
     });
   };
@@ -85,9 +85,9 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
           delete albumToUpdate.imageUrl;
       }
       albumToUpdate.$update(function(updatedAlbum) {
-          success(updatedAlbum);
+          return success(updatedAlbum);
       }, function(err) {
-          failure(err);
+          return failure(err);
       });
     });
   };
@@ -180,9 +180,9 @@ app.service('TracksSvc', ['Tracks', '$log', function(Tracks, $log) {
       }
       $log.debug(trackToUpdate);
       trackToUpdate.$update(function(updatedTrack) {
-          success(updatedTrack);
+          return success(updatedTrack);
       }, function(err) {
-          failure(err);
+          return failure(err);
       });
     });
   };
@@ -217,8 +217,8 @@ app.service('TracksSvc', ['Tracks', '$log', function(Tracks, $log) {
 
   this.delete = function(track, success, failure) {
     return Tracks.delete({id: track._id}, function(data) {
-      data.artist    = { id: data.artistId };
-      data.album     = { id: data.albumId };
+      data.artist       = { id: data.artistId };
+      data.album        = { id: data.albumId };
       data.releaseDate  = new Date(data.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
       delete data.artistId;
       delete data.albumId;
@@ -227,4 +227,92 @@ app.service('TracksSvc', ['Tracks', '$log', function(Tracks, $log) {
       return failure(err);
     });
   };
+}]);app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
+  this.create = function(playlist, success, failure) {
+    var new_playlist = new Playlists({
+      title:        playlist.title,
+      // coverArt:     playlist.coverArt,
+      ownerId:      playlist.owner.id,
+      Tracks:       playlist.tracks
+    });
+
+    new_playlist.$save(function(saved_playlist) {
+      return success(saved_playlist);
+    }, function(err) {
+      return failure(err);
+    });
+  };
+
+  this.update = function(playlist, success, failure) {
+    Playlists.get({ id: playlist._id }, function(playlistToUpdate) {
+      for(var key in playlistToUpdate) {
+          if(!!playlist[key] && playlistToUpdate[key] !== playlist[key]) playlistToUpdate[key] = playlist[key];
+      }
+      /*
+      if(!!playlist.coverArt) {
+          playlistToUpdate.cover_art = playlist.coverArt;
+          delete playlistToUpdate.imageUrl;
+      }
+      */
+      $log.debug(playlistToUpdate);
+      playlistToUpdate.$update(function(updatedPlaylist) {
+          return success(updatedPlaylist);
+      }, function(err) {
+          return failure(err);
+      });
+    });
+  };
+
+  this.get = function(playlistId, success, failure) {
+    return Playlists.get({ id: playlistId }, function(data) {
+      data.owner    = { id: data.ownerId };
+      delete data.ownerId;
+      /* 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
+      if(!!data.coverArt)   data.coverArt   = '../../' + data.coverArt.split('/').slice(1).join('/');
+      */
+      return success(data);
+    }, function(err) {
+      return failure(err);
+    });
+  };
+
+  this.find = function(params, success, failure) { // params must be a valid hash with a_id &| u_id
+    return Playlists.find(params, function(data) {
+      data.owner     = { id: data.ownerId };
+      delete data.ownerId;
+      /* 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
+      if(!!data.coverArt)   data.coverArt   = '../../' + data.coverArt.split('/').slice(1).join('/');
+      */
+      return success(data);
+    }, function(err) {
+      return failure(err);
+    });
+  };
+
+  this.delete = function(playlist, success, failure) {
+    return Playlists.delete({id: playlist._id}, function(data) {
+      data.owner     = { id: data.ownerId };
+      delete data.ownerId;
+      /* 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
+      if(!!data.coverArt)   data.coverArt   = '../../' + data.coverArt.split('/').slice(1).join('/');
+      */
+      return success(data);
+    }, function(err) {
+      return failure(err);
+    });
+  };
+
+  this.addTrack = function(playlist, track, success, failure) {
+    Playlists.get({ id: playlist._id }, function(playlistToUpdate) {
+      playlistToUpdate.tracks.push(track);
+      
+      playlistToUpdate.$update(function(updatedPlaylist) {
+          return true;
+      }, function(err) {
+          return false;
+      });
+    }, function(err) {
+      return false;
+    })
+  }
 }]);
