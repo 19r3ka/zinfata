@@ -304,7 +304,7 @@ app.service('TracksSvc', ['Tracks', '$log', function(Tracks, $log) {
 
   this.addTrack = function(playlist, track, success, failure) {
     Playlists.get({ id: playlist._id }, function(playlistToUpdate) {
-      playlistToUpdate.tracks.push(track);
+      playlistToUpdate.tracks.push(track._id);
       
       playlistToUpdate.$update(function(updatedPlaylist) {
           return true;
@@ -314,5 +314,18 @@ app.service('TracksSvc', ['Tracks', '$log', function(Tracks, $log) {
     }, function(err) {
       return false;
     })
-  }
+  };
+
+  this.removeTrack = function(playlist, index, success, failure) {
+    Playlists.get({ id: playlist._id }, function(playlistToUpdate) {
+      playlistToUpdate.splice(index, 1);
+      playlistToUpdate.$update(function(updatedPlaylist) {
+          return true;
+      }, function(err) {
+          return false;
+      });
+    }, function(err) {
+      return false;
+    });
+  };
 }]);
