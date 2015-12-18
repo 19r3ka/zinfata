@@ -1,0 +1,49 @@
+#presentation
+form(name='PlaylistForm', role='form')
+    //- .form-group
+        img(name='coverArt', ng-src='{{playlist.imageUrl}}')
+        div(ng-show='editing || creating')
+            label(for='coverArt') Cover Art:
+                input.form-control(type='file', name='coverArt', accept='image/*', ng-model='playlist.coverArt', onchange='angular.element(this).scope().readFile(this)')
+    .form-group
+        input.form-control(type='text', name='title', placeholder='Enter Playlist Name', ng-model='playlist.title', ng-disabled='!editing && !creating', autofocus, required)
+        div(ng-if='!editing && !creating')
+            p
+                span(#artistName)
+                    |  Created by
+                    em
+                        a(href='/user/{{ playlist.owner.id }}')   {{ playlist.owner.handle }}
+            p.item-info
+                span.song-count
+                    em
+                        ng-pluralize(count='playlistTracks.length', when="{'0': '0 Song', '1': '1 Song', 'other': '{} Songs'}")
+
+                //- span.playlist-length
+                    |  123 minutes               
+    .form-group
+        button.btn(type='submit', ng-click='edit()', ng-show='!creating && (canEdit() && !editing)', class=['btn-primary', 'form-control']) Edit Playlist!
+        button.btn(type='submit', ng-click='create(playlist)', ng-show='creating', class=['btn-primary', 'form-control'], ng-disabled='playlistForm.$invalid') Create Playlist!
+        button.btn(type='submit', ng-click='update(playlist)', ng-show='editing', class=['btn-primary', 'form-control'], ng-disabled='playlistForm.$invalid') Save Changes!
+        button.btn(type='submit', ng-click='delete(playlist)', ng-show='!creating && canEdit()', class=['btn-danger', 'form-control']) Delete Playlist!
+
+div(ng-if='!creating && !!playlist.tracks.length')
+    table.table(class='table-striped table-hover table-condensed')
+        thead
+            tr
+                th.col-md-5 Title
+                th.col-md-3 Album
+                th.col-md-3 Artist
+                //- td Length -- TODO: record track's length into database
+                //- options for interacting with the song
+                th.col-md-1 
+        tbody
+            tr(ng-repeat='track in playlistTracks')
+                td 
+                    a(href='/track/{{track._id}}') {{ track.title }} 
+                td
+                    a(href='/album/{{track.album.id}}') {{ track.album.title }} 
+                td 
+                    a(href='/user/{{track.artist.id}}') {{ track.artist.handle }}
+                td
+                    a(type="button", class='close', aria-label='Close', ng-click='removeTrack($index)')
+                        span(aria-hidden="true") &times;
