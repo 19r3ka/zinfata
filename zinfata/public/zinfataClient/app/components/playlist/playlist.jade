@@ -45,5 +45,17 @@ div(ng-if='!creating && !!playlist.tracks.length')
                 td 
                     a(href='/user/{{track.artist.id}}') {{ track.artist.handle }}
                 td
-                    a(type="button", class='close', aria-label='Close', ng-click='removeTrack($index)')
-                        span(aria-hidden="true") &times;
+                    div.dropdown(class='pull-right')
+                        a.dropdown-toggle(data-toggle='dropdown')
+                            span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
+                        ul.dropdown-menu
+                            li(ng-click='play(track)'): a(href='#') Play Now
+                            li(ng-click='addToQueue(track)'): a(href='#') Play Next
+                            li.dropdown-toggle: a(href='#') Play Next
+                                ul.dropdown-menu
+                                    li: a(href='/playlist/new') Create new playlist
+                                    li.divider(role='separator') 
+                                    li(ng-repeat='playlist in playlists', ng-click='addToPlaylist(playlist)')
+                                        a(href='#'): {{ playlist.title }}
+                            li(ng-click='removeTrack($index)'): a(href='')
+                                span.text-danger Delete

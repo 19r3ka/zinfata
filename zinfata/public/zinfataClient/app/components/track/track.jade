@@ -25,10 +25,14 @@ form(name='trackInfo', role='form', novalidate)
                 a.dropdown-toggle(data-toggle='dropdown')
                     span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
                 ul.dropdown-menu
-                    li: a(href='/playlist/new') Create new playlist
-                    li.divider(role='separator') 
-                    li(ng-repeat='playlist in playlists', ng-click='addToPlaylist(playlist)')
-                        a(href='#'): {{ playlist.title }}
+                    li(ng-click='play(track)'): a(href='') Play Now
+                    li(ng-click='addToQueue(track)'): a(href='#') Queue Up
+                    li.dropdown-toggle: a(href='#') Add To...
+                        ul.dropdown-menu
+                            li: a(href='/playlist/new') Create new playlist
+                            li.divider(role='separator') 
+                            li(ng-repeat='playlist in playlists', ng-click='addToPlaylist(playlist)')
+                                a(href='#'): {{ playlist.title }}
                             
     div(ng-if='creating || (editing && canEdit())')
         .form-group

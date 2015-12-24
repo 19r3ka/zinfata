@@ -64,6 +64,10 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       templateUrl: '/partials/playlist',
       controller:  'playlistCtrl'
     }).
+    when('/queue', {
+      templateUrl: '/partials/queue',
+      controller:  'queueCtrl'
+    }).
     otherwise({redirectTo: '/'});
 
   $locationProvider.html5Mode(true);

@@ -1,5 +1,7 @@
-app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$routeParams', 'AlbumsSvc', 'TracksSvc', 'UsersSvc', 'PlaylistsSvc', 'MessageSvc' ,'PLAYLIST_EVENTS',  
-                              function($scope, $rootScope, $location, $log, $routeParams, AlbumsSvc, TracksSvc, UsersSvc, PlaylistsSvc, MessageSvc, PLAYLIST_EVENTS) {
+app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$routeParams', 'AlbumsSvc', 
+                                'TracksSvc', 'UsersSvc', 'PlaylistsSvc', 'MessageSvc', 'QueueSvc' ,'PLAYLIST_EVENTS',  
+                              function($scope, $rootScope, $location, $log, $routeParams, AlbumsSvc, TracksSvc, 
+                                UsersSvc, PlaylistsSvc, MessageSvc, QueueSvc, PLAYLIST_EVENTS) {
     $scope.playlist = {
         title:      '',
         owner:   {
@@ -52,16 +54,24 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
     $scope.canEdit = function() {
         if(!!$scope.playlist.owner.id && ($scope.playlist.owner.id === UsersSvc.getCurrentUser()._id)) return true;
         return false;
-    }
+    };
 
     $scope.edit = function() {
         $location.path('/playlist/' + $scope.playlist._id + '/edit');
-    }   
+    };   
 
     $scope.removeTrack = function(index) {
         $scope.playlistTracks.splice(index, 1);
         // PlaylistsSvc.removeTrack($scope.playlist, index)
-    }
+    };
+
+    $scope.play = function(track) {
+        QueueSvc.playNow(track);
+    };
+
+    $scope.addToQueue = function(track) {
+        QueueSvc.addTrack(track);
+    };
 
     $scope.create = function(playlist) {
         if(!!!playlist.owner.id) playlist.owner.id = UsersSvc.getCurrentUser()._id

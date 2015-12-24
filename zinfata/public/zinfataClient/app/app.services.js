@@ -227,7 +227,8 @@ app.service('TracksSvc', ['Tracks', '$log', function(Tracks, $log) {
       return failure(err);
     });
   };
-}]);app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
+}]);
+app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
   this.create = function(playlist, success, failure) {
     var new_playlist = new Playlists({
       title:        playlist.title,
@@ -327,5 +328,57 @@ app.service('TracksSvc', ['Tracks', '$log', function(Tracks, $log) {
     }, function(err) {
       return false;
     });
+  };
+}]);
+app.service('QueueSvc', ['localStore', '$log', function(queue, $log) {
+
+  this.data = {
+    currentlyPlaying: {},
+    tracks: [] //index of tracks in queue
+  }
+
+  this.saveQueue       = function() {
+    queue.setData('queue.tracks', angular.toJson(this.data.tracks));
+    queue.setData('queue.nowPlaying', angular.toJson(this.data.currentlyPlaying));
+  };
+
+  this.getTracks       = function() {
+    this.data.tracks = angular.fromJson(queue.getData('queue.tracks')) || [];
+    return this.data.tracks;
+  };
+
+  this.getCurrentTrack = function() {
+    return queue.getData('queue.nowPlaying');
+  };
+
+  this.addTrack        = function(track) {
+    this.getTracks();
+    this.data.tracks.push(track._id);
+    this.saveQueue();
+  };
+
+  this.playNow         = function(track) {
+    this.addTrack(track);
+    this.data.currentlyPlaying.track = track;
+    this.data.currentlyPlaying.index = 0;
+    this.saveQueue();
+  };
+
+  this.removeTrackAt   = function(index, success, failure) {
+    this.getTracks();
+    if(!!this.tracks.splice(index, 1).length) success(index);
+    failure('Track removal from queue failed at index: ' + index);
+  };
+
+  this.getTrackAt      = function(index) {
+    this.getTracks();
+    return this.tracks[index];
+  }; 
+
+  this.playTrackAt     = function(index) {
+    this.getTracks();
+    this.currentlyPlaying.index = index;
+    this.currentlyPlaying.track = getTrackAt(index);
+    this.saveQueue();
   };
 }]);

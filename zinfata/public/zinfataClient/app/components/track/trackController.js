@@ -1,5 +1,7 @@
-app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$routeParams', '$log', 'UsersSvc', 'TracksSvc', 'PlaylistsSvc', 'TRACK_EVENTS', 'AlbumsSvc', 'MessageSvc',
-							function($scope, $sce, $rootScope, $location, $routeParams, $log, UsersSvc, TracksSvc, PlaylistsSvc, TRACK_EVENTS, AlbumsSvc, MessageSvc) {
+app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$routeParams', '$log', 'UsersSvc', 
+                            'TracksSvc', 'PlaylistsSvc', 'TRACK_EVENTS', 'AlbumsSvc', 'MessageSvc', 'QueueSvc',
+							function($scope, $sce, $rootScope, $location, $routeParams, $log, UsersSvc,
+                            TracksSvc, PlaylistsSvc, TRACK_EVENTS, AlbumsSvc, MessageSvc, QueueSvc) {
 	var userAddedFile = '',
         coverArts     = {};
 
@@ -119,8 +121,15 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
     };
 
     $scope.addToPlaylist = function(playlist) {
-        $log.debug('we entered the addToPlaylist function');
         PlaylistsSvc.addTrack(playlist, $scope.track)
+    };
+
+    $scope.play = function(track) {
+        QueueSvc.playNow(track);
+    };
+
+    $scope.addToQueue = function(track) {
+        QueueSvc.addTrack(track);
     };
 
     $scope.create = function(track) {

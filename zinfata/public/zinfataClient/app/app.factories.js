@@ -71,6 +71,25 @@ app.factory('Users', function($resource) {
     }
   });
 })
+.factory('localStore', ['$window', '$rootScope', function($window, $rootScope){
+  /* Implements access to the local store to enable saving
+     queued tracks from one page to the other */
+
+  /* automatically alerts any element relying on the value of 
+     local stored items */   
+  angular.element($window).on('storage', function(event) {
+    if(event.key === 'queue') $rootScope.$apply();
+  });
+  return {
+    setData: function(store, val) {
+      $window.localStorage && $window.localStorage.setItem(store, val);
+      return this;
+    },
+    getData: function(store) {
+      return $window.localStorage && $window.localStorage.getItem(store);
+    }
+  };
+}])
 .factory('Auth', ['$http', '$rootScope', 'Session', 'MessageSvc', '$log', function($http, $rootScope, Session, MessageSvc, $log) {
   return {
     login: function(credentials, success, failure) {
