@@ -366,19 +366,23 @@ app.service('QueueSvc', ['localStore', '$log', function(queue, $log) {
 
   this.removeTrackAt   = function(index, success, failure) {
     this.getTracks();
-    if(!!this.tracks.splice(index, 1).length) success(index);
-    failure('Track removal from queue failed at index: ' + index);
+    if(!!this.data.tracks.splice(index, 1).length){
+      this.saveQueue();
+      return success(index);
+    } else {
+      failure('Track removal from queue failed at index: ' + index);
+    }
   };
 
   this.getTrackAt      = function(index) {
     this.getTracks();
-    return this.tracks[index];
+    return this.data.tracks[index];
   }; 
 
   this.playTrackAt     = function(index) {
     this.getTracks();
-    this.currentlyPlaying.index = index;
-    this.currentlyPlaying.track = getTrackAt(index);
+    this.data.currentlyPlaying.index = index;
+    this.data.currentlyPlaying.track = getTrackAt(index);
     this.saveQueue();
   };
 }]);
