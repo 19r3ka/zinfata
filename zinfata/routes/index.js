@@ -14,6 +14,11 @@ router.get('/partials/:name', function (req, res) {
   res.render('app/components/' + name + '/' + name);
 });
 
+router.get('/templates/:name', function(req, res) {
+  var name = req.params.name;
+  res.render('app/shared/templates/' + name + 'Template');
+});
+
 router.post('/login', passport.authenticate('local'), function(req, res) {
   res.json(req.user);
 });
@@ -31,7 +36,7 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Zinfata' });
 });
 
-router.get(/^\/(?!(api|partials))/, function(req, res, next) {
+router.get(/^\/(?!(api|partials|templates))/, function(req, res, next) {
   res.render('index', { title: 'Zinfata' });
 });
 

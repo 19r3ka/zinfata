@@ -2,11 +2,11 @@ app.controller('queueCtrl', ['$scope', '$rootScope', '$log', 'QueueSvc', 'Tracks
                             function($scope, $rootScope, $log, QueueSvc, TracksSvc, UsersSvc, AlbumsSvc) {
     $scope.queueTracks = [];
     var trackIndexes   = QueueSvc.getTracks();
-        /* If there are tracks, be sure to inflate 
-        ** each track with album and artist info.*/ 
+    
+    /* If there are tracks, be sure to inflate 
+    ** each track with album and artist info.*/ 
     if(!!trackIndexes.length) {
         angular.forEach(trackIndexes, function(value, index) {
-            var item;
             if(typeof value === 'string') {
                 TracksSvc.get(value, function(track) {
                     UsersSvc.get(track.artist.id, function(user) {

@@ -47,4 +47,12 @@ app.constant('AUTH_EVENTS', {
   creationFailed:       'playlist-creation-failed',
   deleteSuccess:        'playlist-delete-success',
   deleteFailed:         'playlist-delete-failed'
+}).constant('QUEUE', {
+  next:                 'queue-next-track',
+  prev:                 'queue-previous-track',
+}).constant('AUDIO', {
+  set:                  'audio-set',
+  playing:              'audio-playing',
+  paused:               'audio-paused',
+  ended:                'audio-ended'
 });

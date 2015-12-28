@@ -10,7 +10,7 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
         },
         tracks:  []
     }
-    $scope.playlistTracks = [];
+    $scope.playlistTracks = []; // array of inflated track metadata objects
     $scope.creating = false;
     $scope.editing  = false;
 
@@ -40,12 +40,13 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
                                 $log.error('Error getting playlist track album info: ' + err);
                             });
                             $scope.playlistTracks.push(track);
-                        });
+                        }, function(err) {});
                     }
                 })
             }
             // Only assign the metadata to the scope playlist at the very end!
-            $scope.playlist = data; 
+            $scope.playlist = data;
+            $scope.playlistTracks = data.tracks; 
         }, function(err) {
             $location.path('/');
         });

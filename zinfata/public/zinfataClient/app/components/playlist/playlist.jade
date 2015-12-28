@@ -51,11 +51,11 @@ div(ng-if='!creating && !!playlist.tracks.length')
                         ul.dropdown-menu
                             li(ng-click='play(track)'): a(href='#') Play Now
                             li(ng-click='addToQueue(track)'): a(href='#') Play Next
-                            li.dropdown-toggle: a(href='#') Play Next
+                            li.dropdown-toggle: a(href='#') Add To...
                                 ul.dropdown-menu
                                     li: a(href='/playlist/new') Create new playlist
                                     li.divider(role='separator') 
                                     li(ng-repeat='playlist in playlists', ng-click='addToPlaylist(playlist)')
-                                        a(href='#'): {{ playlist.title }}
+                                        a(href='#') {{ playlist.title }}
                             li(ng-click='removeTrack($index)'): a(href='')
                                 span.text-danger Delete
