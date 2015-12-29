@@ -365,11 +365,8 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
     self.getTracks();
     var queueLength  = self.data.tracks.length,
         index        = self.data.currentlyPlaying.index + 1;
-    $log.debug(index);
+    
     if(index >= queueLength) index = 0;
-    $log.debug(self.data.tracks);
-    $log.debug('current index is ' + self.data.currentlyPlaying.index + ' and incremented index is ' + index);
-    $log.debug('Queue length is ' + queueLength);
     
     self.getTrackAt(index, function(track) {
       self.play(track, index);
@@ -399,7 +396,7 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
   }; 
 
   self.getCurrentTrack = function() {
-    return queue.getData('queue.nowPlaying');
+    return angular.fromJson(queue.getData('queue.nowPlaying'));
   };
 
   self.addTrack        = function(track) {
@@ -452,6 +449,7 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
   self.play = function(track, index) {
     self.data.currentlyPlaying.index = index;
     self.data.currentlyPlaying.track = track;
+    $log.debug(self.data.currentlyPlaying.track);
     self.saveQueue();
     $rootScope.$broadcast(AUDIO.set, self.data.currentlyPlaying.track);
   };
