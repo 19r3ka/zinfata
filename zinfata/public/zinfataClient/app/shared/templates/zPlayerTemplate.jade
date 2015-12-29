@@ -9,7 +9,7 @@
       a(href='/track/{{ track.artist.id }}') {{ track.artist.handle }}
 .row(class=audio-player)
   //- input(type='range', min='0', max='{{ audio.duration }}', step='0.01', ng-model='audio.currentTime')
-  audio(ng-src='{{ track.streamUrl }}', controls)
+  audio(controls)
 .row
   .btn-toolbar(class='player-controls', role='toolbar')
     //- .btn-group

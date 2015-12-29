@@ -147,7 +147,8 @@ app.service('MessageSvc', function() {
     this.messages.length = 0;
   };
 });
-app.service('TracksSvc', ['Tracks', '$log', function(Tracks, $log) {
+app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', 
+                          function(Tracks, $log, UsersSvc, AlbumsSvc) {
   this.create = function(track, success, failure) {
     var new_track = new Tracks({
       title:        track.title,
@@ -215,7 +216,7 @@ app.service('TracksSvc', ['Tracks', '$log', function(Tracks, $log) {
     });
   };
 
-  this.inflate = function(index, container) {
+  this.inflate = function(index, container, success, failure) {
     this.get(index, function(track) {
       UsersSvc.get(track.artist.id, function(user) {
           track.artist.handle = user.handle;
@@ -227,9 +228,11 @@ app.service('TracksSvc', ['Tracks', '$log', function(Tracks, $log) {
       }, function(err) {
           $log.error('Error inflating track album info: ' + err);
       });
-      if(!!container) container.push(track);
-      return track;   
-    }, function(err) {});
+      if(!!container) container.push(track); 
+      success(track);
+    }, function(err) {
+      failure(err);
+    });
   };
 
   this.delete = function(track, success, failure) {
@@ -347,9 +350,10 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
     });
   };
 }]);
-app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', 
-                        function(queue, $rootScope, AUDIO, QUEUE, $log) {
-  this.data = {
+app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', 'TracksSvc', 
+                        function(queue, $rootScope, AUDIO, QUEUE, $log, TracksSvc) {
+  var self = this;
+  self.data = {
     currentlyPlaying: {
       index: 0,
       track: {}
@@ -357,81 +361,98 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log',
     tracks: [] //index of tracks in queue
   }
 
-  $rootScope.$on(AUDIO.next, function() {
-    $log.debug('we entered the audio.next listener')
-    var queueLength  = this.data.tracks.length,
-        currentIndex = this.data.currentlyPlaying.index,
-        index        = currentIndex++;
-
+  self.playNext       = function() {
+    self.getTracks();
+    var queueLength  = self.data.tracks.length,
+        index        = self.data.currentlyPlaying.index + 1;
+    $log.debug(index);
     if(index >= queueLength) index = 0;
-    this.playTrackAt(index);
-  });
-
-  $rootScope.$on(AUDIO.prev, function() {
-    var queueLength  = this.data.tracks.length,
-        currentIndex = this.data.currentlyPlaying.index,
-        index        = currentIndex--;
-
-    if(index < 0) index = queueLength - 1;
-    this.playTrackAt(index);
-  });
-
-  this.saveQueue       = function() {
-    queue.setData('queue.tracks', angular.toJson(this.data.tracks));
-    queue.setData('queue.nowPlaying', angular.toJson(this.data.currentlyPlaying));
+    $log.debug(self.data.tracks);
+    $log.debug('current index is ' + self.data.currentlyPlaying.index + ' and incremented index is ' + index);
+    $log.debug('Queue length is ' + queueLength);
+    
+    self.getTrackAt(index, function(track) {
+      self.play(track, index);
+    });
   };
 
-  this.getCurrentTrack = function() {
+  self.playPrev       = function() {
+    self.getTracks();
+    var queueLength  = self.data.tracks.length,
+        currentIndex = self.data.currentlyPlaying.index,
+        index        = currentIndex - 1;
+    if(index < 0) index = queueLength - 1;
+
+    self.getTrackAt(index, function(track) {
+      self.play(track, index);
+    });
+  };
+
+  self.saveQueue       = function() {
+    queue.setData('queue.tracks', angular.toJson(self.data.tracks));
+    queue.setData('queue.nowPlaying', angular.toJson(self.data.currentlyPlaying));
+  };
+
+  self.clearQueue      = function() {
+    self.data.tracks = [];
+    self.saveQueue();
+  }; 
+
+  self.getCurrentTrack = function() {
     return queue.getData('queue.nowPlaying');
   };
 
-  this.addTrack        = function(track) {
-    this.getTracks();
-    this.data.tracks.push(track._id);
-    this.saveQueue();
+  self.addTrack        = function(track) {
+    self.getTracks();
+    self.data.tracks.push(track._id);
+    self.saveQueue();
   };
 
-  this.getTracks       = function() {
-    if(!!!this.data.tracks.length) this.data.tracks = angular.fromJson(queue.getData('queue.tracks')) || [];
-    return this.data.tracks;
+  self.getTracks       = function() {
+    if(!!!self.data.tracks.length) self.data.tracks = angular.fromJson(queue.getData('queue.tracks')) || [];
+    return self.data.tracks;
   };
 
-  this.getTrackAt      = function(index) {
-    this.getTracks();
-    return TracksSvc.inflate(this.data.tracks[index]);
+  self.getTrackAt      = function(index, success, failure) {
+    self.getTracks();
+    if(!!self.data.tracks.length) {
+      TracksSvc.inflate(self.data.tracks[index], null, function(track) {
+        success(track);
+      }, function(err) {failure(err);});
+    }
   }; 
 
-  this.playTrackAt     = function(index) {
-    this.getTracks();
-    this.data.currentlyPlaying.index = index;
-    this.data.currentlyPlaying.track = this.getTrackAt(index);
-    $rootScope.$broadcast(AUDIO.set, this.data.currentlyPlaying.track);
-    $log.debug(this.data.currentlyPlaying);
-    this.saveQueue();
-  };
-
-  this.removeTrackAt   = function(index, success, failure) {
-    this.getTracks();
-    if(!!this.data.tracks.splice(index, 1).length){
-      this.saveQueue();
+  self.removeTrackAt   = function(index, success, failure) {
+    self.getTracks();
+    if(!!self.data.tracks.splice(index, 1).length){
+      self.saveQueue();
       success(index);
     } else {
       failure('Track removal from queue failed at index: ' + index);
     }
   };
-
-  this.playNow         = function(track) {
-    var newIndex = 0;
-    this.getTracks();
-    if(!!this.data.tracks.length) {
-      this.data.tracks.splice(this.data.currentlyPlaying.index, 0, track._id);
-      newIndex = this.data.currentlyPlaying.index++;
-    } else { 
-      this.addTrack(track);
+  /* User clicks on a track's playNow button */
+  self.playNow         = function(track) {
+    var newIndex  = 0,
+        queueCue  = self.data.currentlyPlaying.index;
+    
+    self.getTracks();
+    /* If there is a queue, stick the track in after
+       the current index position */
+    if(!!self.data.tracks.length) { 
+        self.data.tracks.splice(queueCue, 0, track._id);
+        newIndex = self.data.currentlyPlaying.index++;
+    } else { //there is no queue, add to end to create. 
+      self.addTrack(track);
     }
-    this.data.currentlyPlaying.index = newIndex;
-    this.data.currentlyPlaying.track = track;
-    this.saveQueue();
-    $rootScope.$broadcast(AUDIO.set, this.data.currentlyPlaying.track);
+    
+    self.play(track, newIndex);
+  };
+
+  self.play = function(track, index) {
+    self.data.currentlyPlaying.index = index;
+    self.data.currentlyPlaying.track = track;
+    self.saveQueue();
+    $rootScope.$broadcast(AUDIO.set, self.data.currentlyPlaying.track);
   };
 }]);

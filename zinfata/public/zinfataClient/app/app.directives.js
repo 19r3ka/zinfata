@@ -65,7 +65,8 @@ app.directive('zMatch', function($log) {
   };
 });
 
-app.directive('zPlayer', ['$rootScope', '$interval', 'QUEUE', 'AUDIO', '$log', function($rootScope, $interval, QUEUE, AUDIO, $log) {
+app.directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log', 
+                          function($rootScope, QueueSvc, QUEUE, AUDIO, $log) {
   return {
     restrict: 'E',
     link: function(scope, elm, attrs, ctrl) {
@@ -94,27 +95,21 @@ app.directive('zPlayer', ['$rootScope', '$interval', 'QUEUE', 'AUDIO', '$log', f
 
       scope.$on(AUDIO.set, function(event, track) {
         scope.track = track; 
+        $log.debug(track);
         player.src  = track.streamUrl;
         player.play(); 
         /*scope.audio.src = track.streamUrl;
         scope.audio.play();*/ 
       });
 
-      scope.$on('$destroy', function() {
-        player.paused;
-        if(angular.isDefined(stop)) {
-          $interval.cancel(stop);
-          stop = undefined;
-        }
-      });
-
       scope.next = function() {
-        $log.debug('broadcasted audio.next');
-        $rootScope.$broadcast(QUEUE.next);
+        //$rootScope.$broadcast(QUEUE.next);
+        QueueSvc.playNext();
       };
 
       scope.prev = function() {
-        $rootScope.$broadcast(QUEUE.prev);
+        //$rootScope.$broadcast(QUEUE.prev);
+        QueueSvc.playPrev();
       };
 
       scope.playPause = function() {
