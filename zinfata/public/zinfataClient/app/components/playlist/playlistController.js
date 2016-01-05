@@ -15,7 +15,7 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
     $scope.editing  = false;
 
     if($location.path() === '/playlist/new') $scope.creating = true;
-    if($location.path() === '/playlist/' + $routeParams.playlistId + '/edit') $scope.editing = true; 
+    if($location.path() === '/playlist/' + $routeParams.playlistId + '/edit'&& $scope.canEdit) $scope.editing = true; 
     if(!$scope.creating && !!$routeParams.playlistId) {
         PlaylistsSvc.get($routeParams.playlistId, function(data) {
             UsersSvc.get(data.owner.id, function(owner){

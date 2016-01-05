@@ -32,7 +32,7 @@ form(name='trackInfo', role='form', novalidate)
                             li: a(href='/playlist/new') Create new playlist
                             li.divider(role='separator') 
                             li(ng-repeat='playlist in playlists', ng-click='addToPlaylist(playlist)')
-                                a(href='#'): {{ playlist.title }}
+                                a(href='#') {{ playlist.title }}
                             
     div(ng-if='creating || (editing && canEdit())')
         .form-group

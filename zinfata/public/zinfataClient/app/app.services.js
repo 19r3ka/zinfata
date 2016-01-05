@@ -18,7 +18,6 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
       MessageSvc.addMsg('success', 'Welcome to Zinfata, ' + saved_user.firstName + '. Now log in to see your profile!');
       $location.path('login');
     }, function(error) {
-      $log.error('Unable to save user: ' + error);
       MessageSvc.addMsg('danger', 'Oops, we were unable to register you!');
     });
   };
@@ -120,19 +119,6 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
     });
   };
 }]);
-app.service('Session', function() {
-  this.userId = '';
-  this.userRole = '';
-  this.create = function(userId, userRole) {
-    this.userId = userId;
-    this.userRole = userRole;
-  };
-
-  this.destroy = function() {
-    this.userId = '';
-    this.userRole = '';
-  };
-});
 app.service('MessageSvc', function() {
   this.messages = [];
   this.addMsg   = function(type, text) {
@@ -386,8 +372,8 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
   };
 
   self.saveQueue       = function() {
-    queue.setData('queue.tracks', angular.toJson(self.data.tracks));
-    queue.setData('queue.nowPlaying', angular.toJson(self.data.currentlyPlaying));
+    queue.setData('queue.tracks', self.data.tracks);
+    queue.setData('queue.nowPlaying', self.data.currentlyPlaying);
   };
 
   self.clearQueue      = function() {
@@ -396,7 +382,7 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
   }; 
 
   self.getCurrentTrack = function() {
-    return angular.fromJson(queue.getData('queue.nowPlaying'));
+    return queue.getData('queue.nowPlaying');
   };
 
   self.addTrack        = function(track) {
@@ -406,7 +392,7 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
   };
 
   self.getTracks       = function() {
-    if(!!!self.data.tracks.length) self.data.tracks = angular.fromJson(queue.getData('queue.tracks')) || [];
+    if(!!!self.data.tracks.length) self.data.tracks = queue.getData('queue.tracks') || [];
     return self.data.tracks;
   };
 
@@ -449,8 +435,63 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
   self.play = function(track, index) {
     self.data.currentlyPlaying.index = index;
     self.data.currentlyPlaying.track = track;
-    $log.debug(self.data.currentlyPlaying.track);
     self.saveQueue();
     $rootScope.$broadcast(AUDIO.set, self.data.currentlyPlaying.track);
+  };
+}]);
+app.service('Session', ['$window', '$log', '$rootScope', 'AUTH_EVENTS',
+                      function($window, $log, $rootScope, AUTH_EVENTS) {
+  var self    = this,
+      session = $window.sessionStorage;
+  
+  self.user = {
+    id: '',
+    role: ''
+  }
+
+  $rootScope.$on(AUTH_EVENTS.loginSuccess, function(events, user){
+    self.create(user._id, user.role);
+  });
+  $rootScope.$on(AUTH_EVENTS.logoutSuccess, function() {
+    self.destroy();
+  });
+  $rootScope.$on(AUTH_EVENTS.notAuthenticated, function() {
+    self.destroy();
+  });  
+
+  self.create  = function(userId, userRole) {
+    self.user.id   = userId;
+    self.user.role = userRole;
+
+    session.setItem('userId', self.user.id);
+    session.setItem('userRole', self.user.role);
+  };
+
+  self.getUser    = function() {
+    if(!!!self.user.id) self.user.id     = session.getItem('userId');
+    if(!!!self.user.role) self.user.role = session.getItem('userRole');
+    return self.user;
+  };
+
+  self.destroy = function() {
+    self.user.id   = '';
+    self.user.role = '';
+
+    session.removeItem('userId');
+    session.removeItem('userRole');
+  };
+}]);
+app.service('AuthorizationSvc', ['$log', 'Auth', 'AUTHORIZATION', 
+                                function($log, Auth, AUTHORIZATION) {
+  var self = this;
+
+  self.authorize = function(loginRequired) {
+    var result = AUTHORIZATION.authorized,
+        logged = Auth.isAuthenticated();
+
+    if(!!loginRequired && !!!logged){
+      result = AUTHORIZATION.mustLogIn;
+    }
+    return result;
   };
 }]);

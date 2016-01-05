@@ -31,7 +31,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
     $scope.uniqueCover = false;
 
     if($location.path() === '/track/new') $scope.creating = true;
-    if($location.path() === '/track/' + $routeParams.trackId + '/edit') $scope.editing = true;
+    if(($location.path() === '/track/' + $routeParams.trackId + '/edit') && $scope.canEdit) $scope.editing = true;
 
     if(!$scope.creating && !!$routeParams.trackId) {
         TracksSvc.get($routeParams.trackId, function(data) {

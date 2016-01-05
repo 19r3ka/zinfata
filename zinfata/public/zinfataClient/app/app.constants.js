@@ -1,10 +1,10 @@
 app.constant('AUTH_EVENTS', {
-  loginSuccess:     'auth-login-success',
-  loginFailed:      'auth-login-failed',
-  logoutSuccess:    'auth-logout-success',
-  sessionTimeout:   'auth-session-timeout',
-  notAuthenticated: 'auth-not-authenticated',
-  notAuthorized:    'auth-not-authorized'
+  loginSuccess:         'auth-login-success',
+  loginFailed:          'auth-login-failed',
+  logoutSuccess:        'auth-logout-success',
+  sessionTimeout:       'auth-session-timeout',
+  authenticated:        'auth-authenticated',
+  notAuthenticated:     'auth-not-authenticated'
 })
 .constant('USER_ROLES', {
   admin:  'admin',
@@ -49,10 +49,14 @@ app.constant('AUTH_EVENTS', {
   deleteFailed:         'playlist-delete-failed'
 }).constant('QUEUE', {
   next:                 'queue-next-track',
-  prev:                 'queue-previous-track',
+  prev:                 'queue-previous-track'
 }).constant('AUDIO', {
   set:                  'audio-set',
   playing:              'audio-playing',
   paused:               'audio-paused',
   ended:                'audio-ended'
-});
+}).constant('AUTHORIZATION', {
+  mustLogIn:            'auth-log-in-first',
+  authorized:           'auth-authorized',
+  notAuthorized:        'auth-not-authorized'
+})

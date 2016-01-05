@@ -12,6 +12,6 @@ form(name='loginForm', role='form', novalidate)
         input.form-control(type='password', name='password', placeholder='Password', ng-model='credentials.password', required)
         .help-block(ng-messages='loginForm.password.$error', ng-show='loginForm.password.$touched')
             div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
+        p: a(href='forgot') Forgot Your Password ?
     .form-group
         button.btn(type='submit', class=['btn-primary', 'form-control'], ng-disabled='loginForm.$invalid', ng-click='authenticate(credentials)') Log In!
-p: a(href='forgot') Forgot Your Password ?

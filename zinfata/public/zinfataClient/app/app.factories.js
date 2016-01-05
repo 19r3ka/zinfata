@@ -78,49 +78,49 @@ app.factory('Users', function($resource) {
   /* automatically alerts any element relying on the value of 
      local stored items */   
   angular.element($window).on('storage', function(event) {
-    if(event.key === 'queue') $rootScope.$apply();
+    $rootScope.$apply();
   });
   return {
     setData: function(store, val) {
-      $window.localStorage && $window.localStorage.setItem(store, val);
+      $window.localStorage && $window.localStorage.setItem(store, angular.toJson(val));
       return this;
     },
     getData: function(store) {
-      return $window.localStorage && $window.localStorage.getItem(store);
+      return $window.localStorage && angular.fromJson($window.localStorage.getItem(store));
+    },
+    deleteData: function(store) {
+      return $window.localStorage && $window.localStorage.removeItem(store);
     }
   };
 }])
-.factory('Auth', ['$http', '$rootScope', 'Session', 'MessageSvc', '$log', function($http, $rootScope, Session, MessageSvc, $log) {
+.factory('Auth', ['$http', '$rootScope', 'Session', 'MessageSvc', 'AUTH_EVENTS', '$log', 
+                  function($http, $rootScope, Session, MessageSvc, AUTH_EVENTS, $log) {
   return {
     login: function(credentials, success, failure) {
       return $http.post('/login', credentials).then(function(res) {
-        Session.create(res.data._id, res.data.role);
         return success(res.data);
       }, function(err) {
-        $log.error('Unable to log user in: ' + angular.toJson(err));
         return failure(err);
       });
     },
     logout: function(success, failure) {
       return $http.get('/logout').then(function() {
-        Session.destroy();
         return success();
       }, function(err) {
-        $log.error('Unable to log user out: ' + angular.toJson(err));
         return failure(err);
       });
     },
     currentUser: function(success, failure) {
       return $http.get('/currentuser').then(function(res) {
-        Session.create(res.data._id, res.data.role);
+        $rootScope.$broadcast(AUTH_EVENTS.isAuthenticated, res.data);
         return success(res.data);
       }, function(err) {
-        $log.error('No current user session found on server: ' + angular.toJson(err));
+        $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
         return {};
       });
     },
     isAuthenticated: function() {
-      return !!Session.userId;
+      return !!Session.getUser().id;
     },
     isAuthorized: function(authorizedRoles) {
       if(!angular.isArray(authorizedRoles)) {
