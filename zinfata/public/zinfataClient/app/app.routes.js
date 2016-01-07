@@ -78,13 +78,16 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
     }).
     when('/queue', {
       templateUrl: '/partials/queue',
-      controller:  'queueCtrl'
+      controller:  'queueCtrl',
+      access: {
+        loginRequired: true
+      }
     }).
     otherwise({redirectTo: '/'});
 
   $locationProvider.html5Mode(true);
-}]).
-run(function($rootScope, $location, $log, Auth, AuthorizationSvc, AUTHORIZATION, UsersSvc, Session) {
+}])
+.run(function($rootScope, $location, $log, Auth, AuthorizationSvc, AUTHORIZATION, UsersSvc, Session) {
   /*variable to capture user's final destination
     in case of redirection to the /login page
     on protected route requests. */

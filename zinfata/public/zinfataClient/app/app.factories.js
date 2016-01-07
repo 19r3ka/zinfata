@@ -71,7 +71,8 @@ app.factory('Users', function($resource) {
     }
   });
 })
-.factory('localStore', ['$window', '$rootScope', function($window, $rootScope){
+.factory('localStore', ['$window', '$rootScope', '$log', 
+                        function($window, $rootScope, $log){
   /* Implements access to the local store to enable saving
      queued tracks from one page to the other */
 
@@ -86,7 +87,8 @@ app.factory('Users', function($resource) {
       return this;
     },
     getData: function(store) {
-      return $window.localStorage && angular.fromJson($window.localStorage.getItem(store));
+      var data = $window.localStorage && $window.localStorage.getItem(store);
+      return angular.fromJson(data);
     },
     deleteData: function(store) {
       return $window.localStorage && $window.localStorage.removeItem(store);
@@ -113,7 +115,7 @@ app.factory('Users', function($resource) {
     currentUser: function(success, failure) {
       return $http.get('/currentuser').then(function(res) {
         $rootScope.$broadcast(AUTH_EVENTS.isAuthenticated, res.data);
-        return success(res.data);
+        success(res.data);
       }, function(err) {
         $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
         return {};

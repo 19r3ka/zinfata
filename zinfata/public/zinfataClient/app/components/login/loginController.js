@@ -1,5 +1,5 @@
-app.controller('loginCtrl', ['$scope', '$rootScope', 'AUTH_EVENTS', 'Auth', 'UsersSvc', 'MessageSvc', '$location',
-               function($scope, $rootScope, AUTH_EVENTS, Auth, UsersSvc, MessageSvc, $location) {
+app.controller('loginCtrl', ['$scope', '$rootScope', 'AUTH_EVENTS', 'Auth', 'UsersSvc', 'MessageSvc', '$location', '$log',
+               function($scope, $rootScope, AUTH_EVENTS, Auth, UsersSvc, MessageSvc, $location, $log) {
   $scope.credentials = {
     handle:   '',
     password: ''

@@ -65,13 +65,27 @@ app.directive('zMatch', function($log) {
   };
 });
 
-app.directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log', 
-                          function($rootScope, QueueSvc, QUEUE, AUDIO, $log) {
+app.directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log', 'Auth', 'AUTH_EVENTS', 'MessageSvc',
+                          function($rootScope, QueueSvc, QUEUE, AUDIO, $log, Auth, AUTH_EVENTS, MessageSvc) {
   return {
     restrict: 'E',
     link: function(scope, elm, attrs, ctrl) {
+      /*Originally hide the player given that
+        by default, noone should come logged in.*/
+      if(!Auth.isAuthenticated()) elm.hide();
+      
+      scope.$watch(function() { return Auth.isAuthenticated(); },  function(newVal, oldVal){
+        if(newVal !== oldVal){
+          if(!!newVal){
+            elm.show();
+          }else{
+            elm.hide();
+          }
+        }
+      });
+
       // scope.audio = new Audio();
-      player = elm.find('audio')[0];
+      var player = elm.find('audio')[0];
 
       // scope.audio.addEventListener('play', function() {
       player.addEventListener('play', function() {
@@ -98,7 +112,13 @@ app.directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log',
       scope.$on(AUDIO.set, function(event, track) {
         scope.track = track; 
         player.src  = track.streamUrl;
-        player.play(); 
+        // player.play();
+        if(Auth.isAuthenticated()){
+          scope.playPause();
+        } else {
+          $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+          MessageSvc.addMsg('danger', 'Log in first to access that resource!');
+        } 
         /*scope.audio.src = track.streamUrl;
         scope.audio.play();*/ 
       });

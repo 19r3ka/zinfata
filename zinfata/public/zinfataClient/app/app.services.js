@@ -1,5 +1,5 @@
-app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
-                         function(Users, MessageSvc, $log, $location) {
+app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location', '$rootScope',
+                         function(Users, MessageSvc, $log, $location, $rootScope) {
   this.currentUser = {};
 
   this.setCurrentUser = function(user) {
@@ -165,7 +165,6 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc',
           trackToUpdate.cover_art = track.coverArt;
           delete trackToUpdate.imageUrl;
       }
-      $log.debug(trackToUpdate);
       trackToUpdate.$update(function(updatedTrack) {
           return success(updatedTrack);
       }, function(err) {
@@ -261,7 +260,6 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
           delete playlistToUpdate.imageUrl;
       }
       */
-      $log.debug(playlistToUpdate);
       playlistToUpdate.$update(function(updatedPlaylist) {
           return success(updatedPlaylist);
       }, function(err) {
