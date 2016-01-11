@@ -10,7 +10,7 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location', '$rootScope
   };
 
   this.create = function(user) {
-    var new_user = new Users;
+    var new_user = new Users();
     for(var key in user) {
       new_user[key] = user[key];
     }
@@ -26,7 +26,7 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location', '$rootScope
     Users.delete({id: user._id}, function(data) {
       return success(data);
     }, function(error) {
-      return failure(error)
+      return failure(error);
     });
   };
 
@@ -282,16 +282,24 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
   };
 
   this.find = function(params, success, failure) { // params must be a valid hash with a_id &| u_id
-    return Playlists.find(params, function(data) {
-      data.owner     = { id: data.ownerId };
-      delete data.ownerId;
-      /* 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
-      if(!!data.coverArt)   data.coverArt   = '../../' + data.coverArt.split('/').slice(1).join('/');
-      */
-      return success(data);
-    }, function(err) {
-      return failure(err);
-    });
+    if('owner' in params) {
+      params.resource    = 'owner',
+      params.resource_id = params.owner
+
+      delete params.owner;
+
+      return Playlists.find(params, function(data) {
+        data.owner     = { id: data.ownerId };
+        delete data.ownerId;
+        /* 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
+        if(!!data.coverArt)   data.coverArt   = '../../' + data.coverArt.split('/').slice(1).join('/');
+        */
+        return success(data);
+      }, function(err) {
+        return failure(err);
+      });   
+    }
+    
   };
 
   this.delete = function(playlist, success, failure) {
@@ -318,7 +326,7 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
       });
     }, function(err) {
       return false;
-    })
+    });
   };
 
   this.removeTrack = function(playlist, index, success, failure) {
@@ -343,7 +351,7 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
       track: {}
     },
     tracks: [] //index of tracks in queue
-  }
+  };
 
   self.playNext       = function() {
     self.getTracks();
@@ -445,7 +453,7 @@ app.service('Session', ['$window', '$log', '$rootScope', 'AUTH_EVENTS',
   self.user = {
     id: '',
     role: ''
-  }
+  };
 
   $rootScope.$on(AUTH_EVENTS.loginSuccess, function(events, user){
     self.create(user._id, user.role);

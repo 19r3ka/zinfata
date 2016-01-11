@@ -48,7 +48,11 @@ app.factory('Users', function($resource) {
 .factory('Playlists', function($resource) {
   return $resource('/api/playlists/:id', {id: '@_id'}, {
     'update': {method: 'PUT'},
-    'find':   {method: 'GET', isArray: true }
+    'find':   { method: 'GET', 
+                isArray: true,
+                url: '/api/playlists/:resource/:resource_id',
+                params: {resource: '@owner', resource_id: '@ownerId'}
+              }
   });
 })
 .factory('Tracks', function($resource) {

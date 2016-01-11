@@ -8,8 +8,8 @@ var passport = require('../config/passport.js');
 
 router.route('/')
 .get(function(req, res, next) { // GET all playlists listing.
-  var query = {};
-  if(req.query.u_id) query.ownerId = req.query.u_id;
+  /*TODO: Move every call to playlist by a criteria to a new endpoint
+    with the form '/:searchby/:search*/
   Playlist.find(function(err, playlists) {
     if(err) return next(err);
     if(!playlists.length) return next(new Error('not found'));
@@ -37,7 +37,16 @@ router.route('/')
         res.json(playlist);
     });
 })
-
+router.route('/:resource/:resource_id')
+.get(function(req, res, next) {
+  if('resource' in req.params && req.params.resource === 'owner') {
+    Playlist.find({ownerId: req.params.resource_id}, function(err, playlists) {
+      if(err) return next(err);
+      if(!playlists.length) return next(new Error('not found'));
+      res.json(playlists);
+    });
+  }
+})
 router.route('/:id')
 .get(function(req, res, next) { // GET specific album by ID
   Playlist.findById(req.params.id, function(err, playlist) {

@@ -8,7 +8,7 @@ nav.navbar(class='navbar-inverse', role='navigation', ng-controller='headerCtrl'
         b.caret
       ul.dropdown-menu
         li.menu-item: a(href= '{{ userProfile(user) }}' ) Profile
-        li.menu-item: a(href= '{{ userSettings(user) }}') Settings
+        //- li.menu-item: a(href= '{{ userSettings(user) }}') Settings
     li: a(href='#', ng-show='loggedIn', ng-click='logout()') Log Out
     li: a(href='login', ng-hide='loggedIn') Log In
     li: a(href='register', ng-hide='loggedIn') Register

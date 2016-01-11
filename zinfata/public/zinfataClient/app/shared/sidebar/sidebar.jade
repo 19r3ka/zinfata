@@ -1,21 +1,21 @@
 div(ng-controller='sidebarCtrl')
   ul.nav(class=['nav-tabs', 'nav-stacked'], role='navigation')
-    li: a(href='#')
+    li: a(href='search')
       span.glyphicon(class='glyphicon-search')
       |  Search
-    li: a(href='#')
+    //- li: a(href='#')
       span.glyphicon(class='glyphicon-globe')
       |  Discover
-    li: a(href='#')
+    //- li: a(href='#')
       span.glyphicon(class='glyphicon-heart')
       |  Follow
-    li: a(href='#')
+    //- li: a(href='#')
       span.glyphicon(class='glyphicon-star')
       |  Starred
-    li: a(href='#')
+    li: a(href='queue')
       span.glyphicon(class='glyphicon-list-alt')
       |  Play Queue
-    li: a(href='#')
+    //- li: a(href='#')
       span.glyphicon(class='glyphicon-music')
       |  My Music
     li.dropdown
@@ -23,8 +23,10 @@ div(ng-controller='sidebarCtrl')
         span.glyphicon(class='glyphicon-list')
         |  My Playlists
       ul.dropdown-menu
-          li.menu-item: a(href='#')
+          li.menu-item: a(href='playlist/new')
             span.glyphicon(class='glyphicon-plus')
-            |  Add New Playlist
-
-script(src='/zinfataClient/app/shared/sidebar/sidebarController.js')
+            |  Create a new playlist
+          li.menu-item(ng-repeat='playlist in playlists')
+            a(href='playlist/{{ playlist._id }}')
+              span.glyphicon(class='glyphicon-plus')
+              |  {{ playlist.title }}

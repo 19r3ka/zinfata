@@ -3,5 +3,5 @@ app.controller('playerCtrl', ['$scope', '$rootScope', function($scope, $rootScop
 
     $scope.$on('AUDIO.set', function(track) {
         
-    })
-});
+    });
+}]);

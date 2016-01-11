@@ -20,7 +20,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
         };
       });
     }
-  }
+  };
 }]);
 
 app.directive('uniqueEmail', ['Users', '$q', '$log', function(Users, $q, $log) {
@@ -135,7 +135,7 @@ app.directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log', 'A
 
       scope.playPause = function() {
         // scope.audio.paused ? scope.audio.play() : scope.audio.pause();
-        player.paused? player.play() : player.pause();
+        (player.paused ? player.play : player.pause)();
       };
 
       // var stop = $interval(function() { scope.$apply(); }, 500);
