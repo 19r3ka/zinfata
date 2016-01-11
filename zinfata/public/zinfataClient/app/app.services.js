@@ -120,17 +120,21 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
   };
 }]);
 app.service('MessageSvc', function() {
-  this.messages = [];
+  this.message = null;
+
+  this.getMsg   = function() {
+    return this.message;
+  };
+
   this.addMsg   = function(type, text) {
-    var message = {
+    this.message = {
       type: type,
       text: text
     };
-
-    this.messages.push(message);
   };
+
   this.clearQueue = function() {
-    this.messages.length = 0;
+    this.message = null;
   };
 });
 app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', 

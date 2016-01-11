@@ -24,7 +24,9 @@ app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH_EVENTS', 'UsersSvc',
       UsersSvc.setCurrentUser({}); //reset currentUser if successfully logged out!
       $rootScope.$broadcast(AUTH_EVENTS.logoutSuccess);
     }, function() {
-      MessageSvc.addMsg('danger', 'We couldn\'t log you out. Try again later!');
+      MessageSvc.addMsg('danger', 'You are already logged out!');
+      UsersSvc.setCurrentUser({}); //reset currentUser if successfully logged out!
+      $rootScope.$broadcast(AUTH_EVENTS.logoutSuccess);
     });
   };
 }]);

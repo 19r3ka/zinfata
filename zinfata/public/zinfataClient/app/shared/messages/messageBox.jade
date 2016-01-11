@@ -1,5 +1,4 @@
 #messageBox(ng-controller='messageCtrl')
-  div(ng-repeat='msg in messages')
-    .alert(class=['alert-{{msg.type}}', 'alert-dismissable'], role='alert')
+    .alert(class=['alert-{{message.type}}', 'alert-dismissable'], role='alert', ng-show='!!message.text')
       button.close(type='button', data-dismiss='alert', aria-hidden='true') &times;
-      | {{msg.text}}
+      | {{message.text}}
