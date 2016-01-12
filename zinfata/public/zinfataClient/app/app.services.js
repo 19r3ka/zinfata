@@ -288,7 +288,7 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
   this.find = function(params, success, failure) { // params must be a valid hash with a_id &| u_id
     if('owner' in params) {
       params.resource    = 'owner',
-      params.resource_id = params.owner
+      params.resource_id = params.owner;
 
       delete params.owner;
 
