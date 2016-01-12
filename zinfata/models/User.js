@@ -12,15 +12,16 @@ var mongoose    = require('mongoose'),
 
 
 var UserSchema = new mongoose.Schema( {
-  firstName:    { type: String, required: true, lowercase: true },
-  lastName:     { type: String, required: true, lowercase: true },
-  avatarUrl:     { type: String, default: 'zinfataClient/assets/images/user-avatar-placeholder.png'},
-  handle:         { type: String, minlength: 3, match: handleRegex, required: true, lowercase: true, index: {unique: true}},
-  email:           { type: String, match: emailRegex, required: true, unique: true, lowercase: true},
-  password:     { type: String, required: true },
-  role:             { type: String, default: 'user' },
-  whatsapp:     { type: String, index: {unique: true}, default: ''},
-  updated_at:  { type: Date, default: Date.now }
+  firstName:    { type: String, required: true, lowercase: true, trim: true },
+  lastName:     { type: String, required: true, lowercase: true, trim: true },
+  avatarUrl:    { type: String, default: 'zinfataClient/assets/images/user-avatar-placeholder.png', trim: true},
+  handle:       { type: String, minlength: 3, match: handleRegex, required: true, lowercase: true, index: {unique: true}, trim: true},
+  email:        { type: String, match: emailRegex, required: true, unique: true, lowercase: true, trim: true},
+  password:     { type: String, required: true, trim: true },
+  role:         { type: String, default: 'user', trim: true },
+  whatsapp:     { type: String, default: '', trim: true }, 
+  activated:    { type: Boolean, default: false },
+  updated_at:   { type: Date, default: Date.now }
 });
 
 UserSchema.pre('save', function(next) {

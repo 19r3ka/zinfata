@@ -8,6 +8,10 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       templateUrl: '/partials/registration',
       controller:  'registerCtrl'
     }).
+    when('/register/activate/:token', {
+      template:   '',
+      controller: 'tokenCtrl'
+    }).
     when('/login', {
       templateUrl: '/partials/login',
       controller:  'loginCtrl'

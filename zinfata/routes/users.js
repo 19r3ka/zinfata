@@ -28,9 +28,25 @@ router.route('/')
     if(err) return next(err);
     if(user) return next(new Error('duplicate: email'));
   });
+  console.log(user);
   user.save(function(err, new_user){
     if(err) return next(err);
-    res.status(201).json(new_user);
+
+    PwdToken.generateToken(function(token) {
+      var pwdToken = new PwdToken({
+        user_id:  user._id,
+        token:    token,
+        purpose:  'usr-activation'
+      });
+      pwdToken.save(function(err, token) {
+        if(err) return next(err);
+        // TODO: here is where we send out the email
+        // or Whatsapp message
+        // with the generated token.
+        console.log('Here is the generated activation token: ' + token);
+        res.status(201).json(new_user);
+      });
+    });
   });
 });
 
@@ -56,7 +72,7 @@ router.route('/:id')
     });
   });
 })
-.delete(passport.authenticate('local'), function(req, res, next) { /* DELETE specific user */
+.delete(function(req, res, next) { /* DELETE specific user */
   User.findById(req.params.id, req.body, function(err, deleted_user) {
     if(err) return next(err);
     if(!deleted_user) return next(new Error('not found'));
@@ -88,17 +104,24 @@ router.route('/reset-password/:email')
     });
   });
 })
-router.route('/reset-password/validate-token/:token')
+router.route('/validate-token/:token')
 .get(function(req, res, next) {
   PwdToken.findOne({token: req.params.token}, function(err, token) {
     if(err) return next(err);
     if(!token) return next(new Error('not found'));
-    if(req.query.get_user) {
-      res.json(token);
-    } else {
-      res.sendStatus(204);
+    if(token.purpose === 'usr-activation') {
+      User.findById(token.user_id, function(err, user) {
+        if(err) return next(err);
+        if(!user) return next(new Error('not found'))
+        user.activated = true;
+        user.save(function(err, new_user) {
+          if(err) return next(err);
+        });
+      });
     }
+    res.sendStatus(204);
   });
+  return;
 })
 
 module.exports = router;

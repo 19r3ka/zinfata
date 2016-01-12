@@ -16,7 +16,7 @@ app.factory('Users', function($resource) {
             }
     },
     'resetPassword': {method:'GET', url: 'api/users/reset-password/:email'},
-    'verifyToken': {method:'GET', url: 'api/users/reset-password/validate-token/:token', params: {get_user: '@get_user'}}
+    'verifyToken': {method:'GET', url: 'api/users/validate-token/:token', params: {get_user: '@get_user'}}
   });
 })
 .factory('Albums', function($resource) {

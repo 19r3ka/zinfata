@@ -9,16 +9,15 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location', '$rootScope
     return this.currentUser;
   };
 
-  this.create = function(user) {
+  this.create = function(user, success, failure) {
     var new_user = new Users();
     for(var key in user) {
       new_user[key] = user[key];
     }
     new_user.$save(function(saved_user) {
-      MessageSvc.addMsg('success', 'Welcome to Zinfata, ' + saved_user.firstName + '. Now log in to see your profile!');
-      $location.path('login');
-    }, function(error) {
-      MessageSvc.addMsg('danger', 'Oops, we were unable to register you!');
+      success(saved_user);
+    }, function(err) {
+      failure(err);
     });
   };
 

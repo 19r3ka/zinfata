@@ -22,6 +22,7 @@ app.constant('AUTH_EVENTS', {
   updateFailed:         'user-update-failed',
   creationSuccess:      'user-creation-success',
   creationFailed:       'user-creation-failed',
+  accountValidated:     'user-account-validated',
   deleteSuccess:        'user-delete-success',
   deleteFailed:         'user-delete-failed'
 })

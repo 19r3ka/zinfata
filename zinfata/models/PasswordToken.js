@@ -2,8 +2,9 @@ var mongoose = require('mongoose'),
     crypto   = require('crypto');
 
 var PwdTokenSchema = new mongoose.Schema( {
-  user_id:    { type: String, required: true },
-  token:      { type: String, required: true },
+  user_id:    { type: String, required: true, trim: true },
+  token:      { type: String, required: true, trim: true },
+  purpose:    { type: String, default: 'pwd-reset', trim: true }, 
   created_at: { type: Date, default: Date.now, expires: '1h' }
 });
 
