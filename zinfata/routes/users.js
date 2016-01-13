@@ -28,7 +28,6 @@ router.route('/')
     if(err) return next(err);
     if(user) return next(new Error('duplicate: email'));
   });
-  console.log(user);
   user.save(function(err, new_user){
     if(err) return next(err);
 
@@ -36,7 +35,7 @@ router.route('/')
       var pwdToken = new PwdToken({
         user_id:  user._id,
         token:    token,
-        purpose:  'usr-activation'
+        purpose:  'usr_activation'
       });
       pwdToken.save(function(err, token) {
         if(err) return next(err);
@@ -82,34 +81,12 @@ router.route('/:id')
     });
   });
 });
-router.route('/reset-password/:email')
-.get(function(req, res, next) {
-  User.findOne({email: req.params.email}, function(err, user) {
-    if(err) return next(err);
-    if(!user) return next(new Error('not found'));
-    PwdToken.generateToken(function(token) {
-      var pwdToken = new PwdToken({
-        user_id: user._id,
-        token: token,
-      });
-      pwdToken.save(function(err, token) {
-        if(err) return next(err);
-        // TODO: here is where we send out the email
-        // or Whatsapp message
-        // with the generated token.
-        console.log('Here is the generated token: ' + token);
-        res.sendStatus(204);
-      });
-      return;
-    });
-  });
-})
 router.route('/validate-token/:token')
 .get(function(req, res, next) {
   PwdToken.findOne({token: req.params.token}, function(err, token) {
     if(err) return next(err);
     if(!token) return next(new Error('not found'));
-    if(token.purpose === 'usr-activation') {
+    if(token.purpose === 'usr_activation') {
       User.findById(token.user_id, function(err, user) {
         if(err) return next(err);
         if(!user) return next(new Error('not found'))
@@ -122,6 +99,35 @@ router.route('/validate-token/:token')
     res.sendStatus(204);
   });
   return;
-})
+});
+router.route('/tokenize/:action/:email')
+.get(function(req, res, next) {
+  User.findOne({email: req.params.email}, function(err, user) {
+    if(err) return next(err);
+    if(!user) return next(new Error('not found'));
+    PwdToken.generateToken(function(new_token) {
+      PwdToken.findOne({ user_id: user._id }, function(err, old_token) {
+        if(old_token) old_token.remove(function(err, old_token){});
+      });
+
+      var pwdToken = new PwdToken({
+        user_id: user._id,
+        token: new_token,
+      });
+
+      if(req.params.action === 'usr_activation') pwdToken.purpose = 'usr_activation';
+
+      pwdToken.save(function(err, token) {
+        if(err) return next(err);
+        // TODO: here is where we send out the email
+        // or Whatsapp message
+        // with the generated token.
+        console.log('Here is the generated token: ' + token);
+        res.sendStatus(204);
+      });
+      return;
+    });
+  });
+});
 
 module.exports = router;

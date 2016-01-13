@@ -11,7 +11,8 @@ app.controller('registerCtrl', ['$scope', 'UsersSvc', 'MessageSvc', '$location',
   $scope.register = function() {
     UsersSvc.create($scope.user, function(saved_user) {
         MessageSvc.addMsg('success', 'Welcome to Zinfata, ' + saved_user.firstName + '. Check the email we sent you to activate your account');
-        $scope.registForm.$setPristine();
+        $scope.user = {};
+        $scope.registerForm.$setPristine();
     }, function(err) {
         MessageSvc.addMsg('danger', 'Oops, we were unable to register you!');
     });

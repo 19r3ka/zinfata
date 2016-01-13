@@ -15,8 +15,9 @@ app.factory('Users', function($resource) {
                     enctype:           'multipart/form-data'
             }
     },
-    'resetPassword': {method:'GET', url: 'api/users/reset-password/:email'},
-    'verifyToken': {method:'GET', url: 'api/users/validate-token/:token', params: {get_user: '@get_user'}}
+    'resetPassword':  {method:'GET', url: 'api/users/tokenize/:action/:email', params: {email: '@email', action: 'pwd-reset' }},
+    'activate':       {method:'GET', url: 'api/users/tokenize/:action/:email', params: {email: '@email', action: 'usr_activation' }},
+    'verifyToken':    {method:'GET', url: 'api/users/validate-token/:token', params: {token: '@token'}}
   });
 })
 .factory('Albums', function($resource) {

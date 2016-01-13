@@ -9,7 +9,7 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       controller:  'registerCtrl'
     }).
     when('/register/activate/:token', {
-      template:   '',
+      templateUrl:   '/partials/tokenValidator',
       controller: 'tokenCtrl'
     }).
     when('/login', {
