@@ -1,0 +1,7 @@
+form(name='tokenForm', role='form', novalidate)
+    .form-group(ng-class="{ 'has-error': tokenForm.activateEmail.$touched && tokenForm.activateEmail.$invalid }")
+        input.form-control(type='email', name='activateEmail', placeholder='Email address', ng-model='email', required)
+        .help-block(ng-messages='tokenForm.activateEmail.$error', ng-show='tokenForm.activateEmail.$touched')
+                div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
+    .form-group
+        button.btn(type='submit', class=['btn-primary', 'form-control'], ng-disabled='tokenForm.$invalid', ng-click='activate(email)') activate!
