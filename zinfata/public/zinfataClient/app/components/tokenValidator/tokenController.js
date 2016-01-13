@@ -21,5 +21,5 @@ app.controller('tokenCtrl', ['$scope', '$rootScope', '$routeParams', '$location'
             $rootScope.$broadcast(PWD_TOKEN.sendFailed);
             MessageSvc.addMsg('danger', 'We couldn\'t send you a new email at the moment. Try again later.');
         });
-    }
+    };
 }]);

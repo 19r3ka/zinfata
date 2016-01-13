@@ -19,7 +19,13 @@ router.route('/')
   });
 })
 .post(function(req, res, next) { /* POST new user */
-  var user = new User(req.body);
+  var user = new User({
+    firstName: req.body.firstName,
+    lastName:  req.body.lastName,
+    handle:     req.body.handle,
+    email:     req.body.email,
+    password:  req.body.password
+  });
   User.findOne({handle: req.body.handle}, function(err, user) {
     if(err) return next(err);
     if(user) return next(new Error('duplicate: handle'));
@@ -30,7 +36,8 @@ router.route('/')
   });
   user.save(function(err, new_user){
     if(err) return next(err);
-
+    /* Make sure that the password hash is not sent to the user */
+    new_user.password = null;
     PwdToken.generateToken(function(token) {
       var pwdToken = new PwdToken({
         user_id:  user._id,
@@ -42,7 +49,7 @@ router.route('/')
         // TODO: here is where we send out the email
         // or Whatsapp message
         // with the generated token.
-        console.log('Here is the generated activation token: ' + token);
+        console.log('the activation link will be : http://localhost:3000/register/activate/' + token.token);
         res.status(201).json(new_user);
       });
     });
@@ -83,13 +90,13 @@ router.route('/:id')
 });
 router.route('/validate-token/:token')
 .get(function(req, res, next) {
-  PwdToken.findOne({token: req.params.token}, function(err, token) {
+  PwdToken.findOne({ token: req.params.token }, function(err, token) {
     if(err) return next(err);
     if(!token) return next(new Error('not found'));
     if(token.purpose === 'usr_activation') {
       User.findById(token.user_id, function(err, user) {
         if(err) return next(err);
-        if(!user) return next(new Error('not found'))
+        if(!user) return next(new Error('not found'));
         user.activated = true;
         user.save(function(err, new_user) {
           if(err) return next(err);

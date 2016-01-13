@@ -88,7 +88,7 @@ app.factory('Users', function($resource) {
   });
   return {
     setData: function(store, val) {
-      $window.localStorage && $window.localStorage.setItem(store, angular.toJson(val));
+      /*$window.localStorage && */$window.localStorage.setItem(store, angular.toJson(val));
       return this;
     },
     getData: function(store) {
