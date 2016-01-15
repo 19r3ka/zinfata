@@ -1,3 +1,16 @@
+#agreement-modal(class='modal fade', tabindex="-1", role='dialog', aria-labelledBy='myModalLabel')
+    .modal-dialog(role='document')
+        .modal-content
+            .modal-header
+                button.close(data-dismiss='modal', aria-label='Close')
+                    span(aria-hidden='true') &times;
+                h4.modal-title(id='myModalLabel') Zinfata terms of use:
+            .modal-body
+                p
+                | Something like a phenomenon.
+            .modal-footer
+                button.btn(class='btn-default', data-dismiss='modal') Close
+
 form(name='registerForm', role='form', novalidate)
     .form-group(ng-class="{ 'has-error': registerForm.fName.$touched && registerForm.fName.$invalid }")
         input.form-control(type='text', name='fName', placeholder='First Name', ng-model='user.firstName', required, autofocus)
@@ -19,9 +32,15 @@ form(name='registerForm', role='form', novalidate)
         input.form-control(type='password', name='password', ng-minlength='8', placeholder='Password', ng-model='user.password', required)
         .help-block(ng-messages='registerForm.password.$error', ng-show='registerForm.password.$touched')
             div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
+    .checkbox(ng-class="{ 'has-error': registerForm.agreement.$touched && registerForm.agreement.$invalid }")
+        label
+            input(type='checkbox', name='agreement', ng-model='user.agreement', required)
+            .help-block(ng-messages='registerForm.agreement.$error', ng-show='registerForm.agreement.$touched')
+                div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
+            | I have read and agree to the 
+            a(data-toggle='modal', data-target='#agreement-modal') terms of use.
     .form-group
         button.btn(type='submit', ng-click='register()', class=['btn-primary', 'form-control'], ng-disabled='registerForm.$invalid') Register
-
 
 p Already a registered user?
     a(href='login')   Log In Now!

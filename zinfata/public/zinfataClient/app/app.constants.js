@@ -61,4 +61,4 @@ app.constant('AUTH_EVENTS', {
   mustLogIn:            'auth-log-in-first',
   authorized:           'auth-authorized',
   notAuthorized:        'auth-not-authorized'
-})
+});
