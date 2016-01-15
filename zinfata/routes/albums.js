@@ -72,7 +72,7 @@ router.route('/:id')
 .delete(function(req, res, next) { // DELETE album by ID
   Album.findById(req.params.id, function(err, album) {
     if(err) return next(err);
-    if(err) return next(err);
+    //if(err) return next(err);
     if(!album) return next(new Error('not found'));
     //if(req.user.id !== album.artist_id) return next(new Error('forbidden'));
     album.remove(function(err, deleted_album) {

@@ -7,16 +7,23 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var expressSession = require('express-session');
+var oauthserver = require('oauth2-server');
 
 var routes = require('./routes/index');
 var users  = require('./routes/users');
 var albums = require('./routes/albums');
 var tracks = require('./routes/tracks');
 var playlists = require('./routes/playlists');
+var oauthclients = require('./routes/oauthclients');
+var zinfataClientProxy = require('./routes/zinfataclientproxy');
 
 var dbConfig = require('./db.js');
+var authConfig = require('./config/oauth');
 
 var app = express();
+
+//init auth server
+app.oauth = oauthserver(authConfig);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'public/zinfataClient/'));
@@ -37,8 +44,15 @@ app.use(expressSession({
 app.use(passport.initialize());
 app.use(passport.session());
 
+//routes required to manage oauth
+app.use('/clients/', oauthclients);
+app.post('/oauth2/token', app.oauth.grant());
+
+//zfclient proxy route
+app.use('/zinfataclient', zinfataClientProxy);
 // Define the routes to use in the app
 app.use('/api/users', users);
+app.all(/\/api\/*/, app.oauth.authorise()); //user must have access token
 app.use('/api/albums', albums);
 app.use('/api/tracks', tracks);
 app.use('/api/playlists', playlists);
@@ -52,6 +66,7 @@ app.use(function(req, res, next) {
 });
 
 // error handlers
+//app.use(app.oauth.errorHandler());
 
 // custom error handler
 app.use(function(err, req, res, next) {
@@ -59,6 +74,7 @@ app.use(function(err, req, res, next) {
       status   = 500,
       message  = 'Something went wrong!',
       details  = '';
+
   if(err.name === 'ValidationError') {
     caughtIt = true;
     status   = 400;

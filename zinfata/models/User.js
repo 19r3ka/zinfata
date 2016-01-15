@@ -23,6 +23,29 @@ var UserSchema = new mongoose.Schema( {
   updated_at:  { type: Date, default: Date.now }
 });
 
+/*
+ * Required to support password grant type
+ */
+UserSchema.statics.getUser = function (handle, password, callback) {
+  console.log('in getUser (handle: ' + handle + ', password: ' + password + ')');
+
+  userModel.findOne({ handle: handle}, function(err, user) {
+    if(err) return callback(err);
+    if (!user) return callback(null, false);
+
+    bcrypt.compare(password, user.password, function(err, res) {
+      if(err) return callback(err);
+      //if (res == true) return callback(null, user.handle);
+      if (res == true) return callback(null, user._id);
+      return callback(null, false);
+    })
+
+    
+  })
+
+};
+
+
 UserSchema.pre('save', function(next) {
   var user = this;
 
@@ -48,4 +71,5 @@ UserSchema.methods.verifyPassword = function verifyPassword(login, cb) {
   return bcrypt.compare(login, this.password, cb);
 };
 
-module.exports = mongoose.model('User', UserSchema);
+var userModel = mongoose.model('User', UserSchema);
+module.exports = userModel;
