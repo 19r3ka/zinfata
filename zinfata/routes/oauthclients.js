@@ -11,7 +11,8 @@ router.route('/')
 	
 })
 .post(function(req, res, next){//register new client app
-	var data = req.body;
+	var data = req.body,
+		new_client;
 	if (!data.client_id || !data.client_secret) {
 		var err = new Error();
 		err.status = 400;
@@ -28,19 +29,18 @@ router.route('/')
 	});
 
 	new_client.save(function(err, client){
-		if (err.code == 11000) {
+		if (err.code === 11000) {
 			var err = new Error();
 			err.status  = 400;
-			err.error = 'duplicate_client';
+			err.error 	= 'duplicate_client';
     		err.message = 'Bad Input Parameter';
     		err.details = 'client id is already in use';
-    		return next(err);
-		}
+			return next(err);    		
+ 		}
 
 		if (err) return next(err);
 		res.json(client);
 	});
-
 });
 
 router.route('/:id')

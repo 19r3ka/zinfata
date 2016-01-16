@@ -9,9 +9,9 @@ var emailRegex  = new RegExp("^[-a-z0-9~!$%^&*_=+}{\\'?]+(\\.[-a-z0-9~" +
                             "pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\\." +
                             "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,5})?$",'i');
 var OAuthClientSchema = new mongoose.Schema({
-	clientId: { type: String, required: true, unique: true,  lowercase: true, match: clientIdPattern },
- 	clientSecret: { type: String,  required: true, minlength: 6 },
- 	redirectUri: { type: String }
+	clientId:      { type: String, required: true, unique: true,  lowercase: true, match: clientIdPattern },
+ 	clientSecret:  { type: String,  required: true, minlength: 6 },
+ 	redirectUri:   { type: String }
   /*
   appName : {type: String, required:true, minlength: 4, maxlength: 32},
   organisation : {type: String, required:true},
@@ -65,8 +65,5 @@ function generateRandomSecret() {
 
   });
 }
-
-
-
 
 module.exports  = OAuthClientModel;
