@@ -11,7 +11,7 @@ var emailRegex  = new RegExp("^[-a-z0-9~!$%^&*_=+}{\\'?]+(\\.[-a-z0-9~" +
 var OAuthClientSchema = new mongoose.Schema({
 	clientId:      { type: String, required: true, unique: true,  lowercase: true, match: clientIdPattern },
  	clientSecret:  { type: String,  required: true, minlength: 6 },
- 	redirectUri:   { type: String }
+ 	redirectUri:   { type: String, required: true, match: urlPattern }
   /*
   appName : {type: String, required:true, minlength: 4, maxlength: 32},
   organisation : {type: String, required:true},

@@ -16,6 +16,7 @@ var tracks = require('./routes/tracks');
 var playlists = require('./routes/playlists');
 var oauthclients = require('./routes/oauthclients');
 var zinfataClientProxy = require('./routes/zinfataclientproxy');
+var revoketokens = require('./routes/revoketokens');
 
 var dbConfig = require('./db.js');
 var authConfig = require('./config/oauth');
@@ -47,6 +48,7 @@ app.use(passport.session());
 //routes required to manage oauth
 app.use('/clients/', oauthclients);
 app.post('/oauth2/token', app.oauth.grant());
+app.use('/oauth2/revoke', revoketokens);
 
 //zfclient proxy route
 app.use('/zinfataclient', zinfataClientProxy);

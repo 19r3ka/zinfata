@@ -99,41 +99,4 @@ app.factory('Users', function($resource) {
       return $window.localStorage && $window.localStorage.removeItem(store);
     }
   };
-}])
-.factory('Auth', ['$http', '$rootScope', 'Session', 'MessageSvc', 'AUTH_EVENTS', '$log', 
-                  function($http, $rootScope, Session, MessageSvc, AUTH_EVENTS, $log) {
-  return {
-    login: function(credentials, success, failure) {
-      return $http.post('/login', credentials).then(function(res) {
-        return success(res.data);
-      }, function(err) {
-        return failure(err);
-      });
-    },
-    logout: function(success, failure) {
-      return $http.get('/logout').then(function() {
-        return success();
-      }, function(err) {
-        return failure(err);
-      });
-    },
-    currentUser: function(success, failure) {
-      return $http.get('/currentuser').then(function(res) {
-        $rootScope.$broadcast(AUTH_EVENTS.isAuthenticated, res.data);
-        success(res.data);
-      }, function(err) {
-        $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
-        return {};
-      });
-    },
-    isAuthenticated: function() {
-      return !!Session.getUser().id;
-    },
-    isAuthorized: function(authorizedRoles) {
-      if(!angular.isArray(authorizedRoles)) {
-        authorizedRoles = [authorizedRoles];
-      }
-      return (isAuthenticated && authorizedRoles.indexOf(Session.userRole) !== -1);
-    }
-  };
 }]);

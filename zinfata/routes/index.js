@@ -19,19 +19,6 @@ router.get('/templates/:name', function(req, res) {
   res.render('app/shared/templates/' + name + 'Template');
 });
 
-router.post('/login', passport.authenticate('local'), function(req, res) {
-  res.json(req.user);
-});
-
-router.get('/logout', isLoggedIn, function(req, res) {
-  req.logout();
-  res.sendStatus(204);
-});
-
-router.get('/currentuser', isLoggedIn, function(req, res) {
-  return res.json(req.user);
-});
-
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Zinfata' });
 });
