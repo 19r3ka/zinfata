@@ -5,33 +5,28 @@ var User = require('./User');
 var OAuthRefreshTokenSchema = new mongoose.Schema({
 	refreshToken: { type: String, required: true, unique: true, lowercase: true },
  	clientId: { type: String,  required: true, lowercase: true },
- 	userId: { type: String, required: true, lowercase: true },
+ 	userId: { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
  	expires: { type: Date }
 });
 
 
 OAuthRefreshTokenSchema.pre('save', function(next){
+	var self = this;
 
 	//validate client id
 	OAuthClient.findOne({clientId: this.clientId}, function(err, client){
 
 		if (err) return next(err);
 		if (!client) return next(new Error('Invalid clientId'));
-		//validate user id
-		User.findOne({id_: this.userId}, function(err, user){
-			if (err) return next(err);
-			if (!user) return next(new Error('Invalid userId'));
-			console.log('save valid refreshToken');
-			next();
-
-		});
+		//we don't validate the userId because is already done in the schema by using 'ref' that is set to 'User'
+		console.log('save valid refreshToken');
+		next();
 
 	});
 });
 
 OAuthRefreshTokenSchema.statics.saveRefreshToken = function (token, clientId, expires, userId, callback) {
   console.log('in saveRefreshToken (token: ' + token + ', clientId: ' + clientId +', userId: ' + userId + ', expires: ' + expires + ')');
-  if (typeof userId == 'object' && userId.id) userId = userId.id; //patch due to the fact that userId is object when requesting refresh token
   var refreshToken = new OAuthRefreshTokenModel({
     refreshToken: token,
     clientId: clientId,
@@ -62,10 +57,6 @@ OAuthRefreshTokenSchema.statics.revokeRefreshToken = function (refreshToken, cal
 }
 
 var OAuthRefreshTokenModel = mongoose.model('OAuthRefreshToken', OAuthRefreshTokenSchema);
-
-
-
-
 module.exports = OAuthRefreshTokenModel;
 
 
