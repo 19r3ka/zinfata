@@ -1,7 +1,7 @@
 app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$routeParams', 'AlbumsSvc', 
-                                'TracksSvc', 'UsersSvc', 'PlaylistsSvc', 'MessageSvc', 'QueueSvc' ,'PLAYLIST_EVENTS',  
+                                'TracksSvc', 'UsersSvc', 'SessionSvc', 'PlaylistsSvc', 'MessageSvc', 'QueueSvc' ,'PLAYLIST_EVENTS',  
                               function($scope, $rootScope, $location, $log, $routeParams, AlbumsSvc, TracksSvc, 
-                                UsersSvc, PlaylistsSvc, MessageSvc, QueueSvc, PLAYLIST_EVENTS) {
+                                UsersSvc, Session, PlaylistsSvc, MessageSvc, QueueSvc, PLAYLIST_EVENTS) {
     $scope.playlist = {
         title:      '',
         owner:   {
@@ -9,7 +9,7 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
             handle: ''
         },
         tracks:  []
-    }
+    };
     $scope.playlistTracks = []; // array of inflated track metadata objects
     $scope.creating = false;
     $scope.editing  = false;
@@ -42,7 +42,7 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
                             $scope.playlistTracks.push(track);
                         }, function(err) {});
                     }
-                })
+                });
             }
             // Only assign the metadata to the scope playlist at the very end!
             $scope.playlist = data;
@@ -53,7 +53,7 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
     }
 
     $scope.canEdit = function() {
-        if(!!$scope.playlist.owner.id && ($scope.playlist.owner.id === UsersSvc.getCurrentUser()._id)) return true;
+        if(!!$scope.playlist.owner.id && ($scope.playlist.owner.id === Session.getCurrentUser()._id)) return true;
         return false;
     };
 
@@ -75,7 +75,7 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
     };
 
     $scope.create = function(playlist) {
-        if(!!!playlist.owner.id) playlist.owner.id = UsersSvc.getCurrentUser()._id
+        if(!!!playlist.owner.id) playlist.owner.id = Session.getCurrentUser()._id;
         PlaylistsSvc.create(playlist, function(created_playlist) {
             $rootScope.$broadcast(PLAYLIST_EVENTS.createSuccess);
             MessageSvc.addMsg('success', 'You have successfully added a new playlist!');
@@ -105,5 +105,5 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
             $rootScope.$broadcast(PLAYLIST_EVENTS.deleteFailed);
             MessageSvc.addMsg('danger', 'Something went wrong trying to delete your playlist!');
         });
-    }
+    };
 }]);

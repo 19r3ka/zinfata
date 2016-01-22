@@ -1,11 +1,11 @@
 var express = require('express');
 var router = express.Router();
-var passport = require('../config/passport');
+/*var passport = require('../config/passport');
 
 function isLoggedIn(req, res, next) {
   if(req.isAuthenticated()) return next();
   return next(new Error('forbidden'));
-}
+}*/
 
 /* GET home page. */
 

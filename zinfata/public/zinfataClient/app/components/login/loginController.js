@@ -1,19 +1,21 @@
-app.controller('loginCtrl', ['$scope', '$rootScope', 'AUTH_EVENTS', 'Auth', 'UsersSvc', 'MessageSvc', '$location', '$log',
-               function($scope, $rootScope, AUTH_EVENTS, Auth, UsersSvc, MessageSvc, $location, $log) {
+app.controller('loginCtrl', ['$scope', '$rootScope', 'AUTH', 'AuthenticationSvc', 'MessageSvc', '$location', '$log',
+               function($scope, $rootScope, AUTH, AuthSvc, MessageSvc, $location, $log) {
   $scope.credentials = {
     handle:   '',
     password: ''
   };
+  
   $scope.authenticate = function(credentials) {
-    Auth.login(credentials, function(res) {
-      UsersSvc.setCurrentUser(res);
-      MessageSvc.addMsg('success', 'You are now logged in as ' + res.firstName);
-      $rootScope.$broadcast(AUTH_EVENTS.loginSuccess, res);
+    /*Authenticate the user with the server.
+      returns access token. */
+    AuthSvc.login(credentials, function(user) {
+      MessageSvc.addMsg('success', 'You are now logged in as ' + user.firstName);
       $scope.credentials = {};
-      $location.path('/login?success');
+      $scope.loginForm.$setPristine();
+      $location.path('/dashboard');
     }, function(err) {
-      MessageSvc.addMsg('danger', 'We were unable to log you in!');
-      $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
+      MessageSvc.addMsg('danger', 'Login failed! Try again later.');
       $location.path('/login?failure');
     });
-}}]);
+  };
+}]);

@@ -65,7 +65,7 @@ app.directive('zMatch', function($log) {
   };
 });
 
-app.directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log', 'Auth', 'AUTH_EVENTS', 'MessageSvc',
+app.directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log', 'AuthenticationSvc', 'AUTH_EVENTS', 'MessageSvc',
                           function($rootScope, QueueSvc, QUEUE, AUDIO, $log, Auth, AUTH_EVENTS, MessageSvc) {
   return {
     restrict: 'E',

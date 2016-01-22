@@ -88,6 +88,16 @@ router.route('/:id')
     });
   });
 });
+router.route('/handle/:handle')
+.get(function(req, res, next) {
+  if('handle' in req.params && !!req.params.handle) {
+    User.findOne({handle: req.params.handle.toLowerCase()}, function(err, user) {
+      if(err) return next(err);
+      if(!user) return next(new Error('not found'));
+      res.json(user);
+    });
+  }
+});
 router.route('/validate-token/:token')
 .get(function(req, res, next) {
   PwdToken.findOne({ token: req.params.token }, function(err, token) {

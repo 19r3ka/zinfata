@@ -14,7 +14,7 @@ describe('Users CRUD operations', function() {
             if(err) return console.log(err);
             if(user) console.log('user %s flushed from database.', user.firstName);
         });
-    })
+    });
 
     describe('/POSTing', function() {
 
@@ -26,7 +26,7 @@ describe('Users CRUD operations', function() {
                 email:        'snoop@dogpound.com',
                 password:     'qwertyui'
             };
-        })
+        });
 
         it('returns 400 when required keys missing', function(done) {
             /* delete one of the required properties */
@@ -35,7 +35,7 @@ describe('Users CRUD operations', function() {
             .type('form')
             .send(payload)
             .expect(400, done);
-        })
+        });
 
         it('returns 201 when user creation was successful', function(done) {
             api.post('/api/users')
@@ -52,14 +52,14 @@ describe('Users CRUD operations', function() {
                 (res.body).should.have.property('password').which.is.null;
                 done();
             });
-        })
+        });
 
         it('returns 400 when the user already exists', function(done) {
             api.post('/api/users')
             .type('form')
             .send(payload)
             .expect(400, done);
-        })
+        });
     });
 
     describe('/PuTing', function() {
@@ -72,13 +72,12 @@ describe('Users CRUD operations', function() {
                 (res.body.firstName).should.equal('nate');
                 res.body.should.not.have.property('password');
                 done();
-            })
-
-        })
+            });
+        });
     });
 
     describe('/GETing', function() {
-        it('retrieves the user from the database', function(done) {
+        it('retrieves the user by id from the database', function(done) {
             api.get('/api/users/' + userId)
             .expect(200)
             .end(function(err, res) {
@@ -89,8 +88,19 @@ describe('Users CRUD operations', function() {
                 res.body.email.should.exist;
                 res.body.should.not.have.property('password');
                 done();
-            })
-        })
+            });
+        });
+
+        it('retrieves the user by handle', function(done) {
+            api.get('/api/users/handle/doggfather')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) done(err);
+                res.body.should.not.be.instanceOf(Array);
+                res.body.should.have.property('handle', 'doggfather');
+                done();
+            });
+        });
     });
 
     describe('/DELETEing', function() {
@@ -106,7 +116,7 @@ describe('Users CRUD operations', function() {
                 res.body.email.should.exist;
                 res.body.should.not.have.property('password');
                 done();
-            })
-        })
+            });
+        });
     });
 });

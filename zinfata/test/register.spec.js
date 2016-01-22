@@ -26,7 +26,7 @@ describe('registerController', function() {
                 handle:    'sosu',
                 email:     'marielsuaren@gmail.com',
                 password:  'whatever'  
-            }
+            };
 
             $scope.user.should.have.property('firstName').which.equals('sonia');
         });
@@ -40,7 +40,7 @@ describe('registerController', function() {
                 email:     'marielsuaren@gmail.com',
                 password:  'whatever' 
             })
-            .respond(201)
+            .respond(201);
 
             userSvc.create($scope.user, function(res){
                 res.should.have.status(201);
@@ -48,9 +48,7 @@ describe('registerController', function() {
                 res.body.should.have.property('password', null);
             }, function(err){
 
-            })
-        })
-
-
-    })
+            });
+        });
+    });
 });

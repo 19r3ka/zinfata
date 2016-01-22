@@ -1,5 +1,5 @@
-app.controller('newAlbumCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSvc', 'MessageSvc', 'ALBUM_EVENTS', '$location',
-							function($scope, $rootScope, UsersSvc, AlbumsSvc, MessageSvc, ALBUM_EVENTS, $location) {
+app.controller('newAlbumCtrl', ['$scope', '$rootScope', 'SessionSvc', 'AlbumsSvc', 'MessageSvc', 'ALBUM_EVENTS', '$location',
+							function($scope, $rootScope, Session, AlbumsSvc, MessageSvc, ALBUM_EVENTS, $location) {
 	$scope.album = {
 		coverArt: 		'',
 		imageUrl:		'',
@@ -10,7 +10,7 @@ app.controller('newAlbumCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSvc',
     $scope.creating = true;
     $scope.canEdit  = false;
     $scope.editing   = false;
-	$scope.album.artistId = UsersSvc.getCurrentUser()._id;
+	$scope.album.artistId = Session.getCurrentUser()._id;
 	$scope.readFile = function(elem) {
         var file = elem.files[0];
 		var reader = new FileReader();

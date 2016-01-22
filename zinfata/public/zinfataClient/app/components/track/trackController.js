@@ -1,6 +1,6 @@
-app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$routeParams', '$log', 'UsersSvc', 
+app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$routeParams', '$log', 'UsersSvc', 'SessionSvc',
                             'TracksSvc', 'PlaylistsSvc', 'TRACK_EVENTS', 'AlbumsSvc', 'MessageSvc', 'QueueSvc',
-							function($scope, $sce, $rootScope, $location, $routeParams, $log, UsersSvc,
+							function($scope, $sce, $rootScope, $location, $routeParams, $log, UsersSvc, Session,
                             TracksSvc, PlaylistsSvc, TRACK_EVENTS, AlbumsSvc, MessageSvc, QueueSvc) {
 	var userAddedFile = '',
         coverArts     = {};
@@ -21,7 +21,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
     };
     /* This is a temporary fix playlist listing get its own directive
     ** with its own controller and factory. */
-    PlaylistsSvc.find({a_id: UsersSvc.getCurrentUser()._id}, function(data) {
+    PlaylistsSvc.find({a_id: Session.getCurrentUser()._id}, function(data) {
         $scope.playlists = data;
     }, function(err) {});
 
@@ -69,7 +69,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
     ** Otherwise use get the albums by track's artist id
     */
     if(!!$scope.creating) {
-        AlbumsSvc.getByUser(UsersSvc.getCurrentUser(), function(data) {
+        AlbumsSvc.getByUser(Session.getCurrentUser(), function(data) {
             $scope.albums             = data;
             $scope.track.album.id     = $scope.albums[0]._id;
             $scope.track.releaseDate  = new Date($scope.albums[0].releaseDate);
@@ -90,16 +90,16 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
     });
     
     $scope.canEdit = function() {
-        if(!!$scope.track.artist.id && ($scope.track.artist.id === UsersSvc.getCurrentUser()._id)) return true;
+        if(!!$scope.track.artist.id && ($scope.track.artist.id === Session.getCurrentUser()._id)) return true;
         return false;
-    }
+    };
 
 	$scope.readFile = function(elem) {
         var file    = elem.files[0];
         var reader  = new FileReader();
         reader.onload = function() {
             $scope.$apply(function() {
-                if(elem.name='avatar') {
+                if(elem.name === 'avatar') {
                     $scope.track.imageFile  = file;
                     $scope.track.coverArt   = userAddedFile = reader.result;
                 }
@@ -108,8 +108,8 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
                     $scope.track.file = file;
                     $scope.track.streamUrl  = $sce.trustAsResourceUrl(reader.result);
                 } */
-            })
-        }
+            });
+        };
         reader.readAsDataURL(file);
     };
 
@@ -121,7 +121,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
     };
 
     $scope.addToPlaylist = function(playlist) {
-        PlaylistsSvc.addTrack(playlist, $scope.track)
+        PlaylistsSvc.addTrack(playlist, $scope.track);
     };
 
     $scope.play = function(track) {
@@ -170,7 +170,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
         } else {
             $scope.track.coverArt.url = userAddedFile;
         }
-    }
+    };
 
     $scope.edit = function() {
         $location.path('/track/' + $scope.track._id + '/edit');
