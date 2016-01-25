@@ -31,12 +31,10 @@ UserSchema.statics.getUser = function (handle, password, callback) {
   console.log('in getUser (handle: ' + handle + ', password: ' + password + ')');
 
   //userModel.findOne({ handle: handle}, function(err, user) {
-  userModel.findOne({ handle: handle}).select('password').exec(function(err, user) {
+  userModel.findOne({ handle: handle}).select('+password').exec(function(err, user) {
     if(err) return callback(err);
     if (!user) return callback(null, false);
-    console.log(user);
     bcrypt.compare(password, user.password, function(err, res) {
-      console.log('res '+ res);
       if(err) return callback(err);
       //if (res == true) return callback(null, user.handle);
       if (res == true) return callback(null, user._id);
@@ -48,6 +46,23 @@ UserSchema.statics.getUser = function (handle, password, callback) {
 
 };
 
+
+UserSchema.methods.getMetadata = function(){
+  //add key that you assume to be meta to the array
+  var userMeta = ['_id', 'handle', 'email', 'role', ];
+  var size = userMeta.length, 
+    metaKey,
+    meta = {};
+
+  if (userMeta && size){
+    for (var i = 0; i < size; i++) {
+      metaKey = userMeta[i];
+      meta[metaKey] = this[metaKey] ? this[metaKey] : '';
+    }
+  }
+
+  return meta;
+} 
 
 UserSchema.pre('save', function(next) {
   var user = this;

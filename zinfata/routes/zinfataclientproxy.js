@@ -24,6 +24,8 @@ router.post('/', function(req, res, next){
 	request.post({url: 'http://localhost:3000/oauth2/token',form: {username: req.body.username, password: req.body.password ,grant_type:'password',client_id: 'zinfata', client_secret: "'pass'"}},
 		function(err, httpResp, body){
 			if (err) return next(err);
+			var statusCode = httpResp.statusCode || body.code;
+			res.status(statusCode);
 			res.json(JSON.parse(body));
 	});
 
@@ -51,6 +53,8 @@ router.post('/refresh', function(req, res, next){
 	request.post({url: 'http://localhost:3000/oauth2/token',form: {refresh_token: req.body.refresh_token,grant_type:'refresh_token',client_id: 'zinfata', client_secret: "'pass'"}},
 	function(err, httpResp, body){
 		if (err) return next(err);
+		var statusCode = httpResp.statusCode || body.code;
+		res.status(statusCode);
 		//res.json(JSON.parse(body));
 		res.send(JSON.parse(body));
 	});
@@ -97,9 +101,31 @@ router.post('/revoke', function(req, res, next){
 	request.post({url: 'http://localhost:3000/oauth2/revoke',form: {token_type_hint: token_type_hint,token: token,client_id: 'zinfata', client_secret: "'pass'"}},
 	function(err, httpResp, body){
 		if (err) return next(err);
+		var statusCode = httpResp.statusCode || body.code;
+		res.status(statusCode);
 		res.send(body);
 	});
 
+});
+
+router.get('/me', function(req, res, next){
+
+	var data = req.query;
+	if (!data.token) {
+		var err = new Error();
+		err.status = 400;
+		err.error = 'invalid_request';
+		err.message = err.error_description = 'Missing token parameter' ;
+		return next(err);
+	}
+
+	request.get({url: 'http://localhost:3000/oauth2/me', qs: {client_id: 'zinfata', client_secret: "'pass'", token: data.token}},
+	function (err, httpResp, body){
+		if (err) return next(err);
+		var statusCode = httpResp.statusCode || body.code;
+		res.status(statusCode);
+		res.send(body);
+	});
 });
 
 

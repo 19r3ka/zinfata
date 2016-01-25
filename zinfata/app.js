@@ -17,6 +17,7 @@ var playlists = require('./routes/playlists');
 var oauthclients = require('./routes/oauthclients');
 var zinfataClientProxy = require('./routes/zinfataclientproxy');
 var revoketokens = require('./routes/revoketokens');
+var oauthinfo = require('./routes/oauthinfo');
 
 var dbConfig = require('./db.js');
 var authConfig = require('./config/oauth');
@@ -49,6 +50,7 @@ app.use(passport.session());
 app.use('/clients/', oauthclients);
 app.post('/oauth2/token', app.oauth.grant());
 app.use('/oauth2/revoke', revoketokens);
+app.use('/oauth2/me', oauthinfo);
 
 //zfclient proxy route
 app.use('/zinfataclient', zinfataClientProxy);
@@ -68,7 +70,7 @@ app.use(function(req, res, next) {
 });
 
 // error handlers
-//app.use(app.oauth.errorHandler());
+app.use(app.oauth.errorHandler());
 
 // custom error handler
 app.use(function(err, req, res, next) {

@@ -9,23 +9,17 @@ var OAuthAccessTokenSchema = new mongoose.Schema({
   expires:      { type: Date, required: true }
 });
 
-
 OAuthAccessTokenSchema.pre('save', function(next){
+   var self = this;
 
 	//validate client id
-	OAuthClient.findOne({clientId: this.clientId}, function(err, client){
+	OAuthClient.findOne({clientId: self.clientId}, function(err, client){
 
 		if (err) return next(err);
 		if (!client) return next(new Error('Invalid clientId'));
-
-		//validate user id
-		User.findOne({id_: this.userId}, function(err, user){
-			if (err) return next(err);
-			if (!user) return next(new Error('Invalid userId'));
-			console.log('save valid accessToken');
-			next();
-
-		}); 
+		//we don't validate the userId because is already done in the schema by using 'ref' that is set to 'User'
+    console.log('save valid accessToken');
+    next();
 
 	});
 }); 
@@ -39,17 +33,28 @@ OAuthAccessTokenSchema.statics.getAccessToken = function (bearerToken, callback)
 
 OAuthAccessTokenSchema.statics.saveAccessToken = function (token, clientId, expires, userId, callback) {
   console.log('in saveAccessToken (token: ' + token + ', clientId: ' + clientId + ', userId: ' + userId + ', expires: ' + expires + ')');
-console.log(userId)
-  if (typeof userId == 'object' && userId.id) userId = userId.id; //patch due to the fact that userId is object when requesting refresh token
+
   var accessToken = new OAuthAccessTokenModel({
     accessToken: token,
     clientId: clientId,
     userId: userId,
     expires: expires
   });
-
   accessToken.save(callback);
 };
+
+OAuthAccessTokenSchema.statics.revokeAccessToken = function (accessToken, callback) {
+  console.log('in revokeAccessToken (accessToken: ' + accessToken + ')');
+
+  OAuthAccessTokenModel.findOne({accessToken: accessToken}, function(err, accessToken){
+    if (err) return callback(err);
+    if (!accessToken) return callback(null, null);
+    accessToken.remove(function(err, deletedToken){
+      return callback(err, deletedToken);
+    });
+
+  });
+}
 
 var OAuthAccessTokenModel =  mongoose.model('OAuthAccessToken', OAuthAccessTokenSchema);
 module.exports = OAuthAccessTokenModel;
