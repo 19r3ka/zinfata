@@ -9,12 +9,16 @@ var OAuthRefreshTokenSchema = new mongoose.Schema({
  	expires: { type: Date }
 });
 
+//oauth2-server call for "refreshtoken.user" first to get the user_id for grant_type=resfresh_token  
+OAuthRefreshTokenSchema.virtual('user').get(function(){
+	return this._id;
+});
 
 OAuthRefreshTokenSchema.pre('save', function(next){
 	var self = this;
 
 	//validate client id
-	OAuthClient.findOne({clientId: this.clientId}, function(err, client){
+	OAuthClient.findOne({clientId: self.clientId}, function(err, client){
 
 		if (err) return next(err);
 		if (!client) return next(new Error('Invalid clientId'));
