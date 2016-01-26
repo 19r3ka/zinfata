@@ -74,6 +74,9 @@ describe('Oauth2 registration', function() {
     });
 
     describe('Working with access tokens.', function() {
+        var access_token,
+            refresh_token;
+
         before(function() {
             payload = {
                 client_id:     client.id,
@@ -83,133 +86,191 @@ describe('Oauth2 registration', function() {
             };
         });
         describe('Get access token.', function() {
-            beforeEach(function() {
-                payload.grant_type = 'password';
-            });
-            it('returns 400 when required field is missing from request.', function(done) {
-                delete payload.grant_type;
-                app.post(tokenEndpoint)
-                .type('form')
-                .send(payload)
-                .expect(400)
-                .end(function(err, res) {
-                    res.body.should.have.property('message', 'Invalid or missing grant_type parameter');
-                    res.body.should.have.property('error_description', 'Invalid or missing grant_type parameter');
-                    res.body.should.have.property('name', 'OAuth2Error');
-                    res.body.should.have.property('error', 'invalid_request');
-                    done();
+            describe('for any registered clients', function() {
+                describe('for the first time', function() {
+                    beforeEach(function() {
+                        payload.grant_type = 'password';
+                    });
+                    it('returns 400 for missing grant_type parameter.', function(done) {
+                        delete payload.grant_type;
+                        app.post(tokenEndpoint)
+                        .type('form')
+                        .send(payload)
+                        .expect(400)
+                        .end(function(err, res) {
+                            res.body.should.have.property('code', 400);
+                            res.body.should.have.property('error_description', 'Invalid or missing grant_type parameter');
+                            res.body.should.have.property('error', 'invalid_request');
+                            done();
+                        });
+                    });
+                    it('returns  400 for missing client_secret parameter.', function(done) {
+                        delete payload.client_secret;
+                        app.post(tokenEndpoint)
+                        .type('form')
+                        .send(payload)
+                        .expect(400)
+                        .end(function(err, res) {
+                            res.body.should.have.property('code', 400);
+                            res.body.should.have.property('error_description', 'Missing client_secret parameter');
+                            res.body.should.have.property('error', 'invalid_client');
+                            done();
+                        });
+                    });
+                    it('returns  400 when invalid client credentials.', function(done) {
+                        payload.client_id = 'thisiswrong';
+                        app.post(tokenEndpoint)
+                        .type('form')
+                        .send(payload)
+                        .expect(400)
+                        .end(function(err, res) {
+                            res.body.should.have.property('code', 400);
+                            res.body.should.have.property('error_description', 'Client credentials are invalid');
+                            res.body.should.have.property('error', 'invalid_client');
+                            done();
+                        });
+                    });
+                    it('returns 200 with the access token when it works right.', function(done) {
+                        app.post(tokenEndpoint)
+                        .type('form')
+                        .send(payload)
+                        .expect(200)
+                        .end(function(err, res) {
+                            res.body.should.have.property('token_type', 'bearer');
+                            res.body.should.have.property('access_token');
+                            res.body.should.have.property('refresh_token');
+                            res.body.should.have.property('expires_in', 900);
+                            /*Save the tokens for refreshing and revoking.*/
+                            if(!!res.body.access_token) access_token   = res.body.access_token;
+                            if(!!res.body.refresh_token) refresh_token = res.body.refresh_token;
+                            done();
+                        });
+                    });
                 });
+                /*describe('with refresh_token', function() {
+                    beforeEach(function() {
+                        payload.grant_type = 'refresh_token';
+                    });
+                    it('returns 400 when required field is missing from request.', function(done) {
+                        delete payload.client_id;
+                        app.post(tokenEndpoint)
+                        .type('form')
+                        .send(payload)
+                        .expect(400)
+                        .end(function(err, res) {
+                            res.body.should.have.property('message', 'Invalid or missing client_id parameter');
+                            res.body.should.have.property('error_description', 'Invalid or missing client_id parameter');
+                            res.body.should.have.property('name', 'OAuth2Error');
+                            res.body.should.have.property('error', 'invalid_client');
+                            done();
+                        });
+                    });
+                    
+                    
+                    it('returns 200 with the access token when it works right.', function(done) {
+                        app.post(tokenEndpoint)
+                        .type('form')
+                        .send(payload)
+                        .expect(200)
+                        .end(function(err, res) {
+                            res.body.should.have.property('token_type', 'bearer');
+                            res.body.should.have.property('access_token');
+                            res.body.should.have.property('refresh_token');
+                            res.body.should.have.property('expires_in', 900);
+                            done();
+                        });
+                    });
+                });*/
             });
-            it('returns  400 when credentials are not found on server.', function(done) {
-                payload.client_id = 'thisiswrong';
-                app.post(tokenEndpoint)
-                .type('form')
-                .send(payload)
-                .expect(400)
-                .end(function(err, res) {
-                    res.body.should.have.property('message', 'Client credentials are invalid');
-                    res.body.should.have.property('error_description', 'Client credentials are invalid');
-                    res.body.should.have.property('name', 'OAuth2Error');
-                    res.body.should.have.property('error', 'invalid_client');
-                    done();
+            describe('For ZinfataClient.', function() {
+                describe('for the first time', function() {
+                    beforeEach(function() {
+                        delete payload.client_id;
+                        delete payload.client_secret;
+                    });
+                    it('returns 400 for missing required parameters', function(done) {
+                        delete payload.password;
+                        api.post(zAccessToken)
+                        .type('form')
+                        .send(payload)
+                        .expect(400)
+                        .end(function(err, res) {
+                            res.body.should.have.property('error', 'invalid_request');
+                            res.body.should.have.property('error_description', 'Missing parameters. \'username\' and \'password\' are required');
+                            done();
+                        });
+                    });
+                    it('returns 400 for invalid user credentials', function(done) {
+                        payload.password = 'dummyPassword';
+                        api.post(zAccessToken)
+                        .type('form')
+                        .send(payload)
+                        .expect(400)
+                        .end(function(err, res) {
+                            res.body.should.have.property('code', 400);
+                            res.body.should.have.property('error', 'invalid_grant');
+                            res.body.should.have.property('error_description', 'User credentials are invalid');
+                            done();
+                        });
+                    });
+                    it('returns 200 with the access token when it works right.', function(done) {
+                        api.post(zAccessToken)
+                        .type('form')
+                        .send(payload)
+                        .expect(400)
+                        .end(function(err, res) {
+                            res.body.should.have.property('token_type', 'bearer');
+                            res.body.should.have.property('access_token');
+                            res.body.should.have.property('refresh_token');
+                            res.body.should.have.property('expires_in', 900);
+                            done();
+                        });
+                    });
                 });
-            });
-            it('returns 200 with the access token when it works right.', function(done) {
-                app.post(tokenEndpoint)
-                .type('form')
-                .send(payload)
-                .expect(200)
-                .end(function(err, res) {
-                    res.body.should.have.property('token_type', 'bearer');
-                    res.body.should.have.property('access_token');
-                    res.body.should.have.property('refresh_token');
-                    res.body.should.have.property('expires_in', 900);
-                    done();
-                });
-            });
+                /*describe('with refresh_token', function() {
+                    describe('Get refresh token for ZinfataClient.', function() {
+                        beforeEach(function() {
+                            payload.grant_type = 'refresh_token';
+                        });
+                        it('returns 400 when required field is missing from request.', function(done) {
+
+                        });
+                        it('returns  when credentials are not found on server.', function(done) {
+
+                        });
+                        it('returns 200 with the access token when it works right.', function(done) {
+
+                        });
+                    });
+                });*/
+            });   
         });
 
-        describe('Get access token for ZinfataClient.', function() {
-            beforeEach(function() {
-                delete payload.client_id;
-                delete payload.client_secret;
-            });
-            it('returns 400 when required field is missing from request.', function(done) {
-                delete payload.password;
-                api.post(zAccessToken)
-                .type('form')
-                .send(payload)
-                .expect(400)
-                .end(function(err, res) {
-                    res.body.should.have.property('token_type', 'bearer');
-                    done();
-                });
-            });
-            /*it('returns  when credentials are not found on server.', function() {
-                payload.password = 'dummyPassword';
-            });
-            it('returns 200 with the access token when it works right.', function() {
-
-            });*/
-        });
-
-        describe('Get new access token with refresh token.', function() {
-            beforeEach(function() {
-                payload.grant_type = 'refresh_token';
-            });
-            it('returns 400 when required field is missing from request.', function(done) {
-                delete payload.client_id;
-                app.post(tokenEndpoint)
-                .type('form')
-                .send(payload)
-                .expect(400)
-                .end(function(err, res) {
-                    res.body.should.have.property('message', 'Invalid or missing client_id parameter');
-                    res.body.should.have.property('error_description', 'Invalid or missing client_id parameter');
-                    res.body.should.have.property('name', 'OAuth2Error');
-                    res.body.should.have.property('error', 'invalid_client');
-                    done();
-                });
-            });
-            
-            
-            it('returns 200 with the access token when it works right.', function(done) {
-                app.post(tokenEndpoint)
-                .type('form')
-                .send(payload)
-                .expect(200)
-                .end(function(err, res) {
-                    res.body.should.have.property('token_type', 'bearer');
-                    res.body.should.have.property('access_token');
-                    res.body.should.have.property('refresh_token');
-                    res.body.should.have.property('expires_in', 900);
-                    done();
-                });
-            });
-        });
-
-        /*describe('Get refresh token for ZinfataClient.', function() {
-            beforeEach(function() {
-                payload.grant_type = 'refresh_token';
-            });
-            it('returns 400 when required field is missing from request.', function() {
-
-            })
-            it('returns  when credentials are not found on server.', function() {
-
-            })
-            it('returns 200 with the access token when it works right.', function() {
-
-            })
-        })
 
         describe('Make calls to protected api endpoints', function() {
-            it('fails when no token is added to the request headers.', function() {
+            it('fails without access token in the request headers.', function(done) {
                 api.get('api/albums')
-                .  
+                .expect(400)
+                end(function(err, res) {
+                    res.body.should.have.property('error', 'invalid_request');
+                    res.body.should.have.property('error_description', 'The access token was not found');
+                    done()
+                });  
+            });
+            it('fails with invalid access token in the request headers.', function(done) {
+                api.get('api/albums')
+                .set('Authorization', 'Bearer' + access_token + "wrong")
+                .expect(401)
+                end(function(err, res) {
+                    res.body.should.have.property('error', 'invalid_token');
+                    res.body.should.have.property('error_description', 'The access token provided is invalid');
+                    done()
+                });  
             });
             it('works well with the token present in headers.', function() {
-                api.get('api/albums')    
+                api.get('api/albums')
+                .set('Authorization', 'Bearer' + access_token)
+                .expect(200, done)    
             });
         });
 

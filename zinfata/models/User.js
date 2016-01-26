@@ -18,7 +18,7 @@ var UserSchema = new mongoose.Schema( {
   email:        { type: String, required: true, match: emailRegex, unique: true, lowercase: true, trim: true},
   password:     { type: String, required: true, trim: true, select: false },
   avatarUrl:    { type: String, default: 'zinfataClient/assets/images/user-avatar-placeholder.png', trim: true},
-  role:         { type: String, default: 'user', trim: true },
+  role:         { type: String, default: 'fan', trim: true },
   whatsapp:     { type: String, default: '', trim: true }, 
   activated:    { type: Boolean, default: false },
   updated_at:   { type: Date, default: Date.now }

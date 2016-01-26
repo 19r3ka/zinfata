@@ -21,7 +21,7 @@ router.post('/', function(req, res, next){
 		return next(error); 
 	}
 	//proxy.web(req, res, {target: 'http://localhost:3000/oauth2/token'})
-	request.post({url: 'http://localhost:3000/oauth2/token',form: {username: req.body.username, password: req.body.password ,grant_type:'password',client_id: 'zinfata', client_secret: "'pass'"}},
+	request.post({url: 'http://localhost:3000/oauth2/token', form: {username: req.body.username, password: req.body.password, grant_type:'password', client_id: 'zinfata', client_secret: "'pass'"}},
 		function(err, httpResp, body){
 			if (err) return next(err);
 			var statusCode = httpResp.statusCode || body.code;
