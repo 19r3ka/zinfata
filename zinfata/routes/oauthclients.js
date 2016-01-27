@@ -12,6 +12,11 @@ router.route('/')
 	
 })
 .post(function(req, res, next){//register new client app
+
+	if (!req.is('application/x-www-form-urlencoded'))  {
+		var error = new zerror('invalid_request', 'Method must be POST with application/x-www-form-urlencoded encoding');
+		return next(error); 
+	}
 	var data = req.body;
 	if (!data.client_id || !data.client_secret) {
 		var error_description = !data.client_id ? 'Missing client_id parameter' :  'Missing client_secret parameter';
