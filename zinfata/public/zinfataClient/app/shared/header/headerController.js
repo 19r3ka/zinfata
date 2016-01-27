@@ -1,4 +1,4 @@
-app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTHENTICATION', 'SessionSvc', 'MessageSvc', 'AuthenticationSvc', '$location',
+app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH', 'SessionSvc', 'MessageSvc', 'AuthenticationSvc', '$location',
                               function($scope, $rootScope, AUTH, Session, MessageSvc, Auth, $location) {
   $scope.loggedIn = Auth.isAuthenticated();
   $scope.user     = Session.getCurrentUser();
@@ -11,7 +11,10 @@ app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTHENTICATION', 'Session
   });
 
   $scope.userProfile     = function(user) {
-    return 'user/' + user._id;
+    var uri  = '#';
+
+    if(!!user && '_id' in user && user._id) uri = 'user/' + user._id;
+    return uri;
   };
 
   $scope.userSettings    = function(user) {

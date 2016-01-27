@@ -1,4 +1,4 @@
-app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider, $httpProvider){
+app.config(['$routeProvider', '$locationProvider', '$httpProvider', function($routeProvider, $locationProvider, $httpProvider){
   $routeProvider.
     when('/', {
       templateUrl: '/partials/dashboard',

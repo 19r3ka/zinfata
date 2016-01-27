@@ -77,7 +77,7 @@ app.factory('Users', ['$resource', function($resource) {
     }
   });
 }])
-.factory('AccessToken', ['$resource', function($resource){
+.factory('AccessToken', function($resource){
   return $resource('/zinfataclient/:resource', {resource: '@resource'}, {
     'getUser': {
       method: 'GET',
@@ -95,7 +95,7 @@ app.factory('Users', ['$resource', function($resource) {
       params: {resource: 'refresh'}
     }   
   });
-}])
+})
 .factory('localStore', ['$window', '$rootScope', '$log', 
                         function($window, $rootScope, $log){
   /* Implements access to the local store to enable saving
@@ -144,27 +144,32 @@ app.factory('Users', ['$resource', function($resource) {
     }
   };
 }])
-.factory('APIInterceptor', ['$rootScope', '$q', '$location', '$http', '$log', 'sessionStorage', 'AccessToken',
-                        function($rootScope, $q, $location, $http, $log, store, AccessToken){
+.factory('APIInterceptor', ['$rootScope', '$q', '$location', '$log', 'sessionStore',
+                           function($rootScope, $q, $location, $log, store){
 
   return {
     request: function(config) {
       var accessKeys  = store.getData('accessKeys'),
           accessToken = accessKeys ? accessKeys.access_token : null; 
 
-      if(!!accessToken) {
+      if(accessToken) {
         config.headers.authorization = accessToken;
       }
 
       return config;
     },
-    responseError: function(response) {
+    responseError: function(rejection) {
       if(response.status === 401 && response.data.error && response.data.error === 'invalid_token') {
         var deferred      = $q.defer(),
             accessKeys    = store.getData('accessKeys'),
-            refreshToken  = accessKeys ? accessKeys.refresh_token : null; 
+            refreshToken  = accessKeys ? accessKeys.refresh_token : null,
+            req           = {
+              method: 'POST',
+              url:    '/zinfataclient/refresh',
+              data:   {refresh_token: refreshToken}  
+            };
 
-        AccessToken.refresh({refresh_token: refreshToken}, function(new_keys) {
+        $http(req).then(function(new_keys) {
           store.setData('accessKeys', new_keys);
           $http(response.config).then(function(new_response) {
             deferred.resolve(response);
@@ -178,7 +183,7 @@ app.factory('Users', ['$resource', function($resource) {
         });
       }
 
-      return response;
+      return $q.reject(rejection);
     }
   };
 }]);

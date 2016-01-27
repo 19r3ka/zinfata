@@ -34,8 +34,8 @@ app.service('SessionSvc', ['$rootScope', 'AUTH', 'UsersSvc', 'sessionStore',
 
   
 }]);
-app.service('AuthenticationSvc', ['$rootScope', '$http', 'AUTH', 'ROUTES', 'SessionSvc', 'sessionStore', 'AccessToken', '$log',
-                                function($rootScope, $http, AUTH, ROUTES, Session, store, AccessToken, $log) {
+app.service('AuthenticationSvc', ['$rootScope', 'AUTH', 'ROUTES', 'SessionSvc', 'sessionStore', 'AccessToken', '$log',
+                                function($rootScope, AUTH, ROUTES, Session, store, AccessToken, $log) {
   var self  = this;
 
   self.login = function(credentials, success, failure) {
@@ -72,7 +72,7 @@ app.service('AuthenticationSvc', ['$rootScope', '$http', 'AUTH', 'ROUTES', 'Sess
       $rootScope.$broadcast(AUTH.authenticated);
       return true;
     }
-    $rootScope.$broadcast(ATH.notAuthenticated);
+    $rootScope.$broadcast(AUTH.notAuthenticated);
     return false;
   };
 

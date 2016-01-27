@@ -1,5 +1,5 @@
-app.controller('sidebarCtrl', ['$scope', '$log', 'PlaylistsSvc', 'SessionSvc', 'AUTH_EVENTS',
-                                function($scope, $log, PlaylistsSvc, Session, AUTH_EVENTS) {
+app.controller('sidebarCtrl', ['$scope', '$log', 'PlaylistsSvc', 'SessionSvc', 'AUTH',
+                                function($scope, $log, PlaylistsSvc, Session, AUTH) {
     var currentUser  = Session.getCurrentUser(),
         params       = {owner: ''};
 
@@ -17,7 +17,7 @@ app.controller('sidebarCtrl', ['$scope', '$log', 'PlaylistsSvc', 'SessionSvc', '
         }
     });
 
-    $scope.$on(AUTH_EVENTS.logoutSuccess, function() {
+    $scope.$on(AUTH.logoutSuccess, function() {
         $scope.playlists = [];
     });
 }]);

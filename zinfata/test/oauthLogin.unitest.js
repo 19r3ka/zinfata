@@ -33,12 +33,14 @@ describe('Oauth2 registration:', function() {
     var clientId,
         userId;
 
-    before(function() {
+    beforeEach(function() {
         User.create(dummyUser, function(err, user) {
             if(err) return console.log(err);
             if(user) {
                 console.log('new user %s created', user.firstName);
                 userId = user._id;
+            } else {
+                console.log('couldn\'t create the dummy user'); 
             }
         });
     });
@@ -111,18 +113,6 @@ describe('Oauth2 registration:', function() {
         describe('Get access token:', function() {
             describe('for any registered clients:', function() {
                 describe('for the first time:', function() {
-                    before(function() {
-                        Client.findById(clientId, function(err, client) {
-                            if(err) console.log(err);
-                            if(!client) {
-                                Client.create(client, function(err, new_client) {
-                                    if(err) console.log(err);
-                                    if(new_client) clientId = new_client._id;
-                                })
-                            }
-                        });
-                    });
-
                     beforeEach(function() {
                         payload = defaultValues();
                         payload.grant_type = 'password';
@@ -238,13 +228,13 @@ describe('Oauth2 registration:', function() {
                 });
             });
             describe('For ZinfataClient:', function() {
-                before(function() {
-                    Client.findOne({client_id: 'zinfata'}, function(err, client) {
+                /*before(function() {
+                    Client.findOne({clientId: 'zinfata'}, function(err, client) {
                         if(err) console.log(err);
                         if(!client) {
-                            Client.create({ client_id: 'zinfata',
-                                            client_secret: '\'pass\'', 
-                                            redirect_uri: 'zinfata.com'},
+                            Client.create({ clientId: 'zinfata',
+                                            clientSecret: '\'pass\'', 
+                                            redirectUri: 'zinfata.com'},
                                             function(err, new_client) {
                                                 if(err) console.log(err);
                                                 if(!new_client) console.log('couldn\'t register zinfataclient');
@@ -252,7 +242,7 @@ describe('Oauth2 registration:', function() {
                             );
                         }
                     });
-                });
+                });*/
 
                 describe('for the first time:', function() {
                     beforeEach(function() {
@@ -267,6 +257,7 @@ describe('Oauth2 registration:', function() {
                         .send(payload)
                         .expect(400)
                         .end(function(err, res) {
+                            console.log(res);
                             if(err) return done(err);
                             res.body.should.have.property('error', 'invalid_request');
                             res.body.should.have.property('error_description', 'Missing parameters. \'username\' and \'password\' are required');
@@ -370,7 +361,6 @@ describe('Oauth2 registration:', function() {
                 .set('Authorization', 'Bearer ' + access_token + "wrong")
                 .expect(401)
                 .end(function(err, res) {
-                    console.log(res);
                     if(err) return done(err);
                     res.body.should.have.property('error', 'invalid_token');
                     res.body.should.have.property('error_description', 'The access token provided is invalid.');
@@ -431,7 +421,7 @@ describe('Oauth2 registration:', function() {
                     .expect(400)
                     .end(function(err, res) {
                         if(err) return done(err);
-                        res.body.should.have.property('error', 'invalid_grant');
+                        res.body.should.have.property('error', 'invalid_client');
                         res.body.should.have.property('error_description', 'Client credentials are invalid');
                         done();
                     });

@@ -65,8 +65,8 @@ app.directive('zMatch', function($log) {
   };
 });
 
-app.directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log', 'AuthenticationSvc', 'AUTH_EVENTS', 'MessageSvc',
-                          function($rootScope, QueueSvc, QUEUE, AUDIO, $log, Auth, AUTH_EVENTS, MessageSvc) {
+app.directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log', 'AuthenticationSvc', 'AUTH', 'MessageSvc',
+                          function($rootScope, QueueSvc, QUEUE, AUDIO, $log, Auth, AUTH, MessageSvc) {
   return {
     restrict: 'E',
     link: function(scope, elm, attrs, ctrl) {
@@ -116,7 +116,7 @@ app.directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log', 'A
         if(Auth.isAuthenticated()){
           scope.playPause();
         } else {
-          $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+          $rootScope.$broadcast(AUTH.notAuthenticated);
           MessageSvc.addMsg('danger', 'Log in first to access that resource!');
         } 
         /*scope.audio.src = track.streamUrl;
