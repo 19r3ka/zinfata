@@ -1,23 +1,18 @@
 var express  = require('express');
 var request  = require('request');
 var router   = express.Router();
+var zerror = require('../lib/ZinfataOAuthError');
 //var utils   = require('./../bin/utils');
 
 router.post('/', function(req, res, next){
     //utils.checkIsValidPost(req, next);
     if (!req.is('application/x-www-form-urlencoded'))  {
-		var error = new Error();
-		error.status = 400;
-		error.error_description = 'Method must be POST with application/x-www-form-urlencoded encoding';
-		error.error = 'invalid_request';
+		var error = new zerror('invalid_request', 'Method must be POST with application/x-www-form-urlencoded encoding');
 		return next(error); 
 	}
 
 	if (!req.body.username || !req.body.password)  {
-		var error = new Error();
-		error.status = 400;
-		error.error_description = 'Missing parameters. \'username\' and \'password\' are required';
-		error.error = 'invalid_request';
+		var error = new zerror('invalid_request', 'Missing parameters. \'username\' and \'password\' are required');
 		return next(error); 
 	}
 	//proxy.web(req, res, {target: 'http://localhost:3000/oauth2/token'})
@@ -35,18 +30,12 @@ router.post('/', function(req, res, next){
 router.post('/refresh', function(req, res, next){
 	//utils.checkIsValidPost(req, next);
 	if (!req.is('application/x-www-form-urlencoded'))  {
-		var error = new Error();
-		error.status = 400;
-		error.error_description = 'Method must be POST with application/x-www-form-urlencoded encoding';
-		error.error = 'invalid_request';
+		var error = new zerror('invalid_request', 'Method must be POST with application/x-www-form-urlencoded encoding');
 		return next(error); 
 	}
 
 	if (!req.body.refresh_token){
-		var error = new Error();
-		error.status = 400;
-		error.error_description = 'Missing parameters. \'refresh_token\' is required';
-		error.error = 'invalid_request';
+		var error = new zerror('invalid_request', 'Missing parameters. \'refresh_token\' is required');
 		return next(error); 	
 	}
 
@@ -55,7 +44,6 @@ router.post('/refresh', function(req, res, next){
 		if (err) return next(err);
 		var statusCode = httpResp.statusCode || body.code;
 		res.status(statusCode);
-		//res.json(JSON.parse(body));
 		res.send(JSON.parse(body));
 	});
 
@@ -64,35 +52,23 @@ router.post('/refresh', function(req, res, next){
 router.post('/revoke', function(req, res, next){
 	//utils.checkIsValidPost(req, next);
 	if (!req.is('application/x-www-form-urlencoded'))  {
-		var error = new Error();
-		error.status = 400;
-		error.error_description = 'Method must be POST with application/x-www-form-urlencoded encoding';
-		error.error = 'invalid_request';
+		var error = new zerror('invalid_request', 'Method must be POST with application/x-www-form-urlencoded encoding');
 		return next(error); 
 	}
 	//utils.checkIsValidTokenRevokeRequest(req, next);
 	if (!req.body.token_type_hint){
-		var error = new Error();
-		error.status = 400;
-		error.error_description = 'Missing parameters. \'token_type_hint\' is required';
-		error.error = 'invalid_request';
+		var error = new zerror('invalid_request', 'Missing parameters. \'token_type_hint\' is required');
 		return next(error); 
 	}
 
 	//if (!req.body.token_type_hint.match('refresh_token|acces_token')) {
 	if ( req.body.token_type_hint != 'refresh_token' && req.body.token_type_hint != 'access_token') {
-		var error = new Error();
-		error.status = 400;
-		error.error_description = '\'token_type_hint\' parameter value must be either \'refresh_token\' or \'access_token\'';
-		error.error = 'invalid_request';
+		var error = new zerror('invalid_request', '\'token_type_hint\' parameter value must be either \'refresh_token\' or \'access_token\'');
 		return next(error); 
 	}
 
 	if (!req.body.token) {
-		var error = new Error();
-		error.status = 400;
-		error.error_description = 'Missing parameters. \'token\' is required';
-		error.error = 'invalid_request';
+		var error = new zerror('invalid_request', 'Missing parameters. \'token\' is required');
 		return next(error); 
 	}
 	var token_type_hint = req.body.token_type_hint;
@@ -112,11 +88,8 @@ router.get('/me', function(req, res, next){
 
 	var data = req.query;
 	if (!data.token) {
-		var err = new Error();
-		err.status = 400;
-		err.error = 'invalid_request';
-		err.message = err.error_description = 'Missing token parameter' ;
-		return next(err);
+		var error = new zerror('invalid_request', 'Missing token parameter');
+		return next(error);
 	}
 
 	request.get({url: 'http://localhost:3000/oauth2/me', qs: {client_id: 'zinfata', client_secret: "'pass'", token: data.token}},

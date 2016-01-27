@@ -18,6 +18,7 @@ var oauthclients = require('./routes/oauthclients');
 var zinfataClientProxy = require('./routes/zinfataclientproxy');
 var revoketokens = require('./routes/revoketokens');
 var oauthinfo = require('./routes/oauthinfo');
+var zinfataOAuthErrorHandler = require('./lib/ZinfataOAuthErrorHandler')
 
 var dbConfig = require('./db.js');
 var authConfig = require('./config/oauth');
@@ -71,6 +72,7 @@ app.use(function(req, res, next) {
 
 // error handlers
 app.use(app.oauth.errorHandler());
+app.use(zinfataOAuthErrorHandler());
 
 // custom error handler
 app.use(function(err, req, res, next) {
@@ -132,6 +134,7 @@ app.use(function(err, req, res, next) {
   }
 });
 
+
 // catch-all error handler
 app.use(function(err, req, res, next) {
   console.error(err);
@@ -141,6 +144,8 @@ app.use(function(err, req, res, next) {
   }
   res.json(err);
 });
+
+
 
 //Connect to Mongoose (Mongo DB driver)
 mongoose.connect(dbConfig.url);

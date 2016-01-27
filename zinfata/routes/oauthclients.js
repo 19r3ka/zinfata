@@ -1,4 +1,5 @@
 var OAuthClient = require('../models/OAuthClient');
+var zerror = require('../lib/ZinfataOAuthError');
 var express = require('express');
 var router = express.Router();
 
@@ -13,11 +14,8 @@ router.route('/')
 .post(function(req, res, next){//register new client app
 	var data = req.body;
 	if (!data.client_id || !data.client_secret) {
-		var err = new Error();
-		err.status = 400;
-		err.error = 'invalid_request';
-		err.message = !data.client_id ? 'Missing client_id parameter' :  'Missing client_secret parameter';
-		err.error_description = !data.client_id ? 'Missing client_id parameter' :  'Missing client_secret parameter';
+		var error_description = !data.client_id ? 'Missing client_id parameter' :  'Missing client_secret parameter';
+		var err = new zerror('invalid_request', error_description);
 		return next(err);
 	}
 
@@ -28,16 +26,14 @@ router.route('/')
 	});
 
 	new_client.save(function(err, client){
-		if (err.code == 11000) {
-			var err = new Error();
-			err.status  = 400;
-			err.error = 'duplicate_client';
-    		err.message = 'Bad Input Parameter';
-    		err.details = 'client id is already in use';
-    		return next(err);
-		}
+		if (err) {
 
-		if (err) return next(err);
+			if (err.code == 11000) {
+				var err = new zerror('invalid_request', 'The client id is already in use');
+	    		return next(err);
+			}
+			return next(err);
+		}
 		res.json(client);
 	});
 
