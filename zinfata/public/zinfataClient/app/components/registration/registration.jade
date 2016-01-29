@@ -14,7 +14,7 @@
 form(name='registerForm', role='form', novalidate)
     .form-group(ng-class="{ 'has-error': registerForm.fName.$touched && registerForm.fName.$invalid }")
         input.form-control(type='text', name='fName', placeholder='First Name', ng-model='user.firstName', required, autofocus)
-        .help-block(ng-messages='registerForm.fName.$error', ng-show='registerForm.fName.$touched')
+        .help-block(ng-messages='registerForm.fName.$error', ng-show='registerForm.fName.$touched', ng-hide='registerForm.$submitted')
             div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
     .form-group(ng-class="{ 'has-error': registerForm.lName.$touched && registerForm.lName.$invalid }")
         input.form-control(type='text', name='lName', placeholder='Last Name', ng-model='user.lastName', required)

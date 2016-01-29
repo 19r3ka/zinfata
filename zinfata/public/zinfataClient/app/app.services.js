@@ -27,9 +27,10 @@ app.service('SessionSvc', ['$rootScope', 'AUTH', 'UsersSvc', 'sessionStore',
     return currentUser;
   }; 
 
-  self.destroy = function(store) {
+  self.destroy = function() {
     self.currentUser = null;
     store.deleteData('currentUser');
+    store.deleteData('accessKeys');
   };
 
   
@@ -40,7 +41,7 @@ app.service('AuthenticationSvc', ['$rootScope', 'AUTH', 'ROUTES', 'SessionSvc', 
 
   self.login = function(credentials, success, failure) {
     /*First authenticate the user against server database.*/
-    AccessToken.getNew({username: credentials.handle, password: credentials.password}, function(tokens) {
+    AccessToken.getFor({username: credentials.handle, password: credentials.password}, function(tokens) {
       $rootScope.$broadcast(AUTH.authenticated);
       /*Second, get the metadata of the user who was granted access to API.*/
       AccessToken.getUser({token: tokens.access_token}, function(user) {
@@ -58,17 +59,25 @@ app.service('AuthenticationSvc', ['$rootScope', 'AUTH', 'ROUTES', 'SessionSvc', 
     });
   };
 
-  self.logout = function(success, failure) {
+  self.logout = function(callback) {
     var accessKeys    = store.getData('accessKeys'),
-        refreshToken  = accessKeys ? accessKeys.refresh_token : null; 
+        refreshToken  = accessKeys ? accessKeys.refresh_token : null;
 
-    AccessToken.revoke({token_type_hint: 'refresh_token', token: refreshToken}, function() {
+    AccessToken.revoke({ token_type_hint: 'refresh_token', token: refreshToken }, function() {
       Session.destroy();
+      callback(true);
+    }, function(err) {
+      if(err.error_description === 'invalid token') {
+        Session.destroy();
+        callback(true);
+      }
     });
+
+    callback(false);
   };
 
   self.isAuthenticated = function() {
-    if(Session.getCurrentUser()) {
+    if(Session.getCurrentUser() && Session.getCurrentUser()._id) {
       $rootScope.$broadcast(AUTH.authenticated);
       return true;
     }

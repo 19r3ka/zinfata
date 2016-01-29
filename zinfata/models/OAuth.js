@@ -1,6 +1,6 @@
 var OAuthRefreshToken = require('./OAuthRefreshToken'),
 	OAuthAccessToken = require('./OAuthAccessToken'),
-	OAuthClient= require('./OAuthClient'),
+	OAuthClient = require('./OAuthClient'),
 	User = require('./User');
 
 var model = {};

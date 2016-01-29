@@ -144,8 +144,8 @@ app.factory('Users', ['$resource', function($resource) {
     }
   };
 }])
-.factory('APIInterceptor', ['$rootScope', '$q', '$location', '$log', 'sessionStore',
-                           function($rootScope, $q, $location, $log, store){
+.factory('APIInterceptor', ['$rootScope', '$q', '$location', '$log', 'sessionStore', '$httpParamSerializer',
+                           function($rootScope, $q, $location, $log, store, serialize) {
 
   return {
     request: function(config) {
@@ -156,10 +156,15 @@ app.factory('Users', ['$resource', function($resource) {
         config.headers.authorization = accessToken;
       }
 
+      if(config.url.search('zinfataclient') !== -1) {
+        config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        config.data = serialize(config.data);
+      }
+
       return config;
     },
     responseError: function(rejection) {
-      if(response.status === 401 && response.data.error && response.data.error === 'invalid_token') {
+      if(rejection.status === 401 && rejection.data.error && rejection.data.error === 'invalid_token') {
         var deferred      = $q.defer(),
             accessKeys    = store.getData('accessKeys'),
             refreshToken  = accessKeys ? accessKeys.refresh_token : null,
@@ -171,8 +176,8 @@ app.factory('Users', ['$resource', function($resource) {
 
         $http(req).then(function(new_keys) {
           store.setData('accessKeys', new_keys);
-          $http(response.config).then(function(new_response) {
-            deferred.resolve(response);
+          $http(rejection.config).then(function(new_response) {
+            deferred.resolve(new_response);
           }, function(err) {
             deferred.reject();
           });

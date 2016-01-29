@@ -4,7 +4,7 @@ nav.navbar(class='navbar-inverse', role='navigation', ng-controller='headerCtrl'
   ul.nav(class=['navbar-right', 'navbar-nav'])
     li.dropdown(ng-show='loggedIn')
       a.dropdown-toggle(data-toggle='dropdown')
-        | {{ user.firstName }}
+        | {{ user.handle }}
         b.caret
       ul.dropdown-menu
         li.menu-item: a(href= '{{ userProfile(user) }}' ) Profile
