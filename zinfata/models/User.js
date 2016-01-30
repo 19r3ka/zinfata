@@ -37,7 +37,7 @@ UserSchema.statics.getUser = function (handle, password, callback) {
     bcrypt.compare(password, user.password, function(err, res) {
       if(err) return callback(err);
       //if (res == true) return callback(null, user.handle);
-      if (res == true) return callback(null, user._id);
+      if (res === true) return callback(null, user._id);
       return callback(null, false);
     })
 
@@ -49,7 +49,7 @@ UserSchema.statics.getUser = function (handle, password, callback) {
 
 UserSchema.methods.getMetadata = function(){
   //add key that you assume to be meta to the array
-  var userMeta = ['_id', 'handle', 'email', 'role', ];
+  var userMeta = ['_id', 'handle', 'email', 'role', 'activated'];
   var size = userMeta.length, 
     metaKey,
     meta = {};
