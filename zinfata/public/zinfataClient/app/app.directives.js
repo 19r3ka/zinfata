@@ -106,7 +106,7 @@ app.directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log', 'A
       scope.playing = !player.paused; //scope.audio.paused;
       scope.volume  = '';
       /* On reload fetch and set last played song. */
-      scope.track   = QueueSvc.getCurrentTrack().track;
+      scope.track = QueueSvc.getCurrentTrack() && QueueSvc.getCurrentTrack().track;
       if(scope.track) player.src = scope.track.streamUrl;
 
       scope.$on(AUDIO.set, function(event, track) {
