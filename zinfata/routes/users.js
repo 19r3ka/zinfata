@@ -49,7 +49,7 @@ router.route('/')
         // TODO: here is where we send out the email
         // or Whatsapp message
         // with the generated token.
-        console.log('the activation link will be : http://localhost:3000/register/activate/' + token.token);
+        console.log('the activation link will be : http://localhost:3000/register/activate?token=' + token.token);
         res.status(201).json(new_user);
       });
     });

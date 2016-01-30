@@ -45,10 +45,15 @@ app.service('AuthenticationSvc', ['$rootScope', 'AUTH', 'ROUTES', 'SessionSvc', 
       $rootScope.$broadcast(AUTH.authenticated);
       /*Second, get the metadata of the user who was granted access to API.*/
       AccessToken.getUser({token: tokens.access_token}, function(user) {
-        Session.setCurrentUser(user);
-        store.setData('accessKeys', tokens);
-        $rootScope.$broadcast(AUTH.loginSuccess, user);
-        success(user);
+        if(!!user.activated) {
+          Session.setCurrentUser(user);
+          store.setData('accessKeys', tokens);
+          $rootScope.$broadcast(AUTH.loginSuccess, user);
+          success(user);
+        } else {
+          $rootScope.$broadcast(AUTH.mustActivateAccount, user);
+          failure('mustActivateAccount');
+        }
       }, function(err) {
         $rootScope.$broadcast(AUTH.loginFailed);
         failure(err);

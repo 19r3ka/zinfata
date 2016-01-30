@@ -12,10 +12,16 @@ app.controller('loginCtrl', ['$scope', '$rootScope', 'AUTH', 'AuthenticationSvc'
       MessageSvc.addMsg('success', 'You are now logged in as ' + user.handle);
       $scope.credentials = {};
       $scope.loginForm.$setPristine();
-      $location.path('/dashboard');
+      $location.path('dashboard');
     }, function(err) {
-      MessageSvc.addMsg('danger', 'Login failed! Try again later.');
-      $location.path('/login?failure');
+      if(err === 'mustActivateAccount') {
+        MessageSvc.addMsg('danger', 'You must activate your account to access all the music.\nCheck the email we sent you for the activation link. Or enter your email address below to have us send you a new validation link.');
+        AuthSvc.logout(function(){});
+        $location.path('register/activate');
+      } else {
+        MessageSvc.addMsg('danger', 'Login failed! Try again later.');
+        $location.path('login?failure');
+      }
     });
   };
 }]);

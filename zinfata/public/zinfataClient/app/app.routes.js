@@ -8,7 +8,7 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider', function($ro
       templateUrl: '/partials/registration',
       controller:  'registerCtrl'
     }).
-    when('/register/activate/:token', {
+    when('/register/activate', {
       templateUrl:   '/partials/tokenValidator',
       controller: 'tokenCtrl'
     }).
