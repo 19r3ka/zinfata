@@ -21,9 +21,8 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
       });
     }
   };
-}]);
-
-app.directive('uniqueEmail', ['Users', '$q', '$log', function(Users, $q, $log) {
+}])
+.directive('uniqueEmail', ['Users', '$q', '$log', function(Users, $q, $log) {
   return {
     require: 'ngModel',
     link: function(scope, elm, attrs, ctrl) {
@@ -46,9 +45,8 @@ app.directive('uniqueEmail', ['Users', '$q', '$log', function(Users, $q, $log) {
       });
     }
   };
-}]);
-
-app.directive('zMatch', function($log) {
+}])
+.directive('zMatch', function($log) {
   return {
     require: 'ngModel',
     scope: {
@@ -63,9 +61,8 @@ app.directive('zMatch', function($log) {
       };
     }
   };
-});
-
-app.directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log', 'AuthenticationSvc', 'AUTH', 'MessageSvc',
+})
+.directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log', 'AuthenticationSvc', 'AUTH', 'MessageSvc',
                           function($rootScope, QueueSvc, QUEUE, AUDIO, $log, Auth, AUTH, MessageSvc) {
   return {
     restrict: 'E',
@@ -142,4 +139,47 @@ app.directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log', 'A
     },
     templateUrl: '/templates/zPlayer'
   };
+/*}])
+.directive('zProfile', ['', function() {
+  return {
+    restrict: 'E',
+    transclude: true,
+    scope: {
+      'save':   '&onSave',
+      'edit':   '&onEdit',
+      'delete': '&onDelete'
+    },
+    link: function(scope, elm, attrs) {
+      var model = attrs.model;
+      if(!!model) {
+        if('firstName' in model && !!model.firstName) { 
+          scope.title = scope.fullname(model)
+        } else if('title' in model && !!model.title) {
+          scope.title = model.title;
+        }
+
+        scope.image = model.avatarUrl || model.coverArt;
+      }
+
+      scope.fullname = function(model) {
+        return model.firstName + ' ' + model.lastName;
+      };
+
+      scope.readFile = function(elem) {
+        var file = elem.files[0];
+        var reader = new FileReader();
+        reader.onload = function() {
+          scope.$apply(function() {
+            scope.user.avatar = file;
+            scope.user.avatarUrl = reader.result;
+          });
+        };
+        reader.readAsDataURL(file);
+      };
+    },
+    templateUrl: function(elm, attrs) {
+      var url = '';
+      if('type' in attrs && attrs.type === 'user') url = 'templates/zUser';
+    }
+  }*/
 }]);
