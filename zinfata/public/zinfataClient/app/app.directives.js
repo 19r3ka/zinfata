@@ -139,8 +139,8 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
     },
     templateUrl: '/templates/zPlayer'
   };
-/*}])
-.directive('zProfile', ['', function() {
+}])
+/*.directive('zProfile', ['', function() {
   return {
     restrict: 'E',
     transclude: true,
@@ -181,5 +181,5 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
       var url = '';
       if('type' in attrs && attrs.type === 'user') url = 'templates/zUser';
     }
-  }*/
-}]);
+  }
+}]);*/

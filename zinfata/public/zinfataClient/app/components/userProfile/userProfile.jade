@@ -16,7 +16,7 @@
             img.img-circle(class='img-responsive center-block', name= 'avatar', alt='{{ user.handle }}', ng-src='{{ user.avatarUrl }}')
         .col-md-8
             .pull-right
-                .dropdown(ng-show='canEdit() && !editing')
+                .dropdown(ng-show='canEdit && !editing')
                     button.btn-default(class='dropdown-toggle', type='button', id='dropdownMenu', data-toggle='dropdown', aria-haspopup='true', aria-expanded='true')
                         span(class='caret')
                     ul.dropdown-menu(aria-labelledby='dropdownMenu')
@@ -28,7 +28,7 @@
                             | Delete
             h3 {{ fullname(user) }}
             .ux-options()
-form(name='userProfile', role='form', novalidate, ng-if='canEdit()')
+form(name='userProfile', role='form', novalidate, ng-if='canEdit')
     .form-group
         label(for='avatarInput') Choose your avatar:
         input.form-control(type='file', name='avatar', id='avatarInput', accept='image/*', onchange='angular.element(this).scope().readFile(this)', ng-hide='!editing')
