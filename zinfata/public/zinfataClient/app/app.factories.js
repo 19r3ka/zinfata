@@ -144,16 +144,16 @@ app.factory('Users', ['$resource', function($resource) {
     }
   };
 }])
-.factory('APIInterceptor', ['$rootScope', '$q', '$location', '$log', 'sessionStore', '$httpParamSerializer',
-                           function($rootScope, $q, $location, $log, store, serialize) {
+.factory('APIInterceptor', ['$rootScope', '$q', '$location', '$log', 'sessionStore', '$httpParamSerializer', '$injector',
+                           function($rootScope, $q, $location, $log, store, serialize, $injector) {
 
   return {
     request: function(config) {
       var accessKeys  = store.getData('accessKeys'),
           accessToken = accessKeys ? accessKeys.access_token : null; 
-
+    
       if(accessToken) {
-        config.headers.authorization = accessToken;
+        config.headers.authorization = 'Bearer ' + accessToken;
       }
 
       if(config.url.search('zinfataclient') !== -1) {
@@ -166,6 +166,7 @@ app.factory('Users', ['$resource', function($resource) {
     responseError: function(rejection) {
       if(rejection.status === 401 && rejection.data.error && rejection.data.error === 'invalid_token') {
         var deferred      = $q.defer(),
+            http          = $injector.get('$http'),
             accessKeys    = store.getData('accessKeys'),
             refreshToken  = accessKeys ? accessKeys.refresh_token : null,
             req           = {
@@ -173,16 +174,17 @@ app.factory('Users', ['$resource', function($resource) {
               url:    '/zinfataclient/refresh',
               data:   {refresh_token: refreshToken}  
             };
-
-        $http(req).then(function(new_keys) {
-          store.setData('accessKeys', new_keys);
-          $http(rejection.config).then(function(new_response) {
+        $log.debug(req.data);
+        http(req).then(function(new_keys) {
+          store.setData('accessKeys', new_keys.data);
+          http(rejection.config).then(function(new_response) {
             deferred.resolve(new_response);
           }, function(err) {
             deferred.reject();
           });
         }, function(err) {
           deferred.reject();
+          store.deleteData('accessKeys');
           $location.path('login');
           return;
         });

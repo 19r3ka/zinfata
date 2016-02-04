@@ -27,7 +27,7 @@
                             span.glyphicon(class='glyphicon-remove')
                             | Delete
             h3 {{ fullname(user) }}
-            .ux-options()
+            .metrics
 form(name='userProfile', role='form', novalidate, ng-if='canEdit')
     .form-group
         label(for='avatarInput') Choose your avatar:
@@ -50,10 +50,4 @@ form(name='userProfile', role='form', novalidate, ng-if='canEdit')
     .form-group
         button.btn-primary(class='form-control', ng-click='update(user)', ng-show='editing', ng-disabled='userProfile.$invalid') Update!
 
-//- h3 Albums
-//- div(ng-if="noAlbum")
-//- 	p
-//- 		a(href='/album/new') Add your first album now!
-//- ul(ng-repeat='album in user.albums')
-//- 	li
-//- 		a(href='/album/{{album._id}}') {{album.title}}
+z-album-listing(artist='user')

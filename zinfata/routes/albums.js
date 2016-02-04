@@ -27,8 +27,8 @@ router.route('/')
 .post(upload.single('coverArt'), function(req, res, next) { // POST new album
   var data = req.body;
   var new_album = new Album({
-        title:                 data.title,
-        artistId:           data.artistId,
+        title:          data.title,
+        artistId:       data.artistId,
         releaseDate:    data.releaseDate
       });
   if(!!req.user) new_album.artistId = req.user.id;
@@ -42,6 +42,7 @@ router.route('/user/:user_id') // get all albums with given user id
 .get(function(req, res, next) {
 	Album.find({ artistId: req.params.user_id }, function(err, albums) {
 		if(err) return next(err);
+    if(!albums) return next(new Error('not found'));
 		res.json(albums);
 	})
 })
@@ -58,7 +59,6 @@ router.route('/:id')
   Album.findById(req.params.id, function(err, album) {
     if(err) return next(err);
     if(!album) return next(new Error('not found'));
-    //if(req.user.id !== album.artist_id) return next(new Error('forbidden'));
     for(var key in album) {
       if(!!req.body[key]) album[key] = req.body[key]; // Since it's a blind attribution, only update keys that already exit.
     }
@@ -72,9 +72,7 @@ router.route('/:id')
 .delete(function(req, res, next) { // DELETE album by ID
   Album.findById(req.params.id, function(err, album) {
     if(err) return next(err);
-    //if(err) return next(err);
     if(!album) return next(new Error('not found'));
-    //if(req.user.id !== album.artist_id) return next(new Error('forbidden'));
     album.remove(function(err, deleted_album) {
       if(err) return next(err);
       res.json(deleted_album);

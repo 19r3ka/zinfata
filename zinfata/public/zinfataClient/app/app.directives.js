@@ -140,46 +140,28 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
     templateUrl: '/templates/zPlayer'
   };
 }])
-/*.directive('zProfile', ['', function() {
+.directive('zAlbumListing', ['AlbumsSvc', 'SessionSvc', '$log', function(Albums, session, $log) {
   return {
     restrict: 'E',
-    transclude: true,
     scope: {
-      'save':   '&onSave',
-      'edit':   '&onEdit',
-      'delete': '&onDelete'
+      artist:  '='
     },
     link: function(scope, elm, attrs) {
-      var model = attrs.model;
-      if(!!model) {
-        if('firstName' in model && !!model.firstName) { 
-          scope.title = scope.fullname(model)
-        } else if('title' in model && !!model.title) {
-          scope.title = model.title;
-        }
-
-        scope.image = model.avatarUrl || model.coverArt;
-      }
-
-      scope.fullname = function(model) {
-        return model.firstName + ' ' + model.lastName;
+      scope.isOwner = false;
+      scope.albums = {};
+      scope.queueUp = function(album) {
+        // add every track in the queue. Add function in AlbumsSvc to do so.
       };
 
-      scope.readFile = function(elem) {
-        var file = elem.files[0];
-        var reader = new FileReader();
-        reader.onload = function() {
-          scope.$apply(function() {
-            scope.user.avatar = file;
-            scope.user.avatarUrl = reader.result;
-          });
-        };
-        reader.readAsDataURL(file);
-      };
+      scope.$watch(function(){ return scope.artist._id;}, function(val) {
+        if(val !== undefined) {
+          Albums.getByUser({ _id: val }, function(albums) {
+            scope.albums = albums;
+          }, function(err) {});
+          if(!!session.getCurrentUser() && (val === session.getCurrentUser()._id)) scope.isOwner = true;
+        } 
+      });
     },
-    templateUrl: function(elm, attrs) {
-      var url = '';
-      if('type' in attrs && attrs.type === 'user') url = 'templates/zUser';
-    }
+    templateUrl: '/templates/zAlbumListing'
   }
-}]);*/
+}]);
