@@ -1,3 +1,7 @@
+var wagner = require('wagner-core');
+require('./dependencies')(wagner);
+
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -9,19 +13,21 @@ var passport = require('passport');
 var expressSession = require('express-session');
 var oauthserver = require('oauth2-server');
 
-var routes = require('./routes/index');
-var users  = require('./routes/users');
-var albums = require('./routes/albums');
-var tracks = require('./routes/tracks');
-var playlists = require('./routes/playlists');
-var oauthclients = require('./routes/oauthclients');
-var zinfataClientProxy = require('./routes/zinfataclientproxy');
-var revoketokens = require('./routes/revoketokens');
-var oauthinfo = require('./routes/oauthinfo');
-var zinfataOAuthErrorHandler = require('./lib/ZinfataOAuthErrorHandler')
+var routes = require('./routes/index')(wagner);
+var users  = require('./routes/users')(wagner);//add dependencie
+var albums = require('./routes/albums')(wagner);
+var tracks = require('./routes/tracks')(wagner);
+var playlists = require('./routes/playlists')(wagner);
+var oauthclients = require('./routes/oauthclients')(wagner);
+var zinfataClientProxy = require('./routes/zinfataclientproxy')(wagner);
+var revoketokens = require('./routes/revoketokens')(wagner);
+var oauthinfo = require('./routes/oauthinfo')(wagner);
+var zinfataOAuthErrorHandler = require('./lib/errors/ZinfataOAuthErrorHandler');
+var zinfataErrorHandler = require('./lib/errors/ZinfataErrorHandler');
 
-var dbConfig = require('./db.js');
-var authConfig = require('./config/oauth');
+
+var config = wagner.invoke(function(Config){return Config});
+var authConfig = config.oauth2;
 
 var app = express();
 
@@ -73,82 +79,30 @@ app.use(function(req, res, next) {
 // error handlers
 app.use(app.oauth.errorHandler());
 app.use(zinfataOAuthErrorHandler());
-
-// custom error handler
-app.use(function(err, req, res, next) {
-  var caughtIt = false,
-      status   = 500,
-      message  = 'Something went wrong!',
-      details  = '';
-
-  if(err.name === 'ValidationError') {
-    caughtIt = true;
-    status   = 400;
-    message  = 'Bad Input Parameter';
-    details  = '';
-    for(var key in err.errors) {
-      details += err.errors[key].message + '|';
-    };
-  }
-  if(err.message === 'not found' || err.name === 'CastError'){
-    caughtIt = true;
-    status   = 404;
-    message  = 'Item Not Found';
-    details  = '';
-  }
-  if(err.message === 'forbidden'){
-    caughtIt = true;
-    status   = 403;
-    message  = 'Forbidden';
-    details  = 'You do not have access to the requested resource!';
-  }
-  if(err.message === 'bad_param') {
-    caughtIt = true;
-    status   = 400;
-    message  = 'Bad Input Parameter';
-    details  = 'One or more parameters are invalid!';
-  }
-  if(/^duplicate/.test(err.message)) {
-    caughtIt = true;
-    var status  = 400;
-    var message = 'Bad Input Parameter';
-    var details = '';
-    if(/handle$/.test(err.message)) {
-      details += 'handle is already in use';
-    }
-    if(/email$/.test(err.message)) {
-      details += 'email is already in use';
-    }
-  }
-
-  if(caughtIt) {
-    error = new Error();
-    error.status  = status;
-    error.message = message;
-    error.details = details;
-    console.error(error);
-    res.status(error.status).json(error).end;
-    return next('route');
-  } else {
-    return next(err);
-  }
-});
-
+app.use(zinfataErrorHandler());
 
 // catch-all error handler
 app.use(function(err, req, res, next) {
-  console.error(err);
-  res.status(err.status || 500);
-  if(app.get('env') !== 'development') {
-    delete err.stack;
+
+  var zinfataOAuthError = require('./lib/errors/ZinfataOAuthError');
+  var zinfataError = require('./lib/errors/ZinfataError');
+console.error(err);
+  if ( !(err instanceof zinfataOAuthError || err instanceof zinfataError)) { //Do not catch zinfata custom errors
+    
+    res.status(err.status || 500);
+    if(app.get('env') !== 'development') {
+      delete err.stack;
+    }
+    res.json(err);
+
   }
-  res.json(err);
+  
 });
 
 
 
 //Connect to Mongoose (Mongo DB driver)
-mongoose.connect(dbConfig.url);
+mongoose.connect(config.db.url);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {

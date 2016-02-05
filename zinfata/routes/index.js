@@ -1,43 +1,49 @@
-var express = require('express');
-var router = express.Router();
-var passport = require('../config/passport');
 
-function isLoggedIn(req, res, next) {
-  if(req.isAuthenticated()) return next();
-  return next(new Error('forbidden'));
+
+module.exports = function(wagner){
+  var express = require('express');
+  var router = express.Router();
+  var passport = require('../config/passport');
+  var zerror = wagner.invoke(function(ZOAuthError){return ZOAuthError});
+
+  function isLoggedIn(req, res, next) {
+    if(req.isAuthenticated()) return next();
+    return next(new zerror('forbidden'));//return next(new Error('forbidden'));
+  }
+
+  /* GET home page. */
+
+  router.get('/partials/:name', function (req, res) {
+    var name = req.params.name;
+    res.render('app/components/' + name + '/' + name);
+  });
+
+  router.get('/templates/:name', function(req, res) {
+    var name = req.params.name;
+    res.render('app/shared/templates/' + name + 'Template');
+  });
+
+  router.post('/login', passport.authenticate('local'), function(req, res) {
+    res.json(req.user);
+  });
+
+  router.get('/logout', isLoggedIn, function(req, res) {
+    req.logout();
+    res.sendStatus(204);
+  });
+
+  router.get('/currentuser', isLoggedIn, function(req, res) {
+    return res.json(req.user);
+  });
+
+  router.get('/', function(req, res, next) {
+    res.render('index', { title: 'Zinfata' });
+  });
+
+  router.get(/^\/(?!(api|partials|templates))/, function(req, res, next) {
+    res.render('index', { title: 'Zinfata' });
+  });
+
+  //module.exports = router;
+  return router;
 }
-
-/* GET home page. */
-
-router.get('/partials/:name', function (req, res) {
-  var name = req.params.name;
-  res.render('app/components/' + name + '/' + name);
-});
-
-router.get('/templates/:name', function(req, res) {
-  var name = req.params.name;
-  res.render('app/shared/templates/' + name + 'Template');
-});
-
-router.post('/login', passport.authenticate('local'), function(req, res) {
-  res.json(req.user);
-});
-
-router.get('/logout', isLoggedIn, function(req, res) {
-  req.logout();
-  res.sendStatus(204);
-});
-
-router.get('/currentuser', isLoggedIn, function(req, res) {
-  return res.json(req.user);
-});
-
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Zinfata' });
-});
-
-router.get(/^\/(?!(api|partials|templates))/, function(req, res, next) {
-  res.render('index', { title: 'Zinfata' });
-});
-
-module.exports = router;

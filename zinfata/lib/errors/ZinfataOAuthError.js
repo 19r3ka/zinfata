@@ -1,7 +1,6 @@
 function ZinfataOAuthError(error, description) {
 	this.name = 'OAuthError';
 	
-
 	this.headers = {
 	    'Cache-Control': 'no-store',
 	    'Pragma': 'no-cache'
