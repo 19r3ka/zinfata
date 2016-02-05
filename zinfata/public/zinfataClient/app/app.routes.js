@@ -37,7 +37,10 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider', function($ro
     }).
     when('/album/new', {
       templateUrl: '/partials/album',
-      controller:  'newAlbumCtrl'
+      controller:  'albumCtrl',
+      access: {
+        loginRequired: true
+      }
     }).
     when('/album/:albumId', {
         templateUrl: '/partials/album',

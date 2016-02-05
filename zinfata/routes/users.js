@@ -60,6 +60,7 @@ router.route('/:id')
 .get(function(req, res, next) { /* GET specific user */
   User.findById(req.params.id, function(err, user) {
     if(err) return next(err);
+    if(!user) return next(new Error('not found'));
     res.json(user);
   });
 })
@@ -67,7 +68,6 @@ router.route('/:id')
   User.findById(req.params.id, function(err, user) {
     if(err) return next(err);
     if(!user) return next(new Error('not found'));
-    //if(req.user.id !== user.id) return next(new Error('forbidden'));
     for(var key in user) {
       if(!!req.body[key]) user[key] = req.body[key];
     }
@@ -82,7 +82,6 @@ router.route('/:id')
   User.findById(req.params.id, req.body, function(err, deleted_user) {
     if(err) return next(err);
     if(!deleted_user) return next(new Error('not found'));
-    //if(req.user.id !== deleted_user.id) return next(new Error('forbidden'));
     deleted_user.remove(function(err, user) {
       res.json(deleted_user);
     });

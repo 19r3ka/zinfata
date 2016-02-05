@@ -174,7 +174,7 @@ app.factory('Users', ['$resource', function($resource) {
               url:    '/zinfataclient/refresh',
               data:   {refresh_token: refreshToken}  
             };
-        $log.debug(req.data);
+            
         http(req).then(function(new_keys) {
           store.setData('accessKeys', new_keys.data);
           http(rejection.config).then(function(new_response) {

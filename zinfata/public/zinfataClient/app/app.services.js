@@ -147,8 +147,8 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location', '$rootScope
   };
 
   this.get = function(id, success, failure) {
-    Users.get({id: id}, function(user){
-		  if(!!user.avatarUrl && user.avatarUrl.match('user-avatar-placeholder') === -1) user.avatarUrl = '../../' + user.avatarUrl.split('/').slice(1).join('/');
+    Users.get({id: id}, function(user) {
+		  if(!!user.avatarUrl && (user.avatarUrl.search('user-avatar-placeholder') === -1)) user.avatarUrl = '../../' + user.avatarUrl.split('/').slice(1).join('/');
 		  success(user);
 	  }, function(err) {
 		  failure(err);

@@ -31,13 +31,12 @@ router.route('/')
         artistId:       data.artistId,
         releaseDate:    data.releaseDate
       });
-  if(!!req.user) new_album.artistId = req.user.id;
   if(!!req.file) new_album.imageUrl = req.file.path;
   new_album.save(function(err, album) {
     if(err) return next(err);
     res.json(album);
   });
-})
+});
 router.route('/user/:user_id') // get all albums with given user id
 .get(function(req, res, next) {
 	Album.find({ artistId: req.params.user_id }, function(err, albums) {
