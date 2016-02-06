@@ -1,6 +1,8 @@
-app.controller('userProfileCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSvc', 'MessageSvc', 'USER_EVENTS', '$routeParams', '$log', '$location',
-                                   function($scope, $rootScope, UsersSvc, AlbumsSvc, MessageSvc, USER_EVENTS, $routeParams, $log, $location) {
-    $scope.user       = UsersSvc.get($routeParams.userId) || UsersSvc.getCurrentUser();
+app.controller('userProfileCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSvc', 'MessageSvc', 
+                                    'USER_EVENTS', '$routeParams', '$log', '$location', 'SessionSvc',
+                                   function($scope, $rootScope, UsersSvc, AlbumsSvc, MessageSvc, 
+                                    USER_EVENTS, $routeParams, $log, $location, Session) {
+    $scope.user       = UsersSvc.get($routeParams.userId) || Session.getCurrentUser();
     $scope.user.albums = {};
     $scope.noAlbum = false;
     AlbumsSvc.getByUser({_id: $routeParams.userId}, function(data) {
@@ -12,7 +14,7 @@ app.controller('userProfileCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSv
     $log.debug(angular.toJson($scope.user.albums));
     $scope.editing    = false;
     $scope.canEdit = function() {
-        return UsersSvc.getCurrentUser()._id === $scope.user._id;
+        return Session.getCurrentUser()._id === $scope.user._id;
     };
 
     $scope.edit    = function() {
@@ -39,7 +41,8 @@ app.controller('userProfileCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSv
 			MessageSvc.addMsg('danger', 'A problem prevented your account deletion. Try again later');
 			$rootScope.$broadcast(USER_EVENTS.deleteFailed);
 		});
-	}
+	};
+
     $scope.readFile = function(elem) {
         var file = elem.files[0];
 		var reader = new FileReader();
@@ -48,10 +51,10 @@ app.controller('userProfileCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSv
                 $scope.user.avatar = file;
                 $scope.user.avatarUrl = reader.result;
                 $scope.editing = true;
-			})
-		}
+			});
+		};
 		reader.readAsDataURL(file);
-    }
+    };
 
     if(!!!Object.keys($scope.user).length) $location.path('/');
 }]);

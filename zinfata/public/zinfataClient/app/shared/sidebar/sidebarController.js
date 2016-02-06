@@ -1,11 +1,11 @@
-app.controller('sidebarCtrl', ['$scope', '$log', 'PlaylistsSvc', 'UsersSvc', 'AUTH_EVENTS',
-                                function($scope, $log, PlaylistsSvc, UsersSvc, AUTH_EVENTS) {
-    var currentUser  = UsersSvc.getCurrentUser(),
+app.controller('sidebarCtrl', ['$scope', '$log', 'PlaylistsSvc', 'SessionSvc', 'AUTH',
+                                function($scope, $log, PlaylistsSvc, Session, AUTH) {
+    var currentUser  = Session.getCurrentUser(),
         params       = {owner: ''};
 
-    $scope.$watch(function() { return UsersSvc.getCurrentUser(); },  function(newVal, oldVal){
+    $scope.$watch(function() { return Session.getCurrentUser(); },  function(newVal, oldVal){
         if(newVal !== oldVal) {
-            currentUser     = UsersSvc.getCurrentUser();
+            currentUser     = Session.getCurrentUser();
             if('_id' in currentUser && !!currentUser._id) params.owner = currentUser._id;
 
             PlaylistsSvc.find(params, function(data){
@@ -17,7 +17,7 @@ app.controller('sidebarCtrl', ['$scope', '$log', 'PlaylistsSvc', 'UsersSvc', 'AU
         }
     });
 
-    $scope.$on(AUTH_EVENTS.logoutSuccess, function() {
+    $scope.$on(AUTH.logoutSuccess, function() {
         $scope.playlists = [];
-    })
+    });
 }]);

@@ -1,32 +1,51 @@
-app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH_EVENTS', 'UsersSvc', 'MessageSvc', 'Auth', '$location',
-                              function($scope, $rootScope, AUTH_EVENTS, UsersSvc, MessageSvc, Auth, $location) {
+app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH', 'SessionSvc', 'MessageSvc', 'AuthenticationSvc', '$location', '$log',
+                              function($scope, $rootScope, AUTH, Session, MessageSvc, Auth, $location, $log) {
+  
   $scope.loggedIn = Auth.isAuthenticated();
-  $scope.user     = UsersSvc.getCurrentUser();
-
-  $scope.$watch(function() { return UsersSvc.getCurrentUser(); },  function(newVal, oldVal){
-    if(newVal !== oldVal){
-      $scope.user     = UsersSvc.getCurrentUser();
-      $scope.loggedIn = Auth.isAuthenticated();
+  $scope.user     = Session.getCurrentUser();
+  
+  $scope.$watch(function() {
+    return Auth.isAuthenticated();
+  },  function(newVal, oldVal){
+    if(newVal !== oldVal) {
+      refresh();
     }
   });
 
-  $scope.userProfile     = function(user) {
-    return 'user/' + user._id;
+  /*$scope.$on(AUTH.logoutSuccess, function() {
+    $scope.loggedIn = false;
+  });
+
+  $scope.$on(AUTH.loginSuccess, function() {
+    refresh();
+  });*/
+
+  $scope.userProfile = function(user) {
+    var uri  = '#';
+
+    if(!!user && '_id' in user && user._id) uri = 'user/' + user._id;
+    return uri;
   };
 
-  $scope.userSettings    = function(user) {
+  $scope.userSettings = function(user) {
     return '#';
   };
 
   $scope.logout = function() {
-    Auth.logout(function(data) {
-      MessageSvc.addMsg('success', 'You have been successfully logged out!');
-      UsersSvc.setCurrentUser({}); //reset currentUser if successfully logged out!
-      $rootScope.$broadcast(AUTH_EVENTS.logoutSuccess);
-    }, function() {
-      MessageSvc.addMsg('danger', 'You are already logged out!');
-      UsersSvc.setCurrentUser({}); //reset currentUser if successfully logged out!
-      $rootScope.$broadcast(AUTH_EVENTS.logoutSuccess);
+    Auth.logout(function(res) {
+      if(res) {
+        MessageSvc.addMsg('success', 'You have been successfully logged out!');
+        $scope.loggedIn = false;
+        $rootScope.$broadcast(AUTH.logoutSuccess);
+      } else {
+        MessageSvc.addMsg('danger', 'Failed to log out!');
+        $rootScope.$broadcast(AUTH.logoutFailed);
+      }
     });
   };
+
+  function refresh() {
+    $scope.loggedIn = Auth.isAuthenticated();
+    if($scope.loggedIn) $scope.user = Session.getCurrentUser();
+  }
 }]);

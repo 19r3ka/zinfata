@@ -5,12 +5,14 @@ module.exports = function(wagner){
 
 
   var passport = require('../config/passport.js');
-  var zerror, Playlist;
+  var zerror, PlaylistModel;
   wagner.invoke(function(ZError, Playlist){
       zerror = ZError;
-      Playlist = Playlist;
+      PlaylistModel = Playlist;
 
   });
+  Playlist = PlaylistModel;
+
 
 
   router.route('/')

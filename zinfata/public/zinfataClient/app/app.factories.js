@@ -5,22 +5,23 @@ function FileDataObject(data) {
         });
         return fd;
 }
-app.factory('Users', function($resource) {
+app.factory('Users', ['$resource', function($resource) {
   return $resource('/api/users/:id', {id: '@_id'}, {
-     'update': {
-            method: 'PUT',
-            transformRequest: FileDataObject ,
-            headers: {
-                    'Content-Type': undefined,
-                    enctype:           'multipart/form-data'
-            }
+    'update': {
+      method: 'PUT',
+      transformRequest: FileDataObject ,
+      headers: {
+              'Content-Type': undefined,
+              enctype:        'multipart/form-data'
+      }
     },
-    'resetPassword':  {method:'GET', url: 'api/users/tokenize/:action/:email', params: {email: '@email', action: 'pwd-reset' }},
-    'activate':       {method:'GET', url: 'api/users/tokenize/:action/:email', params: {email: '@email', action: 'usr_activation' }},
-    'verifyToken':    {method:'GET', url: 'api/users/validate-token/:token', params: {token: '@token'}}
+    'find':           {method: 'GET', url: 'api/users/handle/:handle', params: {handle: '@handle'}, isArray: false },
+    'resetPassword':  {method: 'GET', url: 'api/users/tokenize/:action/:email', params: {email: '@email', action: 'pwd-reset' }},
+    'activate':       {method: 'GET', url: 'api/users/tokenize/:action/:email', params: {email: '@email', action: 'usr_activation' }},
+    'verifyToken':    {method: 'GET', url: 'api/users/validate-token/:token', params: {token: '@token'}}
   });
-})
-.factory('Albums', function($resource) {
+}])
+.factory('Albums', ['$resource', function($resource) {
   return $resource('/api/albums/:id', {id: '@_id'}, {
     'update': {
             method:'PUT',
@@ -45,8 +46,8 @@ app.factory('Users', function($resource) {
 			isArray: true
     }
   });
-})
-.factory('Playlists', function($resource) {
+}])
+.factory('Playlists', ['$resource', function($resource) {
   return $resource('/api/playlists/:id', {id: '@_id'}, {
     'update': {method: 'PUT'},
     'find':   { method: 'GET', 
@@ -55,8 +56,8 @@ app.factory('Users', function($resource) {
                 params: {resource: '@owner', resource_id: '@ownerId'}
               }
   });
-})
-.factory('Tracks', function($resource) {
+}])
+.factory('Tracks', ['$resource', function($resource) {
   return $resource('/api/tracks/:id', {id: '@_id'}, {
     'update': {
             method:'PUT',
@@ -66,7 +67,7 @@ app.factory('Users', function($resource) {
                     enctype:        'multipart/form-data'
             }
     },
-    'save':     {
+    'save': {
             method: 'POST',
             transformRequest: FileDataObject,
             headers: {
@@ -74,6 +75,25 @@ app.factory('Users', function($resource) {
                     enctype:        'multipart/form-data'
             }
     }
+  });
+}])
+.factory('AccessToken', function($resource){
+  return $resource('/zinfataclient/:resource', {resource: '@resource'}, {
+    'getUser': {
+      method: 'GET',
+      params: {resource: 'me'}
+    },
+    'getFor': {
+      method: 'POST'
+    },
+    'revoke':  {
+      method: 'POST',
+      params: {resource: 'revoke'}
+    },
+    'refresh': {
+      method: 'POST',
+      params: {resource: 'refresh'}
+    }   
   });
 })
 .factory('localStore', ['$window', '$rootScope', '$log', 
@@ -100,40 +120,75 @@ app.factory('Users', function($resource) {
     }
   };
 }])
-.factory('Auth', ['$http', '$rootScope', 'Session', 'MessageSvc', 'AUTH_EVENTS', '$log', 
-                  function($http, $rootScope, Session, MessageSvc, AUTH_EVENTS, $log) {
+.factory('sessionStore', ['$window', '$rootScope', '$log', 
+                        function($window, $rootScope, $log){
+  /* Implements access to the session store to enable saving
+     logged user and access token */
+
+  /* automatically alerts any element relying on the value of 
+     local stored items */   
+  /*angular.element($window).on('storage', function(event) {
+    $rootScope.$apply();
+  });*/
   return {
-    login: function(credentials, success, failure) {
-      return $http.post('/login', credentials).then(function(res) {
-        return success(res.data);
-      }, function(err) {
-        return failure(err);
-      });
+    setData: function(store, val) {
+      /*$window.localStorage && */$window.sessionStorage.setItem(store, angular.toJson(val));
+      return this;
     },
-    logout: function(success, failure) {
-      return $http.get('/logout').then(function() {
-        return success();
-      }, function(err) {
-        return failure(err);
-      });
+    getData: function(store) {
+      var data = $window.sessionStorage && $window.sessionStorage.getItem(store);
+      return angular.fromJson(data);
     },
-    currentUser: function(success, failure) {
-      return $http.get('/currentuser').then(function(res) {
-        $rootScope.$broadcast(AUTH_EVENTS.isAuthenticated, res.data);
-        success(res.data);
-      }, function(err) {
-        $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
-        return {};
-      });
-    },
-    isAuthenticated: function() {
-      return !!Session.getUser().id;
-    },
-    isAuthorized: function(authorizedRoles) {
-      if(!angular.isArray(authorizedRoles)) {
-        authorizedRoles = [authorizedRoles];
+    deleteData: function(store) {
+      return $window.sessionStorage && $window.sessionStorage.removeItem(store);
+    }
+  };
+}])
+.factory('APIInterceptor', ['$rootScope', '$q', '$location', '$log', 'sessionStore', '$httpParamSerializer',
+                           function($rootScope, $q, $location, $log, store, serialize) {
+
+  return {
+    request: function(config) {
+      var accessKeys  = store.getData('accessKeys'),
+          accessToken = accessKeys ? accessKeys.access_token : null; 
+
+      if(accessToken) {
+        config.headers.authorization = accessToken;
       }
-      return (isAuthenticated && authorizedRoles.indexOf(Session.userRole) !== -1);
+
+      if(config.url.search('zinfataclient') !== -1) {
+        config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        config.data = serialize(config.data);
+      }
+
+      return config;
+    },
+    responseError: function(rejection) {
+      if(rejection.status === 401 && rejection.data.error && rejection.data.error === 'invalid_token') {
+        var deferred      = $q.defer(),
+            accessKeys    = store.getData('accessKeys'),
+            refreshToken  = accessKeys ? accessKeys.refresh_token : null,
+            req           = {
+              method: 'POST',
+              url:    '/zinfataclient/refresh',
+              data:   {refresh_token: refreshToken}  
+            };
+
+        $http(req).then(function(new_keys) {
+          store.setData('accessKeys', new_keys);
+          $http(rejection.config).then(function(new_response) {
+            deferred.resolve(new_response);
+          }, function(err) {
+            deferred.reject();
+          });
+        }, function(err) {
+          deferred.reject();
+          $location.path('login');
+          return;
+        });
+      }
+
+      return $q.reject(rejection);
     }
   };
 }]);

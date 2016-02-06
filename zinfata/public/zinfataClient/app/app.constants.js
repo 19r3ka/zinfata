@@ -1,10 +1,16 @@
-app.constant('AUTH_EVENTS', {
+app.constant('ROUTES', {
+  loginEndpoint:        'zinfataclient'
+})
+.constant('AUTH', {
   loginSuccess:         'auth-login-success',
   loginFailed:          'auth-login-failed',
+  mustLogIn:            'auth-log-in-first',
   logoutSuccess:        'auth-logout-success',
   sessionTimeout:       'auth-session-timeout',
   authenticated:        'auth-authenticated',
-  notAuthenticated:     'auth-not-authenticated'
+  notAuthenticated:     'auth-not-authenticated',
+  authorized:           'auth-authorized',
+  notAuthorized:        'auth-not-authorized'
 })
 .constant('USER_ROLES', {
   admin:  'admin',
@@ -57,8 +63,4 @@ app.constant('AUTH_EVENTS', {
   playing:              'audio-playing',
   paused:               'audio-paused',
   ended:                'audio-ended'
-}).constant('AUTHORIZATION', {
-  mustLogIn:            'auth-log-in-first',
-  authorized:           'auth-authorized',
-  notAuthorized:        'auth-not-authorized'
 });

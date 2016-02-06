@@ -10,11 +10,12 @@ module.exports = function(wagner){
   );
 
 
-  var zerror, Album;
+  var zerror, albumModel;
   wagner.invoke(function(ZError, Album){
       zerror = ZError;
-      Album = Album;
+      albumModel = Album;
   });
+  var Album = albumModel;
 
   function isLoggedIn(req, res, next) {
     if(req.isAuthenticated()) return next();

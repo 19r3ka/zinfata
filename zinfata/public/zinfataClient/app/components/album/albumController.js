@@ -1,5 +1,5 @@
-app.controller('albumCtrl', ['$scope', '$rootScope', '$location', '$routeParams', 'UsersSvc', 'AlbumsSvc', 'MessageSvc', 'ALBUM_EVENTS', '$log',
-                                        function($scope, $rootScope, $location, $routeParams, UsersSvc, AlbumsSvc, MessageSvc, ALBUM_EVENTS, $log) {
+app.controller('albumCtrl', ['$scope', '$rootScope', '$location', '$routeParams', 'SessionSvc', 'AlbumsSvc', 'MessageSvc', 'ALBUM_EVENTS', '$log',
+                                        function($scope, $rootScope, $location, $routeParams, Session, AlbumsSvc, MessageSvc, ALBUM_EVENTS, $log) {
 		$scope.album = {};
 		$scope.editing   = false;
         $scope.creating = false;
@@ -8,7 +8,7 @@ app.controller('albumCtrl', ['$scope', '$rootScope', '$location', '$routeParams'
         AlbumsSvc.get($routeParams.albumId, function(data) {
 			$scope.album = data;
 			$scope.album.tracks = [];
-			if(!!$scope.album.artistId && $scope.album.artistId === UsersSvc.getCurrentUser()._id) {
+			if(!!$scope.album.artistId && $scope.album.artistId === Session.getCurrentUser()._id) {
 				$scope.canEdit = true;
 			}
 		}, function(err) {

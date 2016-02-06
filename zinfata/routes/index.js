@@ -1,15 +1,13 @@
-
-
 module.exports = function(wagner){
   var express = require('express');
   var router = express.Router();
-  var passport = require('../config/passport');
   var zerror = wagner.invoke(function(ZOAuthError){return ZOAuthError});
+  /*var passport = require('../config/passport');
 
   function isLoggedIn(req, res, next) {
     if(req.isAuthenticated()) return next();
-    return next(new zerror('forbidden'));//return next(new Error('forbidden'));
-  }
+    return next(new Error('forbidden'));
+  }*/
 
   /* GET home page. */
 
@@ -23,19 +21,6 @@ module.exports = function(wagner){
     res.render('app/shared/templates/' + name + 'Template');
   });
 
-  router.post('/login', passport.authenticate('local'), function(req, res) {
-    res.json(req.user);
-  });
-
-  router.get('/logout', isLoggedIn, function(req, res) {
-    req.logout();
-    res.sendStatus(204);
-  });
-
-  router.get('/currentuser', isLoggedIn, function(req, res) {
-    return res.json(req.user);
-  });
-
   router.get('/', function(req, res, next) {
     res.render('index', { title: 'Zinfata' });
   });
@@ -44,6 +29,5 @@ module.exports = function(wagner){
     res.render('index', { title: 'Zinfata' });
   });
 
-  //module.exports = router;
   return router;
 }

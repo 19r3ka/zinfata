@@ -1,13 +1,112 @@
+/*__________________________________________
+          AUTHENTICATION SERVICES
+  __________________________________________*/
+
+app.service('SessionSvc', ['$rootScope', 'AUTH', 'UsersSvc', 'sessionStore',
+                          function($rootScope, AUTH, UsersSvc, store) {
+  var self        = this,
+      currentUser = null;
+
+  $rootScope.$on(AUTH.loginSuccess, function(events, user){
+    self.setCurrentUser(user);
+  });
+
+  $rootScope.$on(AUTH.logoutSuccess, function() {
+    self.destroy();
+  }); 
+
+  self.setCurrentUser = function(user) {
+    store.setData('currentUser', user);
+  };
+
+  self.getCurrentUser = function() {
+    if(!currentUser) {
+      currentUser = store.getData('currentUser');
+    }
+
+    return currentUser;
+  }; 
+
+  self.destroy = function() {
+    self.currentUser = null;
+    store.deleteData('currentUser');
+    store.deleteData('accessKeys');
+  };
+
+  
+}]);
+app.service('AuthenticationSvc', ['$rootScope', 'AUTH', 'ROUTES', 'SessionSvc', 'sessionStore', 'AccessToken', '$log',
+                                function($rootScope, AUTH, ROUTES, Session, store, AccessToken, $log) {
+  var self  = this;
+
+  self.login = function(credentials, success, failure) {
+    /*First authenticate the user against server database.*/
+    AccessToken.getFor({username: credentials.handle, password: credentials.password}, function(tokens) {
+      $rootScope.$broadcast(AUTH.authenticated);
+      /*Second, get the metadata of the user who was granted access to API.*/
+      AccessToken.getUser({token: tokens.access_token}, function(user) {
+        if(!!user.activated) {
+          Session.setCurrentUser(user);
+          store.setData('accessKeys', tokens);
+          $rootScope.$broadcast(AUTH.loginSuccess, user);
+          success(user);
+        } else {
+          $rootScope.$broadcast(AUTH.mustActivateAccount, user);
+          failure('mustActivateAccount');
+        }
+      }, function(err) {
+        $rootScope.$broadcast(AUTH.loginFailed);
+        failure(err);
+      });
+    }, function(err) {
+      $rootScope.$broadcast(AUTH.notAuthenticated);
+      failure(err);
+    });
+  };
+
+  self.logout = function(callback) {
+    var accessKeys    = store.getData('accessKeys'),
+        refreshToken  = accessKeys ? accessKeys.refresh_token : null;
+
+    AccessToken.revoke({ token_type_hint: 'refresh_token', token: refreshToken }, function() {
+      Session.destroy();
+      callback(true);
+    }, function(err) {
+      if(err.error_description === 'invalid token') {
+        Session.destroy();
+        callback(true);
+      }
+    });
+
+    callback(false);
+  };
+
+  self.isAuthenticated = function() {
+    if(Session.getCurrentUser() && Session.getCurrentUser()._id) {
+      $rootScope.$broadcast(AUTH.authenticated);
+      return true;
+    }
+    $rootScope.$broadcast(AUTH.notAuthenticated);
+    return false;
+  };
+
+  self.authorize = function(loginRequired) {
+    var result = AUTH.authorized,
+        logged = self.isAuthenticated();
+
+    if(!!loginRequired && !!!logged){
+      result = AUTH.mustLogIn;
+    }
+    return result;
+  };
+}]);
+
+/*________________________________________________________
+                    APP CORE SERVICES
+  ________________________________________________________*/
+
 app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location', '$rootScope',
                          function(Users, MessageSvc, $log, $location, $rootScope) {
-  this.currentUser = {};
-
-  this.setCurrentUser = function(user) {
-    this.currentUser = user;
-  };
-  this.getCurrentUser = function() {
-    return this.currentUser;
-  };
 
   this.create = function(user, success, failure) {
     var new_user = new Users();
@@ -48,12 +147,20 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location', '$rootScope
   };
 
   this.get = function(id, success, failure) {
-   return Users.get({id: id}, function(user){
-		if(!!user.avatarUrl)   user.avatarUrl  = '../../' + user.avatarUrl.split('/').slice(1).join('/');
-		return success(user);
-	}, function(err) {
-		return failure(err);
-	});
+    return Users.get({id: id}, function(user){
+		  if(!!user.avatarUrl)   user.avatarUrl  = '../../' + user.avatarUrl.split('/').slice(1).join('/');
+		  return success(user);
+	  }, function(err) {
+		  return failure(err);
+	  });
+  };
+
+  this.findByHandle = function(handle, success, failure) {
+    return Users.find({handle: handle}, function(user) {
+      success(user);
+    }, function(err) {
+      failure(err);
+    });
   };
 }]);
 app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
@@ -446,61 +553,5 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
     self.data.currentlyPlaying.track = track;
     self.saveQueue();
     $rootScope.$broadcast(AUDIO.set, self.data.currentlyPlaying.track);
-  };
-}]);
-app.service('Session', ['$window', '$log', '$rootScope', 'AUTH_EVENTS',
-                      function($window, $log, $rootScope, AUTH_EVENTS) {
-  var self    = this,
-      session = $window.sessionStorage;
-  
-  self.user = {
-    id: '',
-    role: ''
-  };
-
-  $rootScope.$on(AUTH_EVENTS.loginSuccess, function(events, user){
-    self.create(user._id, user.role);
-  });
-  $rootScope.$on(AUTH_EVENTS.logoutSuccess, function() {
-    self.destroy();
-  });
-  $rootScope.$on(AUTH_EVENTS.notAuthenticated, function() {
-    self.destroy();
-  });  
-
-  self.create  = function(userId, userRole) {
-    self.user.id   = userId;
-    self.user.role = userRole;
-
-    session.setItem('userId', self.user.id);
-    session.setItem('userRole', self.user.role);
-  };
-
-  self.getUser    = function() {
-    if(!!!self.user.id) self.user.id     = session.getItem('userId');
-    if(!!!self.user.role) self.user.role = session.getItem('userRole');
-    return self.user;
-  };
-
-  self.destroy = function() {
-    self.user.id   = '';
-    self.user.role = '';
-
-    session.removeItem('userId');
-    session.removeItem('userRole');
-  };
-}]);
-app.service('AuthorizationSvc', ['$log', 'Auth', 'AUTHORIZATION', 
-                                function($log, Auth, AUTHORIZATION) {
-  var self = this;
-
-  self.authorize = function(loginRequired) {
-    var result = AUTHORIZATION.authorized,
-        logged = Auth.isAuthenticated();
-
-    if(!!loginRequired && !!!logged){
-      result = AUTHORIZATION.mustLogIn;
-    }
-    return result;
   };
 }]);

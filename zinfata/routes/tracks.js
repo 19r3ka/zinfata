@@ -3,14 +3,17 @@ module.exports = function(wagner){
   var express  = require('express'),
       router   = express.Router();
 
-  var User, Album, Track, zerror;
+  var UserModel, AlbumModel, TrackModel, zerror;
 
   wagner.invoke(function(User, Album, Track, ZError){
-    User     = User;
-    Album    = Album;
-    Track    = Track;
+    UserModel     = User;
+    AlbumModel    = Album;
+    TrackModel    = Track;
     zerror   = ZError;
   });
+  var User     = UserModel,
+      Album    = AlbumModel,
+      Track    = TrackModel;
      
   var passport = require('../config/passport.js'),
       multer   = require('multer'),

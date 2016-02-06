@@ -39,7 +39,6 @@
     "karma-mocha-reporter": "^1.1.5",
     "mocha": "^2.3.4",
     "supertest": "^1.1.0",
-    "serve-favicon": "~2.3.0",
     "url": "^0.11.0"
   }
 }

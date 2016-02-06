@@ -1,19 +1,27 @@
-app.controller('loginCtrl', ['$scope', '$rootScope', 'AUTH_EVENTS', 'Auth', 'UsersSvc', 'MessageSvc', '$location', '$log',
-               function($scope, $rootScope, AUTH_EVENTS, Auth, UsersSvc, MessageSvc, $location, $log) {
+app.controller('loginCtrl', ['$scope', '$rootScope', 'AUTH', 'AuthenticationSvc', 'MessageSvc', '$location', '$log',
+               function($scope, $rootScope, AUTH, AuthSvc, MessageSvc, $location, $log) {
   $scope.credentials = {
     handle:   '',
     password: ''
   };
+  
   $scope.authenticate = function(credentials) {
-    Auth.login(credentials, function(res) {
-      UsersSvc.setCurrentUser(res);
-      MessageSvc.addMsg('success', 'You are now logged in as ' + res.firstName);
-      $rootScope.$broadcast(AUTH_EVENTS.loginSuccess, res);
+    /*Authenticate the user with the server.
+      returns access token. */
+    AuthSvc.login(credentials, function(user) {
+      MessageSvc.addMsg('success', 'You are now logged in as ' + user.handle);
       $scope.credentials = {};
-      $location.path('/login?success');
+      $scope.loginForm.$setPristine();
+      $location.path('dashboard');
     }, function(err) {
-      MessageSvc.addMsg('danger', 'We were unable to log you in!');
-      $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
-      $location.path('/login?failure');
+      if(err === 'mustActivateAccount') {
+        MessageSvc.addMsg('danger', 'You must activate your account to access all the music.\nCheck the email we sent you for the activation link. Or enter your email address below to have us send you a new validation link.');
+        AuthSvc.logout(function(){});
+        $location.path('register/activate');
+      } else {
+        MessageSvc.addMsg('danger', 'Login failed! Try again later.');
+        $location.path('login?failure');
+      }
     });
-}}]);
+  };
+}]);

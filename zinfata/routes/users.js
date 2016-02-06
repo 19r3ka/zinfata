@@ -3,16 +3,24 @@ module.exports = function(wagner){
   var router   = express.Router();
 
   var mongoose = require('mongoose');
-  var User     = require('../models/User.js');
-  var PwdToken = require('../models/PasswordToken.js');
+  //var User     = require('../models/User.js');
+  //var PwdToken = require('../models/PasswordToken.js');
   var passport = require('../config/passport.js');
-  var zerror = require('../lib/errors/ZinfataError');
-
+  //var zerror = require('../lib/errors/ZinfataError');
 
   var multer   = require('multer');
   var upload   = multer(
       { dest: 'public/images/uploads'}
   );
+
+  var userModel, PwdToken, zerror;
+  wagner.invoke(function(User, ZError, PasswordToken){
+    zerror = ZError;
+    userModel = User;
+    PwdToken = PasswordToken;
+  });
+  var User = userModel;
+
 
   router.route('/')
   .get(function(req, res, next) { /* GET users listing. */
@@ -56,7 +64,7 @@ module.exports = function(wagner){
           // with the generated token.
           console.log('the activation link will be : http://localhost:3000/register/activate/' + token.token);
           wagner.invoke(function(MailService){
-            var activationLink = 'http://localhost:3000/register/activate/?token=' + token.token;
+            var activationLink = 'http://localhost:3000/register/activate?token=' + token.token;
             MailService.sendWelcomeMail(new_user.email, new_user.firstName, activationLink, function(err, infos){
               if(err) { 
                 //if the confirmation email is not send the user can not activate its account so delete the user
@@ -75,8 +83,11 @@ module.exports = function(wagner){
           });
           
         });
+
       });
+
     });
+
   });
 
   router.route('/:id')
@@ -111,13 +122,23 @@ module.exports = function(wagner){
       });
     });
   });
+  router.route('/handle/:handle')
+  .get(function(req, res, next) {
+    if('handle' in req.params && !!req.params.handle) {
+      User.findOne({handle: req.params.handle.toLowerCase()}, function(err, user) {
+        if(err) return next(err);
+        if(!user) return next(new Error('not found'));
+        res.json(user);
+      });
+    }
+  });
   router.route('/validate-token/:token')
   .get(function(req, res, next) {
     PwdToken.findOne({ token: req.params.token }, function(err, token) {
       if(err) return next(err);
       if(!token) return next(new zerror('not_found', 'Token not found'));
       if(token.purpose === 'usr_activation') {
-        User.findById(token.user_id, function(err, user) {
+      User.findById(token.user_id, function(err, user) {
           if(err) return next(err);
           if(!user) return next(new zerror('not_found', 'User not found'));
           user.activated = true;
@@ -160,7 +181,5 @@ module.exports = function(wagner){
     });
   });
 
-  //module.exports = router;
   return router;
-
 }

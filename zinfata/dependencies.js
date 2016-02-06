@@ -12,10 +12,10 @@ var models = {
 	OAuthClient: require('./models/OAuthClient'),
 	OAuthAccessToken: require('./models/OAuthAccessToken'),
 	User: require('./models/User'),
-	Playlist: require('./models/Playlist.js'),
-	OAuthRefreshToken: require('././models/OAuthRefreshToken'),
+	Playlist: require('./models/Playlist'),
+	OAuthRefreshToken: require('./models/OAuthRefreshToken'),
 	Track: require('./models/Track')
-}
+};
 
 
 

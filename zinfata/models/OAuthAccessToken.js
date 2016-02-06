@@ -3,12 +3,11 @@ var OAuthClient = require('./OAuthClient');
 var User = require('./User');
 
 var OAuthAccessTokenSchema = new mongoose.Schema({
-  accessToken: { type: String, required: true, unique: true, lowercase: true },
-  clientId: { type: String,  required: true, lowercase: true },
-  userId: { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
-  expires: { type: Date, required: true }
+  accessToken:  { type: String, required: true, unique: true, lowercase: true },
+  clientId:     { type: String, required: true, lowercase: true },
+  userId:       { type: String, required: true, lowercase: true },
+  expires:      { type: Date, required: true }
 });
-
 
 OAuthAccessTokenSchema.pre('save', function(next){
    var self = this;

@@ -3,7 +3,11 @@
 	"colours": true,
 	"ignore": [
 		".git",
-		"node_modules/**/node_modules"
+		"node_modules/**/*",
+		"test/**/*",
+		".vscode",
+		"zinfata.sublime-*",
+		"public/zinfataClient/assets/*"
 	],
 	"verbose": false,
 	"execMap": {

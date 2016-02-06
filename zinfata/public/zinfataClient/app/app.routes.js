@@ -1,4 +1,4 @@
-app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
+app.config(['$routeProvider', '$locationProvider', '$httpProvider', function($routeProvider, $locationProvider, $httpProvider){
   $routeProvider.
     when('/', {
       templateUrl: '/partials/dashboard',
@@ -8,7 +8,7 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       templateUrl: '/partials/registration',
       controller:  'registerCtrl'
     }).
-    when('/register/activate/:token', {
+    when('/register/activate', {
       templateUrl:   '/partials/tokenValidator',
       controller: 'tokenCtrl'
     }).
@@ -90,19 +90,13 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
     otherwise({redirectTo: '/'});
 
   $locationProvider.html5Mode(true);
+  $httpProvider.interceptors.push('APIInterceptor');
 }])
-.run(function($rootScope, $location, $log, Auth, AuthorizationSvc, AUTHORIZATION, UsersSvc, Session) {
+.run(function($rootScope, $location, $log, AuthenticationSvc, AUTH, UsersSvc) {
   /*variable to capture user's final destination
     in case of redirection to the /login page
     on protected route requests. */
   var loginRedirectUrl;
-
-  /*Auth is a homebrew factory
-    that retrieves user data
-    directly from the server.*/
-  Auth.currentUser(function(user) {
-    UsersSvc.setCurrentUser(user);
-  });
 
   /*Listen to route changes 
     to intercept and inject behaviors. */  
@@ -113,11 +107,11 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       $location.path(loginRedirectUrl).replace();
       loginRedirectUrl = '';
     } else if(!!next.access) {
-      authorized = AuthorizationSvc.authorize(next.access.loginRequired);
-      if(authorized === AUTHORIZATION.mustLogIn) {
+      authorized = AuthenticationSvc.authorize(next.access.loginRequired);
+      if(authorized === AUTH.mustLogIn) {
         loginRedirectUrl = $location.url();
         $location.path('login'); 
-      } else if(authorized === AUTHORIZATION.notAuthorized) {
+      } else if(authorized === AUTH.notAuthorized) {
         // $location.path(403page);
       }
     }

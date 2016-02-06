@@ -1,5 +1,5 @@
 var mongoose    = require('mongoose'),
-    Album       = require('./Album.js'),
+   // Album       = require('./Album.js'),
     bcrypt      = require('bcrypt'),
     crypto      = require('crypto'),
     emailRegex  = new RegExp("^[-a-z0-9~!$%^&*_=+}{\\'?]+(\\.[-a-z0-9~" +
@@ -18,7 +18,7 @@ var UserSchema = new mongoose.Schema( {
   email:        { type: String, required: true, match: emailRegex, unique: true, lowercase: true, trim: true},
   password:     { type: String, required: true, trim: true, select: false },
   avatarUrl:    { type: String, default: 'zinfataClient/assets/images/user-avatar-placeholder.png', trim: true},
-  role:         { type: String, default: 'user', trim: true },
+  role:         { type: String, default: 'fan', trim: true },
   whatsapp:     { type: String, default: '', trim: true }, 
   activated:    { type: Boolean, default: false },
   updated_at:   { type: Date, default: Date.now }
@@ -37,7 +37,7 @@ UserSchema.statics.getUser = function (handle, password, callback) {
     bcrypt.compare(password, user.password, function(err, res) {
       if(err) return callback(err);
       //if (res == true) return callback(null, user.handle);
-      if (res == true) return callback(null, user._id);
+      if (res === true) return callback(null, user._id);
       return callback(null, false);
     })
 
@@ -49,7 +49,7 @@ UserSchema.statics.getUser = function (handle, password, callback) {
 
 UserSchema.methods.getMetadata = function(){
   //add key that you assume to be meta to the array
-  var userMeta = ['_id', 'handle', 'email', 'role', ];
+  var userMeta = ['_id', 'handle', 'email', 'role', 'activated'];
   var size = userMeta.length, 
     metaKey,
     meta = {};

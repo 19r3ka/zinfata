@@ -1,10 +1,11 @@
 module.exports = function(wagner){
 
-	var OAuthClient, zerror;
+	var OAuthClientModel, zerror;
 	wagner.invoke(function(ZOAuthError, OAuthClient){
-		OAuthClient = OAuthClient;
+		OAuthClientModel = OAuthClient;
 		zerror = ZOAuthError;
 	});
+	var OAuthClient = OAuthClientModel
 
 	var express = require('express');
 	var router = express.Router();
@@ -35,10 +36,8 @@ module.exports = function(wagner){
 		 	clientSecret: data.client_secret,
 		 	redirectUri: data.redirect_uri
 		});
-
 		new_client.save(function(err, client){
 			if (err) {
-
 				if (err.code == 11000) {
 					var err = new zerror('invalid_request', 'The client id is already in use');
 		    		return next(err);
@@ -47,7 +46,6 @@ module.exports = function(wagner){
 			}
 			res.json(client);
 		});
-
 	});
 
 	router.route('/:id')
@@ -69,6 +67,5 @@ module.exports = function(wagner){
 		})
 	});
 
-	//module.exports = router
 	return router;
 }
