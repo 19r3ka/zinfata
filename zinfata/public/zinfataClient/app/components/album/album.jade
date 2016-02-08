@@ -4,16 +4,23 @@
             img.img-circle(class='img-responsive center-block', name= 'coverArt', alt='{{ album.title }}', ng-src='{{ album.imageUrl }}')
         .col-md-8
             .pull-right
-                .dropdown(ng-show='canEdit && !editing')
+                .dropdown
                     button.btn-default(class='dropdown-toggle', type='button', id='dropdownMenu', data-toggle='dropdown', aria-haspopup='true', aria-expanded='true')
                         span(class='caret')
                     ul.dropdown-menu(aria-labelledby='dropdownMenu')
-                        li(ng-click='edit(album)'): a(href='') 
-                            span.glyphicon(class='glyphicon-pencil')
-                            |  Edit Info
-                        li.bg-danger(ng-click='delete(album)'): a(href='')
-                            span.glyphicon(class='glyphicon-remove')
-                            | Delete
+                        //- li(ng-click='play(album)'): a(href='')
+                            span.glyphicon(class='glyphicon-play')
+                            |  Play
+                        //- li(ng-click='queueUp(album)'): a(href='')
+                            span.glyphicon(class='glyphicon-list-alt')
+                            |  Add to queue
+                        div(ng-show='canEdit && !editing')
+                            li(ng-click='edit(album)'): a(href='') 
+                                span.glyphicon(class='glyphicon-pencil')
+                                |  Edit info
+                            li.bg-danger(ng-click='delete(album)'): a(href='')
+                                span.glyphicon(class='glyphicon-remove')
+                                | Delete
             h3 {{ album.title }}
             h4: a(href='/user/{{ album.artistId }}') {{ album.artist }}
             .metrics

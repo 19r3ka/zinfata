@@ -174,9 +174,9 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
       }
     );
     new_album.$save(function(saved_album) {
-      return success(saved_album);
+      success(saved_album);
     }, function(err) {
-      return failure(err);
+      failure(err);
     });
   };
 
@@ -187,41 +187,43 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
       }
       if(!!album.coverArt) {
           albumToUpdate.cover_art = album.coverArt;
-          delete albumToUpdate.imageUrl;
+          albumToUpdate.imageUrl;
       }
       albumToUpdate.$update(function(updatedAlbum) {
-          return success(updatedAlbum);
+          success(updatedAlbum);
       }, function(err) {
-          return failure(err);
+          failure(err);
       });
     });
   };
 
   this.get = function(albumId, success, failure) {
-    return Albums.get({ id: albumId }, function(data) {
-    	data.releaseDate = new Date(data.releaseDate); 									   							 // AngularJs 1.3+ only accept valid Date format and not string equilavent
-    	if(!!data.imageUrl)   data.imageUrl  = '../../' + data.imageUrl.split('/').slice(1).join('/');         // 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
-      return success(data);
+    Albums.get({ id: albumId }, function(data) {
+    	data.releaseDate = new Date(data.releaseDate); 	// AngularJs 1.3+ only accept valid Date format and not string equilavent
+    	if(!!data.imageUrl && (data.imageUrl.search('album-coverart-placeholder') === -1)) data.imageUrl = '../../' + data.imageUrl.split('/').slice(1).join('/');  // 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
+      success(data);
     }, function(err) {
-    	return failure(err);
+    	failure(err);
     });
   };
 
   this.getByUser = function(user, success, failure) {
-  	return Albums.getByUser({user_id: user._id}, function(data) {
-  		data.releaseDate = new Date(data.releaseDate);
-  		if(!!data.imageUrl)	data.imageUrl  = '../../' + data.imageUrl.split('/').slice(1).join('/');
-  		return success(data);
+  	Albums.getByUser({user_id: user._id}, function(albums) {
+      angular.forEach(albums, function(data) {
+  		  data.releaseDate = new Date(data.releaseDate);
+        if(!!data.imageUrl && (data.imageUrl.search('album-coverart-placeholder') === -1)) data.imageUrl = '../../' + data.imageUrl.split('/').slice(1).join('/');  // 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
+      });
+  	  success(albums);
   	}, function(err) {
-  		return failure(err);
+  		failure(err);
   	});
   };
 
   this.delete = function(album, success, failure) {
-    return Albums.delete({id: album._id}, function(data) {
-      return success(data);
+    Albums.delete({id: album._id}, function(data) {
+      success(data);
     }, function(err) {
-      return failure(err);
+      failure(err);
     });
   };
 }]);
@@ -501,11 +503,15 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
     return queue.getData('queue.nowPlaying');
   };
 
-  self.addTrack        = function(track) {
+  self.addTrack        = function(track, playNext) {
     self.getTracks();
-    self.data.tracks.push(track._id);
+    playNext ? self.data.tracks.unshift(track._id) : self.data.tracks.push(track._id);
     self.saveQueue();
   };
+
+  self.addAlbum        = function(album, playNow) {
+    
+  }
 
   self.getTracks       = function() {
     if(!!!self.data.tracks.length) self.data.tracks = queue.getData('queue.tracks') || [];

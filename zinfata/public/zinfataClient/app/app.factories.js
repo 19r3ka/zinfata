@@ -174,11 +174,11 @@ app.factory('Users', ['$resource', function($resource) {
               url:    '/zinfataclient/refresh',
               data:   {refresh_token: refreshToken}  
             };
-            
+
         http(req).then(function(new_keys) {
           store.setData('accessKeys', new_keys.data);
           http(rejection.config).then(function(new_response) {
-            deferred.resolve(new_response);
+             return deferred.resolve(new_response);
           }, function(err) {
             deferred.reject();
           });

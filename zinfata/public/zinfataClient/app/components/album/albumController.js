@@ -1,8 +1,8 @@
-app.controller('albumCtrl', ['$scope', '$rootScope', '$location', '$routeParams', 'SessionSvc', 'AlbumsSvc', 'UsersSvc', 'MessageSvc', 'ALBUM_EVENTS', '$log',
-                            function($scope, $rootScope, $location, $routeParams, Session, AlbumsSvc, User, MessageSvc, ALBUM_EVENTS, $log) {
+app.controller('albumCtrl', ['$scope', '$rootScope', '$location', '$routeParams', 'SessionSvc', 'QueueSvc', 'AlbumsSvc', 'UsersSvc', 'MessageSvc', 'ALBUM_EVENTS', '$log',
+                            function($scope, $rootScope, $location, $routeParams, Session, Queue, AlbumsSvc, User, MessageSvc, ALBUM_EVENTS, $log) {
 	$scope.album = {
-        coverArt:       'zinfataClient/assets/images/album-coverart-placeholder.png',
-        imageUrl:       '',
+        coverArt:       '',
+        imageUrl:       'zinfataClient/assets/images/album-coverart-placeholder.png',
         title:          '',
         artistId:       '',
         releaseDate:    ''
@@ -39,6 +39,14 @@ app.controller('albumCtrl', ['$scope', '$rootScope', '$location', '$routeParams'
 
     $scope.edit = function(album) {
         $location.path('/album/' + album._id + '/edit');
+    };
+
+    $scope.queueUp = function(album) {
+        // Queue.addAlbum
+    };
+
+    $scope.play = function(album) {
+        // Queue.addAlbum(album, playNow)
     };
 
     $scope.readFile = function(elem) {
