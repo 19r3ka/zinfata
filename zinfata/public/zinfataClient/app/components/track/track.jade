@@ -1,54 +1,69 @@
-form(name='trackInfo', role='form', novalidate)
-    .form-group
-        div(.imageBox)
-            img.img-circle(name='covertArt', height='200', width='auto', ng-src='{{ track.coverArt }}')
-        div(ng-show='creating || (editing && canEdit())')
-            label
-                input(type='checkbox', name='coverArtToggle', ng-model='uniqueCover', ng-change='updateCoverArt()')
-            |  This Track Has Its Own Cover Art!
-        div(ng-show='uniqueCover && (creating || (editing && canEdit()))')
-            label Cover Art:
-                input.form-control(type='file', name='avatar', accept='image/*', onchange='angular.element(this).scope().readFile(this)')
-    .form-group
-        input.form-control(type='text', name='title', placeholder='Title', ng-model='track.title', ng-disabled='!editing && !creating' ng-required)
-        div(ng-if='!creating && !editing')
-            p
-                span(#albumTitle)
-                    | from
-                    strong
-                        a(href='/album/{{ track.album.id }}')   {{ track.album.title }}
-                span(#artistName)
-                    |  by
-                    em
-                        a(href='/user/{{ track.artist.id }}')   {{ track.artist.handle }}
-            div.dropdown(class='pull-right')
-                a.dropdown-toggle(data-toggle='dropdown')
-                    span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
-                ul.dropdown-menu
-                    li(ng-click='play(track)'): a(href='') Play Now
-                    li(ng-click='addToQueue(track)'): a(href='#') Queue Up
-                    li.dropdown-toggle: a(href='#') Add To...
+.jumbotron(ng-if='!creating && !editing')
+    .row
+        .col-md-4
+            img.img-circle(class='img-responsive center-block', height='200', name= 'coverArt', alt='{{ track.title }}', ng-src='{{ track.coverArt }}')
+        .col-md-8
+            .row
+                .col-md-12
+                    .dropdown(class='pull-right')
+                        a.dropdown-toggle(data-toggle='dropdown', id='dropdownMenu', aria-haspopup='true', aria-expanded='true')
+                            span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
+                        ul.dropdown-menu(aria-labelledby='dropdownMenu')
+                            div(ng-show='canEdit')
+                                li(ng-click='edit(track)'): a(href='') 
+                                    span.glyphicon(class='glyphicon-pencil')
+                                    |  Edit info
+                                li(ng-click='delete(track)'): a.text-danger(href='')
+                                    span.glyphicon(class='glyphicon-remove')
+                                    | Delete
+                    h3 {{ track.title }}
+                    h4: a(href='/album/{{ track.album.id }}') {{ track.album.title }}
+                    h5: a(href='/user/{{ track.artist.id }}') {{ track.artist.handle }}
+            .row(class='interactions')
+                .col-md-12
+                    ul.list-inline
+                        li: a(href='', ng-click='play(track)') 
+                            span.glyphicon(class='glyphicon-play')
+                            |  Play now
+                        li: a(href='', ng-click='addToQueue(track)') 
+                            span.glyphicon(class='glyphicon-list')
+                            |  Queue up
+                        li.dropdown-toggle: a(href='') 
+                            span.glyphicon(class='glyphicon-plus')
+                            |  Add to
+                            span.caret
                         ul.dropdown-menu
                             li: a(href='/playlist/new') Create new playlist
                             li.divider(role='separator') 
                             li(ng-repeat='playlist in playlists', ng-click='addToPlaylist(playlist)')
                                 a(href='#') {{ playlist.title }}
-                            
-    div(ng-if='creating || (editing && canEdit())')
-        .form-group
-            label Track:
-                input.form-control(type='file', name='music', accept='audio/*', onchange='angular.element(this).scope().getFile(this)', ng-required='creating')
-                // div(ng-if='track.streamUrl')
-                    audio(ng-src='{{ track.streamUrl }}', preload='auto', loop='true', controls)
-                        |  Your browser does not support this type of audio file !
-        .form-group
-            label(for='album') Album:	
-                select.form-control(name='album', ng-model='track.album.id', ng-options='album._id as album.title for album in albums', ng-disabled='!editing && !creating' ng-required)
-        .form-group
-            label(for='releaseDate') Release Year:
-            input.form-control(type='date', name='releaseDate', ng-model='track.releaseDate', ng-disabled='!editing && !creating', ng-required=creating)
+form(name='trackInfo', role='form', ng-if='creating || editing', novalidate)
     .form-group
-        button.btn-primary(class='form-control', type='submit', ng-click='create(track)', ng-show='creating', ng-disabled='trackInfo.$invalid') Add This Track!
-        button.btn-primary(class='form-control', type='submit', ng-click='edit()', ng-show='canEdit() && !editing') Edit Info
-        button.btn-primary(class='form-control', type='submit', ng-click='update(track)', ng-show='canEdit() && editing', ng-disabled='trackInfo.$invalid') Save Changes!
-        button.btn-danger(class='form-control', type='submit', ng-click='delete(track)', ng-show='canEdit() && !creating') Delete This Track!
+        .row
+            .col-md-3
+                 img.img-circle(class='img-responsive center-block', height='100', name= 'coverArtPreview', alt='{{ track.title }}', ng-src='{{ track.coverArt }}')
+            .col-md-9
+                .row
+                    .col-md-12
+                        label
+                            input(type='checkbox', name='coverArtToggle', ng-model='uniqueCover', ng-change='updateCoverArt()')
+                        |  This Track Has Its Own Cover Art!
+                        label(ng-show='uniqueCover') Cover Art:
+                            input.form-control(type='file', name='avatar', accept='image/*', onchange='angular.element(this).scope().readFile(this)')
+    .form-group
+        input.form-control(type='text', name='title', placeholder='Title', ng-model='track.title', ng-disabled='!editing && !creating' ng-required)
+                            
+    .form-group
+        label(for='music') Track:
+        input.form-control(type='file', name='music', accept='audio/*', onchange='angular.element(this).scope().getFile(this)', ng-required='creating')
+        audio(ng-src='{{ track.streamUrl }}', preload='auto', loop='true', ng-show='track.streamUrl', controls)
+                    |  Your browser does not support this type of audio file !
+    .form-group
+        label(for='album') Album:	
+        select.form-control(name='album', ng-model='track.album.id', ng-options='album._id as album.title for album in albums', ng-required)
+    .form-group
+        label(for='releaseDate') Release Year:
+        input.form-control(type='date', name='releaseDate', ng-model='track.releaseDate', ng-disabled='!editing && !creating', ng-required=creating)
+    .form-group
+        button.btn-primary(class='form-control', type='submit', ng-click='create(track)', ng-show='creating', ng-disabled='trackInfo.$invalid') Add this track!
+        button.btn-primary(class='form-control', type='submit', ng-click='update(track)', ng-show='canEdit && editing', ng-disabled='trackInfo.$invalid') Save cshanges!

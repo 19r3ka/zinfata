@@ -163,5 +163,38 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
       });
     },
     templateUrl: '/templates/zAlbumListing'
-  }
+  };
+}])
+.directive('zTrackListing', ['TracksSvc', 'SessionSvc', '$log', 
+                            function(Tracks, session, $log) {
+  return {
+    restrict: 'E',
+    scope: {
+      for:  '='
+    },
+    link: function(scope, elm, attrs) {
+      scope.isOwner   = false;
+      scope.tracks    = [];
+      scope.playlists = [];
+      
+      scope.$watch(function(){ return scope.for._id; }, function(val) {
+        if(val !== undefined) {
+          var resource = scope.for, //either an album or a playlist
+              key      = attrs.type='album' ? 'a_id' : 'p_id',
+              owner    = attrs.type='album' ? resource.artistId : resource.owner.id,
+              param    = {}; 
+          // populate search query with a_id || p_id as key and resource_id as value
+          param[key] = resource._id; 
+         
+          Tracks.find(param , function(tracks) {
+            angular.forEach(tracks, function(track) {
+              Tracks.inflate(track._id, this, function(){}, function(){});
+            }, scope.tracks);
+          }, function(err) {});
+          if(session.getCurrentUser() && (session.getCurrentUser()._id === owner)) scope.isOwner = true;
+        } 
+      });
+    },
+    templateUrl: '/templates/zTrackListing'
+  };
 }]);

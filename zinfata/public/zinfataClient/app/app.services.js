@@ -187,7 +187,7 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
       }
       if(!!album.coverArt) {
           albumToUpdate.cover_art = album.coverArt;
-          albumToUpdate.imageUrl;
+          // albumToUpdate.imageUrl;
       }
       albumToUpdate.$update(function(updatedAlbum) {
           success(updatedAlbum);
@@ -261,9 +261,9 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc',
     });
 
     new_track.$save(function(saved_track) {
-      return success(saved_track);
+      success(saved_track);
     }, function(err) {
-      return failure(err);
+      failure(err);
     });
   };
 
@@ -278,39 +278,49 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc',
           delete trackToUpdate.imageUrl;
       }
       trackToUpdate.$update(function(updatedTrack) {
-          return success(updatedTrack);
+          success(updatedTrack);
       }, function(err) {
-          return failure(err);
+          failure(err);
       });
     });
   };
 
   this.get = function(trackId, success, failure) {
-    return Tracks.get({ id: trackId }, function(data) {
-      data.artist    = { id: data.artistId };
-      data.album     = { id: data.albumId };
+    Tracks.get({ id: trackId }, function(data) {
+      data.artist       = { id: data.artistId };
+      data.album        = { id: data.albumId };
       data.releaseDate  = new Date(data.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
       delete data.artistId;
       delete data.albumId;                                  
-      if(!!data.coverArt)   data.coverArt   = '../../' + data.coverArt.split('/').slice(1).join('/');         // 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
-      if(!!data.streamUrl)  data.streamUrl  = '../../' + data.streamUrl.split('/').slice(1).join('/');
-      return success(data);
+      if(!!data.coverArt) data.coverArt    = '../../' + data.coverArt.split('/').slice(1).join('/');         // 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
+      if(!!data.streamUrl) data.streamUrl  = '../../' + data.streamUrl.split('/').slice(1).join('/');
+      success(data);
     }, function(err) {
-      return failure(err);
+      failure(err);
     });
   };
 
-  this.find = function(params, success, failure) { // params must be a valid hash with a_id &| u_id
-    return Tracks.get(params, function(data) {
-      data.artist    = { id: data.artistId };
-      data.album     = { id: data.albumId };
-      data.releaseDate  = new Date(data.releaseDate);
-      if(!!data.coverArt)   data.coverArt  = '../../' + data.coverArt.split('/').slice(1).join('/');
-      if(!!data.streamUrl)  data.streamUrl = '../../' + data.streamUrl.split('/').slice(1).join('/');
-      return success(data);
-    }, function(err) {
-      return failure(err);
-    });
+  this.find = function(query, success, failure) { // query must be a valid hash with a_id &| u_id
+    var search;
+    if('a_id' in query || 'u_id' in query) {
+      search = query.a_id ? { resource: 'album', resource_id: query.a_id } : { resource: 'artist', resource_id: params.u_id };
+    }
+    if(!!search) {
+      Tracks.find(search, function(tracks) {
+        angular.forEach(tracks, function(track) {
+          track.artist       = { id: track.artistId };
+          track.album        = { id: track.albumId };
+          track.releaseDate  = new Date(track.releaseDate);
+          if(!!track.coverArt && (track.coverArt.search('track-coverart-placeholder') === -1)) track.coverArt   = '../../' + track.coverArt.split('/').slice(1).join('/');
+          if(!!track.streamUrl) track.streamUrl = '../../' + track.streamUrl.split('/').slice(1).join('/');
+        });
+        success(tracks);
+      }, function(err) {
+        failure(err);
+      });
+    } else {
+      failure('invalid find params');
+    }
   };
 
   this.inflate = function(index, container, success, failure) {
@@ -505,13 +515,9 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
 
   self.addTrack        = function(track, playNext) {
     self.getTracks();
-    playNext ? self.data.tracks.unshift(track._id) : self.data.tracks.push(track._id);
+    playNext ? self.data.tracks.unshift : self.data.tracks.push(track._id);
     self.saveQueue();
   };
-
-  self.addAlbum        = function(album, playNow) {
-    
-  }
 
   self.getTracks       = function() {
     if(!!!self.data.tracks.length) self.data.tracks = queue.getData('queue.tracks') || [];

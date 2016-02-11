@@ -60,20 +60,25 @@ app.factory('Users', ['$resource', function($resource) {
 .factory('Tracks', ['$resource', function($resource) {
   return $resource('/api/tracks/:id', {id: '@_id'}, {
     'update': {
-            method:'PUT',
-            transformRequest: FileDataObject ,
-            headers: {
-                    'Content-Type': undefined,
-                    enctype:        'multipart/form-data'
-            }
+      method:'PUT',
+      transformRequest: FileDataObject ,
+      headers: {
+        'Content-Type': undefined,
+        enctype:        'multipart/form-data'
+      }
     },
     'save': {
-            method: 'POST',
-            transformRequest: FileDataObject,
-            headers: {
-                    'Content-Type': undefined,
-                    enctype:        'multipart/form-data'
-            }
+      method: 'POST',
+      transformRequest: FileDataObject,
+      headers: {
+        'Content-Type': undefined,
+        enctype:        'multipart/form-data'
+      }
+    },
+    'find': { method: 'GET', 
+      isArray: true,
+      url: '/api/tracks/:resource/:resource_id',
+      params: {resource: '@resource', resource_id: '@resoureceId'}
     }
   });
 }])

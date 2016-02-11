@@ -11,26 +11,19 @@ app.controller('albumCtrl', ['$scope', '$rootScope', '$location', '$routeParams'
     $scope.creating = false;
     $scope.canEdit  = false;
 
-
-    switch($location.path()) {
-        case '/album/new':
-            $scope.creating = true;
-            break;
-        case '/album/' + $routeParams.albumId + '/edit':
-            $scope.editing = true;
-            break;
-        default:
-            $scope.editing = $scope.creating = false;
-    }
+    if($location.path() === '/album/new') creating = true;
 
     if($routeParams.albumId){
         AlbumsSvc.get($routeParams.albumId, function(data) {
     		$scope.album = data;
-    		if(!!$scope.album.artistId && $scope.album.artistId === Session.getCurrentUser()._id) $scope.canEdit = true;
+    		if(!!$scope.album.artistId && ($scope.album.artistId === Session.getCurrentUser()._id)) $scope.canEdit = true;
+            if($location.path() === '/album/' + $routeParams.trackId + '/edit') {
+                $scope.canEdit ? $scope.editing = true : $location.path('album/' + $routeParams.albumId);
+            }
             User.get($scope.album.artistId, function(user) {
                 $scope.album.artist = user.handle;
             }, function(err) {
-                $scope.album.artist = 'Zinfata';
+                $scope.album.artist = 'unknown';
             })
     	}, function(err) {
     		$location.path('/');

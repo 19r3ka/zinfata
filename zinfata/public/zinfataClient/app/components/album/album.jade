@@ -5,8 +5,8 @@
         .col-md-8
             .pull-right
                 .dropdown
-                    button.btn-default(class='dropdown-toggle', type='button', id='dropdownMenu', data-toggle='dropdown', aria-haspopup='true', aria-expanded='true')
-                        span(class='caret')
+                    a.dropdown-toggle(data-toggle='dropdown', id='dropdownMenu', aria-haspopup='true', aria-expanded='true')
+                        span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
                     ul.dropdown-menu(aria-labelledby='dropdownMenu')
                         //- li(ng-click='play(album)'): a(href='')
                             span.glyphicon(class='glyphicon-play')
@@ -39,3 +39,5 @@ form(name='albumForm', enctype= 'multipart/form-data', ng-if='editing || creatin
     .form-group
         button.btn(type='submit', ng-click='create(album)', ng-show='creating', class=['btn-primary', 'form-control'], ng-disabled='albumForm.$invalid') Create Album!
         button.btn(type='submit', ng-click='update(album)', ng-show='editing', class=['btn-primary', 'form-control'], ng-disabled='albumForm.$invalid') Update!
+
+z-track-listing(for='album', type='album')

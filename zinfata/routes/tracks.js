@@ -31,21 +31,12 @@ var uploadParams = upload.fields([
 ]);
 
 router.route('/')
-.get(function(req, res, next) { // GET all songs listing if query is empty.
-  var query = {};
-  if(req.query.u_id) { // GET all songs for user with u_id
-    query.artistId = req.query.u_id;
-  }
-  if(req.query.a_id) { // GET all songs for album with a_id
-    query.albumId = req.query.a_id;
-  }
-
-  Track.find(query, function(err, tracks) {
+.get(function(req, res, next) { // GET all songs listing.
+  Track.find(function(err, tracks) {
     if(err) return next(err);
     if(!tracks.length) return next(new Error('not found'));
     res.json(tracks);
   });
-
 })
 .post(uploadParams, function(req, res, next) { // POST new song
   var new_track = new Track({
@@ -56,8 +47,8 @@ router.route('/')
     feat:         req.body.feat || []
   });
 
-  if(!!req.files['imageFile']) new_track.coverArt  = req.files['imageFile'][0].path;
-  if(!!req.files['audioFile']) new_track.streamUrl = req.files['audioFile'][0].path;
+  if(!!req.files.imageFile) new_track.coverArt  = req.files.imageFile[0].path;
+  if(!!req.files.imageFile) new_track.streamUrl = req.files.imageFile[0].path;
   /*
    *Make sure artist exists and that the album is really his
    *before attempting to save
@@ -91,8 +82,8 @@ router.route('/:id')
     for(var key in track) {
       if(!!req.body[key]) track[key] = req.body[key]; // Since it's a blind attribution, only update keys that already exit.
     }
-    if(!!req.files['imageFile']) new_track.coverArt  = req.files['imageFile'][0].path;
-    if(!!req.files['audioFile']) new_track.streamUrl = req.files['audioFile'][0].path;
+    if(!!req.files.imageFile) new_track.coverArt  = req.files.imageFile[0].path;
+    if(!!req.files.imageFile) new_track.streamUrl = req.files.imageFile[0].path;
     
     track.save(function(err, updated_track) {
       if(err) return next(err);
@@ -109,6 +100,31 @@ router.route('/:id')
       if(err) return next(err);
       res.json(deleted_track);
     });
+  });
+});
+
+router.route('/:resource/:resource_id')
+.get(function(req, res, next) {
+  var query = {},
+      key;
+
+  switch(req.params.resource) {
+    case 'album':
+      key = 'albumId';
+      break;
+    case 'user':
+      key = 'artistId';
+      break;
+    default:
+      next(new Error('bad_param'));
+  }
+
+  query[key] = req.params.resource_id;
+  console.log(query);
+  Track.find(query, function(err, tracks) {
+    if(err) return next(err);
+    if(!tracks.length) return next(new Error('not found'));
+    res.json(tracks);
   });
 });
 
