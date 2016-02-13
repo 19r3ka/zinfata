@@ -17,8 +17,8 @@
         .col-md-8
             .pull-right
                 .dropdown(ng-show='canEdit && !editing')
-                    button.btn-default(class='dropdown-toggle', type='button', id='dropdownMenu', data-toggle='dropdown', aria-haspopup='true', aria-expanded='true')
-                        span(class='caret')
+                    a.dropdown-toggle(data-toggle='dropdown', id='dropdownMenu', aria-haspopup='true', aria-expanded='true')
+                        span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
                     ul.dropdown-menu(aria-labelledby='dropdownMenu')
                         li(ng-click='edit(user)'): a(href='') 
                             span.glyphicon(class='glyphicon-pencil')

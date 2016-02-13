@@ -8,8 +8,6 @@ var passport = require('../config/passport.js');
 
 router.route('/')
 .get(function(req, res, next) { // GET all playlists listing.
-  /*TODO: Move every call to playlist by a criteria to a new endpoint
-    with the form '/:searchby/:search*/
   Playlist.find(function(err, playlists) {
     if(err) return next(err);
     if(!playlists.length) return next(new Error('not found'));
@@ -17,26 +15,23 @@ router.route('/')
   });
 })
 .post(function(req, res, next) { // POST new album
-    console.log(req.body);
-    var pl  = req.body,
-        arr = [];
-    /* turn the stringified array back into a real array */
-    if(typeof pl.tracks === 'string') pl.tracks = pl.tracks.split(',');
+  var pl  = req.body,
+      arr = [];
+  /* turn the stringified array back into a real array */
+  if(typeof pl.tracks === 'string') pl.tracks = pl.tracks.split(',');
 
-    new_playlist = new Playlist({
-        title:    pl.title,
-        ownerId:  pl.ownerId,
-        tracks:   pl.tracks
-    });
+  new_playlist = new Playlist({
+      title:    pl.title,
+      ownerId:  pl.ownerId,
+      tracks:   pl.tracks
+  });
+  
+  new_playlist.save(function(err, playlist) {
+      if(err) return next(err);
+      res.json(playlist);
+  });
+});
 
-    if(!!!new_playlist.ownerId && !!req.user.id) new_playlist.ownerId = req.user.id;
-    
-    new_playlist.save(function(err, playlist) {
-        console.log(playlist);
-        if(err) return next(err);
-        res.json(playlist);
-    });
-})
 router.route('/:resource/:resource_id')
 .get(function(req, res, next) {
   if('resource' in req.params && req.params.resource === 'owner') {
@@ -46,7 +41,8 @@ router.route('/:resource/:resource_id')
       res.json(playlists);
     });
   }
-})
+});
+
 router.route('/:id')
 .get(function(req, res, next) { // GET specific album by ID
   Playlist.findById(req.params.id, function(err, playlist) {
@@ -81,6 +77,5 @@ router.route('/:id')
     });
   });
 });
-
 
 module.exports = router;

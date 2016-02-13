@@ -1,4 +1,3 @@
-#presentation
 form(name='PlaylistForm', role='form')
     //- .form-group
         img(name='coverArt', ng-src='{{playlist.imageUrl}}')
@@ -13,6 +12,16 @@ form(name='PlaylistForm', role='form')
                     |  Created by
                     em
                         a(href='/user/{{ playlist.owner.id }}')   {{ playlist.owner.handle }}
+                span.dropdown(class='pull-right', ng-show='canEdit')
+                    a.dropdown-toggle(data-toggle='dropdown', id='dropdownMenu', aria-haspopup='true', aria-expanded='true')
+                        span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
+                    ul.dropdown-menu(aria-labelledby='dropdownMenu')
+                        li(ng-click='edit(playlist)'): a(href='') 
+                            span.glyphicon(class='glyphicon-pencil')
+                            |  Edit Info
+                        li.bg-danger(ng-click='delete(playlist)'): a(href='')
+                            span.glyphicon(class='glyphicon-remove')
+                            | Delete
             p.item-info
                 span.song-count
                     em
@@ -21,10 +30,8 @@ form(name='PlaylistForm', role='form')
                 //- span.playlist-length
                     |  123 minutes               
     .form-group
-        button.btn(type='submit', ng-click='edit()', ng-show='!creating && (canEdit() && !editing)', class=['btn-primary', 'form-control']) Edit Playlist!
         button.btn(type='submit', ng-click='create(playlist)', ng-show='creating', class=['btn-primary', 'form-control'], ng-disabled='playlistForm.$invalid') Create Playlist!
         button.btn(type='submit', ng-click='update(playlist)', ng-show='editing', class=['btn-primary', 'form-control'], ng-disabled='playlistForm.$invalid') Save Changes!
-        button.btn(type='submit', ng-click='delete(playlist)', ng-show='!creating && canEdit()', class=['btn-danger', 'form-control']) Delete Playlist!
 
 div(ng-if='!creating && !!playlist.tracks.length')
     table.table(class='table-striped table-hover table-condensed')
@@ -45,13 +52,20 @@ div(ng-if='!creating && !!playlist.tracks.length')
                 td 
                     a(href='/user/{{track.artist.id}}') {{ track.artist.handle }}
                 td
-                    div.dropdown(class='pull-right')
+                    .dropdown(class='pull-right')
                         a.dropdown-toggle(data-toggle='dropdown')
                             span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
                         ul.dropdown-menu
-                            li(ng-click='play(track)'): a(href='#') Play Now
-                            li(ng-click='addToQueue(track)'): a(href='#') Play Next
-                            li.dropdown-toggle: a(href='#') Add To...
+                            li: a(href='', ng-click='play(track)') 
+                                span.glyphicon(class='glyphicon-play')
+                                |  Play now
+                            li: a(href='', ng-click='addToQueue(track)') 
+                                span.glyphicon(class='glyphicon-list')
+                                |  Queue up
+                            li.dropdown-toggle: a(href='') 
+                                span.glyphicon(class='glyphicon-plus')
+                                |  Add to
+                                span.caret
                                 ul.dropdown-menu
                                     li: a(href='/playlist/new') Create new playlist
                                     li.divider(role='separator') 

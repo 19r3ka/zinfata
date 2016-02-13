@@ -197,4 +197,67 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
     },
     templateUrl: '/templates/zTrackListing'
   };
+}])
+.directive('zPlaylistDropdown', ['$rootScope', 'PlaylistsSvc', 'PLAYLIST_EVENTS', 'SessionSvc', 'MessageSvc', '$log', 
+                                function($rootScope, Playlists, PLAYLIST, session, Message, $log) {
+  return {
+    restrict: 'E',
+    scope: {
+      track: '='
+    },
+    link: function(scope, elm, attrs) {
+      var currentUser = session.getCurrentUser();
+
+      elm.addClass('dropdown-menu');
+
+      scope.playlists = [];
+      scope.playlist  = {
+        title: '',
+        owner: { id: '' }
+      };
+      scope.loggedIn  = '_id' in currentUser ? true : false;
+      scope.adding    = 'track' in attrs && !!attrs.track ? true : false;
+      
+      if(scope.loggedIn) {
+        Playlists.find({ u_id: currentUser._id }, function(playlists) {
+          scope.playlists = playlists;
+        }, function(err) {});
+      }
+
+      scope.create = function(playlist) {
+        playlist.owner.id = currentUser._id;
+        Playlists.create(playlist, function(created_playlist) {
+          $rootScope.$broadcast(PLAYLIST.createSuccess);
+          scope.playlists.push(playlist);
+        }, function(err) {
+          $rootScope.$broadcast(PLAYLIST.createFailed);
+        });
+      };
+
+      scope.addToPlaylist = function(playlist, track) {
+        Playlists.addTrack(playlist, track, function(){
+          Message.addMsg('success', track.title + ' added to ' + playlist.title);
+        }, function(){
+          Message.addMsg('danger', 'Something went wrong adding track to playlist!');
+        });
+      };
+
+      scope.$watch(function() { return session.getCurrentUser() && session.getCurrentUser()._id; }, 
+                   function(newVal, oldVal) {
+        if(newVal !== oldVal) {
+          currentUser = session.getCurrentUser();
+        }
+
+        if('_id' in currentUser) {
+          scope.loggedIn = true;
+          Playlists.find({ u_id: currentUser._id }, function(playlists) {
+            scope.playlists = playlists;
+          }, function(err) {});
+
+        listItems = elm.find('.list-group-item');
+        }
+      });
+    },
+    templateUrl: '/templates/zPlaylistDropdown'
+  };
 }]);

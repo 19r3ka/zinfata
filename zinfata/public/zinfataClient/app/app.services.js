@@ -20,10 +20,7 @@ app.service('SessionSvc', ['$rootScope', 'AUTH', 'UsersSvc', 'sessionStore',
   };
 
   self.getCurrentUser = function() {
-    if(!currentUser) {
-      currentUser = store.getData('currentUser');
-    }
-
+    currentUser = store.getData('currentUser');
     return currentUser;
   }; 
 
@@ -397,50 +394,51 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
       /* 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
       if(!!data.coverArt)   data.coverArt   = '../../' + data.coverArt.split('/').slice(1).join('/');
       */
-      return success(data);
+      success(data);
     }, function(err) {
-      return failure(err);
+      failure(err);
     });
   };
 
-  this.find = function(params, success, failure) { // params must be a valid hash with a_id &| u_id
-    if('owner' in params) {
-      params.resource    = 'owner';
-      params.resource_id = params.owner;
+  this.find = function(query, success, failure) { // params must be a valid hash with a_id &| u_id
+    if('u_id' in query) {
+      query.resource    = 'owner';
+      query.resource_id = query.u_id;
 
-      delete params.owner;
+      delete query.u_id;
 
-      return Playlists.find(params, function(data) {
-        data.owner     = { id: data.ownerId };
-        delete data.ownerId;
-        /* 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
-        if(!!data.coverArt)   data.coverArt   = '../../' + data.coverArt.split('/').slice(1).join('/');
-        */
-        return success(data);
+      Playlists.find(query, function(playlists) {
+        angular.forEach(playlists, function(playlist) {
+          playlist.owner = { id: playlist.ownerId };
+          delete playlist.ownerId;
+          /* 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
+          ** if(!!playlist.coverArt)   playlist.coverArt   = '../../' + playlist.coverArt.split('/').slice(1).join('/');
+          */
+        })
+        success(playlists);
       }, function(err) {
-        return failure(err);
+        failure(err);
       });   
     }
     
   };
 
   this.delete = function(playlist, success, failure) {
-    return Playlists.delete({id: playlist._id}, function(data) {
+    Playlists.delete({id: playlist._id}, function(data) {
       data.owner     = { id: data.ownerId };
       delete data.ownerId;
       /* 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
       if(!!data.coverArt)   data.coverArt   = '../../' + data.coverArt.split('/').slice(1).join('/');
       */
-      return success(data);
+      success(data);
     }, function(err) {
-      return failure(err);
+      failure(err);
     });
   };
 
   this.addTrack = function(playlist, track, success, failure) {
     Playlists.get({ id: playlist._id }, function(playlistToUpdate) {
       playlistToUpdate.tracks.push(track._id);
-      
       playlistToUpdate.$update(function(updatedPlaylist) {
           return true;
       }, function(err) {

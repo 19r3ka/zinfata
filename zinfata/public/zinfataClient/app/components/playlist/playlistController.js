@@ -11,18 +11,26 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
         tracks:  []
     };
     $scope.playlistTracks = []; // array of inflated track metadata objects
+    $scope.canEdit  = false;
     $scope.creating = false;
     $scope.editing  = false;
 
     if($location.path() === '/playlist/new') $scope.creating = true;
-    if($location.path() === '/playlist/' + $routeParams.playlistId + '/edit' && $scope.canEdit) $scope.editing = true; 
-    if(!$scope.creating && !!$routeParams.playlistId) {
+    
+    if(!!$routeParams.playlistId) {
         PlaylistsSvc.get($routeParams.playlistId, function(data) {
+            if(!!$scope.playlist.owner.id && ($scope.playlist.owner.id === Session.getCurrentUser()._id)) $scope.canEdit = true;
+            if($location.path() === '/playlist/' + $routeParams.playlistId + '/edit') {
+                $scope.canEdit ? $scope.editing = true : $location.path('/playlist/' + $routeParams.playlistId);
+            } 
+
+            /* Populate with owner's data */            
             UsersSvc.get(data.owner.id, function(owner){
                 data.owner.handle = owner.handle;
             }, function(err) {
                 $log.error('Error getting playlist owner info: ' + err);
             });
+
             /* If there are tracks, be sure to inflate 
             ** each track with album and artist info. */
             if(!!data.tracks.length) {
@@ -44,18 +52,14 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
                     }
                 });
             }
+
             // Only assign the metadata to the scope playlist at the very end!
             $scope.playlist = data;
-            $scope.playlistTracks = data.tracks; 
+            // $scope.playlistTracks = data.tracks; 
         }, function(err) {
             $location.path('/');
         });
     }
-
-    $scope.canEdit = function() {
-        if(!!$scope.playlist.owner.id && ($scope.playlist.owner.id === Session.getCurrentUser()._id)) return true;
-        return false;
-    };
 
     $scope.edit = function() {
         $location.path('/playlist/' + $scope.playlist._id + '/edit');
@@ -75,14 +79,14 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
     };
 
     $scope.create = function(playlist) {
-        if(!!!playlist.owner.id) playlist.owner.id = Session.getCurrentUser()._id;
+        playlist.owner.id = Session.getCurrentUser()._id;
         PlaylistsSvc.create(playlist, function(created_playlist) {
             $rootScope.$broadcast(PLAYLIST_EVENTS.createSuccess);
             MessageSvc.addMsg('success', 'You have successfully added a new playlist!');
             $location.path('playlist/' + created_playlist._id);
         }, function(err) {
             $rootScope.$broadcast(PLAYLIST_EVENTS.createFailed);
-            MessageSvc.addMsg('danger', 'Something went wrong trying to upload your new playlist!');
+            MessageSvc.addMsg('danger', 'Something went wrong trying to add your new playlist!');
         });
     };
 

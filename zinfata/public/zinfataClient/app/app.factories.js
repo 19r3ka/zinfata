@@ -51,10 +51,10 @@ app.factory('Users', ['$resource', function($resource) {
   return $resource('/api/playlists/:id', {id: '@_id'}, {
     'update': {method: 'PUT'},
     'find':   { method: 'GET', 
-                isArray: true,
-                url: '/api/playlists/:resource/:resource_id',
-                params: {resource: '@owner', resource_id: '@ownerId'}
-              }
+      isArray: true,
+      url: '/api/playlists/:resource/:resource_id',
+      params: {resource: '@resource', resource_id: '@resource_id'}
+    }
   });
 }])
 .factory('Tracks', ['$resource', function($resource) {
