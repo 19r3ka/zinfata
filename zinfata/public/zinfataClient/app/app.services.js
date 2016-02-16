@@ -462,9 +462,11 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
     });
   };
 }]);
-app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', 'TracksSvc', 
-                        function(queue, $rootScope, AUDIO, QUEUE, $log, TracksSvc) {
-  var self = this;
+app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', 'TracksSvc', 'SessionSvc',
+                        function(queue, $rootScope, AUDIO, QUEUE, $log, TracksSvc, Session) {
+  var self  = this,
+      owner = Session.getCurrentUser()._id;
+
   self.data = {
     currentlyPlaying: {
       index: 0,
@@ -498,17 +500,17 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
   };
 
   self.saveQueue       = function() {
-    queue.setData('queue.tracks', self.data.tracks);
-    queue.setData('queue.nowPlaying', self.data.currentlyPlaying);
+    queue.setData(owner + '.queue.tracks', self.data.tracks);
+    queue.setData(owner + '.queue.nowPlaying', self.data.currentlyPlaying);
   };
 
-  self.clearQueue      = function() {
+  self.clearQueue     = function() {
     self.data.tracks = [];
     self.saveQueue();
   }; 
 
   self.getCurrentTrack = function() {
-    return queue.getData('queue.nowPlaying');
+    return queue.getData(owner + '.queue.nowPlaying');
   };
 
   self.addTrack        = function(track, playNext) {
@@ -518,7 +520,7 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
   };
 
   self.getTracks       = function() {
-    if(!!!self.data.tracks.length) self.data.tracks = queue.getData('queue.tracks') || [];
+    if(!!!self.data.tracks.length) self.data.tracks = queue.getData(owner + '.queue.tracks') || [];
     return self.data.tracks;
   };
 
