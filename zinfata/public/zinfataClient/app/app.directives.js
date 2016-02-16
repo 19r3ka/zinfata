@@ -198,6 +198,26 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
     templateUrl: '/templates/zTrackListing'
   };
 }])
+.directive('zDetailedTrackListing', ['PlaylistsSvc', 'QueueSvc', '$log', 
+                            function(Playlists, Queue, $log) {
+  return {
+    restrict: 'E',
+    scope: {
+      tracks: '=',
+      remove: '&onRemove'
+    },
+    link: function(scope, elm, attrs) {
+      scope.play = function(track) {
+        Queue.playNow(track);
+      };
+
+      scope.addToQueue = function(track) {
+        Queue.addTrack(track);
+      };
+    },
+    templateUrl: '/templates/zDetailedTrackListing'
+  };
+}])
 .directive('zPlaylistDropdown', ['$rootScope', 'PlaylistsSvc', 'PLAYLIST_EVENTS', 'SessionSvc', 'MessageSvc', '$log', 
                                 function($rootScope, Playlists, PLAYLIST, session, Message, $log) {
   return {
@@ -215,7 +235,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
         title: '',
         owner: { id: '' }
       };
-      scope.loggedIn  = '_id' in currentUser ? true : false;
+      scope.loggedIn  = currentUser && '_id' in currentUser ? true : false;
       scope.adding    = 'track' in attrs && !!attrs.track ? true : false;
       
       if(scope.loggedIn) {
@@ -253,8 +273,6 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
           Playlists.find({ u_id: currentUser._id }, function(playlists) {
             scope.playlists = playlists;
           }, function(err) {});
-
-        listItems = elm.find('.list-group-item');
         }
       });
     },

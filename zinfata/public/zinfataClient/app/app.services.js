@@ -440,25 +440,25 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
     Playlists.get({ id: playlist._id }, function(playlistToUpdate) {
       playlistToUpdate.tracks.push(track._id);
       playlistToUpdate.$update(function(updatedPlaylist) {
-          return true;
+          success(updatedPlaylist);
       }, function(err) {
-          return false;
+          failure(false);
       });
     }, function(err) {
-      return false;
+      failure(false);
     });
   };
 
   this.removeTrack = function(playlist, index, success, failure) {
     Playlists.get({ id: playlist._id }, function(playlistToUpdate) {
-      playlistToUpdate.splice(index, 1);
+      playlistToUpdate.tracks.splice(index, 1);
       playlistToUpdate.$update(function(updatedPlaylist) {
-          return true;
+        success(updatedPlaylist);
       }, function(err) {
-          return false;
+        failure(false);
       });
     }, function(err) {
-      return false;
+      failure(false);
     });
   };
 }]);

@@ -19,7 +19,7 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
     
     if(!!$routeParams.playlistId) {
         PlaylistsSvc.get($routeParams.playlistId, function(data) {
-            if(!!$scope.playlist.owner.id && ($scope.playlist.owner.id === Session.getCurrentUser()._id)) $scope.canEdit = true;
+            if(!!data.owner.id && (data.owner.id === Session.getCurrentUser()._id)) $scope.canEdit = true;
             if($location.path() === '/playlist/' + $routeParams.playlistId + '/edit') {
                 $scope.canEdit ? $scope.editing = true : $location.path('/playlist/' + $routeParams.playlistId);
             } 
@@ -34,20 +34,9 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
             /* If there are tracks, be sure to inflate 
             ** each track with album and artist info. */
             if(!!data.tracks.length) {
-                angular.forEach(data.tracks, function(value, index) {
-                    if(typeof value === 'string') {
-                        TracksSvc.get(value, function(track) {
-                            UsersSvc.get(track.artist.id, function(user) {
-                                track.artist.handle = user.handle;
-                            }, function(err) {
-                                $log.error('Error getting playlist track artist info: ' + err);
-                            });
-                            AlbumsSvc.get(track.album.id, function(album) {
-                                track.album.title  = album.title;
-                            }, function(err) {
-                                $log.error('Error getting playlist track album info: ' + err);
-                            });
-                            $scope.playlistTracks.push(track);
+                angular.forEach(data.tracks, function(trackId, index) {
+                    if(typeof trackId === 'string') {
+                        TracksSvc.inflate(trackId, $scope.playlistTracks, function(track) {
                         }, function(err) {});
                     }
                 });
@@ -63,12 +52,13 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
 
     $scope.edit = function() {
         $location.path('/playlist/' + $scope.playlist._id + '/edit');
-    };   
+    };
 
     $scope.removeTrack = function(index) {
-        $scope.playlistTracks.splice(index, 1);
-        // PlaylistsSvc.removeTrack($scope.playlist, index)
-    };
+        PlaylistsSvc.removeTrack($scope.playlist, index, function(updatedPlaylist) {
+            $scope.playlistTracks.splice(index, 1);
+        }, function(err){});
+    }; 
 
     $scope.play = function(track) {
         QueueSvc.playNow(track);
@@ -76,7 +66,7 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
 
     $scope.addToQueue = function(track) {
         QueueSvc.addTrack(track);
-    };
+    };  
 
     $scope.create = function(playlist) {
         playlist.owner.id = Session.getCurrentUser()._id;
@@ -94,6 +84,7 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
         PlaylistsSvc.update(playlist, function(updated_playlist) {
             $rootScope.$broadcast(PLAYLIST_EVENTS.updateSuccess);
             MessageSvc.addMsg('success', 'You have successfully updated this playlist!');
+            $location.path('playlist/' + updated_playlist._id);
         }, function(err) {
             $rootScope.$broadcast(PLAYLIST_EVENTS.updateFailed);
             MessageSvc.addMsg('danger', 'Something went wrong trying to update your playlist!');
