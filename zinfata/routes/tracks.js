@@ -47,8 +47,16 @@ router.route('/')
     feat:         req.body.feat || []
   });
 
-  if(!!req.files.imageFile) new_track.coverArt  = req.files.imageFile[0].path;
-  if(!!req.files.imageFile) new_track.streamUrl = req.files.imageFile[0].path;
+  if(!!req.files.imageFile) {
+    new_track.coverArt = req.files.imageFile[0].path;
+  } else {
+    new_track.coverArt = req.body.coverArt.replace('../..', 'public');
+  }
+
+  if(!!req.files.audioFile) {
+    new_track.streamUrl = req.files.audioFile[0].path;
+    // new_track.size      = req.files.audioFile[0].size;
+  }
   /*
    *Make sure artist exists and that the album is really his
    *before attempting to save
@@ -82,9 +90,17 @@ router.route('/:id')
     for(var key in track) {
       if(!!req.body[key]) track[key] = req.body[key]; // Since it's a blind attribution, only update keys that already exit.
     }
-    if(!!req.files.imageFile) new_track.coverArt  = req.files.imageFile[0].path;
-    if(!!req.files.imageFile) new_track.streamUrl = req.files.imageFile[0].path;
-    
+    if(!!req.files.imageFile) {
+      new_track.coverArt = req.files.imageFile[0].path;
+    } else {
+      new_track.coverArt = req.body.coverArt.replace('../..', 'public');
+    }
+
+    if(!!req.files.audioFile) {
+      new_track.streamUrl = req.files.audioFile[0].path;
+      // new_track.size      = req.files.audioFile[0].size;
+    } 
+
     track.save(function(err, updated_track) {
       if(err) return next(err);
       res.json(updated_track);

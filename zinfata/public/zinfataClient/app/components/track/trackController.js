@@ -138,6 +138,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
     };
 
     $scope.create = function(track) {
+        track.artist.id = Session.getCurrentUser()._id;
         TracksSvc.create(track, function(created_track) {
             $rootScope.$broadcast(TRACK_EVENTS.createSuccess);
             MessageSvc.addMsg('success', 'You have successfully added a new track!');
