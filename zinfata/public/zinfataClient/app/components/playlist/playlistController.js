@@ -57,7 +57,9 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
     $scope.removeTrack = function(index) {
         PlaylistsSvc.removeTrack($scope.playlist, index, function(updatedPlaylist) {
             $scope.playlistTracks.splice(index, 1);
-        }, function(err){});
+        }, function(err){ 
+            $rootScope.$broadcast(PLAYLIST_EVENTS.updateFailed);
+        });
     }; 
 
     $scope.play = function(track) {

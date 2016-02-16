@@ -33,7 +33,13 @@ form(name='PlaylistForm', role='form')
         button.btn(type='submit', ng-click='create(playlist)', ng-show='creating', class=['btn-primary', 'form-control'], ng-disabled='playlistForm.$invalid') Create Playlist!
         button.btn(type='submit', ng-click='update(playlist)', ng-show='editing', class=['btn-primary', 'form-control'], ng-disabled='playlistForm.$invalid') Save Changes!
 
-div(ng-if='!creating')
+div(ng-show='!creating && !playlistTracks.length')
+    .panel(class='panel-warning')
+        .panel-heading
+            .panel-title This playlist is <em>empty</em> !
+        .panel-body
+            p.text-center This playlist doesn't contain any tracks yet!
+div(ng-if='!creating && !!playlistTracks.length')
     table.table(class='table-striped table-hover table-condensed')
         thead
             tr

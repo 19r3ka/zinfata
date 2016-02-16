@@ -218,8 +218,8 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
     templateUrl: '/templates/zDetailedTrackListing'
   };
 }])
-.directive('zPlaylistDropdown', ['$rootScope', 'PlaylistsSvc', 'PLAYLIST_EVENTS', 'SessionSvc', 'MessageSvc', '$log', 
-                                function($rootScope, Playlists, PLAYLIST, session, Message, $log) {
+.directive('zPlaylistDropdown', ['$rootScope', 'PlaylistsSvc', 'PLAYLIST_EVENTS', 'AUTH', 'SessionSvc', 'MessageSvc', '$log', 
+                                function($rootScope, Playlists, PLAYLIST, AUTH, session, Message, $log) {
   return {
     restrict: 'E',
     scope: {
@@ -227,6 +227,12 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
     },
     link: function(scope, elm, attrs) {
       var currentUser = session.getCurrentUser();
+
+      function refresh() {
+        Playlists.find({ u_id: currentUser._id }, function(playlists) {
+          scope.playlists = playlists;
+        }, function(err) {});
+      }
 
       elm.addClass('dropdown-menu');
 
@@ -238,11 +244,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
       scope.loggedIn  = currentUser && '_id' in currentUser ? true : false;
       scope.adding    = 'track' in attrs && !!attrs.track ? true : false;
       
-      if(scope.loggedIn) {
-        Playlists.find({ u_id: currentUser._id }, function(playlists) {
-          scope.playlists = playlists;
-        }, function(err) {});
-      }
+      if(scope.loggedIn) refresh();
 
       scope.create = function(playlist) {
         playlist.owner.id = currentUser._id;
@@ -254,26 +256,40 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
         });
       };
 
-      scope.addToPlaylist = function(playlist, track) {
+      scope.addToPlaylist = function(event, playlist, track) {
+        if(!scope.adding) return;
+        event.preventDefault();
         Playlists.addTrack(playlist, track, function(){
           Message.addMsg('success', track.title + ' added to ' + playlist.title);
-        }, function(){
+        }, function() {
           Message.addMsg('danger', 'Something went wrong adding track to playlist!');
         });
       };
 
-      scope.$watch(function() { return session.getCurrentUser() && session.getCurrentUser()._id; }, 
-                   function(newVal, oldVal) {
-        if(newVal !== oldVal) {
-          currentUser = session.getCurrentUser();
-        }
+      // scope.$watch(function() { return session.getCurrentUser() && session.getCurrentUser()._id; }, 
+      //              function(newVal, oldVal) {
+      //   if(newVal !== oldVal) {
+      //     currentUser = session.getCurrentUser();
+      //   }
 
-        if('_id' in currentUser) {
-          scope.loggedIn = true;
-          Playlists.find({ u_id: currentUser._id }, function(playlists) {
-            scope.playlists = playlists;
-          }, function(err) {});
-        }
+      //   if('_id' in currentUser) {
+      //     scope.loggedIn = true;
+      //     refresh();
+      //   }
+      // });
+
+      scope.$on(PLAYLIST.updateSuccess, function() {
+        refresh();
+      });
+      scope.$on(PLAYLIST.creationSuccess, function() {
+        refresh();
+      });
+      scope.$on(PLAYLIST.deleteSuccess, function() {
+        refresh();
+      });
+      scope.$on(AUTH.loginSuccess, function() {
+        scope.loggedIn = true;
+        refresh();
       });
     },
     templateUrl: '/templates/zPlaylistDropdown'
