@@ -1,0 +1,22 @@
+.panel(class='panel-primary')
+    .panel-heading
+        h4.panel-title Albums
+    .panel-body
+        div(ng-show='!albums.length && isOwner')
+            p.text-center You don't have any albums yet?
+                a(href='albums/new')  Create one now!
+        div(ng-show='!albums.length && !isOwner')
+            p.text-center This user has no album!
+        .list-group(ng-show='!!albums.length')
+            .list-group-item(ng-repeat='album in albums')
+                .row
+                    .col-md-2
+                        img.img-responsive(class='center-block', name='coverArt', width='50', alt='{{ album.title }}', ng-src='{{ album.imageUrl }}')
+                    .col-md-8
+                        h5.list-group-item-heading: a(href='album/{{ album._id }}') {{ album.title }}
+                        h6: a(href='user/{{ artist._id }}') {{ artist.handle }}
+                        .metrics
+                            //- tracks min likes
+                    .col-md-2
+                        //- button.btn-lg(class='btn-default btn-block', type='button', ng-click='queueUp(album)')
+                            span.glyphicon(class='glyphicon-play-circle')

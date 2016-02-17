@@ -1,0 +1,38 @@
+table.table(class='table-striped table-hover table-condensed')
+    thead
+        tr
+            th.col-md-5 Title
+            th.col-md-3 Album
+            th.col-md-3 Artist
+            //- td Length -- TODO: record track's length into database
+            //- options for interacting with the song
+            th.col-md-1 
+    tbody
+        tr(ng-repeat='track in tracks')
+            td 
+                a(href='/track/{{track._id}}') {{ track.title }} 
+            td
+                a(href='/album/{{track.album.id}}') {{ track.album.title }} 
+            td 
+                a(href='/user/{{track.artist.id}}') {{ track.artist.handle }}
+            td
+                .dropdown(class='pull-right')
+                    a.dropdown-toggle(data-toggle='dropdown')
+                        span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
+                    ul.dropdown-menu
+                        li: a(href='', ng-click='play(track)') 
+                            span.glyphicon(class='glyphicon-play')
+                            |  Play now
+                        li: a(href='#', ng-click='addToQueue(track)') 
+                            span.glyphicon(class='glyphicon-list')
+                            |  Queue up
+                        li.dropdown
+                            a.dropdown-toggle(href='#', data-toggle='dropdown')
+                                span.glyphicon(class='glyphicon-plus')
+                                |  Add to
+                                span.caret
+                            z-playlist-dropdown(track='track')
+                        li(ng-click='remove($index)'): a(href='#')
+                            span.glyphicon(class='glyphicon-remove')
+                            span.text-danger  Remove
+                            

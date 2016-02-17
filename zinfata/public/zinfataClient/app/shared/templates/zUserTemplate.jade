@@ -1,0 +1,26 @@
+.jumbotron
+    .row
+        .col-md-2
+            img.img-circle(name= 'avatar', alt='{{ title }}', height='200', width='auto', ng-src='{{ model.image }}')
+        .col-md-10
+            h3 {{ title }}
+            .ux-options
+                button.btn-primary(ng-click='edit()', ng-show='canEdit() && !editing') Edit Info
+                button.btn-danger(ng-click='delete()', ng-show='canEdit()') Delete Account!
+
+form(name='userProfile', role='form', novalidate, ng-if='editing')
+    .form-group 
+        input.form-control(type='file', name='avatar', accept='image/*', onchange='angular.element(this).scope().readFile(this)')
+    .form-group
+        input.form-control(type='text', name='firstName', placeholder='First Name', ng-model='user.firstName', required)
+    .form-group
+        input.form-control(type='text', name='lastName', placeholder='Last Name', ng-model='user.lastName', required)
+    .form-group
+        input.form-control(type='text', name='handle', placeholder='Handle', ng-model='user.handle', required)
+    .form-group
+        input.form-control(type='email', name='email', placeholder='Email', ng-model='user.email', required)
+    .form-group
+        input.form-control(type='tel', name='whatsapp', placeholder='Whatsapp N*', ng-model='user.whatsapp')
+    .form-group
+        button.btn-primary(class='form-control', type='submit', ng-click='save(user)', ng-show='editing', ng-disabled='userProfile.$invalid') Update!
+        

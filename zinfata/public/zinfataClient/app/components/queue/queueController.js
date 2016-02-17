@@ -6,23 +6,12 @@ app.controller('queueCtrl', ['$scope', '$rootScope', '$log', 'QueueSvc', 'Tracks
     /* If there are tracks, be sure to inflate 
     ** each track with album and artist info.*/ 
     if(!!trackIndexes.length) {
-        angular.forEach(trackIndexes, function(value, index) {
-            if(typeof value === 'string') {
-                TracksSvc.get(value, function(track) {
-                    UsersSvc.get(track.artist.id, function(user) {
-                        track.artist.handle = user.handle;
-                    }, function(err) {
-                        $log.error('Error getting queue track artist info: ' + err);
-                    });
-                    AlbumsSvc.get(track.album.id, function(album) {
-                        track.album.title  = album.title;
-                    }, function(err) {
-                        $log.error('Error getting queue track album info: ' + err);
-                    });
-                    $scope.queueTracks.push(track);   
-                }, function(err) {});
+        angular.forEach(trackIndexes, function(trackId, index) {
+            if(typeof trackId === 'string') {
+                TracksSvc.inflate(trackId, this, function(track) {}, 
+                function(err) {});
             }
-        });
+        }, $scope.queueTracks);
     }
 
     $scope.removeTrack = function(index) {
