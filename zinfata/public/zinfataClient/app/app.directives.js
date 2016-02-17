@@ -72,10 +72,10 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
       if(!Auth.isAuthenticated()) elm.hide();
       
       scope.$watch(function() { return Auth.isAuthenticated(); },  function(newVal, oldVal){
-        if(newVal !== oldVal){
+        if(newVal !== oldVal) {
           if(!!newVal){
             elm.show();
-          }else{
+          } else {
             elm.hide();
           }
         }
@@ -104,15 +104,25 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
       scope.volume  = '';
       /* On reload fetch and set last played song. */
       scope.track = QueueSvc.getCurrentTrack() && QueueSvc.getCurrentTrack().track;
-      if(scope.track) player.src = scope.track.streamUrl;
+      if(scope.track) {
+        player.src = scope.track.streamUrl;
+      } else {
+        elm.hide();
+      }
+
+      scope.$on(AUDIO.playPause, function() {
+        scope.playPause();
+      });
 
       scope.$on(AUDIO.set, function(event, track) {
         scope.track = track; 
         player.src  = track.streamUrl;
         // player.play();
         if(Auth.isAuthenticated()){
+          elm.show();
           scope.playPause();
         } else {
+          elm.hide();
           $rootScope.$broadcast(AUTH.notAuthenticated);
           MessageSvc.addMsg('danger', 'Log in first to access that resource!');
         } 
@@ -132,7 +142,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
 
       scope.playPause = function() {
         // scope.audio.paused ? scope.audio.play() : scope.audio.pause();
-        (player.paused ? player.play : player.pause)();
+        player.paused ? player.play() : player.pause();
       };
 
       // var stop = $interval(function() { scope.$apply(); }, 500);
@@ -229,6 +239,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
       var currentUser = session.getCurrentUser();
 
       function refresh() {
+        if(!!!currentUser._id) return;
         Playlists.find({ u_id: currentUser._id }, function(playlists) {
           scope.playlists = playlists;
         }, function(err) {});
@@ -266,17 +277,17 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
         });
       };
 
-      // scope.$watch(function() { return session.getCurrentUser() && session.getCurrentUser()._id; }, 
-      //              function(newVal, oldVal) {
-      //   if(newVal !== oldVal) {
-      //     currentUser = session.getCurrentUser();
-      //   }
+      scope.$watch(function() { return session.getCurrentUser() && session.getCurrentUser()._id; }, 
+                   function(newVal, oldVal) {
+        if(newVal !== oldVal) {
+          currentUser = session.getCurrentUser();
+        }
 
-      //   if('_id' in currentUser) {
-      //     scope.loggedIn = true;
-      //     refresh();
-      //   }
-      // });
+        if('_id' in currentUser) {
+          scope.loggedIn = true;
+          refresh();
+        }
+      });
 
       scope.$on(PLAYLIST.updateSuccess, function() {
         refresh();

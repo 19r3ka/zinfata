@@ -20,7 +20,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
         releaseDate: ''
     };
     /* This is a temporary fix playlist listing get its own directive
-    ** with its own controller and factory. */
+    ** with its own controller and factory. 
     PlaylistsSvc.find({a_id: Session.getCurrentUser()._id}, function(data) {
         $scope.playlists = data;
     }, function(err) {});
@@ -31,6 +31,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
 	$scope.creating    = false;
     $scope.uniqueCover = false;
 
+    */
     if($location.path() === '/track/new') $scope.creating = true;
 
     if($routeParams.trackId) {

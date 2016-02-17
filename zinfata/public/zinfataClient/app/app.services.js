@@ -465,12 +465,12 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
 app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', 'TracksSvc', 'SessionSvc',
                         function(queue, $rootScope, AUDIO, QUEUE, $log, TracksSvc, Session) {
   var self  = this,
-      owner = Session.getCurrentUser()._id;
+      owner = Session.getCurrentUser() && Session.getCurrentUser()._id;
 
   self.data = {
     currentlyPlaying: {
-      index: 0,
-      track: {}
+      index: null,
+      track: null
     },
     tracks: [] //index of tracks in queue
   };

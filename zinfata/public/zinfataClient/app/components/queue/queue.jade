@@ -3,14 +3,19 @@ p {{ queueTracks.length }} Tracks
 table.table(class='table-striped table-hover table-condensed')
     thead
         tr
+            th.col-md-1
             th.col-md-5 Title
             th.col-md-3 Album
-            th.col-md-3 Artist
+            th.col-md-2 Artist
             //- td Length -- TODO: record track's length into database
             //- options for interacting with the song
             th.col-md-1 
     tbody
         tr(ng-repeat='item in queueTracks track by $index')
+            td
+                a(href='#', ng-click='playPause($event, $index)')
+                    span.glyphicon(ng-if='$index !== nowLoaded', class='glyphicon-play')
+                    span.glyphicon(ng-if='$index === nowLoaded', class='glyphicon-volume-up')
             td 
                 a(href='/track/{{item._id}}') {{ item.title }} 
             td

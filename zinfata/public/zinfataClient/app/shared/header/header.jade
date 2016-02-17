@@ -7,8 +7,14 @@ nav.navbar(class='navbar-inverse', role='navigation', ng-controller='headerCtrl'
         | {{ user.handle }}
         b.caret
       ul.dropdown-menu
-        li.menu-item: a(href= '{{ userProfile(user) }}' ) Profile
+        li.menu-item: a(href= '{{ userProfile(user) }}' )
+          span.glyphicon(class='glyphicon-user')
+          |   Profile
         //- li.menu-item: a(href= '{{ userSettings(user) }}') Settings
-    li: a(href='#', ng-show='loggedIn', ng-click='logout()') Log Out
-    li: a(href='login', ng-hide='loggedIn') Log In
+    li: a(href='#', ng-show='loggedIn', ng-click='logout()')
+      span.glyphicon(class='glyphicon-log-out') 
+      |   Log Out
+    li: a(href='login', ng-hide='loggedIn')
+      span.glyphicon(class='glyphicon-log-in')
+      |   Log In
     li: a(href='register', ng-hide='loggedIn') Register

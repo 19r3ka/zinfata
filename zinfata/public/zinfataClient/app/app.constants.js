@@ -60,6 +60,7 @@ app.constant('ROUTES', {
   prev:                 'queue-previous-track'
 }).constant('AUDIO', {
   set:                  'audio-set',
+  playPause:           'audio-play-pause',
   playing:              'audio-playing',
   paused:               'audio-paused',
   ended:                'audio-ended'

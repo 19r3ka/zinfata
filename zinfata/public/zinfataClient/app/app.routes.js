@@ -26,7 +26,10 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider', function($ro
     }).
     when('/user/:userId', {
       templateUrl: '/partials/userProfile',
-      controller:  'userProfileCtrl'
+      controller:  'userProfileCtrl',
+      access: {
+        loginRequired: true
+      }
     }).
     when('/user/:userId/edit', {
       templateUrl: '/partials/userProfile',
@@ -43,8 +46,11 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider', function($ro
       }
     }).
     when('/album/:albumId', {
-        templateUrl: '/partials/album',
-        controller:  'albumCtrl'
+      templateUrl: '/partials/album',
+      controller:  'albumCtrl',
+      access: {
+        loginRequired: true
+      }
     }).
     when('/album/:albumId/edit', {
       templateUrl: '/partials/album',
@@ -55,11 +61,17 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider', function($ro
     }).
     when('/track/new', {
       templateUrl: '/partials/track',
-      controller:  'trackCtrl'
+      controller:  'trackCtrl',
+      access: {
+        loginRequired: true
+      }
     }).
     when('/track/:trackId', {
       templateUrl: '/partials/track',
-      controller:  'trackCtrl'
+      controller:  'trackCtrl',
+      access: {
+        loginRequired: true
+      }
     }).
     when('/track/:trackId/edit', {
       templateUrl: '/partials/track',
@@ -70,11 +82,17 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider', function($ro
     }).
     when('/playlist/new', {
       templateUrl: '/partials/playlist',
-      controller:  'playlistCtrl'
+      controller:  'playlistCtrl',
+      access: {
+        loginRequired: true
+      }
     }).
     when('/playlist/:playlistId', {
       templateUrl: '/partials/playlist',
-      controller:  'playlistCtrl'
+      controller:  'playlistCtrl',
+      access: {
+        loginRequired: true
+      }
     }).
     when('/playlist/:playlistId/edit', {
       templateUrl: '/partials/playlist',

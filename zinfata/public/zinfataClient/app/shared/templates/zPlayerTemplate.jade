@@ -8,39 +8,15 @@ div(ng-show='!!track')
         strong: a(href='/track/{{ track.album.id }}') {{ track.album.title }}
       h5 By 
         a(href='/track/{{ track.artist.id }}') {{ track.artist.handle }}
-  .row(class=audio-player)
-    //- input(type='range', min='0', max='{{ audio.duration }}', step='0.01', ng-model='audio.currentTime')
-    .btn-group
-        button.btn(class='btn-default', type='button', ng-click='prev()')
-          span.glyphicon(class='glyphicon-backward')
-        audio(controls)
-        button.btn(class='btn-default', type='button', ng-click='next()')
-          span.glyphicon(class='glyphicon-forward')  
-  //- .row
-    .btn-toolbar(class='player-controls', role='toolbar')
-      //- .btn-group
-        button.btn(class='btn-default', type='button')
-          span.glyphicon(class='glyphicon-eject')
-      .btn-group
-        button.btn(class='btn-default', type='button', ng-click='prev()')
-          span.glyphicon(class='glyphicon-backward')
-        //- button.btn(class='btn-default', type='button', ng-click='playPause()')
-          span.glyphicon(class='glyphicon-play', ng-show='!playing')
-          span.glyphicon(class='glyphicon-pause', ng-show='playing')
-        button.btn(class='btn-default', type='button', ng-click='next()')
-          span.glyphicon(class='glyphicon-forward')
-      //- .btn-group
-        button.btn(class='btn-default', type='button')
-          span.glyphicon(class='glyphicon-repeat')
-        button.btn(class='btn-default', type='button')
-          span.glyphicon(class='glyphicon-random')
-      //- .btn-group
-        button.btn(class='btn-default', type='button')
-          span.glyphicon(class='glyphicon-option-horizontal')
-      //- 
-      //- button.btn(class='btn-default dropdown-toggle', data-toggle='dropdown', type='button')
-        span.glyphicon(class='glyphicon-volume-up', ng-show='audio.volume >= .49')
-        span.glyphicon(class='glyphicon-volume-down', ng-show='audio.volume < .49 && audio.volume > 0')
-        span.glyphicon(class='glyphicon-volume-off', ng-show='audio.volume === 0')
-      //- ul.dropdown-menu
-        li: input(type='range', min='0', max='1', value='.60', step='0.01', ng-model='volume', ng-change='updateSound()')
+  .row(class='audio-player')
+    audio(controls)
+  //- .row(class='audio-player')
+    .col-md-2
+      button.btn(class='btn-default', type='button', ng-click='prev()')
+        span.glyphicon(class='glyphicon-backward')
+    .col-md-12
+      audio(controls)
+    .col-md-2
+      button.btn(class='btn-default', type='button', ng-click='next()')
+        span.glyphicon(class='glyphicon-forward')  
+  
