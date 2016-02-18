@@ -11,7 +11,6 @@ var OAuthAccessTokenSchema = new mongoose.Schema({
 
 OAuthAccessTokenSchema.pre('save', function(next){
    var self = this;
-
 	//validate client id
 	OAuthClient.findOne({clientId: self.clientId}, function(err, client){
 
@@ -33,7 +32,6 @@ OAuthAccessTokenSchema.statics.getAccessToken = function (bearerToken, callback)
 
 OAuthAccessTokenSchema.statics.saveAccessToken = function (token, clientId, expires, userId, callback) {
   console.log('in saveAccessToken (token: ' + token + ', clientId: ' + clientId + ', userId: ' + userId + ', expires: ' + expires + ')');
-
   var accessToken = new OAuthAccessTokenModel({
     accessToken: token,
     clientId: clientId,

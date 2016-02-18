@@ -1,5 +1,5 @@
 var mongoose    = require('mongoose'),
-    Album       = require('./Album.js'),
+   // Album       = require('./Album.js'),
     bcrypt      = require('bcrypt'),
     crypto      = require('crypto'),
     emailRegex  = new RegExp("^[-a-z0-9~!$%^&*_=+}{\\'?]+(\\.[-a-z0-9~" +
