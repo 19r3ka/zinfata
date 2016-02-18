@@ -535,7 +535,14 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
 
   self.removeTrackAt   = function(index, success, failure) {
     self.getTracks();
-    if(!!self.data.tracks.splice(index, 1).length){
+    if(!!self.data.tracks.splice(index, 1).length) {
+      if(self.data.currentlyPlaying.index > index) {
+        self.data.currentlyPlaying.index--;
+      } else if(self.data.currentlyPlaying.index === index) {
+        self.getTrackAt(index + 1, function(track) {
+          self.play(track, index);
+        }, function(){})
+      }
       self.saveQueue();
       success(index);
     } else {

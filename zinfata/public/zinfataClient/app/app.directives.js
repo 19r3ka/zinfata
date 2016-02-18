@@ -239,7 +239,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
       var currentUser = session.getCurrentUser();
 
       function refresh() {
-        if(!!!currentUser._id) return;
+        if(!currentUser) return;
         Playlists.find({ u_id: currentUser._id }, function(playlists) {
           scope.playlists = playlists;
         }, function(err) {});
@@ -283,7 +283,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
           currentUser = session.getCurrentUser();
         }
 
-        if('_id' in currentUser) {
+        if(currentUser) {
           scope.loggedIn = true;
           refresh();
         }
