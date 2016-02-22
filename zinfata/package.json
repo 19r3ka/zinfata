@@ -27,6 +27,7 @@
     "request": "^2.67.0",
     "serve-favicon": "~2.3.0",
     "styliner": "^0.8.9",
+    "underscore": "^1.8.3",
     "wagner-core": "^0.2.0"
   },
   "devDependencies": {

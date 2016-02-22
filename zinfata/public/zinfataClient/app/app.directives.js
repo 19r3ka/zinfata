@@ -175,8 +175,8 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
     templateUrl: '/templates/zAlbumListing'
   };
 }])
-.directive('zTrackListing', ['TracksSvc', 'SessionSvc', '$log', 
-                            function(Tracks, session, $log) {
+.directive('zTrackListing', ['TracksSvc', 'SessionSvc', 'QueueSvc', '$log', 
+                            function(Tracks, session, Queue, $log) {
   return {
     restrict: 'E',
     scope: {
@@ -204,6 +204,14 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
           if(session.getCurrentUser() && (session.getCurrentUser()._id === owner)) scope.isOwner = true;
         } 
       });
+
+      scope.play = function(track) {
+        Queue.playNow(track);
+      };
+
+      scope.addToQueue = function(track) {
+        Queue.addTrack(track);
+      };
     },
     templateUrl: '/templates/zTrackListing'
   };

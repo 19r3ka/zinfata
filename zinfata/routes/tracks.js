@@ -147,10 +147,9 @@ module.exports = function(wagner) {
     }
 
     query[key] = req.params.resource_id;
-    console.log(query);
     Track.find(query, function(err, tracks) {
       if(err) return next(err);
-      if(!track) return next(new zerror('not_found', 'Track not found'));
+      if(!tracks) return next(new zerror('not_found', 'Track not found'));
       res.json(tracks);
     });
   });
