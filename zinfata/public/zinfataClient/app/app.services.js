@@ -321,22 +321,23 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc',
   };
 
   this.inflate = function(index, container, success, failure) {
-    this.get(index, function(track) {
-      UsersSvc.get(track.artist.id, function(user) {
-          track.artist.handle = user.handle;
+    if(!index) return $log.debug('there is no index sent to Tracks.inflate.')
+      this.get(index, function(track) {
+        UsersSvc.get(track.artist.id, function(user) {
+            track.artist.handle = user.handle;
+        }, function(err) {
+            $log.error('Error inflating track artist info: ' + err);
+        });
+        AlbumsSvc.get(track.album.id, function(album) {
+            track.album.title  = album.title;
+        }, function(err) {
+            $log.error('Error inflating track album info: ' + err);
+        });
+        if(!!container) container.push(track); 
+        success(track);
       }, function(err) {
-          $log.error('Error inflating track artist info: ' + err);
+        failure(err);
       });
-      AlbumsSvc.get(track.album.id, function(album) {
-          track.album.title  = album.title;
-      }, function(err) {
-          $log.error('Error inflating track album info: ' + err);
-      });
-      if(!!container) container.push(track); 
-      success(track);
-    }, function(err) {
-      failure(err);
-    });
   };
 
   this.delete = function(track, success, failure) {
@@ -551,8 +552,8 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
   };
   /* User clicks on a track's playNow button */
   self.playNow         = function(track) {
-    var newIndex  = 0,
-        queueCue  = self.data.currentlyPlaying.index;
+    var newIndex = 0,
+        queueCue = self.data.currentlyPlaying.index;
     
     self.getTracks();
     /* If there is a queue, stick the track in after

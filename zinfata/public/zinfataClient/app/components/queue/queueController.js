@@ -33,6 +33,7 @@ app.controller('queueCtrl', ['$scope', '$rootScope', '$log', 'QueueSvc', 'Tracks
     $scope.removeTrack = function(index) {
         QueueSvc.removeTrackAt(index, function(index) {
             $scope.queueTracks.splice(index, 1);
+            $rootScope.$broadcast(AUDIO.set);
         }, function(err) {
             $log.error(err);
         });
