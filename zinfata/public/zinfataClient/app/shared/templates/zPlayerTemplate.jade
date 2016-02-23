@@ -1,22 +1,20 @@
-div(ng-show='!!track')
-  .row
-    a.thumbnail
-      img(ng-src='{{ track.coverArt }}', alt='cover art')
-    .track-info
-      h4: a(href='/track/{{ track._id }}') {{ track.title }} 
-        |  - 
-        strong: a(href='/track/{{ track.album.id }}') {{ track.album.title }}
-      h5 By 
-        a(href='/track/{{ track.artist.id }}') {{ track.artist.handle }}
-  .row(class='audio-player')
+.row
+  a.thumbnail
+    img(ng-src='{{ track.coverArt }}', alt='cover art')
+  .track-info
+    h4: a(href='/track/{{ track._id }}') {{ track.title }} 
+      |  - 
+      strong: a(href='/track/{{ track.album.id }}') {{ track.album.title }}
+    h5 By 
+      a(href='/track/{{ track.artist.id }}') {{ track.artist.handle }}
+.row(class='audio-player')
+  audio(controls)
+//- .row(class='audio-player')
+  .col-md-2
+    button.btn(class='btn-default', type='button', ng-click='prev()')
+      span.glyphicon(class='glyphicon-backward')
+  .col-md-12
     audio(controls)
-  //- .row(class='audio-player')
-    .col-md-2
-      button.btn(class='btn-default', type='button', ng-click='prev()')
-        span.glyphicon(class='glyphicon-backward')
-    .col-md-12
-      audio(controls)
-    .col-md-2
-      button.btn(class='btn-default', type='button', ng-click='next()')
-        span.glyphicon(class='glyphicon-forward')  
-  
+  .col-md-2
+    button.btn(class='btn-default', type='button', ng-click='next()')
+      span.glyphicon(class='glyphicon-forward')  
