@@ -67,14 +67,12 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
   return {
     restrict: 'E',
     link: function(scope, elm, attrs, ctrl) {
-
-      scope.$watch(function() { return Auth.isAuthenticated() && !!scope.track.streamUrl; },  function(newVal, oldVal){
-        if(newVal !== oldVal) {
-          if(!!newVal) {
-            elm.show();
-          } else {
-            elm.hide();
-          }
+      if(!Auth.isAuthenticated() || !scope.track || !scope.track.streamUrl) elm.hide();
+      scope.$watch(function() { return Auth.isAuthenticated() && (scope.track && !!scope.track.streamUrl) },  function(newVal, oldVal) {
+        if(!!newVal) {
+          elm.show();
+        } else {
+          elm.hide();
         }
       });
 

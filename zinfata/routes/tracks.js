@@ -65,7 +65,7 @@ module.exports = function(wagner) {
 
     if(!!req.files.audioFile) {
       new_track.streamUrl = req.files.audioFile[0].path;
-      // new_track.size      = req.files.audioFile[0].size;
+      new_track.length    = req.files.audioFile[0].size;
     }
     /*
      *Make sure artist exists and that the album is really his
@@ -109,7 +109,7 @@ module.exports = function(wagner) {
 
       if(!!req.files.audioFile) {
         trackToUpdate.streamUrl = req.files.audioFile[0].path;
-        // new_track.size      = req.files.audioFile[0].size;
+        trackToUpdate.length    = req.files.audioFile[0].size;
       }
       
       trackToUpdate.save(function(err, updated_track) {
