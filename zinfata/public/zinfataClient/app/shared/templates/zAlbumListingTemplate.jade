@@ -16,7 +16,9 @@
                         h5.list-group-item-heading: a(href='album/{{ album._id }}') {{ album.title }}
                         h6: a(href='user/{{ artist._id }}') {{ artist.handle }}
                         .metrics
-                            //- tracks min likes
+                            ul.list-inline
+                                li: ng-pluralize(count='album.trackLength', when="{'0': '0 track', '1': '1 track', 'other': '{} tracks'}")
+                                li duration: {{ album.duration | duration2time }} 
                     .col-md-2
                         //- button.btn-lg(class='btn-default btn-block', type='button', ng-click='queueUp(album)')
                             span.glyphicon(class='glyphicon-play-circle')

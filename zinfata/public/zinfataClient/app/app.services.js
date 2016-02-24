@@ -285,13 +285,13 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc',
 
   this.get = function(trackId, success, failure) {
     Tracks.get({ id: trackId }, function(data) {
-      data.artist       = { id: data.artistId };
-      data.album        = { id: data.albumId };
-      data.releaseDate  = new Date(data.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
+      data.artist      = { id: data.artistId };
+      data.album       = { id: data.albumId };
+      data.releaseDate = new Date(data.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
       delete data.artistId;
       delete data.albumId;                                  
-      if(!!data.coverArt) data.coverArt    = '../../' + data.coverArt.split('/').slice(1).join('/');         // 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
-      if(!!data.streamUrl) data.streamUrl  = '../../' + data.streamUrl.split('/').slice(1).join('/');
+      if(!!data.coverArt) data.coverArt   = '../../' + data.coverArt.split('/').slice(1).join('/');  // 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
+      if(!!data.streamUrl) data.streamUrl = '../../' + data.streamUrl.split('/').slice(1).join('/');
       success(data);
     }, function(err) {
       failure(err);
@@ -306,9 +306,9 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc',
     if(!!search) {
       Tracks.find(search, function(tracks) {
         angular.forEach(tracks, function(track) {
-          track.artist       = { id: track.artistId };
-          track.album        = { id: track.albumId };
-          track.releaseDate  = new Date(track.releaseDate);
+          track.artist      = { id: track.artistId };
+          track.album       = { id: track.albumId };
+          track.releaseDate = new Date(track.releaseDate);
           if(!!track.coverArt && (track.coverArt.search('track-coverart-placeholder') === -1)) track.coverArt   = '../../' + track.coverArt.split('/').slice(1).join('/');
           if(!!track.streamUrl) track.streamUrl = '../../' + track.streamUrl.split('/').slice(1).join('/');
         });
@@ -343,9 +343,9 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc',
 
   this.delete = function(track, success, failure) {
     return Tracks.delete({id: track._id}, function(data) {
-      data.artist       = { id: data.artistId };
-      data.album        = { id: data.albumId };
-      data.releaseDate  = new Date(data.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
+      data.artist      = { id: data.artistId };
+      data.album       = { id: data.albumId };
+      data.releaseDate = new Date(data.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
       delete data.artistId;
       delete data.albumId;
       return success(data);

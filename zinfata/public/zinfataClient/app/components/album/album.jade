@@ -24,6 +24,9 @@
             h3 {{ album.title }}
             h4: a(href='/user/{{ album.artistId }}') {{ album.artist }}
             .metrics
+                ul.list-inline
+                    li: ng-pluralize(count='album.trackLength', when="{'0': '0 track', '1': '1 track', 'other': '{} tracks'}")
+                    li duration: {{ album.duration | duration2time }}
 
 form(name='albumForm', enctype= 'multipart/form-data', ng-if='editing || creating', role='form', novalidate)
     .form-group

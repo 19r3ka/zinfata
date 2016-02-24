@@ -1,5 +1,5 @@
-app.controller('albumCtrl', ['$scope', '$rootScope', '$location', '$routeParams', 'SessionSvc', 'QueueSvc', 'AlbumsSvc', 'UsersSvc', 'MessageSvc', 'ALBUM_EVENTS', '$log',
-                            function($scope, $rootScope, $location, $routeParams, Session, Queue, AlbumsSvc, User, MessageSvc, ALBUM_EVENTS, $log) {
+app.controller('albumCtrl', ['$scope', '$rootScope', '$location', '$routeParams', 'SessionSvc', 'TracksSvc', 'QueueSvc', 'AlbumsSvc', 'UsersSvc', 'MessageSvc', 'ALBUM_EVENTS', '$log',
+                            function($scope, $rootScope, $location, $routeParams, Session, Tracks, Queue, AlbumsSvc, Users, MessageSvc, ALBUM_EVENTS, $log) {
 	$scope.album = {
         coverArt:       '',
         imageUrl:       'zinfataClient/assets/images/album-coverart-placeholder.png',
@@ -15,16 +15,27 @@ app.controller('albumCtrl', ['$scope', '$rootScope', '$location', '$routeParams'
 
     if($routeParams.albumId){
         AlbumsSvc.get($routeParams.albumId, function(data) {
-    		$scope.album = data;
-    		if(!!$scope.album.artistId && ($scope.album.artistId === Session.getCurrentUser()._id)) $scope.canEdit = true;
+    		$scope.album              = data;
+            $scope.album.duration     = 0;
+            $scope.album.trackLength  = 0;
+            var duration              = 0;
+    		
+            if(!!$scope.album.artistId && ($scope.album.artistId === Session.getCurrentUser()._id)) $scope.canEdit = true;
             if($location.path() === '/album/' + $routeParams.trackId + '/edit') {
                 $scope.canEdit ? $scope.editing = true : $location.path('album/' + $routeParams.albumId);
             }
-            User.get($scope.album.artistId, function(user) {
+            Users.get($scope.album.artistId, function(user) {
                 $scope.album.artist = user.handle;
             }, function(err) {
                 $scope.album.artist = 'unknown';
-            })
+            });
+            Tracks.find({a_id: data._id} , function(tracks) {
+                angular.forEach(tracks, function(track) {
+                    $scope.album.trackLength++;
+                    duration               = parseInt(track.duration);
+                    $scope.album.duration += duration;
+                });
+            }, function(err) {});
     	}, function(err) {
     		$location.path('/');
     	});
@@ -67,7 +78,10 @@ app.controller('albumCtrl', ['$scope', '$rootScope', '$location', '$routeParams'
     };
 
     $scope.update = function(album) {
+        if($scope.album.duration)    $scope.album.duration;
+        if($scope.album.trackLength) $scope.album.trackLength;
         if(!album.artistId) album.artistId = Session.getCurrentUser()._id;
+        
         AlbumsSvc.update(album, function(updated_album) {
             $rootScope.$broadcast(ALBUM_EVENTS.updateSuccess);
             MessageSvc.addMsg('success', 'You have successfully updated the album info');

@@ -139,7 +139,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
     templateUrl: '/templates/zPlayer'
   };
 }])
-.directive('zAlbumListing', ['AlbumsSvc', 'SessionSvc', '$log', function(Albums, session, $log) {
+.directive('zAlbumListing', ['AlbumsSvc', 'TracksSvc', 'SessionSvc', '$log', function(Albums, Tracks, session, $log) {
   return {
     restrict: 'E',
     scope: {
@@ -147,7 +147,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
     },
     link: function(scope, elm, attrs) {
       scope.isOwner = false;
-      scope.albums = {};
+      scope.albums = [];
       scope.queueUp = function(album) {
         // add every track in the queue. Add function in AlbumsSvc to do so.
       };
@@ -155,7 +155,19 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
       scope.$watch(function(){ return scope.artist._id;}, function(val) {
         if(val !== undefined) {
           Albums.getByUser({ _id: val }, function(albums) {
-            scope.albums = albums;
+            angular.forEach(albums, function(album) {
+              album.duration    = 0;
+              album.trackLength = 0;
+              Tracks.find({a_id: album._id} , function(tracks) {
+                angular.forEach(tracks, function(track) {
+                    album.trackLength++;
+                    duration       = parseInt(track.duration);
+                    album.duration += duration;
+                });
+              }, function(err) {});
+              this.push(album);
+            }, scope.albums);
+            // scope.albums = albums;
           }, function(err) {});
           if(!!session.getCurrentUser() && (val === session.getCurrentUser()._id)) scope.isOwner = true;
         } 
