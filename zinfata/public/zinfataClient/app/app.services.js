@@ -353,13 +353,6 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc',
       return failure(err);
     });
   };
-
-  this.duration2time = function(duration) {
-    if(!angular.isNumber(duration)) return;
-    var minutes = '0' + Math.floor(duration / 60),
-        seconds = '0' + Math.floor(duration) % 60;
-    return minutes.substr(-2) + ':' + seconds.substr(-2);      
-  };
 }]);
 app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
   this.create = function(playlist, success, failure) {

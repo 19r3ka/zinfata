@@ -19,6 +19,9 @@
                     .col-md-6
                         .metrics
                             ul.list-inline
+                                li duration: {{ track.duration | duration2time }}
+                        .interactions
+                            ul.list-inline
                                 li: a(href='', ng-click='play(track)') 
                                     span.glyphicon(class='glyphicon-play')
                                     |  Play now

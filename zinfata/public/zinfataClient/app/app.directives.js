@@ -206,7 +206,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
   };
 }])
 .directive('zDetailedTrackListing', ['PlaylistsSvc', 'QueueSvc', '$log', 
-                            function(Playlists, Queue, $log) {
+                                  function(Playlists, Queue, $log) {
   return {
     restrict: 'E',
     scope: {
