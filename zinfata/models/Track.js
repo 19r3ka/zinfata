@@ -4,7 +4,8 @@ var TrackSchema = new mongoose.Schema( {
   title: 		{ type: String, required: true, lowercase: true },
   artistId:  	{ type: String, required: true },
   feat:       	{ type: Array, default: [] }, //for the IDs of all contributing artists
-  length:       { type: String, required: true },
+  size:         { type: String, required: true },
+  duration:     { type: String, required: true },
   albumId:   	{ type: String, required: true },
   coverArt: 	{ type: String, required: true },
   streamUrl: 	{ type: String, required: true },

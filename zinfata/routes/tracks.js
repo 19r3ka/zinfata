@@ -54,7 +54,8 @@ module.exports = function(wagner) {
       artistId:     req.body.artistId,
       albumId:      req.body.albumId,
       releaseDate:  req.body.releaseDate || '',
-      feat:         req.body.feat || []
+      feat:         req.body.feat || [],
+      duration:     req.body.duration
     });
 
     if(!!req.files.imageFile) {
@@ -65,7 +66,7 @@ module.exports = function(wagner) {
 
     if(!!req.files.audioFile) {
       new_track.streamUrl = req.files.audioFile[0].path;
-      new_track.length    = req.files.audioFile[0].size;
+      new_track.size      = req.files.audioFile[0].size;
     }
     /*
      *Make sure artist exists and that the album is really his
@@ -109,7 +110,7 @@ module.exports = function(wagner) {
 
       if(!!req.files.audioFile) {
         trackToUpdate.streamUrl = req.files.audioFile[0].path;
-        trackToUpdate.length    = req.files.audioFile[0].size;
+        trackToUpdate.size      = req.files.audioFile[0].size;
       }
       
       trackToUpdate.save(function(err, updated_track) {

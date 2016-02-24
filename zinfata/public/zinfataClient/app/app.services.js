@@ -251,6 +251,7 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc',
       albumId:      track.album.id,
       feat:         track.feat,
       streamUrl:    track.streamUrl,
+      duration:     track.duration,
       coverArt:     track.coverArt,
       imageFile:    track.imageFile,
       audioFile:    track.audioFile,
@@ -351,6 +352,13 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc',
     }, function(err) {
       return failure(err);
     });
+  };
+
+  this.duration2time = function(duration) {
+    if(!angular.isNumber(duration)) return;
+    var minutes = '0' + Math.floor(duration / 60),
+        seconds = '0' + Math.floor(duration) % 60;
+    return minutes.substr(-2) + ':' + seconds.substr(-2);      
   };
 }]);
 app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {

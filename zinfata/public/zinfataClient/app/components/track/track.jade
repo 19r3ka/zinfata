@@ -52,8 +52,8 @@ form(name='trackInfo', role='form', ng-if='creating || editing', novalidate)
                             
     .form-group
         label(for='music') Track:
-        input.form-control(type='file', name='music', accept='audio/*', onchange='angular.element(this).scope().getFile(this)', ng-required='creating')
-        audio(ng-src='{{ track.streamUrl }}', preload='auto', loop='true', ng-show='track.streamUrl', controls)
+        input.form-control(type='file', name='music', accept='audio/*', onchange='angular.element(this).scope().readFile(this)', ng-required='creating')
+        //- audio(name='musicPreview', ng-src='{{ track.streamUrl }}', preload='auto', loop='true', ng-show='track.streamUrl', controls)
                     |  Your browser does not support this type of audio file !
     .form-group
         label(for='album') Album:	

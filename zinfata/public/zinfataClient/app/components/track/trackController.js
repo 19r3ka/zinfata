@@ -17,21 +17,10 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
         },
         streamUrl:   '',
         coverArt: '',
+        duration: '',
         releaseDate: ''
     };
-    /* This is a temporary fix playlist listing get its own directive
-    ** with its own controller and factory. 
-    PlaylistsSvc.find({a_id: Session.getCurrentUser()._id}, function(data) {
-        $scope.playlists = data;
-    }, function(err) {});
-
-	$scope.albums 	   = {};
-    $scope.canEdit     = false;
-	$scope.editing     = false;
-	$scope.creating    = false;
-    $scope.uniqueCover = false;
-
-    */
+    
     if($location.path() === '/track/new') $scope.creating = true;
 
     if($routeParams.trackId) {
@@ -100,6 +89,15 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
         }
     });
 
+    $scope.$watch(function() { return $scope.track.streamUrl; }, function(newValue, oldValue) {
+        if(newValue !== oldValue) {
+            var audio = new Audio(newValue);
+            audio.onloadedmetadata = function() {
+                $scope.track.duration = audio.duration;
+            }
+        }
+    });
+
 	$scope.readFile = function(elem) {
         var file    = elem.files[0];
         var reader  = new FileReader();
@@ -110,10 +108,10 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
                     $scope.track.coverArt   = userAddedFile = reader.result;
                 }
             // Reading large mp3 files causes the browser to crash.    
-            /*    if(elem.name='music') {
-                    $scope.track.file = file;
+                if(elem.name === 'music') {
+                    $scope.track.audioFile  = file;
                     $scope.track.streamUrl  = $sce.trustAsResourceUrl(reader.result);
-                } */
+                } 
             });
         };
         reader.readAsDataURL(file);
@@ -140,6 +138,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
 
     $scope.create = function(track) {
         track.artist.id = Session.getCurrentUser()._id;
+        delete track.streamUrl;
         TracksSvc.create(track, function(created_track) {
             $rootScope.$broadcast(TRACK_EVENTS.createSuccess);
             MessageSvc.addMsg('success', 'You have successfully added a new track!');
@@ -151,6 +150,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
     };
 
 	$scope.update = function(track) {
+        delete track.streamUrl;
         TracksSvc.update(track, function(updated_track) {
             $rootScope.$broadcast(TRACK_EVENTS.updateSuccess);
             MessageSvc.addMsg('success', 'You have successfully updated this track!');
