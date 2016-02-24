@@ -11,14 +11,15 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
         tracks:  []
     };
     $scope.playlistTracks = []; // array of inflated track metadata objects
-    $scope.canEdit  = false;
-    $scope.creating = false;
-    $scope.editing  = false;
+    $scope.canEdit        = false;
+    $scope.creating       = false;
+    $scope.editing        = false;
 
     if($location.path() === '/playlist/new') $scope.creating = true;
     
     if(!!$routeParams.playlistId) {
         PlaylistsSvc.get($routeParams.playlistId, function(data) {
+            data.duration = 0;
             if(!!data.owner.id && (data.owner.id === Session.getCurrentUser()._id)) $scope.canEdit = true;
             if($location.path() === '/playlist/' + $routeParams.playlistId + '/edit') {
                 $scope.canEdit ? $scope.editing = true : $location.path('/playlist/' + $routeParams.playlistId);
@@ -34,9 +35,13 @@ app.controller('playlistCtrl', ['$scope', '$rootScope', '$location', '$log', '$r
             /* If there are tracks, be sure to inflate 
             ** each track with album and artist info. */
             if(!!data.tracks.length) {
+                var duration = 0;
                 angular.forEach(data.tracks, function(trackId, index) {
-                    if(typeof trackId === 'string') {
+                    if(typeof trackId === 'string') {        
                         TracksSvc.inflate(trackId, $scope.playlistTracks, function(track) {
+                            duration = parseInt(track.duration);
+                            if(!angular.isNumber(duration)) duration = 0;
+                            data.duration += duration;
                         }, function(err) {});
                     }
                 });

@@ -271,6 +271,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
         Playlists.create(playlist, function(created_playlist) {
           $rootScope.$broadcast(PLAYLIST.createSuccess);
           scope.playlists.push(playlist);
+          scope.playlist.title = '';
         }, function(err) {
           $rootScope.$broadcast(PLAYLIST.createFailed);
         });

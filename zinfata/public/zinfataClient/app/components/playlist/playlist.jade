@@ -7,12 +7,12 @@ form(name='PlaylistForm', role='form')
     .form-group
         input.form-control(type='text', name='title', placeholder='Enter playlist name', ng-model='playlist.title', ng-disabled='!editing && !creating', autofocus, required)
         div(ng-if='!editing && !creating')
-            p
-                span(#artistName)
+            ul.list-inline
+                li
                     |  Created by
                     em
                         a(href='/user/{{ playlist.owner.id }}')   {{ playlist.owner.handle }}
-                .dropdown(class='pull-right', ng-show='canEdit && !editing')
+                li.dropdown(class='pull-right', ng-show='canEdit && !editing')
                     a.dropdown-toggle(data-toggle='dropdown', id='dropdownMenu', aria-haspopup='true', aria-expanded='true')
                         span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
                     ul.dropdown-menu(aria-labelledby='dropdownMenu')
@@ -22,13 +22,10 @@ form(name='PlaylistForm', role='form')
                         li.bg-danger(ng-click='delete(playlist)'): a(href='')
                             span.glyphicon(class='glyphicon-remove')
                             | Delete
-            p.item-info
-                span.song-count
-                    em
-                        ng-pluralize(count='playlistTracks.length', when="{'0': '0 Song', '1': '1 Song', 'other': '{} Songs'}")
+            ul.list-inline(class='metrics')
+                li: ng-pluralize(count='playlistTracks.length', when="{'0': '0 track', '1': '1 track', 'other': '{} tracks'}")
 
-                //- span.playlist-length
-                    |  123 minutes               
+                li duration: {{ playlist.duration | duration2time }}               
     .form-group
         button.btn(type='submit', ng-click='create(playlist)', ng-show='creating', class=['btn-primary', 'form-control'], ng-disabled='playlistForm.$invalid') Create Playlist!
         button.btn(type='submit', ng-click='update(playlist)', ng-show='editing', class=['btn-primary', 'form-control'], ng-disabled='playlistForm.$invalid') Save Changes!
