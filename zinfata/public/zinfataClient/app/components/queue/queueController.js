@@ -3,12 +3,12 @@ app.controller('queueCtrl', ['$scope', '$rootScope', '$log', 'QueueSvc', 'Tracks
     $scope.queueTracks   = [];
     $scope.nowLoaded     = QueueSvc.getCurrentTrack() && QueueSvc.getCurrentTrack().index;
     $scope.queueDuration = 0;
-    var trackIndexes     = QueueSvc.getTracks();
+    var trackIndexes     = QueueSvc.getTracks(),
+        duration         = 0;
 
     /* If there are tracks, be sure to inflate 
     ** each track with album and artist info.*/ 
     if(!!trackIndexes.length) {
-        var duration = 0;
         angular.forEach(trackIndexes, function(trackId, index) {
             if(typeof trackId === 'string') {
                 TracksSvc.inflate(trackId, this, function(track) {
@@ -23,6 +23,17 @@ app.controller('queueCtrl', ['$scope', '$rootScope', '$log', 'QueueSvc', 'Tracks
 
     $scope.$on(AUDIO.set, function() {
         $scope.nowLoaded = QueueSvc.getCurrentTrack() && QueueSvc.getCurrentTrack().index;  
+    });
+
+    $scope.$watch(function(){ return $scope.queueTracks.length; }, function(newVal, oldVal) {
+        if(newVal !== oldVal) {
+            $scope.queueDuration = 0;
+            angular.forEach($scope.queueTracks, function(track) {
+                duration = parseInt(track.duration);
+                if(!angular.isNumber(duration)) duration = 0;
+                $scope.queueDuration += duration;
+            });
+        }
     });
 
     $scope.playPause   = function(event, index) {
