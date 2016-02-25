@@ -21,7 +21,7 @@
                     h5: a(href='/user/{{ track.artist.id }}') {{ track.artist.handle }}
             
                     ul.list-inline(class='metrics')
-                        li duration: {{ track.duration | duration2time }}
+                        li duration: {{ track.duration | duration2time }} 
             
                     ul.list-inline(class='interactions')
                         li: a(href='', ng-click='play(track)') 
@@ -65,5 +65,5 @@ form(name='trackInfo', role='form', ng-if='creating || editing', novalidate)
         .help-block(ng-messages='trackInfo.releaseDate.$error', ng-show='trackInfo.releaseDate.$touched', ng-hide='trackInfo.releaseDate.$submitted')
             div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
     .form-group
-        button.btn-primary(class='form-control', type='submit', ng-click='create(track)', ng-show='creating', ng-disabled='trackInfo.$invalid') Add this track!
-        button.btn-primary(class='form-control', type='submit', ng-click='update(track)', ng-show='canEdit && editing', ng-disabled='trackInfo.$invalid') Save cshanges!
+        button.btn-primary(class='form-control', type='submit', ng-click='create(track)', ng-show='creating', ng-disabled='trackInfo.$invalid') Upload track!
+        button.btn-primary(class='form-control', type='submit', ng-click='update(track)', ng-show='canEdit && editing', ng-disabled='trackInfo.$invalid') Save changes!

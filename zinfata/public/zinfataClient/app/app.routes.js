@@ -113,7 +113,7 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider', function($ro
   $locationProvider.html5Mode(true);
   $httpProvider.interceptors.push('APIInterceptor');
 }])
-.run(function($rootScope, $location, $log, AuthenticationSvc, AUTH, UsersSvc) {
+.run(function($rootScope, $location, $log, AuthenticationSvc, AUTH, MessageSvc, UsersSvc) {
   /*variable to capture user's final destination
     in case of redirection to the /login page
     on protected route requests. */
@@ -131,6 +131,7 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider', function($ro
       authorized = AuthenticationSvc.authorize(next.access.loginRequired);
       if(authorized === AUTH.mustLogIn) {
         loginRedirectUrl = $location.url();
+        MessageSvc.addMsg('warning', 'You must log-in first to access that resource.');
         $location.path('login'); 
       } else if(authorized === AUTH.notAuthorized) {
         // $location.path(403page);

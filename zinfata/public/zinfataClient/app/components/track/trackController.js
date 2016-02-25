@@ -80,7 +80,6 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
                 coverArts[$scope.albums[i]._id]    = $scope.albums[i].imageUrl;
                 releaseDates[$scope.albums[i]._id] = $scope.albums[i].releaseDate;
             } 
-            $log.debug(releaseDates);
         });
     }
     /* 
