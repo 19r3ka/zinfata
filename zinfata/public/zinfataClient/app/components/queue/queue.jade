@@ -20,8 +20,8 @@
                 tr(ng-repeat='item in queueTracks track by $index')
                     td
                         a(href='#', ng-click='playPause($event, $index)')
-                            span.glyphicon(ng-if='$index !== nowLoaded', class='glyphicon-play')
-                            span.glyphicon(ng-if='$index === nowLoaded', class='glyphicon-volume-up')
+                            span.glyphicon(ng-show='$index !== nowLoaded', class='glyphicon-play')
+                            span.glyphicon(ng-show='$index === nowLoaded', class='glyphicon-volume-up')
                     td 
                         a(href='/track/{{item._id}}') {{ item.title }} 
                     td

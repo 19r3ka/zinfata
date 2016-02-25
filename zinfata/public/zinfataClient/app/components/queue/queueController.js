@@ -48,9 +48,9 @@ app.controller('queueCtrl', ['$scope', '$rootScope', '$log', 'QueueSvc', 'Tracks
     };
 
     $scope.removeTrack = function(index) {
-        QueueSvc.removeTrackAt(index, function(index) {
+        QueueSvc.removeTrackAt(index, function() {
             $scope.queueTracks.splice(index, 1);
-            $rootScope.$broadcast(AUDIO.set);
+            if($scope.nowLoaded >= index) $scope.nowLoaded = QueueSvc.getCurrentTrack() && QueueSvc.getCurrentTrack().index;  
         }, function(err) {
             $log.error(err);
         });

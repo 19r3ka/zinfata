@@ -531,7 +531,9 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
     if(!!self.data.tracks.length) {
       TracksSvc.inflate(self.data.tracks[index], null, function(track) {
         success(track);
-      }, function(err) {failure(err);});
+      }, function(err) { failure(err);} );
+    } else {
+      failure('No tracks to fetch');
     }
   }; 
 
@@ -541,7 +543,8 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
       if(self.data.currentlyPlaying.index > index) {
         self.data.currentlyPlaying.index--;
       } else if(self.data.currentlyPlaying.index === index) {
-        self.getTrackAt(index + 1, function(track) {
+        if(index >= self.data.tracks.length) index = 0;
+        self.getTrackAt(index, function(track) {
           self.play(track, index);
         }, function(){})
       }
