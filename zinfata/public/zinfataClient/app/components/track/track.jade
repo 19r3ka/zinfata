@@ -40,7 +40,7 @@ form(name='trackInfo', role='form', ng-if='creating || editing', novalidate)
     .form-group
         .row
             .col-md-3
-                 img.img-circle(class='img-responsive center-block', height='100', name= 'coverArtPreview', alt='{{ track.title }}', ng-src='{{ track.coverArt }}')
+                 img.img-circle(class='img-responsive center-block', height='100', name='coverArtPreview', alt='{{ track.title }}', ng-src='{{ track.coverArt }}')
             .col-md-9
                 .row
                     .col-md-12
@@ -50,8 +50,7 @@ form(name='trackInfo', role='form', ng-if='creating || editing', novalidate)
                         label(ng-show='uniqueCover') Cover Art:
                             input.form-control(type='file', name='avatar', accept='image/*', onchange='angular.element(this).scope().readFile(this)')
     .form-group
-        input.form-control(type='text', name='title', placeholder='Title', ng-model='track.title', ng-disabled='!editing && !creating' ng-required)
-                            
+        input.form-control(type='text', name='title', placeholder='Title', ng-model='track.title', ng-disabled='!editing && !creating' ng-required)                
     .form-group
         label(for='music') Track:
         input.form-control(type='file', name='music', accept='audio/*', onchange='angular.element(this).scope().readFile(this)', ng-required='creating')
@@ -60,9 +59,11 @@ form(name='trackInfo', role='form', ng-if='creating || editing', novalidate)
     .form-group
         label(for='album') Album:	
         select.form-control(name='album', ng-model='track.album.id', ng-options='album._id as album.title for album in albums', ng-required)
-    .form-group
-        label(for='releaseDate') Release Year:
-        input.form-control(type='date', name='releaseDate', ng-model='track.releaseDate', ng-disabled='!editing && !creating', ng-required=creating)
+    .form-group(ng-class="{ 'has-error': trackInfo.releaseDate.$invalid }")
+        label(for='releaseDate') Release Date:
+        input.form-control(type='date', name='releaseDate', ng-model='track.releaseDate', max="{{track.album.releaseDate | date:'yyyy-MM-dd'}}", ng-disabled='!editing && !creating', ng-required='creating')
+        .help-block(ng-messages='trackInfo.releaseDate.$error', ng-show='trackInfo.releaseDate.$touched', ng-hide='trackInfo.releaseDate.$submitted')
+            div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
     .form-group
         button.btn-primary(class='form-control', type='submit', ng-click='create(track)', ng-show='creating', ng-disabled='trackInfo.$invalid') Add this track!
         button.btn-primary(class='form-control', type='submit', ng-click='update(track)', ng-show='canEdit && editing', ng-disabled='trackInfo.$invalid') Save cshanges!

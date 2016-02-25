@@ -75,7 +75,7 @@ module.exports = function(wagner) {
     Album.find({artistId: new_track.artistId, _id: new_track.albumId}, function(err, album) {
       if(err) return next(err);
       if(!album) return next(new zerror('bad_param', 'invalid album / artist match'));
-      if(!!!new_track.releaseDate) {
+      if(!new_track.releaseDate || new_track.releaseDate > album.releaseDate ) {
         new_track.releaseDate = album.releaseDate;
       }
     });

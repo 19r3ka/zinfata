@@ -3,7 +3,8 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
 							function($scope, $sce, $rootScope, $location, $routeParams, $log, UsersSvc, Session,
                             TracksSvc, PlaylistsSvc, TRACK_EVENTS, AlbumsSvc, MessageSvc, QueueSvc) {
 	var userAddedFile = '',
-        coverArts     = {};
+        coverArts     = {},
+        releaseDates  = {};
 
     $scope.track 	  = {
         title:       '',
@@ -43,9 +44,11 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
             AlbumsSvc.getByUser({ _id: $scope.track.artist.id }, function(data) {
                 $scope.albums = data;
                 angular.forEach($scope.albums, function(album) {
-                    this[album._id] = album.imageUrl;
+                    this[album._id]         = album.imageUrl;
+                    releaseDates[album._id] = album.releaseDate;
                     if(album._id === $scope.track.album.id) {
-                        $scope.track.album.title = album.title;
+                        $scope.track.album.title       = album.title;
+                        $scope.track.album.releaseDate = album.releaseDate;
                         if($scope.track.coverArt !== album.imageUrl) $scope.uniqueCover = true;
                     }
                 }, coverArts);
@@ -74,8 +77,10 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
             $scope.track.album.id     = $scope.albums[0]._id;
             $scope.track.releaseDate  = new Date($scope.albums[0].releaseDate);
             for(var i = 0; i < $scope.albums.length; i++) {
-                coverArts[$scope.albums[i]._id] = $scope.albums[i].imageUrl;
+                coverArts[$scope.albums[i]._id]    = $scope.albums[i].imageUrl;
+                releaseDates[$scope.albums[i]._id] = $scope.albums[i].releaseDate;
             } 
+            $log.debug(releaseDates);
         });
     }
     /* 
@@ -84,8 +89,9 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
     ** whenever the album selected changes
     */
     $scope.$watch(function() { return $scope.track.album.id; }, function(newValue, oldValue) {
-        if((newValue !== oldValue) && !$scope.uniqueCover && !!coverArts[newValue]) {
-            $scope.track.coverArt = coverArts[newValue];
+        if(newValue !== oldValue) {
+            if(!$scope.uniqueCover && !!coverArts[newValue]) $scope.track.coverArt = coverArts[newValue];
+            $scope.track.album.releaseDate = releaseDates[newValue];
         }
     });
 
