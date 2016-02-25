@@ -40,9 +40,10 @@ div(ng-if='!creating && !!playlistTracks.length')
     table.table(class='table-striped table-hover table-condensed')
         thead
             tr
-                th.col-md-5 Title
-                th.col-md-3 Album
-                th.col-md-3 Artist
+                th.col-md-4 Title
+                th.col-md-4 Album
+                th.col-md-2 Artist
+                th.col-md-1 Duration
                 //- td Length -- TODO: record track's length into database
                 //- options for interacting with the song
                 th.col-md-1 
@@ -54,6 +55,8 @@ div(ng-if='!creating && !!playlistTracks.length')
                     a(href='/album/{{track.album.id}}') {{ track.album.title }} 
                 td 
                     a(href='/user/{{track.artist.id}}') {{ track.artist.handle }}
+                td.text-center(class='small') 
+                    {{ track.duration | duration2time }}
                 td
                     .dropdown(class='pull-right')
                         a.dropdown-toggle(data-toggle='dropdown')
