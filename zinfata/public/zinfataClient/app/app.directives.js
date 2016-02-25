@@ -110,7 +110,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
       scope.$on(AUDIO.set, function(event, track) {
         scope.track = track; 
         player.src  = track.streamUrl;
-        // player.play();
+        scope.playPause();
         if(!Auth.isAuthenticated()) {
           $rootScope.$broadcast(AUTH.notAuthenticated);
           MessageSvc.addMsg('danger', 'Log in first to access that resource!');
