@@ -99,7 +99,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
             var audio = new Audio(newValue);
             audio.onloadedmetadata = function() {
                 $scope.track.duration = audio.duration;
-            }
+            };
         }
     });
 
