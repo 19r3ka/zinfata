@@ -1,21 +1,54 @@
 {
   "name": "zinfata",
-  "version": "1.0.0",
-  "description": "The one spot for Togolese music lovers on the internet.",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The first digital platform dedicated to Togo music distribution.",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "keywords": [
     "togo",
-    "music",
-    "promotion",
-    "database",
-    "soundcloud"
+    "music distribution",
+    "music promotion"
   ],
-  "author": "Yem Ahiatsi <yemahiatsi@gmail.com>",
+  "authors": "Yem Ahiatsi <yemahiatsi@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "start": "node ./bin/www",
+    "test": "./node_modules/.bin/mocha --reporter spec"
+  },
   "dependencies": {
-    "express": "^4.13.3"
+    "angular-storage": "0.0.13",
+    "basic-auth": "^1.0.3",
+    "bcrypt": "^0.8.5",
+    "body-parser": "~1.13.2",
+    "cookie-parser": "~1.3.5",
+    "crypto": "0.0.3",
+    "debug": "~2.2.0",
+    "express": "~4.13.1",
+    "express-session": "^1.11.3",
+    "jade": "~1.11.0",
+    "mongoose": "^4.1.2",
+    "morgan": "~1.6.1",
+    "multer": "^1.1.0",
+    "nodemailer": "^2.0.0",
+    "oauth2-server": "^2.4.1",
+    "passport": "^0.2.2",
+    "passport-local": "^1.0.0",
+    "request": "^2.67.0",
+    "serve-favicon": "~2.3.0",
+    "styliner": "^0.8.9",
+    "underscore": "^1.8.3",
+    "wagner-core": "^0.2.0"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "jshint": "^2.8.0",
+    "karma": "^0.13.19",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^0.2.2",
+    "karma-mocha": "^0.2.1",
+    "karma-mocha-reporter": "^1.1.5",
+    "mocha": "^2.3.4",
+    "supertest": "^1.1.0",
+    "url": "^0.11.0"
   }
 }
