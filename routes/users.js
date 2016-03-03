@@ -33,7 +33,7 @@ module.exports = function(wagner) {
     var user = new User({
       firstName: req.body.firstName,
       lastName:  req.body.lastName,
-      handle:     req.body.handle,
+      handle:    req.body.handle,
       email:     req.body.email,
       password:  req.body.password
     });
@@ -68,7 +68,7 @@ module.exports = function(wagner) {
             MailService.sendWelcomeMail(new_user.email, new_user.firstName, activationLink, function(err, infos){
               if(err) { 
                 //if the confirmation email is not send the user can not activate its account so delete the user
-                User.remove({email: new_user.email}, function(error, delectedUser){
+                User.remove({email: new_user.email}, function(error, deletedUser){
                     if (error) { //delete error
                       return next(err);
                     } else {

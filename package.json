@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "description": "The first digital platform dedicated to Togo music distribution.",
-  "main": "index.js",
   "keywords": [
     "togo",
     "music distribution",
