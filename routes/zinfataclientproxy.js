@@ -1,4 +1,4 @@
-module.exports = function(wagner){
+module.exports = function(wagner) {
 
 	var express  = require('express');
 	var request  = require('request');

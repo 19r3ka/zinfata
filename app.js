@@ -13,17 +13,18 @@ var passport = require('passport');
 var expressSession = require('express-session');
 var oauthserver = require('oauth2-server');
 
-var routes = require('./routes/index')(wagner);
-var users  = require('./routes/users')(wagner);//add dependencie
-var albums = require('./routes/albums')(wagner);
-var tracks = require('./routes/tracks')(wagner);
-var playlists = require('./routes/playlists')(wagner);
-var oauthclients = require('./routes/oauthclients')(wagner);
-var zinfataClientProxy = require('./routes/zinfataclientproxy')(wagner);
-var revoketokens = require('./routes/revoketokens')(wagner);
-var oauthinfo = require('./routes/oauthinfo')(wagner);
+var routes                   = require('./routes/index')(wagner);
+var users                    = require('./routes/users')(wagner);//add dependencie
+var albums                   = require('./routes/albums')(wagner);
+var tracks                   = require('./routes/tracks')(wagner);
+var playlists                = require('./routes/playlists')(wagner);
+var oauthclients             = require('./routes/oauthclients')(wagner);
+var zinfataClientProxy       = require('./routes/zinfataclientproxy')(wagner);
+var revoketokens             = require('./routes/revoketokens')(wagner);
+var creds                    = require('./routes/getCreds')(wagner);
+var oauthinfo                = require('./routes/oauthinfo')(wagner);
 var zinfataOAuthErrorHandler = require('./lib/errors/ZinfataOAuthErrorHandler');
-var zinfataErrorHandler = require('./lib/errors/ZinfataErrorHandler');
+var zinfataErrorHandler      = require('./lib/errors/ZinfataErrorHandler');
 
 
 var config = wagner.invoke(function(Config){return Config});
@@ -63,6 +64,7 @@ app.use('/oauth2/me', oauthinfo);
 app.use('/zinfataclient', zinfataClientProxy);
 // Define the routes to use in the app
 app.use('/api/users', users);
+app.use('/creds', creds);
 app.all(/\/api\/*/, app.oauth.authorise()); //user must have access token
 app.use('/api/albums', albums);
 app.use('/api/tracks', tracks);
