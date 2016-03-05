@@ -9,7 +9,7 @@ app.factory('Users', ['$resource', function($resource) {
   return $resource('/api/users/:id', {id: '@_id'}, {
     'update': {
       method: 'PUT',
-      transformRequest: FileDataObject ,
+      transformRequest: FileDataObject,
       headers: {
               'Content-Type': undefined,
               enctype:        'multipart/form-data'
@@ -25,7 +25,7 @@ app.factory('Users', ['$resource', function($resource) {
   return $resource('/api/albums/:id', {id: '@_id'}, {
     'update': {
             method:'PUT',
-            transformRequest: FileDataObject ,
+            transformRequest: FileDataObject,
             headers: {
                     'Content-Type': undefined,
                     enctype:        'multipart/form-data'
@@ -61,7 +61,7 @@ app.factory('Users', ['$resource', function($resource) {
   return $resource('/api/tracks/:id', {id: '@_id'}, {
     'update': {
       method:'PUT',
-      transformRequest: FileDataObject ,
+      transformRequest: FileDataObject,
       headers: {
         'Content-Type': undefined,
         enctype:        'multipart/form-data'
