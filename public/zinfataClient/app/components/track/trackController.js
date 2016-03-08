@@ -99,6 +99,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
         if(newValue !== oldValue) {
             if(!$scope.uniqueCover && !!coverArts[newValue]) $scope.track.coverArt = coverArts[newValue];
             $scope.track.album.releaseDate = releaseDates[newValue];
+            if($scope.track.album.releaseDate < $scope.track.releaseDate) $scope.track.releaseDate = $scope.track.album.releaseDate;
         }
     });
 

@@ -1,12 +1,12 @@
 var mongoose = require('mongoose');
 
 var TrackSchema = new mongoose.Schema( {
-  title: 		    { type: String, required: true, lowercase: true },
+  title: 		    { type: String, required: true },
   artistId:  	  { type: String, required: true },
-  feat:       	{ type: Array, default: [] }, //for the IDs of all contributing artists
+  feat:       	{ type: Array, default: [] },      // for the IDs of all contributing artists
   size:         { type: String, required: true },
   duration:     { type: String, required: true },
-  sharing:      { type: Boolean, default: false },
+  sharing:      { type: Boolean, default: false }, // should the track be available to others
   downloadable: { type: Boolean, default: false },
   albumId:   	  { type: String, required: true },
   coverArt: 	  { type: String, required: true },

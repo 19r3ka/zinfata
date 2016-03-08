@@ -21,8 +21,8 @@
                     h5: a(href='/user/{{ track.artist.id }}') {{ track.artist.handle }}
             
                     ul.list-inline(class='metrics')
-                        li duration: {{ track.duration | duration2time }} 
-            
+                        li Duration: {{ track.duration | duration2time }} 
+                        li Genre: {{ track.genre }}
                     ul.list-inline(class='interactions')
                         li: a(href='', ng-click='play(track)') 
                             span.glyphicon(class='glyphicon-play')
@@ -36,6 +36,9 @@
                                 |  Add to
                                 span.caret
                             z-playlist-dropdown(track='track')
+                        li: a(href='', ng-click='download(track)', ng-show='track.downloadable') 
+                            span.glyphicon(class='glyphicon-download-alt')
+                            |  Download
 form(name='trackInfo', role='form', ng-if='creating || editing', novalidate)
     .form-group
         .row
