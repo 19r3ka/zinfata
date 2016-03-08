@@ -46,7 +46,7 @@ form(name='trackInfo', role='form', ng-if='creating || editing', novalidate)
                     .col-md-12
                         label
                             input(type='checkbox', name='coverArtToggle', ng-model='uniqueCover', ng-change='updateCoverArt()')
-                        |  This Track Has Its Own Cover Art!
+                        |  This track has its own cover art!
                         label(ng-show='uniqueCover') Cover Art:
                             input.form-control(type='file', name='avatar', accept='image/*', onchange='angular.element(this).scope().readFile(this)')
     .form-group
@@ -59,11 +59,22 @@ form(name='trackInfo', role='form', ng-if='creating || editing', novalidate)
     .form-group
         label(for='album') Album:	
         select.form-control(name='album', ng-model='track.album.id', ng-options='album._id as album.title for album in albums', ng-required)
+    .form-group
+        label(for='genre') Genre:   
+        select.form-control(name='genre', ng-model='track.genre', ng-options='(genre | uppercase) for genre in musicGenres | orderBy: genre', ng-required)
+            option(value='') -- Choose a music genre --
     .form-group(ng-class="{ 'has-error': trackInfo.releaseDate.$invalid }")
         label(for='releaseDate') Release Date:
         input.form-control(type='date', name='releaseDate', ng-model='track.releaseDate', max="{{track.album.releaseDate | date:'yyyy-MM-dd'}}", ng-disabled='!editing && !creating', ng-required='creating')
         .help-block(ng-messages='trackInfo.releaseDate.$error', ng-show='trackInfo.releaseDate.$touched', ng-hide='trackInfo.releaseDate.$submitted')
             div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
     .form-group
+        label
+            input(type='checkbox', name='DownloadToggle', ng-model='track.downloadable')
+        |  This track may be downloaded!
+    .form-group
         button.btn-primary(class='form-control', type='submit', ng-click='create(track)', ng-show='creating', ng-disabled='trackInfo.$invalid') Upload track!
         button.btn-primary(class='form-control', type='submit', ng-click='update(track)', ng-show='canEdit && editing', ng-disabled='trackInfo.$invalid') Save changes!
+
+pre
+    {{ track }}

@@ -255,7 +255,9 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc',
       coverArt:     track.coverArt,
       imageFile:    track.imageFile,
       audioFile:    track.audioFile,
-      releaseDate:  track.releaseDate
+      releaseDate:  track.releaseDate,
+      downloadable: track.downloadable,
+      genre:        track.genre
     });
 
     new_track.$save(function(saved_track) {

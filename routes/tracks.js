@@ -55,7 +55,9 @@ module.exports = function(wagner) {
       albumId:      req.body.albumId,
       releaseDate:  req.body.releaseDate || '',
       feat:         req.body.feat || [],
-      duration:     req.body.duration
+      duration:     req.body.duration,
+      downloadable: req.body.downloadable,
+      genre:        req.body.genre
     });
 
     if(!!req.files.imageFile) {

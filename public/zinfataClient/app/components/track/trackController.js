@@ -1,12 +1,18 @@
-app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$routeParams', '$log', 'UsersSvc', 'SessionSvc',
-                            'TracksSvc', 'PlaylistsSvc', 'TRACK_EVENTS', 'AlbumsSvc', 'MessageSvc', 'QueueSvc',
-							function($scope, $sce, $rootScope, $location, $routeParams, $log, UsersSvc, Session,
-                            TracksSvc, PlaylistsSvc, TRACK_EVENTS, AlbumsSvc, MessageSvc, QueueSvc) {
-	var userAddedFile = '',
-        coverArts     = {},
-        releaseDates  = {};
+app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$routeParams', '$log', 'UsersSvc', 
+                            'SessionSvc', 'TracksSvc', 'PlaylistsSvc', 'TRACK_EVENTS', 'AlbumsSvc', 'MessageSvc', 
+                            'QueueSvc', function($scope, $sce, $rootScope, $location, $routeParams, $log, 
+                            UsersSvc, Session, TracksSvc, PlaylistsSvc, TRACK_EVENTS, AlbumsSvc, MessageSvc, 
+                            QueueSvc) {
+	var userAddedFile  = '',
+        coverArts      = {},
+        releaseDates   = {};
 
-    $scope.track 	  = {
+    $scope.musicGenres = ['alternative', 'blues', 'danse', 'hip hop', 'rap', 'r&b', 'soul', 'jazz', 'gospel', 
+                          'reggae', 'rock', 'dubstep', 'trap', 'instrumental', 'salsa', 'flamenco', 'reggaeton', 
+                          'meditation', 'funk', 'dancehall', 'a cappella', 'afro-beat', 'calypso', 'coupe-decale', 
+                          'worldbeat'];
+
+    $scope.track 	   = {
         title:       '',
         album:  {
             id:      '',
@@ -17,9 +23,11 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
             handle:  ''
         },
         streamUrl:   '',
-        coverArt: '',
-        duration: '',
-        releaseDate: ''
+        coverArt:    '',
+        duration:    '',
+        releaseDate: '',
+        genre:       '',
+        downloadable: false
     };
     
     if($location.path() === '/track/new') $scope.creating = true;
