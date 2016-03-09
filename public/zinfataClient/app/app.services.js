@@ -242,8 +242,8 @@ app.service('MessageSvc', function() {
     this.message = null;
   };
 });
-app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
-                          function(Tracks, $log, UsersSvc, AlbumsSvc, $window) {
+app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window', 'sessionStore',
+                          function(Tracks, $log, UsersSvc, AlbumsSvc, $window, store) {
   this.create = function(track, success, failure) {
     var new_track = new Tracks({
       title:        track.title,
@@ -344,13 +344,14 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
   };
 
   this.downloadLink = function(track, success, failure) {
-    Tracks.download({id: track._id}, function(data) {
-      var url  = $window.URL || $window.webkitURL,
-          blob = new Blob([data], { type: 'audio/mpeg' });
-      success(url.createObjectURL(blob));
-    }, function(err) {
-      failure(err);
-    });
+    var accessKeys  = store.getData('accessKeys'),
+        accessToken = accessKeys ? accessKeys.access_token : null,
+        downloadUrl = '/zinfataclient/tracks/' + track._id + '/download';
+
+    if(accessToken) { 
+      downloadUrl += '?token=' + accessToken;
+      $window.open(downloadUrl);
+    }
   };
 
   this.delete = function(track, success, failure) {

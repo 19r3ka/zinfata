@@ -143,22 +143,16 @@ module.exports = function(wagner) {
       if(!track) return next(new zerror('not_found', 'Track not found'));
       if(!track.downloadable) return next(new zerror('forbidden', 'Track not downloadable'));
 
-      var downloadTitle = 'zinfata - ' + track.title + '_',
+      var downloadTitle = '[zinfata] ' + track.title,
           downloadFile  = function(url) {
             var parentDir = __dirname.split('/');
             parentDir.splice(-1, 1);
             return parentDir.join('/') + '/' + url;
           }; 
       
-      User.findById(track.artistId, function(err, user) {
-        if(err) return next(err);
-        if(user) {
-          downloadTitle =  downloadTitle + user.handle;
-        }
-      });
-      // res.setHeader('Content-Type', 'audio/mp3');
-      // res.setHeader('Content-Disposition', 'attachment');
-      res.download(downloadFile(track.streamUrl), downloadTitle);
+      res.set('Content-Type', 'audio/mp3');
+      res.set('Content-Disposition', 'attachment; filename=' + downloadTitle);
+      res.status(200).download(downloadFile(track.streamUrl), downloadTitle);
     });
   });
 
