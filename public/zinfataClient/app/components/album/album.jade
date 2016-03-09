@@ -1,3 +1,5 @@
+pre
+    {{ creating }}
 .jumbotron(ng-if='!creating')
     .row
         .col-md-4
@@ -43,4 +45,4 @@ form(name='albumForm', enctype= 'multipart/form-data', ng-if='editing || creatin
         button.btn(type='submit', ng-click='create(album)', ng-show='creating', class=['btn-primary', 'form-control'], ng-disabled='albumForm.$invalid') Create Album!
         button.btn(type='submit', ng-click='update(album)', ng-show='editing', class=['btn-primary', 'form-control'], ng-disabled='albumForm.$invalid') Update!
 
-z-track-listing(for='album', type='album')
+z-track-listing(for='album', type='album', ng-if='!creating')

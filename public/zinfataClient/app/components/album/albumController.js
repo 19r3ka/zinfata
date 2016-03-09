@@ -11,7 +11,7 @@ app.controller('albumCtrl', ['$scope', '$rootScope', '$location', '$routeParams'
     $scope.creating = false;
     $scope.canEdit  = false;
 
-    if($location.path() === '/album/new') creating = true;
+    if($location.path() === '/album/new') $scope.creating = true;
 
     if($routeParams.albumId){
         AlbumsSvc.get($routeParams.albumId, function(data) {
