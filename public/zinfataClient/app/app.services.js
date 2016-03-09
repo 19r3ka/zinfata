@@ -242,8 +242,8 @@ app.service('MessageSvc', function() {
     this.message = null;
   };
 });
-app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', 
-                          function(Tracks, $log, UsersSvc, AlbumsSvc) {
+app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
+                          function(Tracks, $log, UsersSvc, AlbumsSvc, $window) {
   this.create = function(track, success, failure) {
     var new_track = new Tracks({
       title:        track.title,
@@ -343,16 +343,26 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc',
       });
   };
 
+  this.downloadLink = function(track, success, failure) {
+    Tracks.download({id: track._id}, function(data) {
+      var url  = $window.URL || $window.webkitURL,
+          blob = new Blob([data], { type: 'audio/mpeg' });
+      success(url.createObjectURL(blob));
+    }, function(err) {
+      failure(err);
+    });
+  };
+
   this.delete = function(track, success, failure) {
-    return Tracks.delete({id: track._id}, function(data) {
+    Tracks.delete({id: track._id}, function(data) {
       data.artist      = { id: data.artistId };
       data.album       = { id: data.albumId };
       data.releaseDate = new Date(data.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
       delete data.artistId;
       delete data.albumId;
-      return success(data);
+      success(data);
     }, function(err) {
-      return failure(err);
+      failure(err);
     });
   };
 }]);

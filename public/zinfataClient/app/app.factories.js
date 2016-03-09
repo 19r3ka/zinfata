@@ -75,10 +75,16 @@ app.factory('Users', ['$resource', function($resource) {
         enctype:        'multipart/form-data'
       }
     },
-    'find': { method: 'GET', 
+    'find': { 
+      method: 'GET', 
       isArray: true,
       url: '/api/tracks/:resource/:resource_id',
       params: {resource: '@resource', resource_id: '@resoureceId'}
+    },
+    'download': {
+      method: 'GET',
+      url: '/api/tracks/:id/download',
+      params : {id: '@_id'}  
     }
   });
 }])

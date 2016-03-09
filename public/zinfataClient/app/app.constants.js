@@ -47,7 +47,9 @@ app.constant('ROUTES', {
   creationSuccess:      'track-creation-success',
   creationFailed:       'track-creation-failed',
   deleteSuccess:        'track-delete-success',
-  deleteFailed:         'track-delete-failed'
+  deleteFailed:         'track-delete-failed',
+  downloadSuccess:      'track-download-success',
+  downloadFailed:       'track-download-failed'
 }).constant('PLAYLIST_EVENTS', {
   updateSuccess:        'playlist-update-success',
   updateFailed:         'playlist-update-failed',

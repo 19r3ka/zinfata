@@ -51,8 +51,8 @@ app.use(expressSession({
   resave: true,
   saveUninitialized: true
 }));
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 //routes required to manage oauth
 app.use('/clients/', oauthclients);

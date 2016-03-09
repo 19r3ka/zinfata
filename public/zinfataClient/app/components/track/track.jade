@@ -36,9 +36,9 @@
                                 |  Add to
                                 span.caret
                             z-playlist-dropdown(track='track')
-                        li: a(href='', ng-click='download(track)', ng-show='track.downloadable') 
-                            span.glyphicon(class='glyphicon-download-alt')
-                            |  Download
+                        //- li: a(href='', ng-click='download(track)', ng-show='track.downloadable') 
+                        //-     span.glyphicon(class='glyphicon-download-alt')
+                        //-     |  Download
 form(name='trackInfo', role='form', ng-if='creating || editing', novalidate)
     .form-group
         .row

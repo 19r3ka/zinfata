@@ -7,6 +7,8 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
         coverArts      = {},
         releaseDates   = {};
 
+    $scope.dlUrl       = '';
+
     $scope.musicGenres = ['alternative', 'blues', 'danse', 'hip hop', 'rap', 'r&b', 'soul', 'jazz', 'gospel', 
                           'reggae', 'rock', 'dubstep', 'trap', 'instrumental', 'salsa', 'flamenco', 'reggaeton', 
                           'meditation', 'funk', 'dancehall', 'a cappella', 'afro-beat', 'calypso', 'coupe-decale', 
@@ -191,6 +193,18 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
         } else {
             $scope.track.coverArt = userAddedFile;
         }
+    };
+
+    $scope.download = function(track) {
+        if($scope.dlUrl) return;
+        TracksSvc.downloadLink(track, function(downloadUrl) {
+            $scope.dlUrl = $sce.trustAsResourceUrl(downloadUrl);
+            $rootScope.$broadcast(TRACK_EVENTS.downloadSuccess);
+            MessageSvc.addMsg('success', 'your file is ready for download.');
+        }, function() {
+            $rootScope.$broadcast(TRACK_EVENTS.downloadFailed);
+            MessageSvc.addMsg('danger', 'Download failed!');
+        });
     };
 
     $scope.edit = function() {
