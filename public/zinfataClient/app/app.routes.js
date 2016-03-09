@@ -123,12 +123,20 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider', function($ro
     to intercept and inject behaviors. */  
   $rootScope.$on('$routeChangeStart', function(event, next) {
     var authorized;
-    
-    if(!!loginRedirectUrl && next.originalPath !== '/login') {
+
+    $log.debug('loginRedirectUrl: %s', loginRedirectUrl);
+    $log.debug('next.originalPath: %s', next.originalPath);
+        
+    if(next.originalPath === '/register') {
+      loginRedirectUrl = null;
+    } else if(!!loginRedirectUrl && next.originalPath !== '/login') {
       $location.path(loginRedirectUrl).replace();
-      loginRedirectUrl = '';
-    } else if(!!next.access) {
+      loginRedirectUrl = null;
+    }
+
+    if(!!next.access) {
       authorized = AuthenticationSvc.authorize(next.access.loginRequired);
+      
       if(authorized === AUTH.mustLogIn) {
         loginRedirectUrl = $location.url();
         MessageSvc.addMsg('warning', 'You must log-in first to access that resource.');
