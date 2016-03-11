@@ -1,13 +1,13 @@
-.list-group(ng-show='loggedIn')    
+.list-group(ng-show='loggedIn()')    
     form.form-inline
         .form-group
             .input-group
                 input.form-control(type='text', class='input-sm', id='new_playlist', ng-model='playlist.title', placeholder='Create playlist')
                 a.input-group-addon(type='button', class='btn btn-primary', ng-click='create(playlist)')
                     span.glyphicon(class='glyphicon-plus')
-    a.list-group-item(ng-repeat='playlist in playlists', ng-click='addToPlaylist($event, playlist, track)', ng-href='playlist/{{playlist._id }}')
-        {{ playlist.title }}
-div(ng-show='!loggedIn')
+    a.list-group-item(ng-repeat='pl in playlists', ng-click='addToPlaylist($event, pl, track)', ng-href='playlist/{{pl._id }}')
+        {{ pl.title }}
+div(ng-show='!loggedIn()')
     p.small(class='text-center')
         a(href='login')  Log in now
         |  to see playlists

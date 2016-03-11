@@ -1,12 +1,12 @@
 app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH', 'SessionSvc', 'MessageSvc', 'AuthenticationSvc', '$location', '$log',
                               function($scope, $rootScope, AUTH, Session, MessageSvc, Auth, $location, $log) {
   
-  $scope.loggedIn = Auth.isAuthenticated();
+  $scope.loggedIn = Auth.isAuthenticated;
   $scope.user     = Session.getCurrentUser();
   
   $scope.$watch(function() {
     return Auth.isAuthenticated();
-  },  function(newVal, oldVal){
+  },  function(newVal, oldVal) {    
     if(newVal !== oldVal) {
       refresh();
     }
@@ -45,7 +45,6 @@ app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH', 'SessionSvc', 'Mes
   };
 
   function refresh() {
-    $scope.loggedIn = Auth.isAuthenticated();
     if($scope.loggedIn) $scope.user = Session.getCurrentUser();
   }
 }]);
