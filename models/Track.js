@@ -1,7 +1,8 @@
 var mongoose = require('mongoose');
 
 var TrackSchema = new mongoose.Schema( {
-  title: 		    { type: String, required: true },
+  title:        { type: String, required: true },
+  title_lower: 	{ type: String, required: true, lowercase: true, select: false },
   artistId:  	  { type: String, required: true },
   feat:       	{ type: Array, default: [] },      // for the IDs of all contributing artists
   size:         { type: String, required: true },

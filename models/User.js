@@ -12,16 +12,19 @@ var mongoose    = require('mongoose'),
 
 
 var UserSchema = new mongoose.Schema( {
-  firstName:    { type: String, required: true, lowercase: true, trim: true },
-  lastName:     { type: String, required: true, lowercase: true, trim: true },
-  handle:       { type: String, required: true, minlength: 3, match: handleRegex, lowercase: true, index: {unique: true}, trim: true},
-  email:        { type: String, required: true, match: emailRegex, unique: true, lowercase: true, trim: true},
-  password:     { type: String, required: true, trim: true, select: false },
-  avatarUrl:    { type: String, default: 'zinfataClient/assets/images/user-avatar-placeholder.png', trim: true},
-  role:         { type: String, default: 'fan', trim: true },
-  whatsapp:     { type: String, default: '', trim: true }, 
-  activated:    { type: Boolean, default: false },
-  updated_at:   { type: Date, default: Date.now }
+  firstName:       { type: String, required: true, trim: true },
+  firstName_lower: { type: String, required: true, lowercase: true, trim: true, select: false },
+  lastName:        { type: String, required: true, trim: true },
+  lastName_lower:  { type: String, required: true, lowercase: true, trim: true, select: false },
+  handle:          { type: String, required: true, minlength: 3, match: handleRegex, index: {unique: true}, trim: true},
+  handle_lower:    { type: String, required: true, minlength: 3, match: handleRegex, lowercase: true, index: {unique: true}, trim: true, select: false},
+  email:           { type: String, required: true, match: emailRegex, unique: true, lowercase: true, trim: true},
+  password:        { type: String, required: true, trim: true, select: false },
+  avatarUrl:       { type: String, default: 'zinfataClient/assets/images/user-avatar-placeholder.png', trim: true},
+  role:            { type: String, default: 'fan', trim: true },
+  whatsapp:        { type: String, default: '', trim: true }, 
+  activated:       { type: Boolean, default: false },
+  updated_at:      { type: Date, default: Date.now }
 });
 
 /*
