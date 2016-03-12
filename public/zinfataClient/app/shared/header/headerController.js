@@ -35,10 +35,10 @@ app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH', 'SessionSvc', 'Mes
     Auth.logout(function(res) {
       if(res) {
         MessageSvc.addMsg('success', 'You have been successfully logged out!');
-        $scope.loggedIn = false;
         $rootScope.$broadcast(AUTH.logoutSuccess);
       } else {
-        MessageSvc.addMsg('danger', 'Failed to log out!');
+        MessageSvc.addMsg('danger', 'Issue with the logout process!');
+        Session.destroy();
         $rootScope.$broadcast(AUTH.logoutFailed);
       }
     });

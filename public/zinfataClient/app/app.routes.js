@@ -124,9 +124,6 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider',
     to intercept and inject behaviors. */  
   $rootScope.$on('$routeChangeStart', function(event, next) {
     var authorized;
-
-    $log.debug('loginRedirectUrl: %s', loginRedirectUrl);
-    $log.debug('next.originalPath: %s', next.originalPath);
         
     if(next.originalPath === '/register') {
       loginRedirectUrl = null;

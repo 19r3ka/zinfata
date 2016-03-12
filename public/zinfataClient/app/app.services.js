@@ -581,11 +581,15 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
     } else { //there is no queue, add to end to create. 
       self.addTrack(track);
     }
-    
     self.play(track, newIndex);
   };
 
-  self.play = function(track, index) {
+  self.play           = function(track, index) {
+    if(!('album' in track && track.album.title) || ('artist' in track && track.artist.handle)) {
+      TracksSvc.inflate(track._id, null, function(inflated_track) {
+        track = inflated_track;
+      }, function(err) {return;});
+    }
     self.data.currentlyPlaying.index = index;
     self.data.currentlyPlaying.track = track;
     self.saveQueue();
