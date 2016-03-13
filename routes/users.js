@@ -37,12 +37,12 @@ module.exports = function(wagner) {
       email:     req.body.email,
       password:  req.body.password
     });
-    User.findOne({handle: req.body.handle}, function(err, user) {
+    User.findOne({handle_lower: req.body.handle.toLowerCase()}, function(err, user) {
       if(err) return next(err);
       //if(user) return next(new Error('duplicate: handle'));
       if(user) return next(new zerror('bad_param', 'handle is already in use'));
     });
-    User.findOne({email: req.body.email}, function(err, user) {
+    User.findOne({email: req.body.email.toLowerCase()}, function(err, user) {
       if(err) return next(err);
       //if(user) return next(new Error('duplicate: email'));
       if(user) return next(new zerror('bad_param', 'email is already in use'));
@@ -121,7 +121,7 @@ module.exports = function(wagner) {
   router.route('/handle/:handle')
   .get(function(req, res, next) {
     if('handle' in req.params && !!req.params.handle) {
-      User.findOne({handle: req.params.handle.toLowerCase()}, function(err, user) {
+      User.findOne({handle_lower: req.params.handle.toLowerCase()}, function(err, user) {
         if(err) return next(err);
         if(!user) return next(new Error('not found'));
         res.json(user);
@@ -149,7 +149,7 @@ module.exports = function(wagner) {
   });
   router.route('/tokenize/:action/:email')
   .get(function(req, res, next) {
-    User.findOne({email: req.params.email}, function(err, user) {
+    User.findOne({email: req.params.email.toLowerCase()}, function(err, user) {
       if(err) return next(err);
       if(!user) return next(new zerror('not_found', 'User not found'));
       PwdToken.generateToken(function(new_token) {

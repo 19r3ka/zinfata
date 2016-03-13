@@ -57,7 +57,7 @@ module.exports = function(wagner) {
     });
   })
   .put(function(req, res, next) { // UPDATE album info by ID
-    Playlist.findOne({ _id: req.params.id }, function(err, playlist) {
+    Playlist.findById(req.params.id, function(err, playlist) {
       if(err) return next(err);
       if(!playlist) return next(new zerror('not_found', 'Playlist not found'));
       

@@ -1,17 +1,20 @@
-app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) {
+app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users, $q, $log, $filter) {
   return {
     require: 'ngModel',
     link: function(scope, elm, attrs, ctrl) {
-      var users = [];
+      var users  = [],
+          handle = '';
 
       Users.query(function(data) {
         for(i = 0; i < data.length; i++) {
-          users.push(data[i].handle);
+          handle = $filter('lowercase')(data[i].handle)
+          users.push(handle);
         }
-
+        $log.debug(users);
         ctrl.$asyncValidators.uniquehandle = function(modelValue, viewValue) {
-          var defer = $q.defer();
-          if(users.indexOf(modelValue) === -1){
+          var defer = $q.defer(),
+              entry = $filter('lowercase')(modelValue);
+          if(users.indexOf(entry) === -1) {
             defer.resolve();
           }else{
             defer.reject();
@@ -22,7 +25,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
     }
   };
 }])
-.directive('uniqueEmail', ['Users', '$q', '$log', function(Users, $q, $log) {
+.directive('uniqueEmail', ['Users', '$q', '$log', '$filter', function(Users, $q, $log, $filter) {
   return {
     require: 'ngModel',
     link: function(scope, elm, attrs, ctrl) {
@@ -30,12 +33,14 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
 
       Users.query(function(data) {
         for(i = 0; i < data.length; i++) {
-          users.push(data[i].email);
+          users.push($filter('lowercase')(data[i].email));
         }
 
         ctrl.$asyncValidators.uniqueemail = function(modelValue, viewValue) {
-          var defer = $q.defer();
-          if(users.indexOf(modelValue) === -1){
+          var defer = $q.defer(),
+              entry = $filter('lowercase')(modelValue);
+
+          if(users.indexOf(entry) === -1){
             defer.resolve();
           }else{
             defer.reject();
