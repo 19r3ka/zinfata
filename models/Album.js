@@ -12,6 +12,13 @@ var AlbumSchema = new mongoose.Schema({
 AlbumSchema.pre('save', function(next) {
   var album = this;
   if(album.isModified('title')) album.title_lower = album.title;
-};
+});
+
+AlbumSchema.set('toJSON', {
+    transform: function(doc, ret, options) {
+      delete ret.title_lower;
+      return ret;
+    }
+});
 
 module.exports = mongoose.model('Album', AlbumSchema);

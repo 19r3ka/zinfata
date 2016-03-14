@@ -12,6 +12,13 @@ var PlaylistSchema = new mongoose.Schema({
 PlaylistSchema.pre('save', function(next) {
   var playlist = this;
   if(playlist.isModified('title')) playlist.title_lower = playlist.title;
-};
+});
+
+PlaylistSchema.set('toJSON', {
+    transform: function(doc, ret, options) {
+      delete ret.title_lower;
+      return ret;
+    }
+});
 
 module.exports = mongoose.model('Playlist', PlaylistSchema);
