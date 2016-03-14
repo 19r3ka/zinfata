@@ -21,6 +21,9 @@ module.exports = function(wagner) {
   });
   var User = userModel;
 
+  /*function lowerCase(doc, field) {
+    doc[field + '_lower'] = doc[field].toLowerCase();
+  };*/
 
   router.route('/')
   .get(function(req, res, next) { /* GET users listing. */
@@ -37,20 +40,23 @@ module.exports = function(wagner) {
       email:     req.body.email,
       password:  req.body.password
     });
+
+    /* Checks if the handle is taken */
     User.findOne({handle_lower: req.body.handle.toLowerCase()}, function(err, user) {
       if(err) return next(err);
       //if(user) return next(new Error('duplicate: handle'));
       if(user) return next(new zerror('bad_param', 'handle is already in use'));
     });
+    /* Checks if the email is taken */
     User.findOne({email: req.body.email.toLowerCase()}, function(err, user) {
       if(err) return next(err);
       //if(user) return next(new Error('duplicate: email'));
       if(user) return next(new zerror('bad_param', 'email is already in use'));
     });
+    
     user.save(function(err, new_user){
       if(err) return next(err);
       /* Make sure that the password hash is not sent to the user */
-      new_user.password = null;
       PwdToken.generateToken(function(token) {
         var pwdToken = new PwdToken({
           user_id:  user._id,
@@ -90,14 +96,14 @@ module.exports = function(wagner) {
   .get(function(req, res, next) { /* GET specific user */
     User.findById(req.params.id, function(err, user) {
       if(err) return next(err);
-      if(!user) return next(new Error('not found'));
+      if(!user) return next(new zerror('not_found', 'User not found'));
       res.json(user);
     });
   })
   .put(upload.single('avatar'), function(req, res, next) { /* UPDATE specific user */ //Must be protected somehow
     User.findById(req.params.id, function(err, user) {
       if(err) return next(err);
-      if(!user) return next(new Error('not found'));
+      if(!user) return next(new zerror('not_found', 'User not found'));
       for(var key in user) {
         if(!!req.body[key]) user[key] = req.body[key];
       }
@@ -123,7 +129,7 @@ module.exports = function(wagner) {
     if('handle' in req.params && !!req.params.handle) {
       User.findOne({handle_lower: req.params.handle.toLowerCase()}, function(err, user) {
         if(err) return next(err);
-        if(!user) return next(new Error('not found'));
+        if(!user) return next(new zerror('not_found', 'User not found'));
         res.json(user);
       });
     }

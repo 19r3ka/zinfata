@@ -40,8 +40,8 @@ app.controller('userProfileCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSv
         $location.path('/user/' + $scope.user._id + '/edit');
     };
 
-    $scope.update = function() {
-        UsersSvc.update($scope.user, function(updatedUser) {
+    $scope.update = function(user) {
+        UsersSvc.update(user, function(updatedUser) {
           MessageSvc.addMsg('success', 'Your profile has been updated!');
           $rootScope.$broadcast(USER_EVENTS.updateSuccess);
           $scope.editing = false;
@@ -52,8 +52,8 @@ app.controller('userProfileCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSv
         });
     };
 
-	$scope.delete = function() {
-		UsersSvc.delete($scope.user, function() {
+	$scope.delete = function(user) {
+		UsersSvc.delete(user, function() {
 			MessageSvc.addMsg('success', 'Your account has been deleted!');
 			$rootScope.$broadcast(USER_EVENTS.deleteSuccess);
 			$location.path = '/';
