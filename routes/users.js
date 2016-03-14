@@ -105,6 +105,7 @@ module.exports = function(wagner) {
       if(err) return next(err);
       if(!user) return next(new zerror('not_found', 'User not found'));
       for(var key in user) {
+        if(key === 'role' || key === 'activated') continue;
         if(!!req.body[key]) user[key] = req.body[key];
       }
       if(!!req.file) user.avatarUrl = req.file.path;
