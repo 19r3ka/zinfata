@@ -9,4 +9,9 @@ var PlaylistSchema = new mongoose.Schema({
   updated_at:  { type: Date, default: Date.now }
 });
 
+PlaylistSchema.pre('save', function(next) {
+  var playlist = this;
+  if(playlist.isModified('title')) playlist.title_lower = playlist.title;
+};
+
 module.exports = mongoose.model('Playlist', PlaylistSchema);
