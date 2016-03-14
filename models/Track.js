@@ -12,9 +12,14 @@ var TrackSchema = new mongoose.Schema( {
   albumId:   	  { type: String, required: true },
   coverArt: 	  { type: String, required: true },
   streamUrl: 	  { type: String, required: true },
-  genre:        { type: String },
+  genre:        { type: String, lowercase: true },
   releaseDate: 	{ type: Date, default: Date.now },
   updated_at: 	{ type: Date, default: Date.now }
 });
+
+TrackSchema.pre('save', function(next) {
+  var track = this;
+  if(track.isModified('title')) track.title_lower = track.title;
+};
 
 module.exports = mongoose.model('Track', TrackSchema);
