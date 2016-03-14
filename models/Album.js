@@ -9,4 +9,9 @@ var AlbumSchema = new mongoose.Schema({
   updated_at:   { type: Date, default: Date.now }
 });
 
+AlbumSchema.pre('save', function(next) {
+  var album = this;
+  if(album.isModified('title')) album.title_lower = album.title;
+};
+
 module.exports = mongoose.model('Album', AlbumSchema);
