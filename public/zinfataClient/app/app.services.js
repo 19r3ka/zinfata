@@ -1,4 +1,5 @@
 /*__________________________________________
+
           AUTHENTICATION SERVICES
   __________________________________________*/
 
@@ -99,7 +100,8 @@ app.service('AuthenticationSvc', ['$rootScope', 'AUTH', 'ROUTES', 'SessionSvc', 
 }]);
 
 /*________________________________________________________
-                    APP CORE SERVICES
+
+               APP RESOURCE SERVICE WRAPPERS
   ________________________________________________________*/
 
 app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location', '$rootScope',
@@ -151,6 +153,17 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location', '$rootScope
 		  failure(err);
 	  });
   };
+
+  this.all = Users.query(function(collection) {
+    var ret = [];
+    angular.forEach(collection, function(item) {
+      if(!!item.avatarUrl && (item.avatarUrl.search('user-avatar-placeholder') === -1)) item.avatarUrl = '../../' + item.avatarUrl.split('/').slice(1).join('/');
+      this.push(item);
+    }, ret)
+    return ret = [];
+  }, function(err) {
+    $log.debug('Unable to get all the users!');
+  });
 
   this.findByHandle = function(handle, success, failure) {
     return Users.find({handle: handle}, function(user) {
@@ -204,6 +217,18 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
     });
   };
 
+  this.all = Albums.query(function(collection) {
+    var ret = [];
+    angular.forEach(collection, function(item) {
+      item.releaseDate = new Date(item.releaseDate);  // AngularJs 1.3+ only accept valid Date format and not string equilavent
+      if(!!item.imageUrl && (item.imageUrl.search('album-coverart-placeholder') === -1)) item.imageUrl = '../../' + item.imageUrl.split('/').slice(1).join('/');
+      this.push(item);
+    }, ret)
+    return ret;
+  }, function(err) {
+    $log.debug('Unable to get all the albums!');
+  });
+
   this.getByUser = function(user, success, failure) {
   	Albums.getByUser({user_id: user._id}, function(albums) {
       angular.forEach(albums, function(data) {
@@ -224,24 +249,6 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
     });
   };
 }]);
-app.service('MessageSvc', function() {
-  this.message = null;
-
-  this.getMsg   = function() {
-    return this.message;
-  };
-
-  this.addMsg   = function(type, text) {
-    this.message = {
-      type: type,
-      text: text
-    };
-  };
-
-  this.clearQueue = function() {
-    this.message = null;
-  };
-});
 app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window', 'sessionStore',
                           function(Tracks, $log, UsersSvc, AlbumsSvc, $window, store) {
   this.create = function(track, success, failure) {
@@ -299,6 +306,23 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window', 
       failure(err);
     });
   };
+
+  this.all = Tracks.query(function(collection) {
+    var ret = [];
+    angular.forEach(collection, function(item) {
+      item.artist      = { id: item.artistId };
+      item.album       = { id: item.albumId };
+      item.releaseDate = new Date(item.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
+      delete item.artistId;
+      delete item.albumId;
+      if('coverArt' in item && !!item.coverArt)  item.coverArt  = '../../' + item.coverArt.split('/').slice(1).join('/');
+      if('streamUrl' in item && !!item.streamUrl) item.streamUrl = '../../' + item.streamUrl.split('/').slice(1).join('/');
+      this.push(item);
+    }, ret)
+    return ret;
+  }, function(err) {
+    $log.debug('Unable to get all the tracks!');
+  });
 
   this.find = function(query, success, failure) { // query must be a valid hash with a_id &| u_id
     var search;
@@ -404,7 +428,7 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
 
   this.get = function(playlistId, success, failure) {
     return Playlists.get({ id: playlistId }, function(data) {
-      data.owner    = { id: data.ownerId };
+      data.owner = { id: data.ownerId };
       delete data.ownerId;
       /* 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
       if(!!data.coverArt)   data.coverArt   = '../../' + data.coverArt.split('/').slice(1).join('/');
@@ -414,6 +438,18 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
       failure(err);
     });
   };
+
+  this.all = Playlists.query(function(collection) {
+    var ret = [];
+    angular.forEach(collection, function(item) {
+      item.owner = {id: item.ownerId };
+      delete item.ownerId;
+      this.push(item);
+    }, ret)
+    return ret;
+  }, function(err) {
+    $log.debug('Unable to get all the playlists!');
+  });
 
   this.find = function(query, success, failure) { // params must be a valid hash with a_id &| u_id
     if('u_id' in query) {
@@ -477,6 +513,12 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
     });
   };
 }]);
+
+/*________________________________________________________
+
+                    APP OTHER SERVICES
+  ________________________________________________________*/
+
 app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', 'TracksSvc', 'SessionSvc',
                         function(queue, $rootScope, AUDIO, QUEUE, $log, TracksSvc, Session) {
   var self  = this,
@@ -596,3 +638,21 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
     $rootScope.$broadcast(AUDIO.set, self.data.currentlyPlaying.track);
   };
 }]);
+app.service('MessageSvc', function() {
+  this.message = null;
+
+  this.getMsg   = function() {
+    return this.message;
+  };
+
+  this.addMsg   = function(type, text) {
+    this.message = {
+      type: type,
+      text: text
+    };
+  };
+
+  this.clearQueue = function() {
+    this.message = null;
+  };
+});

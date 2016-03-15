@@ -109,6 +109,13 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider',
         loginRequired: true
       }
     }).
+    when('/search', {
+      templateUrl: '/partials/search',
+      controller:  'searchCtrl',
+      access: {
+        loginRequired: true
+      }
+    }).
     otherwise({redirectTo: '/'});
 
   $locationProvider.html5Mode(true);

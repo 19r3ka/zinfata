@@ -10,7 +10,6 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
           handle = $filter('lowercase')(data[i].handle)
           users.push(handle);
         }
-        $log.debug(users);
         ctrl.$asyncValidators.uniquehandle = function(modelValue, viewValue) {
           var defer = $q.defer(),
               entry = $filter('lowercase')(modelValue);
@@ -240,6 +239,34 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
       };
     },
     templateUrl: '/templates/zDetailedTrackListing'
+  };
+}])
+.directive('zSearchBox', ['PlaylistsSvc', 'TracksSvc', 'AlbumsSvc', 'UsersSvc',
+                         function(Playlists, Tracks, Albums, Users) {
+  return {
+    restrict: 'E',
+    link: function(scope, elm, attrs) {
+      scope.playlists  = scope.tracks = scope.albums = scope.users = [];
+      if(angular.isUndefined(scope.searchTerm)) scope.searchTerm = '';
+      scope.playlists = Playlists.all;
+      scope.tracks    = Tracks.all;
+      scope.albums    = Albums.all;
+      scope.users     = Users.all;
+
+      /*Playlists.query(function(playlists) {
+        scope.playlists = playlists;
+      });
+      Tracks.query(function(tracks) {
+        scope.tracks = tracks;
+      });
+      Albums.query(function(albums) {
+        scope.albums = albums;
+      });
+      Users.query(function(users) {
+        scope.users = users;
+      });*/
+    },
+    templateUrl: '/templates/zSearchBox'
   };
 }])
 .directive('zPlaylistDropdown', ['$rootScope', 'PlaylistsSvc', 'PLAYLIST_EVENTS', 'AUTH', 'AuthenticationSvc', 'SessionSvc', 'MessageSvc', '$log', 

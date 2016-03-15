@@ -1,0 +1,42 @@
+.panel(class='panel-default')
+    .panel-heading
+        form(name='searchForm', role='form', novalidate)
+                .input-group
+                    span.input-group-addon(class='glyphicon glyphicon-search')
+                    input.form-control(type='text', ng-model='searchTerm', placeholder='Search users, tracks, albums, and playlists')
+    .panel-body
+        h4(ng-show='!!tracks.length') Tracks
+        .list-group
+            .media(class='list-group-item', ng-repeat='track in filteredTracks = (tracks | filter:searchTerm)', href='/track/{{track._id}}')
+                .media-left(class='media-middle')
+                    img.media-object(height='30', name='coverArt', alt='{{ track.title }}', ng-src='{{ track.coverArt }}')
+                .media-body
+                    {{ track.title }}
+                    .pull-right
+                         {{track.releaseDate | date:'yyyy'}}
+            .well(ng-hide='filteredTracks.length', class='well-sm')
+                p.text-center No result matching 
+                    strong   {{ searchTerm }}
+        h4(ng-show='!!albums.length') Albums
+        .list-group 
+            .media(class='list-group-item', ng-repeat='album in filteredAlbums = (albums | filter:searchTerm)', href='/album/{{album._id}}')
+                .media-left(class='media-middle')
+                    img.media-object(height='30', name='coverArt', alt='{{ album.title }}', ng-src='{{ album.imageUrl }}')
+                .media-body
+                    {{ album.title }}
+                    .pull-right
+                         {{album.releaseDate | date:'yyyy'}}
+            .well(ng-hide='filteredAlbums.length', class='well-sm')
+                p.text-center No result matching 
+                    strong   {{ searchTerm }}
+        h4(ng-show='!!users.length') Users
+        .list-group 
+            .media(class='list-group-item', ng-repeat='user in filteredUsers = (users | filter:searchTerm)', href='/user/{{user._id}}')
+                .media-left(class='media-middle')
+                    img.media-object(height='30', name= 'avatar', alt='{{ user.handle }}', ng-src='{{ user.avatarUrl }}')
+                .media-body
+                    {{ user.handle }}
+            .well(ng-hide='filteredUsers.length', class='well-sm')
+                p.text-center No result matching 
+                    strong   {{ searchTerm }}
+                    
