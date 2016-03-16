@@ -179,7 +179,7 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
       {
         title:         data.title,
         coverArt:      data.coverArt,
-        artistId:      data.artistId,
+        artistId:      data.artist.id,
         releaseDate:   data.releaseDate
       }
     );
@@ -195,10 +195,8 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
       for(var key in albumToUpdate) {
           if(!!album[key] && albumToUpdate[key] !== album[key]) albumToUpdate[key] = album[key];
       }
-      if(!!album.coverArt) {
-          albumToUpdate.cover_art = album.coverArt;
-          // albumToUpdate.imageUrl;
-      }
+      if(album.coverArt) albumToUpdate.coverArt = album.coverArt;
+      
       albumToUpdate.$update(function(updatedAlbum) {
           success(updatedAlbum);
       }, function(err) {
@@ -209,6 +207,8 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
 
   this.get = function(albumId, success, failure) {
     Albums.get({ id: albumId }, function(data) {
+      data.artist      = { id: data.artistId };
+      delete data.artistId;
     	data.releaseDate = new Date(data.releaseDate); 	// AngularJs 1.3+ only accept valid Date format and not string equilavent
     	if(!!data.imageUrl && (data.imageUrl.search('album-coverart-placeholder') === -1)) data.imageUrl = '../../' + data.imageUrl.split('/').slice(1).join('/');  // 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
       success(data);
@@ -220,6 +220,8 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
   this.all = Albums.query(function(collection) {
     var ret = [];
     angular.forEach(collection, function(item) {
+      item.artist      = { id: item.artistId };
+      delete item.artistId;
       item.releaseDate = new Date(item.releaseDate);  // AngularJs 1.3+ only accept valid Date format and not string equilavent
       if(!!item.imageUrl && (item.imageUrl.search('album-coverart-placeholder') === -1)) item.imageUrl = '../../' + item.imageUrl.split('/').slice(1).join('/');
       this.push(item);
@@ -232,6 +234,8 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
   this.getByUser = function(user, success, failure) {
   	Albums.getByUser({user_id: user._id}, function(albums) {
       angular.forEach(albums, function(data) {
+        data.artist      = { id: data.artistId };
+        delete data.artistId;
   		  data.releaseDate = new Date(data.releaseDate);
         if(!!data.imageUrl && (data.imageUrl.search('album-coverart-placeholder') === -1)) data.imageUrl = '../../' + data.imageUrl.split('/').slice(1).join('/');  // 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
       });

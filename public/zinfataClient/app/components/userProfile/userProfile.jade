@@ -32,7 +32,7 @@
 form(name='userProfile', role='form', novalidate, ng-if='canEdit')
     .form-group(ng-hide='!editing')
         label(for='avatarInput') Choose your avatar:
-        z-img-crop(on-img-ready='updateAvatar(avatar)')
+        z-img-crop(on-img-ready='updateAvatar(imgFile)')
         //- input.form-control(type='file', name='avatar', id='avatarInput', accept='image/jpeg,image/jpg,image/png', onchange='angular.element(this).scope().readFile(this)')
         //- .crop-area(ng-show='cropPending', class='center-block', style='width:auto; height:350px;')  
             img-crop(image='rawImage', result-image='croppedImage')

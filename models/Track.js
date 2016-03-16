@@ -20,6 +20,7 @@ var TrackSchema = new mongoose.Schema( {
 TrackSchema.pre('save', function(next) {
   var track = this;
   if(track.isModified('title')) track.title_lower = track.title;
+  next();
 });
 
 TrackSchema.set('toJSON', {

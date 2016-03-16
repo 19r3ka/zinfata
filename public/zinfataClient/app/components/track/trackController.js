@@ -117,10 +117,10 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
         var reader  = new FileReader();
         reader.onload = function() {
             $scope.$apply(function() {
-                if(elem.name === 'avatar') {
+                /*if(elem.name === 'avatar') {
                     $scope.track.imageFile  = file;
                     $scope.track.coverArt   = userAddedFile = reader.result;
-                }
+                }*/
             // Reading large mp3 files causes the browser to crash.    
                 if(elem.name === 'music') {
                     $scope.track.audioFile  = file;
@@ -191,6 +191,11 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
         } else {
             $scope.track.coverArt = userAddedFile;
         }
+    };
+
+    $scope.updateCoverImage = function(image) {
+        $scope.track.imageFile = image.file;
+        $scope.user.coverArt   = userAddedFile = image.url;
     };
 
     $scope.download = function(track) {

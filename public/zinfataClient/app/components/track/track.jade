@@ -51,7 +51,8 @@ form(name='trackInfo', role='form', ng-if='creating || editing', novalidate)
                             input(type='checkbox', name='coverArtToggle', ng-model='uniqueCover', ng-change='updateCoverArt()')
                         |  This track has its own cover art!
                         label(ng-show='uniqueCover') Cover Art:
-                            input.form-control(type='file', name='avatar', accept='image/*', onchange='angular.element(this).scope().readFile(this)')
+                            z-img-crop(on-img-ready='updateCoverImage(imgFile)')
+                            
     .form-group
         input.form-control(type='text', name='title', placeholder='Title', ng-model='track.title', ng-disabled='!editing && !creating' ng-required)                
     .form-group

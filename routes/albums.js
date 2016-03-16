@@ -26,16 +26,17 @@ module.exports = function(wagner){
     });
   })
   .post(upload.single('coverArt'), function(req, res, next) { // POST new album
-    var data = req.body;
-    var new_album = new Album({
+    var data      = req.body,
+        new_album = new Album({
           title:          data.title,
           artistId:       data.artistId,
           releaseDate:    data.releaseDate
         });
     if(!!req.file) new_album.imageUrl = req.file.path;
-    new_album.save(function(err, album) {
+    console.log(new_album);
+    new_album.save(function(err, savedAlbum) {
       if(err) return next(err);
-      res.json(album);
+      res.json(savedAlbum);
     });
   });
 
@@ -61,7 +62,7 @@ module.exports = function(wagner){
     Album.findById(req.params.id, function(err, album) {
       if(err) return next(err);
       if(!album) return next(new zerror('not_found', 'Album not found'));
-      //if(req.user.id !== album.artist_id) return next(new Error('forbidden'));
+      console.log('we hit the put endpoint.');
       for(var key in album) {
         if(!!req.body[key]) album[key] = req.body[key]; // Since it's a blind attribution, only update keys that already exit.
       }

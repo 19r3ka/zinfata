@@ -362,12 +362,12 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
       };
 
       scope.updateAvatar = function(image) {
-        var avatar = {
+        var data = {
           file: dataURItoBlob(image),
           url:  image
         };
         scope.cropPending = false;
-        return scope.onImgReady({avatar: avatar});
+        return scope.onImgReady({imgFile: data});
       };  
      /*
       * Converts data uri to Blob. Necessary for uploading.

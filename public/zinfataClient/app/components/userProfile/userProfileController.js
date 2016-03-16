@@ -4,27 +4,8 @@ app.controller('userProfileCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSv
                                     USER_EVENTS, $routeParams, $log, $location, Session) {
     // $scope.user = UsersSvc.get($routeParams.userId) || Session.getCurrentUser();
     var userId = $routeParams.userId || Session.getCurrentUser() && Sesion.getCurrentUser()._id || null;
-    /**
-    * Converts data uri to Blob. Necessary for uploading.
-    * @see http://stackoverflow.com/questions/4998908/convert-data-uri-to-file-then-append-to-formdata
-    * @param  {String} dataURI
-    * @return {Blob}
-   */
-        /*dataURItoBlob = function(dataURI) {
-    var binary = atob(dataURI.split(',')[1]);
-    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-    var array = [];
-    for(var i = 0; i < binary.length; i++) {
-      array.push(binary.charCodeAt(i));
-    }
-    return new Blob([new Uint8Array(array)], {type: mimeString});
-  };*/
-
 
     $scope.user         = {};
-    /*$scope.rawImage     = '';
-    $scope.croppedImage = '';
-    $scope.cropPending  = false;*/
     $scope.editing      = false;
     $scope.canEdit      = false;
 
@@ -35,18 +16,6 @@ app.controller('userProfileCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSv
     }, function(err) {
         $location.path('/');
     });
-    
-    // if(!!!Object.keys($scope.user).length) $location.path('/');
-    
-    /*if(!!$scope.user) $scope.user.albums = {};
-    $scope.noAlbum = false;
-    
-    AlbumsSvc.getByUser({_id: $routeParams.userId}, function(data) {
-		$scope.user.albums = data;
-		if(!!!$scope.user.albums.length) $scope.noAlbum = true;
-    }, function(err) {
-		$scope.user.albums = {};
-    });*/
     
     $scope.fullname = function(user) {
         return user.firstName + ' ' + user.lastName;
@@ -83,25 +52,8 @@ app.controller('userProfileCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSv
 		});
 	};
 
-    /*$scope.readFile = function(elem) {
-        var file = elem.files[0];
-		var reader = new FileReader();
-		reader.onload = function() {
-			$scope.$apply(function() {
-                $scope.user.avatar = file;
-                $scope.rawImage    = reader.result;
-                $scope.cropPending = true;
-                $scope.editing     = true;
-			});
-		};
-		reader.readAsDataURL(file);
-    };*/
-
     $scope.updateAvatar = function(image) {
-        /*$scope.user.avatar    = dataURItoBlob(image);
-        $scope.user.avatarUrl = image;
-        $scope.cropPending    = false;*/
         $scope.user.avatar    = image.file;
         $scope.user.avatarUrl = image.url;
-    }
+    };
 }]);

@@ -11,8 +11,8 @@ app.factory('Users', ['$resource', function($resource) {
       method: 'PUT',
       transformRequest: FileDataObject,
       headers: {
-              'Content-Type': undefined,
-              enctype:        'multipart/form-data'
+        'Content-Type': undefined,
+        enctype:        'multipart/form-data'
       }
     },
     'find':           {method: 'GET', url: 'api/users/handle/:handle', params: {handle: '@handle'}, isArray: false },
@@ -24,12 +24,12 @@ app.factory('Users', ['$resource', function($resource) {
 .factory('Albums', ['$resource', function($resource) {
   return $resource('/api/albums/:id', {id: '@_id'}, {
     'update': {
-            method:'PUT',
-            transformRequest: FileDataObject,
-            headers: {
-                    'Content-Type': undefined,
-                    enctype:        'multipart/form-data'
-            }
+      method:'PUT',
+      transformRequest: FileDataObject,
+      headers: {
+        'Content-Type': undefined,
+        enctype:        'multipart/form-data'
+      }
     },
     'save':     {
             method: 'POST',
