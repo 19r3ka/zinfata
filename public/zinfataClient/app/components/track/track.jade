@@ -39,7 +39,7 @@
                         li: a(href='#', ng-click='download(track)', ng-show='track.downloadable') 
                             span.glyphicon(class='glyphicon-download-alt')
                             |  Download
-form(name='trackInfo', role='form', ng-if='creating || editing', novalidate)
+form(name='trackInfo', role='form', ng-if='creating || editing')
     .form-group
         .row
             .col-md-3
@@ -48,28 +48,30 @@ form(name='trackInfo', role='form', ng-if='creating || editing', novalidate)
                 .row
                     .col-md-12
                         label
-                            input(type='checkbox', name='coverArtToggle', ng-model='uniqueCover', ng-change='updateCoverArt()')
+                            input(type='checkbox', name='coverArtToggle', ng-model='cover.unique', ng-change='updateCoverArt(cover.unique)')
                         |  This track has its own cover art!
-                        label(ng-show='uniqueCover') Cover Art:
+                        label(ng-show='cover.unique') Cover Art:
                             z-img-crop(on-img-ready='updateCoverImage(imgFile)')
                             
     .form-group
-        input.form-control(type='text', name='title', placeholder='Title', ng-model='track.title', ng-disabled='!editing && !creating' ng-required)                
+        input.form-control(type='text', name='title', ng-min-length='1', placeholder='Title', ng-model='track.title', ng-disabled='!editing && !creating' required)                
     .form-group
         label(for='music') Track:
-        input.form-control(type='file', name='music', accept='audio/*', onchange='angular.element(this).scope().readFile(this)', ng-required='creating')
+        input.form-control(type='file', name='music', accept='audio/*', onchange='angular.element(this).scope().readFile(this)', ng-required='!track.streamUrl')
         //- audio(name='musicPreview', ng-src='{{ track.streamUrl }}', preload='auto', loop='true', ng-show='track.streamUrl', controls)
                     |  Your browser does not support this type of audio file !
     .form-group
         label(for='album') Album:	
-        select.form-control(name='album', ng-model='track.album.id', ng-options='album._id as album.title for album in albums', ng-required)
+        select.form-control(name='album', ng-model='track.album.id', ng-options='album._id as album.title for album in albums', required)
     .form-group
         label(for='genre') Genre:   
-        select.form-control(name='genre', ng-model='track.genre', ng-options='(genre | uppercase) for genre in musicGenres | orderBy: genre', ng-required)
+        select.form-control(name='genre', ng-model='track.genre', ng-options='(genre | uppercase) for genre in musicGenres | orderBy: genre', required)
             option(value='') -- Choose a music genre --
+        pre
+            {{track.genre}}
     .form-group(ng-class="{ 'has-error': trackInfo.releaseDate.$invalid }")
         label(for='releaseDate') Release Date:
-        input.form-control(type='date', name='releaseDate', ng-model='track.releaseDate', max="{{track.album.releaseDate | date:'yyyy-MM-dd'}}", ng-disabled='!editing && !creating', ng-required='creating')
+        input.form-control(type='date', name='releaseDate', ng-model='track.releaseDate', max="{{track.album.releaseDate | date:'yyyy-MM-dd'}}", ng-disabled='!editing && !creating', required)
         .help-block(ng-messages='trackInfo.releaseDate.$error', ng-show='trackInfo.releaseDate.$touched', ng-hide='trackInfo.releaseDate.$submitted')
             div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
     .form-group
@@ -79,6 +81,3 @@ form(name='trackInfo', role='form', ng-if='creating || editing', novalidate)
     .form-group
         button.btn-primary(class='form-control', type='submit', ng-click='create(track)', ng-show='creating', ng-disabled='trackInfo.$invalid') Upload track!
         button.btn-primary(class='form-control', type='submit', ng-click='update(track)', ng-show='canEdit && editing', ng-disabled='trackInfo.$invalid') Save changes!
-
-pre
-    {{ track }}

@@ -29,12 +29,16 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
         genre:       '',
         downloadable: false
     };
+    $scope.cover = {
+        unique:    false
+    };
     
     if($location.path() === '/track/new') $scope.creating = true;
 
     if($routeParams.trackId) {
         TracksSvc.get($routeParams.trackId, function(data) {
             $scope.track            = data;
+            $log.debug(data.genre);
             $scope.track.streamUrl  = $sce.trustAsResourceUrl(data.streamUrl);
 
             if(!!$scope.track.artist.id && ($scope.track.artist.id === Session.getCurrentUser()._id)) {
@@ -57,7 +61,13 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
                     if(album._id === $scope.track.album.id) {
                         $scope.track.album.title       = album.title;
                         $scope.track.album.releaseDate = album.releaseDate;
-                        if($scope.track.coverArt !== album.imageUrl) $scope.uniqueCover = true;
+                        if($scope.track.coverArt !== album.imageUrl) {
+                            $scope.cover.unique = true;
+                            /* Save the original unique cover art in case we need to revert back to it
+                               when the user unchecks 'cover.unique' without uploading new cover afterwards
+                            */
+                            userAddedFile      = $scope.track.coverArt;
+                        }
                     }
                 }, coverArts);
             }, function(err) {
@@ -91,13 +101,12 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
         });
     }
     /* 
-    ** Watch $scope.track.album.id to
-    ** update the coverArt dynamically
-    ** whenever the album selected changes
+    ** Watch $scope.track.album.id to update the coverArt dynamically whenever the album selected changes
     */
     $scope.$watch(function() { return $scope.track.album.id; }, function(newValue, oldValue) {
         if(newValue !== oldValue) {
-            if(!$scope.uniqueCover && !!coverArts[newValue]) $scope.track.coverArt = coverArts[newValue];
+            $log.debug($scope.cover.unique);
+            if(!$scope.cover.unique && !!coverArts[newValue]) $scope.track.coverArt = coverArts[newValue];
             $scope.track.album.releaseDate = releaseDates[newValue];
             if($scope.track.album.releaseDate < $scope.track.releaseDate) $scope.track.releaseDate = $scope.track.album.releaseDate;
         }
@@ -153,23 +162,24 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
     $scope.create = function(track) {
         track.artist.id = Session.getCurrentUser()._id;
         delete track.streamUrl;
-        TracksSvc.create(track, function(created_track) {
-            $rootScope.$broadcast(TRACK_EVENTS.createSuccess);
+        TracksSvc.create(track, function(createdTrack) {
+            $rootScope.$broadcast(TRACK_EVENTS.createSuccess, createdTrack);
             MessageSvc.addMsg('success', 'You have successfully added a new track!');
-            $location.path('track/' + created_track._id);
+            $location.path('track/' + createdTrack._id);
         }, function(err) {
-            $rootScope.$broadcast(TRACK_EVENTS.createFailed);
+            $rootScope.$broadcast(TRACK_EVENTS.createFailed, err);
             MessageSvc.addMsg('danger', 'Something went wrong trying to upload your new track!');
         });
     };
 
 	$scope.update = function(track) {
         delete track.streamUrl;
-        TracksSvc.update(track, function(updated_track) {
-            $rootScope.$broadcast(TRACK_EVENTS.updateSuccess);
+        TracksSvc.update(track, function(updatedTrack) {
+            $rootScope.$broadcast(TRACK_EVENTS.updateSuccess, updatedTrack);
             MessageSvc.addMsg('success', 'You have successfully updated this track!');
+            $location.path('track/' + updatedTrack._id);
         }, function(err) {
-            $rootScope.$broadcast(TRACK_EVENTS.updateFailed);
+            $rootScope.$broadcast(TRACK_EVENTS.updateFailed, err);
             MessageSvc.addMsg('danger', 'Something went wrong trying to update your track\'s info!');
         });
 	};
@@ -185,17 +195,19 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
         });
     };
 
-    $scope.updateCoverArt = function() {
-        if(!$scope.uniqueCover) {
+    $scope.updateCoverArt = function(unique) {
+        $log.debug(unique);
+        if(!unique) {
             $scope.track.coverArt = coverArts[$scope.track.album.id];
         } else {
             $scope.track.coverArt = userAddedFile;
         }
+        $log.debug($scope.track.coverArt);
     };
 
     $scope.updateCoverImage = function(image) {
         $scope.track.imageFile = image.file;
-        $scope.user.coverArt   = userAddedFile = image.url;
+        $scope.track.coverArt  = userAddedFile = image.url;
     };
 
     $scope.download = function(track) {

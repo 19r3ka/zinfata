@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var TrackSchema = new mongoose.Schema( {
   title:        { type: String, required: true },
-  title_lower: 	{ type: String, required: true, lowercase: true, select: false },
+  title_lower: 	{ type: String, lowercase: true, select: false },
   artistId:  	  { type: String, required: true },
   feat:       	{ type: Array, default: [] },      // for the IDs of all contributing artists
   size:         { type: String, required: true },
@@ -12,8 +12,8 @@ var TrackSchema = new mongoose.Schema( {
   albumId:   	  { type: String, required: true },
   coverArt: 	  { type: String, required: true },
   streamUrl: 	  { type: String, required: true },
-  genre:        { type: String, lowercase: true },
-  releaseDate: 	{ type: Date, default: Date.now },
+  genre:        { type: String, lowercase: true, required: true },
+  releaseDate: 	{ type: Date, required: true },
   updated_at: 	{ type: Date, default: Date.now }
 });
 

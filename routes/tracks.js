@@ -103,20 +103,22 @@ module.exports = function(wagner) {
     Track.findById(req.params.id, function(err, trackToUpdate) {
       if(err) return next(err);
       if(!trackToUpdate) return next(new zerror('not_found', 'Track not found'));
-      //if(req.user.id !== album.artist_id) return next(new Error('forbidden'));
-      for(var key in track) {
-        if(!!req.body[key]) track[key] = req.body[key]; // Since it's a blind attribution, only update keys that already exit.
+      // Since it's a blind attribution, only update keys that already exit.
+      for(var key in trackToUpdate) {
+        if(!!req.body[key]) trackToUpdate[key] = req.body[key]; 
       }
       if(!!req.files.imageFile) {
         trackToUpdate.coverArt = req.files.imageFile[0].path;
-      } else {
-        if(req.body.coverArt) trackToUpdate.coverArt = req.body.coverArt.replace('../..', 'public');
+      } else if(req.body.coverArt) {
+        trackToUpdate.coverArt = req.body.coverArt.replace('../..', 'public');
       }
 
       if(!!req.files.audioFile) {
         trackToUpdate.streamUrl = req.files.audioFile[0].path;
         trackToUpdate.size      = req.files.audioFile[0].size;
       }
+
+      console.log(trackToUpdate);
       
       trackToUpdate.save(function(err, updated_track) {
         if(err) return next(err);

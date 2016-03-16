@@ -284,10 +284,9 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window', 
           if(!!track[key] && trackToUpdate[key] !== track[key]) trackToUpdate[key] = track[key];
       }
       trackToUpdate.albumId = track.album.id;
-      if(!!track.coverArt) {
-          trackToUpdate.cover_art = track.coverArt;
-          delete trackToUpdate.imageUrl;
-      }
+      
+      $log.debug(trackToUpdate);
+      
       trackToUpdate.$update(function(updatedTrack) {
           success(updatedTrack);
       }, function(err) {
