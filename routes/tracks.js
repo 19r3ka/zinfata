@@ -87,6 +87,11 @@ module.exports = function(wagner) {
 
     new_track.save(function(err, track) {
       if(err) return next(err);
+      User.findById(track.artistId, function(err, user) {
+        if(err) console.log(err);
+        if(user.role !== 'artist') user.role = 'artist';
+        user.save();
+      });
       res.json(track);
     });
   });

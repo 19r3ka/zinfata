@@ -38,7 +38,6 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
     if($routeParams.trackId) {
         TracksSvc.get($routeParams.trackId, function(data) {
             $scope.track            = data;
-            $log.debug(data.genre);
             $scope.track.streamUrl  = $sce.trustAsResourceUrl(data.streamUrl);
 
             if(!!$scope.track.artist.id && ($scope.track.artist.id === Session.getCurrentUser()._id)) {
@@ -105,7 +104,6 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
     */
     $scope.$watch(function() { return $scope.track.album.id; }, function(newValue, oldValue) {
         if(newValue !== oldValue) {
-            $log.debug($scope.cover.unique);
             if(!$scope.cover.unique && !!coverArts[newValue]) $scope.track.coverArt = coverArts[newValue];
             $scope.track.album.releaseDate = releaseDates[newValue];
             if($scope.track.album.releaseDate < $scope.track.releaseDate) $scope.track.releaseDate = $scope.track.album.releaseDate;
@@ -196,13 +194,11 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location', '$rout
     };
 
     $scope.updateCoverArt = function(unique) {
-        $log.debug(unique);
         if(!unique) {
             $scope.track.coverArt = coverArts[$scope.track.album.id];
         } else {
             $scope.track.coverArt = userAddedFile;
         }
-        $log.debug($scope.track.coverArt);
     };
 
     $scope.updateCoverImage = function(image) {

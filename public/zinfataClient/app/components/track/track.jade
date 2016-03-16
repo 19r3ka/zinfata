@@ -67,8 +67,6 @@ form(name='trackInfo', role='form', ng-if='creating || editing')
         label(for='genre') Genre:   
         select.form-control(name='genre', ng-model='track.genre', ng-options='(genre | uppercase) for genre in musicGenres | orderBy: genre', required)
             option(value='') -- Choose a music genre --
-        pre
-            {{track.genre}}
     .form-group(ng-class="{ 'has-error': trackInfo.releaseDate.$invalid }")
         label(for='releaseDate') Release Date:
         input.form-control(type='date', name='releaseDate', ng-model='track.releaseDate', max="{{track.album.releaseDate | date:'yyyy-MM-dd'}}", ng-disabled='!editing && !creating', required)
