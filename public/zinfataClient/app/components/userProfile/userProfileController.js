@@ -3,14 +3,14 @@ app.controller('userProfileCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSv
                                    function($scope, $rootScope, UsersSvc, AlbumsSvc, MessageSvc, 
                                     USER_EVENTS, $routeParams, $log, $location, Session) {
     // $scope.user = UsersSvc.get($routeParams.userId) || Session.getCurrentUser();
-    var userId = $routeParams.userId || Session.getCurrentUser() && Sesion.getCurrentUser()._id || null,
+    var userId = $routeParams.userId || Session.getCurrentUser() && Sesion.getCurrentUser()._id || null;
     /**
     * Converts data uri to Blob. Necessary for uploading.
     * @see http://stackoverflow.com/questions/4998908/convert-data-uri-to-file-then-append-to-formdata
     * @param  {String} dataURI
     * @return {Blob}
    */
-        dataURItoBlob = function(dataURI) {
+        /*dataURItoBlob = function(dataURI) {
     var binary = atob(dataURI.split(',')[1]);
     var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
     var array = [];
@@ -18,15 +18,15 @@ app.controller('userProfileCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSv
       array.push(binary.charCodeAt(i));
     }
     return new Blob([new Uint8Array(array)], {type: mimeString});
-  };
+  };*/
 
 
     $scope.user         = {};
-    $scope.rawImage     = '';
+    /*$scope.rawImage     = '';
     $scope.croppedImage = '';
+    $scope.cropPending  = false;*/
     $scope.editing      = false;
     $scope.canEdit      = false;
-    $scope.cropPending  = false;
 
     UsersSvc.get(userId, function(user) {
         $scope.user = user;
@@ -83,7 +83,7 @@ app.controller('userProfileCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSv
 		});
 	};
 
-    $scope.readFile = function(elem) {
+    /*$scope.readFile = function(elem) {
         var file = elem.files[0];
 		var reader = new FileReader();
 		reader.onload = function() {
@@ -95,11 +95,13 @@ app.controller('userProfileCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSv
 			});
 		};
 		reader.readAsDataURL(file);
-    };
+    };*/
 
     $scope.updateAvatar = function(image) {
-        $scope.user.avatar    = dataURItoBlob(image);
+        /*$scope.user.avatar    = dataURItoBlob(image);
         $scope.user.avatarUrl = image;
-        $scope.cropPending    = false;
+        $scope.cropPending    = false;*/
+        $scope.user.avatar    = image.file;
+        $scope.user.avatarUrl = image.url;
     }
 }]);
