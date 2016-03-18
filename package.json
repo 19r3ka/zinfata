@@ -39,7 +39,9 @@
     "wagner-core": "^0.2.0"
   },
   "devDependencies": {
+    "browser-sync": "^2.11.1",
     "chai": "^3.4.1",
+    "gulp": "^3.9.1",
     "jshint": "^2.8.0",
     "karma": "^0.13.19",
     "karma-chai": "^0.1.0",
