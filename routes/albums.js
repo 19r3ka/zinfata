@@ -1,4 +1,4 @@
-module.exports = function(wagner){
+module.exports = function(wagner) {
 
   var express  = require('express');
   var router   = express.Router();
@@ -9,10 +9,11 @@ module.exports = function(wagner){
       {dest: 'public/images/uploads'}
   );
 
-  var zerror, albumModel;
-  wagner.invoke(function(ZError, Album){
-      zerror = ZError;
-      albumModel = Album;
+  var ZError;
+  var albumModel;
+  wagner.invoke(function(ZError, Album) {
+    ZError = ZError;
+    albumModel = Album;
   });
 
   var Album = albumModel;
@@ -20,68 +21,68 @@ module.exports = function(wagner){
   router.route('/')
   .get(function(req, res, next) { // GET all albums listing.
     Album.find(function(err, albums) {
-      if(err) return next(err);
-      if(!albums) return next(new zerror('not_found', 'No album found'));
+      if (err) {return next(err);}
+      if (!albums) {return next(new ZError('not_found', 'No album found'));}
       res.json(albums);
     });
   })
   .post(upload.single('coverArt'), function(req, res, next) { // POST new album
-    var data      = req.body,
-        new_album = new Album({
+    var data      = req.body;
+    var newAlbum = new Album({
           title:          data.title,
           artistId:       data.artistId,
           releaseDate:    data.releaseDate
         });
-    if(!!req.file) new_album.imageUrl = req.file.path;
-    console.log(new_album);
-    new_album.save(function(err, savedAlbum) {
-      if(err) return next(err);
+    if (!!req.file) {newAlbum.imageUrl = req.file.path;}
+    newAlbum.save(function(err, savedAlbum) {
+      if (err) {return next(err);}
       res.json(savedAlbum);
     });
   });
 
   router.route('/user/:userId') // get all albums with given user id
   .get(function(req, res, next) {
-  	Album.find({ artistId: req.params.userId }, function(err, albums) {
-  		if(err) return next(err);
-      if(!albums) return next(new zerror('not_found', 'User has no album'));
-  		res.json(albums);
-  	});
+    Album.find({artistId: req.params.userId}, function(err, albums) {
+      if (err) {return next(err);}
+      if (!albums) {return next(new ZError('not_found', 'User has no album'));}
+      res.json(albums);
+    });
   });
 
   router.route('/:id')
-  .get(function(req, res, next) { // GET specific album by ID
+  // GET specific album by ID
+  .get(function(req, res, next) {
     Album.findById(req.params.id, function(err, album) {
-      if(err) return next(err);
-      if(!album) return next(new zerror('not_found', 'Album not found'));
-      
+      if (err) {return next(err);}
+      if (!album) {return next(new ZError('not_found', 'Album not found'));}
       res.json(album);
     });
   })
-  .put(upload.single('coverArt'), function(req, res, next) { // UPDATE album info by ID
+  // UPDATE album info by ID
+  .put(upload.single('coverArt'), function(req, res, next) {
     Album.findById(req.params.id, function(err, album) {
-      if(err) return next(err);
-      if(!album) return next(new zerror('not_found', 'Album not found'));
-      console.log('we hit the put endpoint.');
-      for(var key in album) {
-        if(!!req.body[key]) album[key] = req.body[key]; // Since it's a blind attribution, only update keys that already exit.
+      if (err) {return next(err);}
+      if (!album) {return next(new ZError('not_found', 'Album not found'));}
+      // Since it's a blind attribution, only update keys that already exit.
+      for (var key in album) {
+        if (!!req.body[key]) {album[key] = req.body[key];}
       }
-      if(!!req.file) album.imageUrl = req.file.path;
-      album.save(function(err, updated_album) {
-        if(err) return next(err);
-        res.json(updated_album);
+      if (!!req.file) {album.imageUrl = req.file.path;}
+      album.save(function(err, updatedAlbum) {
+        if (err) {return next(err);}
+        res.json(updatedAlbum);
       });
     });
   })
-  .delete(function(req, res, next) { // DELETE album by ID
+  // DELETE album by ID
+  .delete(function(req, res, next) {
     Album.findById(req.params.id, function(err, album) {
-      if(err) return next(err);
-      //if(err) return next(err);
-      if(!album) return next(new zerror('not_found', 'Album not found'));
-      //if(req.user.id !== album.artist_id) return next(new Error('forbidden'));
-      album.remove(function(err, deleted_album) {
-        if(err) return next(err);
-        res.json(deleted_album);
+      if (err) {return next(err);}
+      if (!album) {return next(new ZError('not_found', 'Album not found'));}
+      album.deleted = true;
+      album.save(function(err, deletedAlbum) {
+        if (err) {return next(err);}
+        res.json(deletedAlbum);
       });
     });
   });

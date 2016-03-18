@@ -111,7 +111,7 @@ UserSchema.set('toJSON', {
     delete ret.password;
     delete ret.email;
     delete ret.role;
-    // delete ret.activated;
+    delete ret.activated;
     return ret;
   }
 });
