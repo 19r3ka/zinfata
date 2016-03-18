@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var TrackSchema = new mongoose.Schema( {
   title:        { type: String, required: true },
-  title_lower: 	{ type: String, lowercase: true, select: false },
+  titleLower: 	{ type: String, lowercase: true, select: false },
   artistId:  	  { type: String, required: true },
   feat:       	{ type: Array, default: [] },      // for the IDs of all contributing artists
   size:         { type: String, required: true },
@@ -14,18 +14,18 @@ var TrackSchema = new mongoose.Schema( {
   streamUrl: 	  { type: String, required: true },
   genre:        { type: String, lowercase: true, required: true },
   releaseDate: 	{ type: Date, required: true },
-  updated_at: 	{ type: Date, default: Date.now }
+  updatedAt: 	{ type: Date, default: Date.now }
 });
 
 TrackSchema.pre('save', function(next) {
   var track = this;
-  if(track.isModified('title')) track.title_lower = track.title;
+  if(track.isModified('title')) track.titleLower = track.title;
   next();
 });
 
 TrackSchema.set('toJSON', {
     transform: function(doc, ret, options) {
-      delete ret.title_lower;
+      delete ret.titleLower;
       return ret;
     }
 });

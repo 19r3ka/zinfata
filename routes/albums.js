@@ -6,7 +6,7 @@ module.exports = function(wagner){
   var passport = require('../config/passport.js');
   var multer   = require('multer');
   var upload   = multer(
-      { dest: 'public/images/uploads'}
+      {dest: 'public/images/uploads'}
   );
 
   var zerror, albumModel;
@@ -40,9 +40,9 @@ module.exports = function(wagner){
     });
   });
 
-  router.route('/user/:user_id') // get all albums with given user id
+  router.route('/user/:userId') // get all albums with given user id
   .get(function(req, res, next) {
-  	Album.find({ artistId: req.params.user_id }, function(err, albums) {
+  	Album.find({ artistId: req.params.userId }, function(err, albums) {
   		if(err) return next(err);
       if(!albums) return next(new zerror('not_found', 'User has no album'));
   		res.json(albums);
