@@ -8,6 +8,7 @@ html.no-js
     meta(name='description', content='Le plateforme de la musique togolaise.')
     meta(name='viewport', content='width=device-width, initial-scale=1')
     link(rel='stylesheet', href='/zinfataClient/assets/libs/bootstrap-3.3.5/css/bootstrap.css')
+    link(rel='stylesheet', href="../stylesheets/style.min.css")
     link(rel='stylesheet', href='/zinfataClient/assets/libs/ngImgCrop/ng-img-crop.css')
     block scripts
       script(src='/zinfataClient/assets/libs/jquery/jquery-2.1.4.min.js')
@@ -27,7 +28,7 @@ html.no-js
       block messages
         include app/shared/messages/messageBox
     .row
-      .col-md-2
+      .col-md-2#sidebar
         block sidebar
           include app/shared/sidebar/sidebar
       .col-md-7
