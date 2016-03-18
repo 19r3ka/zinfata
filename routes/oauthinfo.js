@@ -1,10 +1,10 @@
 module.exports = function(wagner){
 
-	var oAuthClientModel, oAuthAccessTokenModel, userModel, zerror;
+	var oAuthClientModel, oAuthAccessTokenModel, userModel, ZError;
 	wagner.invoke(function(OAuthClient, ZOAuthError, OAuthAccessToken, User){
 		oAuthClientModel = OAuthClient;
 		oAuthAccessTokenModel = OAuthAccessToken;
-		zerror = ZOAuthError;
+		ZError = ZOAuthError;
 		userModel = User;
 
 	});
@@ -20,13 +20,13 @@ module.exports = function(wagner){
 
 			var error_description = !data.client_id ? 'Missing client_id parameter' :  'Missing client_secret parameter';
 
-			var err = new zerror('invalid_request', error_description);
+			var err = new ZError('invalid_request', error_description);
 			return next(err);
 		}
 
 		if (!data.token) {
 
-			var err = new zerror('invalid_request', 'Missing token parameter' );
+			var err = new ZError('invalid_request', 'Missing token parameter' );
 			return next(err);
 		}
 
@@ -39,7 +39,7 @@ module.exports = function(wagner){
 			if (err) return next(err);
 			if (!client) {
 				
-				var err = new zerror('invalid_grant', 'Client credentials are invalid');
+				var err = new ZError('invalid_grant', 'Client credentials are invalid');
 				return next(err);
 			} 
 
@@ -48,7 +48,7 @@ module.exports = function(wagner){
 			if (err) return next(err);
 			if (!accessToken) {
 
-				var err = new zerror('invalid_request', 'Invalid token');
+				var err = new ZError('invalid_request', 'Invalid token');
 				return next(err);
 			}
 
@@ -56,7 +56,7 @@ module.exports = function(wagner){
 				if (err) return next(err);
 				//the token owner doesn't exist
 				if (!user) {
-					var err = new zerror('invalid_request', 'Invalid token');
+					var err = new ZError('invalid_request', 'Invalid token');
 					return next(error);
 				}
 

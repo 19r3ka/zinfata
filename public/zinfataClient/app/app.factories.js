@@ -41,8 +41,8 @@ app.factory('Users', ['$resource', function($resource) {
     },
     'getByUser': {
 			method:'GET',
-			url: '/api/albums/user/:user_id',
-			params: {user_id: '@_id'},
+			url: '/api/albums/user/:userId',
+			params: {userId: '@_id'},
 			isArray: true
     }
   });

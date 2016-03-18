@@ -232,7 +232,7 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
   });
 
   this.getByUser = function(user, success, failure) {
-  	Albums.getByUser({user_id: user._id}, function(albums) {
+  	Albums.getByUser({userId: user._id}, function(albums) {
       angular.forEach(albums, function(data) {
         data.artist      = { id: data.artistId };
         delete data.artistId;
