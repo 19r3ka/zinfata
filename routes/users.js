@@ -77,10 +77,10 @@ module.exports = function(wagner) {
           console.log('the activation link will be : ' +
                       'http://localhost:3000/register/activate/' +
                       token.token);
-          wagner.invoke(function(MailService) {
+          wagner.invoke(function(mailService) {
             var activationLink = 'http://localhost:3000/register/' +
                                  'activate?token=' + token.token;
-            MailService.sendWelcomeMail(newUser.email, newUser.firstName,
+            mailService.sendWelcomeMail(newUser.email, newUser.firstName,
               activationLink, function(err, infos) {
               if (err) {
                 //if the confirmation email is not send the user can not activate its account so delete the user

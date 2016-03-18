@@ -1,9 +1,9 @@
 module.exports = function(wagner){
 
-	var OAuthClientModel, zerror;
+	var OAuthClientModel, ZError;
 	wagner.invoke(function(ZOAuthError, OAuthClient){
 		OAuthClientModel = OAuthClient;
-		zerror = ZOAuthError;
+		ZError = ZOAuthError;
 	});
 	var OAuthClient = OAuthClientModel
 
@@ -21,13 +21,13 @@ module.exports = function(wagner){
 	.post(function(req, res, next){//register new client app
 
 		if (!req.is('application/x-www-form-urlencoded'))  {
-			var error = new zerror('invalid_request', 'Method must be POST with application/x-www-form-urlencoded encoding');
+			var error = new ZError('invalid_request', 'Method must be POST with application/x-www-form-urlencoded encoding');
 			return next(error); 
 		}
 		var data = req.body;
 		if (!data.client_id || !data.client_secret) {
 			var error_description = !data.client_id ? 'Missing client_id parameter' :  'Missing client_secret parameter';
-			var err = new zerror('invalid_request', error_description);
+			var err = new ZError('invalid_request', error_description);
 			return next(err);
 		}
 
@@ -39,7 +39,7 @@ module.exports = function(wagner){
 		new_client.save(function(err, client){
 			if (err) {
 				if (err.code == 11000) {
-					var err = new zerror('invalid_request', 'The client id is already in use');
+					var err = new ZError('invalid_request', 'The client id is already in use');
 		    		return next(err);
 				}
 				return next(err);
