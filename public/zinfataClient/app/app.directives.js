@@ -1,17 +1,19 @@
-app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) {
+app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users, $q, $log, $filter) {
   return {
     require: 'ngModel',
     link: function(scope, elm, attrs, ctrl) {
-      var users = [];
+      var users  = [],
+          handle = '';
 
       Users.query(function(data) {
         for(i = 0; i < data.length; i++) {
-          users.push(data[i].handle);
+          handle = $filter('lowercase')(data[i].handle)
+          users.push(handle);
         }
-
         ctrl.$asyncValidators.uniquehandle = function(modelValue, viewValue) {
-          var defer = $q.defer();
-          if(users.indexOf(modelValue) === -1){
+          var defer = $q.defer(),
+              entry = $filter('lowercase')(modelValue);
+          if(users.indexOf(entry) === -1) {
             defer.resolve();
           }else{
             defer.reject();
@@ -22,7 +24,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
     }
   };
 }])
-.directive('uniqueEmail', ['Users', '$q', '$log', function(Users, $q, $log) {
+.directive('uniqueEmail', ['Users', '$q', '$log', '$filter', function(Users, $q, $log, $filter) {
   return {
     require: 'ngModel',
     link: function(scope, elm, attrs, ctrl) {
@@ -30,12 +32,14 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
 
       Users.query(function(data) {
         for(i = 0; i < data.length; i++) {
-          users.push(data[i].email);
+          users.push($filter('lowercase')(data[i].email));
         }
 
         ctrl.$asyncValidators.uniqueemail = function(modelValue, viewValue) {
-          var defer = $q.defer();
-          if(users.indexOf(modelValue) === -1){
+          var defer = $q.defer(),
+              entry = $filter('lowercase')(modelValue);
+
+          if(users.indexOf(entry) === -1){
             defer.resolve();
           }else{
             defer.reject();
@@ -237,40 +241,85 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
     templateUrl: '/templates/zDetailedTrackListing'
   };
 }])
-.directive('zPlaylistDropdown', ['$rootScope', 'PlaylistsSvc', 'PLAYLIST_EVENTS', 'AUTH', 'SessionSvc', 'MessageSvc', '$log', 
-                                function($rootScope, Playlists, PLAYLIST, AUTH, session, Message, $log) {
+.directive('zSearchBox', ['PlaylistsSvc', 'TracksSvc', 'AlbumsSvc', 'UsersSvc',
+                         function(Playlists, Tracks, Albums, Users) {
+  return {
+    restrict: 'E',
+    link: function(scope, elm, attrs) {
+      scope.playlists  = scope.tracks = scope.albums = scope.users = [];
+      if(angular.isUndefined(scope.searchTerm)) scope.searchTerm = '';
+      scope.playlists = Playlists.all;
+      scope.tracks    = Tracks.all;
+      scope.albums    = Albums.all;
+      scope.users     = Users.all;
+
+      /*Playlists.query(function(playlists) {
+        scope.playlists = playlists;
+      });
+      Tracks.query(function(tracks) {
+        scope.tracks = tracks;
+      });
+      Albums.query(function(albums) {
+        scope.albums = albums;
+      });
+      Users.query(function(users) {
+        scope.users = users;
+      });*/
+    },
+    templateUrl: '/templates/zSearchBox'
+  };
+}])
+.directive('zPlaylistDropdown', ['$rootScope', 'PlaylistsSvc', 'PLAYLIST_EVENTS', 'AUTH', 'AuthenticationSvc', 'SessionSvc', 'MessageSvc', '$log', 
+                                function($rootScope, Playlists, PLAYLIST, AUTH, Auth, session, Message, $log) {
   return {
     restrict: 'E',
     scope: {
       track: '='
     },
     link: function(scope, elm, attrs) {
-      var currentUser = session.getCurrentUser();
-
-      function refresh() {
-        if(!currentUser) return;
-        Playlists.find({ u_id: currentUser._id }, function(playlists) {
-          scope.playlists = playlists;
-        }, function(err) {});
-      }
-
       elm.addClass('dropdown-menu');
 
+      var currentUser = session.getCurrentUser();
       scope.playlists = [];
       scope.playlist  = {
         title: '',
         owner: { id: '' }
       };
-      scope.loggedIn  = currentUser && '_id' in currentUser ? true : false;
-      scope.adding    = 'track' in attrs && !!attrs.track ? true : false;
-      
+      scope.loggedIn  = Auth.isAuthenticated;
+
+      function refresh() {
+        if(!currentUser) return scope.playlists = [];
+        Playlists.find({ u_id: currentUser._id }, function(playlists) {
+          scope.playlists = playlists;
+        }, function(err) {});
+      }
+
+      scope.$watch(function() { return Auth.isAuthenticated(); }, 
+                   function(newVal, oldVal) {
+        if(newVal !== oldVal) {
+          if(!!newVal) currentUser = session.getCurrentUser();
+          refresh()
+        }
+      });
+      scope.$on(PLAYLIST.updateSuccess, function() {
+        refresh();
+      });
+      scope.$on(PLAYLIST.createSuccess, function() {
+        refresh();
+      });
+      scope.$on(PLAYLIST.deleteSuccess, function() {
+        refresh();
+      });
+      scope.$on(AUTH.loginSuccess, function() {
+        refresh();
+      });
+
       if(scope.loggedIn) refresh();
 
       scope.create = function(playlist) {
         playlist.owner.id = currentUser._id;
         Playlists.create(playlist, function(created_playlist) {
-          $rootScope.$broadcast(PLAYLIST.createSuccess);
-          scope.playlists.push(playlist);
+          $rootScope.$broadcast(PLAYLIST.createSuccess, created_playlist);
           scope.playlist.title = '';
         }, function(err) {
           $rootScope.$broadcast(PLAYLIST.createFailed);
@@ -286,33 +335,58 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', function(Users, $q, $log) 
           Message.addMsg('danger', 'Something went wrong adding track to playlist!');
         });
       };
-
-      scope.$watch(function() { return session.getCurrentUser() && session.getCurrentUser()._id; }, 
-                   function(newVal, oldVal) {
-        if(newVal !== oldVal) {
-          currentUser = session.getCurrentUser();
-        }
-
-        if(currentUser) {
-          scope.loggedIn = true;
-          refresh();
-        }
-      });
-
-      scope.$on(PLAYLIST.updateSuccess, function() {
-        refresh();
-      });
-      scope.$on(PLAYLIST.creationSuccess, function() {
-        refresh();
-      });
-      scope.$on(PLAYLIST.deleteSuccess, function() {
-        refresh();
-      });
-      scope.$on(AUTH.loginSuccess, function() {
-        scope.loggedIn = true;
-        refresh();
-      });
     },
     templateUrl: '/templates/zPlaylistDropdown'
   };
-}]);
+}])
+.directive('zImgCrop', function() {
+  return {
+    restrict: 'E',
+    scope: {
+      onImgReady: '&'
+    },
+    link: function(scope) {
+      scope.rawImage = scope.croppedImage = '';
+      scope.cropPending = false;
+
+      scope.readFile = function(elem) {
+        var file   = elem.files[0],
+            reader = new FileReader();
+        reader.onload = function() {
+          scope.$apply(function() {
+            scope.rawImage    = reader.result;
+            scope.cropPending = true;
+          });
+        };
+        reader.readAsDataURL(file);
+      };
+
+      scope.updateAvatar = function(image) {
+        var data = {
+          file: dataURItoBlob(image),
+          url:  image
+        };
+        scope.cropPending = false;
+        return scope.onImgReady({imgFile: data});
+      };  
+     /*
+      * Converts data uri to Blob. Necessary for uploading.
+      * @see http://stackoverflow.com/questions/4998908/convert-data-uri-to-file-then-append-to-formdata
+      * @param  {String} dataURI
+      * @return {Blob}
+      */
+      var dataURItoBlob = function(dataURI) {
+        var binary     = atob(dataURI.split(',')[1]),
+            mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0],
+            array      = [];
+
+        for(var i = 0; i < binary.length; i++) {
+          array.push(binary.charCodeAt(i));
+        }
+
+        return new Blob([new Uint8Array(array)], {type: mimeString});
+      };
+    },
+    templateUrl: '/templates/zImgCrop'
+  };
+});

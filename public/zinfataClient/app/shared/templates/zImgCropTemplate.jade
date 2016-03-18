@@ -1,0 +1,4 @@
+input.form-control(type='file', name='imageInput', accept='image/jpeg,image/jpg,image/png', onchange='angular.element(this).scope().readFile(this)')
+.crop-area(ng-show='cropPending', class='center-block', style='width:auto; height:350px;')  
+    img-crop(image='rawImage', result-image='croppedImage')
+    button.center-block(type='button', class='btn btn-primary', ng-click='updateAvatar(croppedImage)') Crop image

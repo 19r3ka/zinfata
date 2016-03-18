@@ -8,33 +8,33 @@ nav.navbar(class='navbar-inverse', role='navigation', ng-controller='headerCtrl'
             span(class='glyphicon glyphicon-menu-hamburger')
             ul.dropdown-menu
                 li 
-                  a(href="search", ng-hide='!loggedIn')
+                  a(href="search", ng-hide='!loggedIn()')
                     span(class='glyphicon glyphicon-search')
                     |  search
                 li 
-                  a(href="queue", ng-hide='!loggedIn')
+                  a(href="queue", ng-hide='!loggedIn()')
                    span(class='glyphicon glyphicon-list-alt')
                    |  Play Queue
                 li 
-                  a(href="#", ng-hide='!loggedIn')
+                  a(href="#", ng-hide='!loggedIn()')
                    span(class='glyphicon glyphicon-list')
                    |  My Playlists
-                li(class="divider",  ng-hide='!loggedIn')
-                li: a(href='login', ng-hide='loggedIn')
+                li(class="divider",  ng-hide='!loggedIn()')
+                li: a(href='login', ng-hide='loggedIn()')
                   span(class='glyphicon glyphicon-log-in')
                   |  Log In
-                li.menu-item: a(href= '{{ userProfile(user) }}',  ng-hide='!loggedIn')
+                li.menu-item: a(href= '{{ userProfile(user) }}',  ng-hide='!loggedIn()')
                   span.glyphicon(class='glyphicon-user')
                   |   Profile
-                li: a(href='#', ng-show='loggedIn', ng-click='logout()')
+                li: a(href='#', ng-show='loggedIn()', ng-click='logout()')
                   span(class='glyphicon glyphicon-log-out') 
                   |  Log Out
-                li: a(href='register', ng-hide='loggedIn')
+                li: a(href='register', ng-hide='loggedIn()')
                   span(class='glyphicon glyphicon-copy')
                   |  Register
 
     ul.nav(class=['navbar-right', 'navbar-nav'])
-      li.dropdown(ng-show='loggedIn', class='z-desktop')
+      li.dropdown(ng-show='loggedIn()', class='z-desktop')
         a.dropdown-toggle(data-toggle='dropdown')
           | {{ user.handle }}
           b.caret
@@ -43,10 +43,11 @@ nav.navbar(class='navbar-inverse', role='navigation', ng-controller='headerCtrl'
             span.glyphicon(class='glyphicon-user')
             |   Profile
           //- li.menu-item: a(href= '{{ userSettings(user) }}') Settings
-      li(class='z-desktop'): a(href='#', ng-show='loggedIn', ng-click='logout()')
+      li(class='z-desktop'): a(href='#', ng-show='loggedIn()', ng-click='logout()')
         span.glyphicon(class='glyphicon-log-out') 
         |   Log Out
-      li(class='z-desktop'): a(href='login', ng-hide='loggedIn')
+      li(class='z-desktop'): a(href='login', ng-hide='loggedIn()')
         span.glyphicon(class='glyphicon-log-in')
         |   Log In
-      li(class='z-desktop'): a(href='register', ng-hide='loggedIn') Register
+      li(class='z-desktop'): a(href='register', ng-hide='loggedIn()') Register
+    

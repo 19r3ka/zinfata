@@ -11,8 +11,8 @@ app.factory('Users', ['$resource', function($resource) {
       method: 'PUT',
       transformRequest: FileDataObject,
       headers: {
-              'Content-Type': undefined,
-              enctype:        'multipart/form-data'
+        'Content-Type': undefined,
+        enctype:        'multipart/form-data'
       }
     },
     'find':           {method: 'GET', url: 'api/users/handle/:handle', params: {handle: '@handle'}, isArray: false },
@@ -24,12 +24,12 @@ app.factory('Users', ['$resource', function($resource) {
 .factory('Albums', ['$resource', function($resource) {
   return $resource('/api/albums/:id', {id: '@_id'}, {
     'update': {
-            method:'PUT',
-            transformRequest: FileDataObject,
-            headers: {
-                    'Content-Type': undefined,
-                    enctype:        'multipart/form-data'
-            }
+      method:'PUT',
+      transformRequest: FileDataObject,
+      headers: {
+        'Content-Type': undefined,
+        enctype:        'multipart/form-data'
+      }
     },
     'save':     {
             method: 'POST',
@@ -75,10 +75,16 @@ app.factory('Users', ['$resource', function($resource) {
         enctype:        'multipart/form-data'
       }
     },
-    'find': { method: 'GET', 
+    'find': { 
+      method: 'GET', 
       isArray: true,
       url: '/api/tracks/:resource/:resource_id',
       params: {resource: '@resource', resource_id: '@resoureceId'}
+    },
+    'download': {
+      method: 'GET',
+      url: '/api/tracks/:id/download',
+      params : {id: '@_id'}  
     }
   });
 }])

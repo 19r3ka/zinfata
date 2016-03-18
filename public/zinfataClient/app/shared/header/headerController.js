@@ -1,12 +1,12 @@
 app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH', 'SessionSvc', 'MessageSvc', 'AuthenticationSvc', '$location', '$log',
                               function($scope, $rootScope, AUTH, Session, MessageSvc, Auth, $location, $log) {
   
-  $scope.loggedIn = Auth.isAuthenticated();
+  $scope.loggedIn = Auth.isAuthenticated;
   $scope.user     = Session.getCurrentUser();
   
   $scope.$watch(function() {
     return Auth.isAuthenticated();
-  },  function(newVal, oldVal){
+  },  function(newVal, oldVal) {    
     if(newVal !== oldVal) {
       refresh();
     }
@@ -35,17 +35,16 @@ app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH', 'SessionSvc', 'Mes
     Auth.logout(function(res) {
       if(res) {
         MessageSvc.addMsg('success', 'You have been successfully logged out!');
-        $scope.loggedIn = false;
         $rootScope.$broadcast(AUTH.logoutSuccess);
       } else {
-        MessageSvc.addMsg('danger', 'Failed to log out!');
+        MessageSvc.addMsg('danger', 'Issue with the logout process!');
+        Session.destroy();
         $rootScope.$broadcast(AUTH.logoutFailed);
       }
     });
   };
 
   function refresh() {
-    $scope.loggedIn = Auth.isAuthenticated();
     if($scope.loggedIn) $scope.user = Session.getCurrentUser();
   }
 }]);

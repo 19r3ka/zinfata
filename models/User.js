@@ -8,20 +8,23 @@ var mongoose    = require('mongoose'),
                             "edu|gov|info|int|mil|museum|name|net|org|" +
                             "pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\\." +
                             "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,5})?$",'i'),
-    handleRegex = new RegExp("^[a-z0-9_]{3,}$");
+    handleRegex = new RegExp("^[a-zA-Z0-9_]{3,}$");
 
 
-var UserSchema = new mongoose.Schema( {
-  firstName:    { type: String, required: true, lowercase: true, trim: true },
-  lastName:     { type: String, required: true, lowercase: true, trim: true },
-  handle:       { type: String, required: true, minlength: 3, match: handleRegex, lowercase: true, index: {unique: true}, trim: true},
-  email:        { type: String, required: true, match: emailRegex, unique: true, lowercase: true, trim: true},
-  password:     { type: String, required: true, trim: true, select: false },
-  avatarUrl:    { type: String, default: 'zinfataClient/assets/images/user-avatar-placeholder.png', trim: true},
-  role:         { type: String, default: 'fan', trim: true },
-  whatsapp:     { type: String, default: '', trim: true }, 
-  activated:    { type: Boolean, default: false },
-  updated_at:   { type: Date, default: Date.now }
+var UserSchema = new mongoose.Schema({
+  firstName:       { type: String, required: true, trim: true },
+  firstName_lower: { type: String, lowercase: true, trim: true, select: false },
+  lastName:        { type: String, required: true, trim: true },
+  lastName_lower:  { type: String, lowercase: true, trim: true, select: false },
+  handle:          { type: String, required: true, minlength: 3, match: handleRegex, index: {unique: true}, trim: true},
+  handle_lower:    { type: String, minlength: 3, match: handleRegex, lowercase: true, index: {unique: true}, trim: true, select: false},
+  email:           { type: String, required: true, match: emailRegex, unique: true, lowercase: true, trim: true},
+  password:        { type: String, required: true, trim: true, select: false },
+  avatarUrl:       { type: String, default: 'zinfataClient/assets/images/user-avatar-placeholder.png', trim: true},
+  role:            { type: String, default: 'fan', trim: true },
+  whatsapp:        { type: String, default: '', trim: true }, 
+  activated:       { type: Boolean, default: false },
+  updated_at:      { type: Date, default: Date.now }
 });
 
 /*
@@ -47,7 +50,7 @@ UserSchema.statics.getUser = function (handle, password, callback) {
 };
 
 
-UserSchema.methods.getMetadata = function(){
+UserSchema.methods.getMetadata = function() {
   //add key that you assume to be meta to the array
   var userMeta = ['_id', 'handle', 'email', 'role', 'activated'];
   var size = userMeta.length, 
@@ -62,13 +65,25 @@ UserSchema.methods.getMetadata = function(){
   }
 
   return meta;
-} 
+}; 
 
 UserSchema.pre('save', function(next) {
   var user = this;
 
+  if(user.isModified('lastName')){
+    user.lastName_lower = user.lastName;
+  }
+
+  if(user.isModified('firstName')){
+    user.firstName_lower = user.firstName;
+  }
+
+  if(user.isModified('handle')){
+    user.handle_lower = user.handle;
+  }
+
   // only hash the password if it has been modified (or is new)
-  if (!user.isModified('password')) return next();
+  if(!user.isModified('password')) return next();
 
   // generate a salt
   bcrypt.genSalt(11, function(err, salt) {
@@ -85,9 +100,19 @@ UserSchema.pre('save', function(next) {
   });
 });
 
+UserSchema.set('toJSON', {
+    transform: function(doc, ret, options) {
+      delete ret.firstName_lower;
+      delete ret.lastName_lower;
+      delete ret.handle_lower;
+      delete ret.password;
+      return ret;
+    }
+});
+
 UserSchema.methods.verifyPassword = function verifyPassword(login, cb) {
   return bcrypt.compare(login, this.password, cb);
 };
 
-var userModel = mongoose.model('User', UserSchema);
+var userModel  = mongoose.model('User', UserSchema);
 module.exports = userModel;

@@ -103,7 +103,26 @@ module.exports = function(wagner) {
 		});
 	});
 
+	router.get('/tracks/:id/download', function(req, res, next) {
+		var url     = 'http://localhost:3000/api/tracks/:id/download',
+			options = {
+				headers: { Authorization: 'Bearer ' + req.query.token }
+			};
+		function callback(err, httpResp, body) {
+			if(err) {
+				var errMsg = 'Error downloading. '
+				if(httpResp.status === 401) errMsg += 'Reload Zinfata and try again!';
+				if(httpResp.status === 404) errMsg += 'That track does not exist!';
+				if(httpResp.status === 403) errMsg += 'That track is not downloadable!';
+			}
+			var statusCode = httpResp.statusCode || body.code;
+			res.status(statusCode).send(new Buffer(body));
+		};
 
+		options.url = url.replace(':id', req.params.id);
+		request(options, callback);
+
+	});
 	//module.exports = router;
 	return router;
 }

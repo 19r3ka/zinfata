@@ -26,8 +26,8 @@ app.constant('ROUTES', {
 .constant('USER_EVENTS', {
   updateSuccess:        'user-update-success',
   updateFailed:         'user-update-failed',
-  creationSuccess:      'user-creation-success',
-  creationFailed:       'user-creation-failed',
+  createSuccess:      'user-creation-success',
+  createFailed:       'user-creation-failed',
   accountActivated:     'user-account-activated',
   accountNotActivated:  'user-account-not-activated',
   deleteSuccess:        'user-delete-success',
@@ -44,15 +44,17 @@ app.constant('ROUTES', {
 .constant('TRACK_EVENTS', {
   updateSuccess:        'track-update-success',
   updateFailed:         'track-update-failed',
-  creationSuccess:      'track-creation-success',
-  creationFailed:       'track-creation-failed',
+  createSuccess:      'track-creation-success',
+  createFailed:       'track-creation-failed',
   deleteSuccess:        'track-delete-success',
-  deleteFailed:         'track-delete-failed'
+  deleteFailed:         'track-delete-failed',
+  downloadSuccess:      'track-download-success',
+  downloadFailed:       'track-download-failed'
 }).constant('PLAYLIST_EVENTS', {
   updateSuccess:        'playlist-update-success',
   updateFailed:         'playlist-update-failed',
-  creationSuccess:      'playlist-creation-success',
-  creationFailed:       'playlist-creation-failed',
+  createSuccess:      'playlist-creation-success',
+  createFailed:       'playlist-creation-failed',
   deleteSuccess:        'playlist-delete-success',
   deleteFailed:         'playlist-delete-failed'
 }).constant('QUEUE', {

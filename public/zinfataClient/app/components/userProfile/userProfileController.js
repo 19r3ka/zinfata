@@ -5,9 +5,10 @@ app.controller('userProfileCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSv
     // $scope.user = UsersSvc.get($routeParams.userId) || Session.getCurrentUser();
     var userId = $routeParams.userId || Session.getCurrentUser() && Sesion.getCurrentUser()._id || null;
 
-    $scope.user     = {};
-    $scope.editing  = false;
-    $scope.canEdit  = false;
+    $scope.user         = {};
+    $scope.editing      = false;
+    $scope.canEdit      = false;
+
     UsersSvc.get(userId, function(user) {
         $scope.user = user;
         if(Session.getCurrentUser()._id === $scope.user._id) $scope.canEdit = true;
@@ -15,18 +16,6 @@ app.controller('userProfileCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSv
     }, function(err) {
         $location.path('/');
     });
-    
-    // if(!!!Object.keys($scope.user).length) $location.path('/');
-    
-    /*if(!!$scope.user) $scope.user.albums = {};
-    $scope.noAlbum = false;
-    
-    AlbumsSvc.getByUser({_id: $routeParams.userId}, function(data) {
-		$scope.user.albums = data;
-		if(!!!$scope.user.albums.length) $scope.noAlbum = true;
-    }, function(err) {
-		$scope.user.albums = {};
-    });*/
     
     $scope.fullname = function(user) {
         return user.firstName + ' ' + user.lastName;
@@ -40,8 +29,8 @@ app.controller('userProfileCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSv
         $location.path('/user/' + $scope.user._id + '/edit');
     };
 
-    $scope.update = function() {
-        UsersSvc.update($scope.user, function(updatedUser) {
+    $scope.update = function(user) {
+        UsersSvc.update(user, function(updatedUser) {
           MessageSvc.addMsg('success', 'Your profile has been updated!');
           $rootScope.$broadcast(USER_EVENTS.updateSuccess);
           $scope.editing = false;
@@ -52,8 +41,8 @@ app.controller('userProfileCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSv
         });
     };
 
-	$scope.delete = function() {
-		UsersSvc.delete($scope.user, function() {
+	$scope.delete = function(user) {
+		UsersSvc.delete(user, function() {
 			MessageSvc.addMsg('success', 'Your account has been deleted!');
 			$rootScope.$broadcast(USER_EVENTS.deleteSuccess);
 			$location.path = '/';
@@ -63,16 +52,8 @@ app.controller('userProfileCtrl', ['$scope', '$rootScope', 'UsersSvc', 'AlbumsSv
 		});
 	};
 
-    $scope.readFile = function(elem) {
-        var file = elem.files[0];
-		var reader = new FileReader();
-		reader.onload = function() {
-			$scope.$apply(function() {
-                $scope.user.avatar = file;
-                $scope.user.avatarUrl = reader.result;
-                $scope.editing = true;
-			});
-		};
-		reader.readAsDataURL(file);
+    $scope.updateAvatar = function(image) {
+        $scope.user.avatar    = image.file;
+        $scope.user.avatarUrl = image.url;
     };
 }]);

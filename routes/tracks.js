@@ -1,6 +1,8 @@
 module.exports = function(wagner) {
 
   var express  = require('express'),
+      path     = require('path'),
+      fs       = require('fs'),
       router   = express.Router();
 
   var UserModel, AlbumModel, TrackModel, zerror;
@@ -17,7 +19,8 @@ module.exports = function(wagner) {
      
   var passport = require('../config/passport.js'),
       multer   = require('multer'),
-      /* Used to customize the destination directory of 
+      /* 
+      ** Used to customize the destination directory of 
       ** files according to form fieldname. Image will go to 
       ** /public/images while audio goes to /public/audio
       */
@@ -55,7 +58,9 @@ module.exports = function(wagner) {
       albumId:      req.body.albumId,
       releaseDate:  req.body.releaseDate || '',
       feat:         req.body.feat || [],
-      duration:     req.body.duration
+      duration:     req.body.duration,
+      downloadable: req.body.downloadable,
+      genre:        req.body.genre
     });
 
     if(!!req.files.imageFile) {
@@ -82,6 +87,11 @@ module.exports = function(wagner) {
 
     new_track.save(function(err, track) {
       if(err) return next(err);
+      User.findById(track.artistId, function(err, user) {
+        if(err) console.log(err);
+        if(user.role !== 'artist') user.role = 'artist';
+        user.save();
+      });
       res.json(track);
     });
   });
@@ -104,14 +114,16 @@ module.exports = function(wagner) {
       }
       if(!!req.files.imageFile) {
         trackToUpdate.coverArt = req.files.imageFile[0].path;
-      } else {
-        if(req.body.coverArt) trackToUpdate.coverArt = req.body.coverArt.replace('../..', 'public');
+      } else if(req.body.coverArt) {
+        trackToUpdate.coverArt = req.body.coverArt.replace('../..', 'public');
       }
 
       if(!!req.files.audioFile) {
         trackToUpdate.streamUrl = req.files.audioFile[0].path;
         trackToUpdate.size      = req.files.audioFile[0].size;
       }
+
+      console.log(trackToUpdate);
       
       trackToUpdate.save(function(err, updated_track) {
         if(err) return next(err);
@@ -128,6 +140,26 @@ module.exports = function(wagner) {
         if(err) return next(err);
         res.json(deleted_track);
       });
+    });
+  });
+
+  router.route('/:id/download')
+  .get(function(req, res, next) {
+    Track.findById(req.params.id, function(err, track) {
+      if(err) return next(err);
+      if(!track) return next(new zerror('not_found', 'Track not found'));
+      if(!track.downloadable) return next(new zerror('forbidden', 'Track not downloadable'));
+
+      var downloadTitle = '[zinfata] ' + track.title,
+          downloadFile  = function(url) {
+            var parentDir = __dirname.split('/');
+            parentDir.splice(-1, 1);
+            return parentDir.join('/') + '/' + url;
+          }; 
+      
+      res.set('Content-Type', 'audio/mp3');
+      res.set('Content-Disposition', 'attachment; filename=' + downloadTitle);
+      res.status(200).download(downloadFile(track.streamUrl), downloadTitle);
     });
   });
 
@@ -154,6 +186,6 @@ module.exports = function(wagner) {
       res.json(tracks);
     });
   });
-  //module.exports = router;
+
   return router;
 };

@@ -1,4 +1,5 @@
 /*__________________________________________
+
           AUTHENTICATION SERVICES
   __________________________________________*/
 
@@ -99,7 +100,8 @@ app.service('AuthenticationSvc', ['$rootScope', 'AUTH', 'ROUTES', 'SessionSvc', 
 }]);
 
 /*________________________________________________________
-                    APP CORE SERVICES
+
+               APP RESOURCE SERVICE WRAPPERS
   ________________________________________________________*/
 
 app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location', '$rootScope',
@@ -152,6 +154,17 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location', '$rootScope
 	  });
   };
 
+  this.all = Users.query(function(collection) {
+    var ret = [];
+    angular.forEach(collection, function(item) {
+      if(!!item.avatarUrl && (item.avatarUrl.search('user-avatar-placeholder') === -1)) item.avatarUrl = '../../' + item.avatarUrl.split('/').slice(1).join('/');
+      this.push(item);
+    }, ret)
+    return ret = [];
+  }, function(err) {
+    $log.debug('Unable to get all the users!');
+  });
+
   this.findByHandle = function(handle, success, failure) {
     return Users.find({handle: handle}, function(user) {
       success(user);
@@ -166,7 +179,7 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
       {
         title:         data.title,
         coverArt:      data.coverArt,
-        artistId:      data.artistId,
+        artistId:      data.artist.id,
         releaseDate:   data.releaseDate
       }
     );
@@ -182,10 +195,8 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
       for(var key in albumToUpdate) {
           if(!!album[key] && albumToUpdate[key] !== album[key]) albumToUpdate[key] = album[key];
       }
-      if(!!album.coverArt) {
-          albumToUpdate.cover_art = album.coverArt;
-          // albumToUpdate.imageUrl;
-      }
+      if(album.coverArt) albumToUpdate.coverArt = album.coverArt;
+      
       albumToUpdate.$update(function(updatedAlbum) {
           success(updatedAlbum);
       }, function(err) {
@@ -196,6 +207,8 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
 
   this.get = function(albumId, success, failure) {
     Albums.get({ id: albumId }, function(data) {
+      data.artist      = { id: data.artistId };
+      delete data.artistId;
     	data.releaseDate = new Date(data.releaseDate); 	// AngularJs 1.3+ only accept valid Date format and not string equilavent
     	if(!!data.imageUrl && (data.imageUrl.search('album-coverart-placeholder') === -1)) data.imageUrl = '../../' + data.imageUrl.split('/').slice(1).join('/');  // 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
       success(data);
@@ -204,9 +217,25 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
     });
   };
 
+  this.all = Albums.query(function(collection) {
+    var ret = [];
+    angular.forEach(collection, function(item) {
+      item.artist      = { id: item.artistId };
+      delete item.artistId;
+      item.releaseDate = new Date(item.releaseDate);  // AngularJs 1.3+ only accept valid Date format and not string equilavent
+      if(!!item.imageUrl && (item.imageUrl.search('album-coverart-placeholder') === -1)) item.imageUrl = '../../' + item.imageUrl.split('/').slice(1).join('/');
+      this.push(item);
+    }, ret)
+    return ret;
+  }, function(err) {
+    $log.debug('Unable to get all the albums!');
+  });
+
   this.getByUser = function(user, success, failure) {
   	Albums.getByUser({user_id: user._id}, function(albums) {
       angular.forEach(albums, function(data) {
+        data.artist      = { id: data.artistId };
+        delete data.artistId;
   		  data.releaseDate = new Date(data.releaseDate);
         if(!!data.imageUrl && (data.imageUrl.search('album-coverart-placeholder') === -1)) data.imageUrl = '../../' + data.imageUrl.split('/').slice(1).join('/');  // 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
       });
@@ -224,26 +253,8 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
     });
   };
 }]);
-app.service('MessageSvc', function() {
-  this.message = null;
-
-  this.getMsg   = function() {
-    return this.message;
-  };
-
-  this.addMsg   = function(type, text) {
-    this.message = {
-      type: type,
-      text: text
-    };
-  };
-
-  this.clearQueue = function() {
-    this.message = null;
-  };
-});
-app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', 
-                          function(Tracks, $log, UsersSvc, AlbumsSvc) {
+app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window', 'sessionStore',
+                          function(Tracks, $log, UsersSvc, AlbumsSvc, $window, store) {
   this.create = function(track, success, failure) {
     var new_track = new Tracks({
       title:        track.title,
@@ -255,7 +266,9 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc',
       coverArt:     track.coverArt,
       imageFile:    track.imageFile,
       audioFile:    track.audioFile,
-      releaseDate:  track.releaseDate
+      releaseDate:  track.releaseDate,
+      downloadable: track.downloadable,
+      genre:        track.genre
     });
 
     new_track.$save(function(saved_track) {
@@ -271,10 +284,9 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc',
           if(!!track[key] && trackToUpdate[key] !== track[key]) trackToUpdate[key] = track[key];
       }
       trackToUpdate.albumId = track.album.id;
-      if(!!track.coverArt) {
-          trackToUpdate.cover_art = track.coverArt;
-          delete trackToUpdate.imageUrl;
-      }
+      
+      $log.debug(trackToUpdate);
+      
       trackToUpdate.$update(function(updatedTrack) {
           success(updatedTrack);
       }, function(err) {
@@ -297,6 +309,23 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc',
       failure(err);
     });
   };
+
+  this.all = Tracks.query(function(collection) {
+    var ret = [];
+    angular.forEach(collection, function(item) {
+      item.artist      = { id: item.artistId };
+      item.album       = { id: item.albumId };
+      item.releaseDate = new Date(item.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
+      delete item.artistId;
+      delete item.albumId;
+      if('coverArt' in item && !!item.coverArt)  item.coverArt  = '../../' + item.coverArt.split('/').slice(1).join('/');
+      if('streamUrl' in item && !!item.streamUrl) item.streamUrl = '../../' + item.streamUrl.split('/').slice(1).join('/');
+      this.push(item);
+    }, ret)
+    return ret;
+  }, function(err) {
+    $log.debug('Unable to get all the tracks!');
+  });
 
   this.find = function(query, success, failure) { // query must be a valid hash with a_id &| u_id
     var search;
@@ -341,16 +370,27 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc',
       });
   };
 
+  this.downloadLink = function(track, success, failure) {
+    var accessKeys  = store.getData('accessKeys'),
+        accessToken = accessKeys ? accessKeys.access_token : null,
+        downloadUrl = '/zinfataclient/tracks/' + track._id + '/download';
+
+    if(accessToken) { 
+      downloadUrl += '?token=' + accessToken;
+      $window.open(downloadUrl);
+    }
+  };
+
   this.delete = function(track, success, failure) {
-    return Tracks.delete({id: track._id}, function(data) {
+    Tracks.delete({id: track._id}, function(data) {
       data.artist      = { id: data.artistId };
       data.album       = { id: data.albumId };
       data.releaseDate = new Date(data.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
       delete data.artistId;
       delete data.albumId;
-      return success(data);
+      success(data);
     }, function(err) {
-      return failure(err);
+      failure(err);
     });
   };
 }]);
@@ -391,7 +431,7 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
 
   this.get = function(playlistId, success, failure) {
     return Playlists.get({ id: playlistId }, function(data) {
-      data.owner    = { id: data.ownerId };
+      data.owner = { id: data.ownerId };
       delete data.ownerId;
       /* 'Public' folder is outside the root path of the AngularJs app but inside ExpressJs static path
       if(!!data.coverArt)   data.coverArt   = '../../' + data.coverArt.split('/').slice(1).join('/');
@@ -401,6 +441,18 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
       failure(err);
     });
   };
+
+  this.all = Playlists.query(function(collection) {
+    var ret = [];
+    angular.forEach(collection, function(item) {
+      item.owner = {id: item.ownerId };
+      delete item.ownerId;
+      this.push(item);
+    }, ret)
+    return ret;
+  }, function(err) {
+    $log.debug('Unable to get all the playlists!');
+  });
 
   this.find = function(query, success, failure) { // params must be a valid hash with a_id &| u_id
     if('u_id' in query) {
@@ -464,6 +516,12 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
     });
   };
 }]);
+
+/*________________________________________________________
+
+                    APP OTHER SERVICES
+  ________________________________________________________*/
+
 app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', 'TracksSvc', 'SessionSvc',
                         function(queue, $rootScope, AUDIO, QUEUE, $log, TracksSvc, Session) {
   var self  = this,
@@ -568,14 +626,36 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log', '
     } else { //there is no queue, add to end to create. 
       self.addTrack(track);
     }
-    
     self.play(track, newIndex);
   };
 
-  self.play = function(track, index) {
+  self.play           = function(track, index) {
+    if(!('album' in track && track.album.title) || ('artist' in track && track.artist.handle)) {
+      TracksSvc.inflate(track._id, null, function(inflated_track) {
+        track = inflated_track;
+      }, function(err) {return;});
+    }
     self.data.currentlyPlaying.index = index;
     self.data.currentlyPlaying.track = track;
     self.saveQueue();
     $rootScope.$broadcast(AUDIO.set, self.data.currentlyPlaying.track);
   };
 }]);
+app.service('MessageSvc', function() {
+  this.message = null;
+
+  this.getMsg   = function() {
+    return this.message;
+  };
+
+  this.addMsg   = function(type, text) {
+    this.message = {
+      type: type,
+      text: text
+    };
+  };
+
+  this.clearQueue = function() {
+    this.message = null;
+  };
+});

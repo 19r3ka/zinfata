@@ -1,4 +1,5 @@
-app.config(['$routeProvider', '$locationProvider', '$httpProvider', function($routeProvider, $locationProvider, $httpProvider){
+app.config(['$routeProvider', '$locationProvider', '$httpProvider',
+            function($routeProvider, $locationProvider, $httpProvider) {
   $routeProvider.
     when('/', {
       templateUrl: '/partials/dashboard',
@@ -108,6 +109,13 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider', function($ro
         loginRequired: true
       }
     }).
+    when('/search', {
+      templateUrl: '/partials/search',
+      controller:  'searchCtrl',
+      access: {
+        loginRequired: true
+      }
+    }).
     otherwise({redirectTo: '/'});
 
   $locationProvider.html5Mode(true);
@@ -123,9 +131,6 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider', function($ro
     to intercept and inject behaviors. */  
   $rootScope.$on('$routeChangeStart', function(event, next) {
     var authorized;
-
-    $log.debug('loginRedirectUrl: %s', loginRedirectUrl);
-    $log.debug('next.originalPath: %s', next.originalPath);
         
     if(next.originalPath === '/register') {
       loginRedirectUrl = null;

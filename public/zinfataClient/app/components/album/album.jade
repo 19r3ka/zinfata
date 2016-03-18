@@ -1,6 +1,4 @@
-pre
-    {{ creating }}
-.jumbotron(ng-if='!creating')
+.jumbotron(ng-if='!creating && !editing')
     .row
         .col-md-4
             img.img-circle(class='img-responsive center-block', name= 'coverArt', alt='{{ album.title }}', ng-src='{{ album.imageUrl }}')
@@ -24,7 +22,7 @@ pre
                                 span.glyphicon(class='glyphicon-remove')
                                 | Delete
             h3 {{ album.title }}
-            h4: a(href='/user/{{ album.artistId }}') {{ album.artist }}
+            h4: a(href='/user/{{ album.artist.id }}') {{ album.artist.handle }}
             .metrics
                 ul.list-inline
                     li: ng-pluralize(count='album.trackLength', when="{'0': '0 track', '1': '1 track', 'other': '{} tracks'}")
@@ -37,7 +35,7 @@ form(name='albumForm', enctype= 'multipart/form-data', ng-if='editing || creatin
         input.form-control(type='text', name='title', id='title', placeholder='Title', ng-model='album.title', ng-disabled='!editing && !creating', required)
     .form-group
         label(for='coverArt') Cover Art:
-        input.form-control(type='file', name='coverArt', id='coverArt', accept='image/*', ng-model='album.coverArt', onchange='angular.element(this).scope().readFile(this)')
+        z-img-crop(on-img-ready='updateCoverImage(imgFile)')
     .form-group
         label(for='releaseDate') Release Date:
         input.form-control(type='date', name='releaseDate', id='releaseDate', ng-model='album.releaseDate', ng-disabled='!editing && !creating', required)

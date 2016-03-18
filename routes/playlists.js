@@ -42,7 +42,7 @@ module.exports = function(wagner) {
     if('resource' in req.params && req.params.resource === 'owner') {
       Playlist.find({ownerId: req.params.resource_id}, function(err, playlists) {
         if(err) return next(err);
-        if(!playlists.length) return next(new zerror('not_found', 'Playlist not found'));
+        if(!playlists.length) return next(new zerror('not_found', 'Playlists not found'));
         res.json(playlists);
       });
     }
@@ -57,7 +57,7 @@ module.exports = function(wagner) {
     });
   })
   .put(function(req, res, next) { // UPDATE album info by ID
-    Playlist.findOne({ _id: req.params.id }, function(err, playlist) {
+    Playlist.findById(req.params.id, function(err, playlist) {
       if(err) return next(err);
       if(!playlist) return next(new zerror('not_found', 'Playlist not found'));
       
