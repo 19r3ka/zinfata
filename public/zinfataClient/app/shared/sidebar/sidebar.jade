@@ -1,4 +1,4 @@
-ul.nav(class=['nav-tabs', 'nav-stacked'], role='navigation')
+ul.nav(class=['nav-tabs', 'nav-stacked'], role='navigation', ng-controller='sidebarCtrl', ng-show='isloggedIn()')
   li: a(href='search')
     span.glyphicon(class='glyphicon-search')
     |  Search

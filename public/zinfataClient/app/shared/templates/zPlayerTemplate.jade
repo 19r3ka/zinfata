@@ -4,9 +4,9 @@
   .track-info
     h4: a(href='/track/{{ track._id }}') {{ track.title }} 
       |  - 
-      strong: a(href='/track/{{ track.album.id }}') {{ track.album.title }}
+      strong: a(href='/album/{{ track.album.id }}') {{ track.album.title }}
     h5 By 
-      a(href='/track/{{ track.artist.id }}') {{ track.artist.handle }}
+      a(href='/user/{{ track.artist.id }}') {{ track.artist.handle }}
 .row(class='audio-player')
   audio(controls)
 //- .row(class='audio-player')

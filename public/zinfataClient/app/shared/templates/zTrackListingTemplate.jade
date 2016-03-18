@@ -4,34 +4,42 @@
     .panel-body
         div(ng-show='!tracks.length && isOwner')
             p.text-center You don't have any tracks in this album yet?
-                a(href='tracks/new')  Add one now!
+                a(href='track/new')  Add one now!
         div(ng-show='!tracks.length && !isOwner')
             p.text-center This album doesn\'t have any track yet!
-        .list-group(ng-show='!!tracks.length')
-            .list-group-item(ng-repeat='track in tracks')
-                .row
-                    .col-md-2
-                        img.img-responsive(class='center-block', name='coverArt', width='50', alt='{{ track.title }}', ng-src='{{ track.coverArt }}')
-                    .col-md-4
-                        h5.list-group-item-heading: a(href='track/{{ track._id }}') {{ track.title }}
-                        h6: a(href='album/{{ track.album.id }}') {{ track.album.title }}
-                        h6: em: a(href='user/{{ track.artist.id }}') {{ track.artist.handle }}
-                    .col-md-6
-                        .metrics
-                            ul.list-inline
-                                li duration: {{ track.duration | duration2time }}
-                        .interactions
-                            ul.list-inline
-                                li: a(href='', ng-click='play(track)') 
-                                    span.glyphicon(class='glyphicon-play')
-                                    |  Play now
-                                li: a(href='', ng-click='addToQueue(track)') 
-                                    span.glyphicon(class='glyphicon-list')
-                                    |  Queue up
-                                li.dropdown
-                                    a.dropdown-toggle(href='', data-toggle='dropdown')
-                                        span.glyphicon(class='glyphicon-plus')
-                                        |  Add to
-                                        span.caret
-                                    z-playlist-dropdown(track='track')
+        .track-list(ng-show='!!tracks.length')
+            .track-item(ng-repeat='track in tracks')
+                .track-cover
+                    img.img-responsive(class='center-block', name='coverArt', width='50', alt='{{ track.title }}', ng-src='{{ track.coverArt }}')
+                .track-infos
+                    .track-title 
+                        a(href='track/{{ track._id }}') {{ track.title }}
+                    .track-author 
+                        a(href='user/{{ track.artist.id }}') {{ track.artist.handle }}
+                    .track-album 
+                        i.fa.fa-folder-o
+                        a(href='album/{{ track.album.id }}') {{ track.album.title }}
+                    .track-type-duration
+                        span.track-type
+                            | Genre : R.N.B
+                        span.track-duration
+                            i.fa.fa-clock-o 
+                            |  {{ track.duration | duration2time }} 
+                    .track-actions
+                        a(class='track-actions-bt track-actions-bt-play', href='', ng-click='play(track)') 
+                            span.glyphicon(class='glyphicon-play')
+                        a(class='track-actions-bt track-actions-bt-add-to-queue', href='', ng-click='addToQueue(track)') 
+                            span.glyphicon(class='glyphicon-list')
+                            |  Queue up
+                        span(class='track-actions-bt track-actions-bt-add-to-playlist dropdown')
+                            a.dropdown-toggle(href='', data-toggle='dropdown')
+                                span.glyphicon(class='glyphicon-plus')
+                                |  Add to
+                                span.caret
+                            z-playlist-dropdown(track='track')
+
+
+
+
+
  
