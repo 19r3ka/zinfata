@@ -81,10 +81,18 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
       });
 
       // scope.audio = new Audio();
-      var player = elm.find('audio')[0];
+      //var player = elm.find('audio')[0];
+      scope.playing = false;
+      scope.currentTime = 0;
+      scope.isLoggedIn = Auth.isAuthenticated;
+
+      var player = document.createElement('audio');
+      player.volume = 0.5;
+      var trackDurationSlider = document.getElementById('track-duration-slider');
+      var playerVolumeSlider = document.getElementById('player-volume-slider');
 
       // scope.audio.addEventListener('play', function() {
-      player.addEventListener('play', function() {
+      player.addEventListener('play', function() {        
         $rootScope.$broadcast(AUDIO.playing, scope.track);
       });
       
@@ -95,12 +103,43 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
       
       // scope.audio.addEventListener('ended', function() {
       player.addEventListener('ended', function() {
-        $rootScope.$broadcast(AUDIO.ended, scope.track);
+        $rootScope.$broadcast(AUDIO.ended, scope.track);        
         scope.next();
       });
 
-      scope.playing = !player.paused; //scope.audio.paused;
-      scope.volume  = '';
+      player.addEventListener('timeupdate', updateProgressBar);
+      trackDurationSlider.addEventListener('change', updateTrackCurrenTime);
+      trackDurationSlider.addEventListener('input', updateTrackCurrenTime);
+
+      playerVolumeSlider.addEventListener('change', updatePlayerVolume);
+      playerVolumeSlider.addEventListener('input', updatePlayerVolume);
+
+      function updateProgressBar(){
+        var progressWidth = '';
+        var trackCurrentTime = player.currentTime;
+        var tarckDuration = player.duration;
+        scope.currentTime = trackCurrentTime;
+
+        var currentTimePercentage = Math.floor((100 * trackCurrentTime) / tarckDuration);
+        //document.querySelector('.duration-spin').style.width = currentTimePercentage + '%';
+        trackDurationSlider.value = currentTimePercentage;
+        scope.$apply();
+      }
+
+      function  updateTrackCurrenTime(){
+        player.currentTime = trackDurationSlider.value * player.duration / 100;
+        scope.$apply();        
+      }
+
+      function  updatePlayerVolume(){
+        player.volume = playerVolumeSlider.value / 100;
+        scope.$apply();   
+        console.log(player.volume );     
+      }
+
+      
+
+      //scope.playing = !player.paused; //scope.audio.paused;
       /* On reload fetch and set last played song. */
       scope.track = QueueSvc.getCurrentTrack() && QueueSvc.getCurrentTrack().track;
       if(scope.track) {
@@ -111,9 +150,14 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
         scope.playPause();
       });
 
+      scope.$on(AUDIO.ended, function() {
+        scope.stop();
+      });
+
       scope.$on(AUDIO.set, function(event, track) {
         scope.track = track; 
         player.src  = track.streamUrl;
+        scope.duration = player.duration;
         scope.playPause();
         if(!Auth.isAuthenticated()) {
           $rootScope.$broadcast(AUTH.notAuthenticated);
@@ -136,7 +180,22 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
       scope.playPause = function() {
         // scope.audio.paused ? scope.audio.play() : scope.audio.pause();
         player.paused ? player.play() : player.pause();
+        scope.playing = player.paused || player.ended ? false : true;
       };
+
+      scope.stop = function() {
+        player.pause();
+        scope.playing = false;
+        player.currentTime = 0;
+      };
+
+      scope.mute = function (){
+        player.muted = !player.muted;
+      }
+
+      scope.muted = function (){
+        return player.muted;
+      }
 
       // var stop = $interval(function() { scope.$apply(); }, 500);
     },

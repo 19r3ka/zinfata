@@ -4,7 +4,7 @@
     .panel-body
         div(ng-show='!albums.length && isOwner')
             p.text-center You don't have any albums yet?
-                a(href='albums/new')  Create one now!
+                a(href='album/new')  Create one now!
         div(ng-show='!albums.length && !isOwner')
             p.text-center This user has no album!
         .list-group(ng-show='!!albums.length')
@@ -18,7 +18,9 @@
                         .metrics
                             ul.list-inline
                                 li: ng-pluralize(count='album.trackLength', when="{'0': '0 track', '1': '1 track', 'other': '{} tracks'}")
-                                li duration: {{ album.duration | duration2time }} 
+                                li 
+                                    i.fa.fa-clock-o 
+                                    |  {{ album.duration | duration2time }} 
                     .col-md-2
                         //- button.btn-lg(class='btn-default btn-block', type='button', ng-click='queueUp(album)')
                             span.glyphicon(class='glyphicon-play-circle')

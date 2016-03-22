@@ -1,20 +1,44 @@
-.row
-  a.thumbnail
-    img(ng-src='{{ track.coverArt }}', alt='cover art')
-  .track-info
-    h4: a(href='/track/{{ track._id }}') {{ track.title }} 
-      |  - 
-      strong: a(href='/track/{{ track.album.id }}') {{ track.album.title }}
-    h5 By 
-      a(href='/track/{{ track.artist.id }}') {{ track.artist.handle }}
-.row(class='audio-player')
-  audio(controls)
-//- .row(class='audio-player')
-  .col-md-2
-    button.btn(class='btn-default', type='button', ng-click='prev()')
-      span.glyphicon(class='glyphicon-backward')
-  .col-md-12
-    audio(controls)
-  .col-md-2
-    button.btn(class='btn-default', type='button', ng-click='next()')
-      span.glyphicon(class='glyphicon-forward')  
+
+.z-player-bottom(ng-show="isLoggedIn()")
+  .z-player-container
+    .cent
+    img(ng-src='{{ track.coverArt }}' alt='cover art' width='50px' class='track-thumbnail')
+    .z-player-track-infos
+      span.z-player-track-title
+        a(href='/track/{{ track._id }}') {{ track.title }}
+      br/
+      | by
+      span.z-player-track-author
+        a(href='/user/{{ track.artist.id }}') {{ track.artist.handle }}
+      br/
+      | From
+      span.z-player-track-album
+        a(href='/album/{{ track.album.id }}') {{ track.album.title }}
+    .z-control-bt-container
+      .cent
+      .z-control-bt.z-control-bt-stop(ng-click='stop()')
+        .cent
+        i.fa.fa-stop
+      .z-control-bt.z-control-bt-previous(ng-click='prev()')
+        .cent
+        i.fa.fa-step-backward
+      .z-control-bt.z-control-bt-play(ng-click='playPause()')
+        .cent
+        i.fa.fa-play(ng-show='!playing')
+        i.fa.fa-pause(ng-show='playing')
+      .z-control-bt.z-control-bt-next(ng-click='next()')
+        .cent
+        i#z-control-bt-volume.fa.fa-step-forward
+      .z-track-volume-container
+        input(id="player-volume-slider" orient="vertical"  type="range" min="0" max="100" value="50")
+        i.fa.fa-volume-up(ng-click="mute()" ng-show="!muted()") 
+        i.fa.fa-volume-off(ng-click="mute()" ng-show="muted()") 
+      .z-track-duration-container
+        .cent
+        input(id="track-duration-slider"  type="range" min="0" max="100" value="0")
+        .duration-infos
+          {{ currentTime | duration2time  }}
+          | / 
+          {{ track.duration | duration2time  }}
+     
+
