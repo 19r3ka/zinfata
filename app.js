@@ -1,17 +1,16 @@
 var wagner = require('wagner-core');
 require('./dependencies')(wagner);
 
-
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-var passport = require('passport');
+var express        = require('express');
+var path           = require('path');
+var favicon        = require('serve-favicon');
+var logger         = require('morgan');
+var cookieParser   = require('cookie-parser');
+var bodyParser     = require('body-parser');
+var mongoose       = require('mongoose');
+var passport       = require('passport');
 var expressSession = require('express-session');
-var oauthserver = require('oauth2-server');
+var oauthserver    = require('oauth2-server');
 
 var routes                   = require('./routes/index')(wagner);
 var users                    = require('./routes/users')(wagner);//add dependencie
@@ -26,11 +25,9 @@ var oauthinfo                = require('./routes/oauthinfo')(wagner);
 var zinfataOAuthErrorHandler = require('./lib/errors/ZinfataOAuthErrorHandler');
 var zinfataErrorHandler      = require('./lib/errors/ZinfataErrorHandler');
 
-
-var config = wagner.invoke(function(Config){return Config});
+var config     = wagner.invoke(function(Config) {return Config;});
 var authConfig = config.oauth2;
-
-var app = express();
+var app        = express();
 
 //init auth server
 app.oauth = oauthserver(authConfig);
@@ -43,7 +40,7 @@ app.set('view engine', 'jade');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(expressSession({
@@ -88,23 +85,18 @@ app.use(function(err, req, res, next) {
 
   var zinfataOAuthError = require('./lib/errors/ZinfataOAuthError');
   var zinfataError = require('./lib/errors/ZinfataError');
-console.error(err);
-  if ( !(err instanceof zinfataOAuthError || err instanceof zinfataError)) { //Do not catch zinfata custom errors
-    
+  console.error(err);
+  if (!(err instanceof zinfataOAuthError || err instanceof zinfataError)) { //Do not catch zinfata custom errors
     res.status(err.status || 500);
-    if(app.get('env') !== 'development') {
+    if (app.get('env') !== 'development') {
       delete err.stack;
     }
     res.json(err);
-
   }
-  
 });
 
-
-
 //Connect to Mongoose (Mongo DB driver)
-mongoose.connect(config.db.url);
+mongoose.connect(config[app.get('env')].db.url);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {

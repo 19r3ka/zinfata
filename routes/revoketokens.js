@@ -85,13 +85,8 @@ module.exports = function(wagner){
 			}
 
 		});
-
-		
-
-
 	});
 
 	//module.exports = router;
 	return router;
-
 }
