@@ -12,6 +12,8 @@ var runSequence  = require('run-sequence');
 var browserSync  = require('browser-sync').create();
 var exec         = require('child_process').exec;
 
+var running      = false;
+
 /*
 ** Executes cli commands with Gulp
 */
@@ -31,7 +33,8 @@ function runCommand(command) {
 gulp.task('nodemon', ['start-mongo'], function() {
   var nodeConfig = require('fs').readFileSync('nodemon.json','utf8');
   var started    = false;
-  nodemon(JSON.parse(nodeConfig))
+  // nodemon(JSON.parse(nodeConfig))
+  return nodemon(require('./nodemon.json'))
   .on('start', function(cb) {
     if (!started) {
       cb();
@@ -60,7 +63,7 @@ gulp.task('watch', ['compilecss'], function() {
 ** Start the mongo database
 */
 gulp.task('start-mongo', function() {
-  runCommand('mongod');
+  return runCommand('mongod');
 });
 
 /*
@@ -102,7 +105,7 @@ gulp.task('css', function() {
 ** Sets up browser-sync
 */
 gulp.task('browser-sync', ['nodemon'], function() {
-  browserSync.init(null, {
+  return browserSync.init(null, {
     proxy: 'http://localhost:3000',
     files: ['public/zinfataClient/**/*.*'],//files: ['public/**/*.*'], //,'public/zinfataClient/index.jade', 'public/stylesheets/style-css.css','public/zinfataClient/layout.jade','public/stylesheets/style.min.css'
     // browser: ['google chrome'],//iceweasel,chromium
@@ -131,4 +134,5 @@ gulp.task('default', ['browser-sync'], function() {
     ['./public/stylesheets/style-css.css', './public/stylesheets/less/*.less'],
     ['compilecss']
   );
+  gulp.watch('./**/*.js', ['lint']);
 });
