@@ -3,8 +3,8 @@ var mongoose = require('mongoose');
 var TrackSchema = new mongoose.Schema( {
   title:        { type: String, required: true },
   title_lower: 	{ type: String, lowercase: true, select: false },
-  artistId:  	  { type: String, required: true },
-  feat:       	{ type: Array, default: [] },      // for the IDs of all contributing artists
+  artistId:  	  { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
+  feat:       	{ type: [{ type: mongoose.Schema.ObjectId, ref: 'User'}]},      // for the IDs of all contributing artists
   size:         { type: String, required: true },
   duration:     { type: String, required: true },
   sharing:      { type: Boolean, default: false }, // should the track be available to others

@@ -4,14 +4,15 @@ var User = require('./User');
 
 var OAuthRefreshTokenSchema = new mongoose.Schema({
 	refreshToken: { type: String, required: true, unique: true, lowercase: true },
- 	clientId: { type: String,  required: true, lowercase: true },
+ 	clientId: { type: String,  required: true, ref: 'OAuthClient.clientId', lowercase: true },
  	userId: { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
  	expires: { type: Date }
 });
 
 //oauth2-server call for "refreshtoken.user" first to get the user_id for grant_type=resfresh_token  
 OAuthRefreshTokenSchema.virtual('user').get(function(){
-	return this._id;
+	//return this._id;
+	return this.userId;
 });
 
 OAuthRefreshTokenSchema.pre('save', function(next){

@@ -4,7 +4,7 @@ var AlbumSchema = new mongoose.Schema({
   title:        { type: String, required: true },
   title_lower:  { type: String, lowercase: true, select: false },
   imageUrl:     { type: String, default: 'zinfataClient/assets/images/album-coverart-placeholder.png'},
-  artistId:     { type: String, required: true },
+  artistId:     { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
   releaseDate:  { type: Date, required: true },
   updated_at:   { type: Date, default: Date.now }
 });

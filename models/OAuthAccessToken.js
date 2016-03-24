@@ -4,8 +4,8 @@ var User = require('./User');
 
 var OAuthAccessTokenSchema = new mongoose.Schema({
   accessToken:  { type: String, required: true, unique: true, lowercase: true },
-  clientId:     { type: String, required: true, lowercase: true },
-  userId:       { type: String, required: true, lowercase: true },
+  clientId:     { type: String, required: true, ref: 'OAuthClient.clientId', lowercase: true },
+  userId: { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
   expires:      { type: Date, required: true }
 });
 

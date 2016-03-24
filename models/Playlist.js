@@ -4,7 +4,7 @@ var mongoose    = require('mongoose'),
 var PlaylistSchema = new mongoose.Schema({
   title:       { type: String, required: true },
   title_lower: { type: String, required: true, lowercase: true, select: false },
-  ownerId:     { type: String, required: true },
+  ownerId:     { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
   tracks:      { type: Array },
   updated_at:  { type: Date, default: Date.now }
 });
