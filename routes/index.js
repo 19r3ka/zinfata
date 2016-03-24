@@ -1,7 +1,7 @@
 module.exports = function(wagner){
   var express = require('express');
   var router = express.Router();
-  var zerror = wagner.invoke(function(ZOAuthError){return ZOAuthError});
+  var ZError = wagner.invoke(function(ZOAuthError){return ZOAuthError});
   /*var passport = require('../config/passport');
 
   function isLoggedIn(req, res, next) {

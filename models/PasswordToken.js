@@ -1,11 +1,11 @@
-var mongoose = require('mongoose'),
-    crypto   = require('crypto');
+var mongoose = require('mongoose');
+var crypto   = require('crypto');
 
-var PwdTokenSchema = new mongoose.Schema( {
-  user_id:    { type: mongoose.Schema.ObjectId, required: true, ref: 'User', trim: true },
-  token:      { type: String, required: true, trim: true },
-  purpose:    { type: String, default: 'pwd-reset', trim: true }, 
-  created_at: { type: Date, default: Date.now, expires: '1h' }
+var PwdTokenSchema = new mongoose.Schema({
+  userId:     { type: mongoose.Schema.ObjectId, required: true, ref: 'User', trim: true },
+  token:      {type: String, required: true, trim: true},
+  purpose:    {type: String, default: 'pwd-reset', trim: true},
+  createdAt:  {type: Date, default: Date.now, expires: '1h'}
 });
 
 PwdTokenSchema.statics.generateToken = function generateToken(cb) {

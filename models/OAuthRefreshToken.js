@@ -9,7 +9,7 @@ var OAuthRefreshTokenSchema = new mongoose.Schema({
  	expires: { type: Date }
 });
 
-//oauth2-server call for "refreshtoken.user" first to get the user_id for grant_type=resfresh_token  
+//oauth2-server call for "refreshtoken.user" first to get the userId for grant_type=resfresh_token  
 OAuthRefreshTokenSchema.virtual('user').get(function(){
 	//return this._id;
 	return this.userId;

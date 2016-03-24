@@ -20,7 +20,7 @@ app.controller('passwordResetCtrl', ['$scope', '$log', '$rootScope', 'UsersSvc',
     $scope.update = function(credentials) {
       if(!!credentials.token && credentials.password === credentials.passwordConfirmation) {
         Users.verifyToken({token: credentials.token, get_user: true }, function(res) {
-          UsersSvc.update({password: credentials.password, _id: res.user_id}, function(res) {
+          UsersSvc.update({password: credentials.password, _id: res.userId}, function(res) {
             $log.debug(angular.toJson(res));
             $rootScope.$broadcast(USER_EVENTS.updateSuccess);
             MessageSvc.addMsg('success', 'Password successfully updated. Log in now');

@@ -1,5 +1,6 @@
 app.constant('ROUTES', {
-  loginEndpoint:        'zinfataclient'
+  loginEndpoint:        'zinfataclient',
+  serverHost:           'XXXXX'
 })
 .constant('AUTH', {
   loginSuccess:         'auth-login-success',

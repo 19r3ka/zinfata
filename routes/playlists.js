@@ -1,13 +1,14 @@
 module.exports = function(wagner) {
 
-  var express  = require('express'),
-      router   = express.Router();
+  var express  = require('express');
+  var router   = express.Router();
 
   var passport = require('../config/passport.js');
-  var zerror, PlaylistModel;
-  wagner.invoke(function(ZError, Playlist){
-      zerror = ZError;
-      PlaylistModel = Playlist;
+  var ZErr;
+  var PlaylistModel;
+  wagner.invoke(function(ZError, Playlist) {
+    ZErr = ZError;
+    PlaylistModel = Playlist;
   });
   Playlist = PlaylistModel;
 
@@ -15,36 +16,42 @@ module.exports = function(wagner) {
   .get(function(req, res, next) { // GET all playlists listing.
 
     Playlist.find(function(err, playlists) {
-      if(err) return next(err);
-      if(!playlists.length) return next(new zerror('not_found', 'Playlist not found'));
+      if (err) {return next(err);}
+      if (!playlists.length) {
+        return next(new ZErr('not_found', 'Playlist not found'));
+      }
       res.json(playlists);
     }); 
 
   })
   .post(function(req, res, next) { // POST new album
-    var pl  = req.body,
-        arr = [];
+    var pl  = req.body;
+    var arr = [];
     /* turn the stringified array back into a real array */
-    if(typeof pl.tracks === 'string') pl.tracks = pl.tracks.split(',');
+    if (typeof pl.tracks === 'string') {
+      pl.tracks = pl.tracks.split(',');
+    }
 
-    new_playlist = new Playlist({
-        title:    pl.title,
-        ownerId:  pl.ownerId,
-        tracks:   pl.tracks
+    newPlaylist = new Playlist({
+      title:    pl.title,
+      ownerId:  pl.ownerId,
+      tracks:   pl.tracks
     });
-    
-    new_playlist.save(function(err, playlist) {
-        if(err) return next(err);
-        res.json(playlist);
+
+    newPlaylist.save(function(err, playlist) {
+      if (err) {return next(err);}
+      res.json(playlist);
     });
   });
 
-  router.route('/:resource/:resource_id')
+  router.route('/:resource/:resourceId')
   .get(function(req, res, next) {
-    if('resource' in req.params && req.params.resource === 'owner') {
-      Playlist.find({ownerId: req.params.resource_id}, function(err, playlists) {
-        if(err) return next(err);
-        if(!playlists.length) return next(new zerror('not_found', 'Playlists not found'));
+    if ('resource' in req.params && req.params.resource === 'owner') {
+      Playlist.find({ownerId: req.params.resourceId}, function(err, playlists) {
+        if (err) {return next(err);}
+        if (!playlists.length) {
+          return next(new ZErr('not_found', 'Playlists not found'));
+        }
         res.json(playlists);
       });
     }
@@ -53,34 +60,43 @@ module.exports = function(wagner) {
   router.route('/:id')
   .get(function(req, res, next) { // GET specific album by ID
     Playlist.findById(req.params.id, function(err, playlist) {
-      if(err) return next(err);
-      if(!playlist) return next(new zerror('not_found', 'Playlist not found'));
+      if (err) {return next(err);}
+      if (!playlist) {
+        return next(new ZErr('not_found', 'Playlist not found'));
+      }
       res.json(playlist);
     });
   })
   .put(function(req, res, next) { // UPDATE album info by ID
     Playlist.findById(req.params.id, function(err, playlist) {
-      if(err) return next(err);
-      if(!playlist) return next(new zerror('not_found', 'Playlist not found'));
-      
-      for(var key in playlist) {
-        if(!!req.body[key]) playlist[key] = req.body[key]; // Since it's a blind attribution, only update keys that already exit.
+      if (err) {return next(err);}
+      if (!playlist) {
+        return next(new ZErr('not_found', 'Playlist not found'));
       }
 
-      playlist.save(function(err, updated_playlist) {
-        if(err) return next(err);
-        res.json(updated_playlist);
+      for (var key in playlist) {
+        if (!!req.body[key]) {
+          // Since it's a blind attribution, only update keys that already exit.
+          playlist[key] = req.body[key];
+        }
+      }
+
+      playlist.save(function(err, updatedPlaylist) {
+        if (err) {return next(err);}
+        res.json(updatedPlaylist);
       });
     });
   })
   .delete(function(req, res, next) { // DELETE album by ID
     Playlist.findById(req.params.id, function(err, playlist) {
-      if(err) return next(err);
-      if(!playlist) return next(new zerror('not_found', 'Playlist not found'));
-      
-      playlist.remove(function(err, deleted_playlist) {
-        if(err) return next(err);
-        res.json(deleted_playlist);
+      if (err) {return next(err);}
+      if (!playlist) {
+        return next(new ZErr('not_found', 'Playlist not found'));
+      }
+      playlist.deleted = true;
+      playlist.save(function(err, deletedPlaylist) {
+        if (err) {return next(err);}
+        res.json(deletedPlaylist);
       });
     });
   });

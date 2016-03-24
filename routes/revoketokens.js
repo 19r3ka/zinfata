@@ -5,13 +5,13 @@ module.exports = function(wagner){
 	var oAuthClientModel, 
 		oAuthAccessTokenModel,
 		oAuthRefreshTokenModel,
-		zerror;
+		ZError;
 
 	wagner.invoke(function(OAuthAccessToken, OAuthRefreshToken, OAuthClient, ZOAuthError){
 		oAuthClientModel = OAuthClient;
 		oAuthAccessTokenModel   = OAuthAccessToken;
 		oAuthRefreshTokenModel   = OAuthRefreshToken;
-		zerror = ZOAuthError;
+		ZError = ZOAuthError;
 	});
 
 	//var request = require('request');
@@ -30,23 +30,23 @@ module.exports = function(wagner){
 		}
 
 		if (!client_id || !client_secret){
-			var error = new zerror('invalid_request', 'Missing parameters. \'client_id\' and \'client_secret\' are required');
+			var error = new ZError('invalid_request', 'Missing parameters. \'client_id\' and \'client_secret\' are required');
 			return next(error); 
 		}
 		//utils.checkIsValidTokenRevokeRequest(req, next);
 
 		if (!req.body.token_type_hint){
-			var error = new zerror('invalid_request', 'Missing parameters. \'token_type_hint\' is required');
+			var error = new ZError('invalid_request', 'Missing parameters. \'token_type_hint\' is required');
 			return next(error); 
 		}
 
 		if (!req.body.token_type_hint.match('refresh_token|access_token')) {
-			var error = new zerror('invalid_request', '\'token_type_hint\' parameter value must be either \'refresh_token\' or \'access_token\'');
+			var error = new ZError('invalid_request', '\'token_type_hint\' parameter value must be either \'refresh_token\' or \'access_token\'');
 			return next(error); 
 		}
 
 		if (!req.body.token) {
-			var error = new zerror('invalid_request', 'Missing parameters. \'token\' is required');
+			var error = new ZError('invalid_request', 'Missing parameters. \'token\' is required');
 			return next(error); 
 		}
 
@@ -54,7 +54,7 @@ module.exports = function(wagner){
 		oAuthClientModel.getClient(client_id, client_secret, function(err, client){
 			if (err) return next(err);
 			if (!client) {
-				var error = new zerror('invalid_client', 'Client credentials are invalid');
+				var error = new ZError('invalid_client', 'Client credentials are invalid');
 				return next(error);
 
 			} 
@@ -66,7 +66,7 @@ module.exports = function(wagner){
 				oAuthRefreshTokenModel.revokeRefreshToken(token, function(err, revokedToken){
 					if (err) return next(err);
 					if (!revokedToken) {
-						var error = new zerror('invalid_request', 'Invalid token');
+						var error = new ZError('invalid_request', 'Invalid token');
 						return next(error);
 					}
 					res.sendStatus(200);
@@ -76,7 +76,7 @@ module.exports = function(wagner){
 				oAuthAccessTokenModel.revokeAccessToken(token, function(err, revokedToken){
 					if (err) return next(err);
 					if (!revokedToken) {
-						var error = new zerror('invalid_request', 'Invalid token');
+						var error = new ZError('invalid_request', 'Invalid token');
 						return next(error);
 					}
 					res.sendStatus(200);
@@ -85,13 +85,8 @@ module.exports = function(wagner){
 			}
 
 		});
-
-		
-
-
 	});
 
 	//module.exports = router;
 	return router;
-
 }
