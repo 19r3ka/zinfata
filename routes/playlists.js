@@ -13,11 +13,13 @@ module.exports = function(wagner) {
 
   router.route('/')
   .get(function(req, res, next) { // GET all playlists listing.
+
     Playlist.find(function(err, playlists) {
       if(err) return next(err);
-      if(!playlists.length) next(new zerror('not_found', 'Playlist not found'));
+      if(!playlists.length) return next(new zerror('not_found', 'Playlist not found'));
       res.json(playlists);
-    });
+    }); 
+
   })
   .post(function(req, res, next) { // POST new album
     var pl  = req.body,
