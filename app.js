@@ -13,6 +13,7 @@ var passport = require('passport');
 var expressSession = require('express-session');
 var oauthserver = require('oauth2-server');
 
+var updateinterceptor        = require('./routes/updateinterceptor')(wagner);
 var routes                   = require('./routes/index')(wagner);
 var users                    = require('./routes/users')(wagner);//add dependencie
 var albums                   = require('./routes/albums')(wagner);
@@ -65,7 +66,10 @@ app.use('/zinfataclient', zinfataClientProxy);
 // Define the routes to use in the app
 app.use('/api/users', users);
 app.use('/creds', creds);
-app.all(/\/api\/*/, app.oauth.authorise()); //user must have access token
+app.all(/\/api\/*/, app.oauth.authorise());
+app.all('/api/:route/:id', updateinterceptor);
+//user must have access token
+//app.all('/api/:route/:id',  updateinterceptor, app.oauth.authorise()); //user must have access token
 app.use('/api/albums', albums);
 app.use('/api/tracks', tracks);
 app.use('/api/playlists', playlists);
@@ -75,7 +79,7 @@ app.use('/', routes);
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
-  next(err);
+  return next(err);
 });
 
 // error handlers

@@ -52,16 +52,20 @@ module.exports = function(wagner) {
     });
   })
   .post(uploadParams, function(req, res, next) { // POST new song
+    var feat = [];
     var new_track = new Track({
       title:        req.body.title,
       artistId:     req.body.artistId,
       albumId:      req.body.albumId,
       releaseDate:  req.body.releaseDate || '',
-      feat:         req.body.feat || [],
       duration:     req.body.duration,
       downloadable: req.body.downloadable,
       genre:        req.body.genre
     });
+    if (req.body.feat && req.body.feat instanceof Array &&  req.body.feat.length > 0){
+        feat = req.body.feat;
+    }
+    new_track.feat = feat;
 
     if(!!req.files.imageFile) {
       new_track.coverArt = req.files.imageFile[0].path;
@@ -84,7 +88,8 @@ module.exports = function(wagner) {
         new_track.releaseDate = album.releaseDate;
       }
     });
-
+    console.log('new_track');
+    console.log(new_track);
     new_track.save(function(err, track) {
       if(err) return next(err);
       User.findById(track.artistId, function(err, user) {
