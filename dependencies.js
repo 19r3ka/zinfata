@@ -1,7 +1,7 @@
 var _= require('underscore');
 var config 	= require('./config/config'),
 ZOAuthError = require('./lib/errors/ZinfataOAuthError'),
-ZError = require('./lib/errors/ZinfataOAuthError'),
+ZError = require('./lib/errors/ZinfataError'),
 mailservice = require('./lib/services/ZinfataMailerService');
 
 //Models
