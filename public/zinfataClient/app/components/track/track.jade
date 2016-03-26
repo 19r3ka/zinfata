@@ -61,8 +61,14 @@ form(name='trackInfo', role='form', ng-if='creating || editing')
         //- audio(name='musicPreview', ng-src='{{ track.streamUrl }}', preload='auto', loop='true', ng-show='track.streamUrl', controls)
                     |  Your browser does not support this type of audio file !
     .form-group
-        label(for='album') Album:	
+        label(for='album') Album:
         select.form-control(name='album', ng-model='track.album.id', ng-options='album._id as album.title for album in albums', required)
+            option(value='') -- Choose this track's album --
+        .well(ng-show='!albums.length')
+            p.text-center You don't have any albums yet. 
+                a(href='album/new') Create an album first.
+                |  Or quickly add one below! 
+            z-album-creator
     .form-group
         label(for='genre') Genre:   
         select.form-control(name='genre', ng-model='track.genre', ng-options='(genre | uppercase) for genre in musicGenres | orderBy: genre', required)
@@ -79,3 +85,5 @@ form(name='trackInfo', role='form', ng-if='creating || editing')
     .form-group
         button.btn-primary(class='form-control', type='submit', ng-click='create(track)', ng-show='creating', ng-disabled='trackInfo.$invalid') Upload track!
         button.btn-primary(class='form-control', type='submit', ng-click='update(track)', ng-show='canEdit && editing', ng-disabled='trackInfo.$invalid') Save changes!
+pre
+    {{track.album}}
