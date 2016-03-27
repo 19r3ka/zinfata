@@ -134,5 +134,5 @@ gulp.task('default', ['browser-sync'], function() {
     ['./public/stylesheets/style-css.css', './public/stylesheets/less/*.less'],
     ['compilecss']
   );
-  gulp.watch('./**/*.js', ['lint']);
+  // gulp.watch('./**/*.js', ['lint']);
 });

@@ -1,21 +1,23 @@
-app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users, $q, $log, $filter) {
+app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
+  function(Users, $q, $log, $filter) {
   return {
     require: 'ngModel',
     link: function(scope, elm, attrs, ctrl) {
-      var users  = [],
-          handle = '';
+      var users  = [];
+      var handle = '';
 
       Users.query(function(data) {
-        for(i = 0; i < data.length; i++) {
-          handle = $filter('lowercase')(data[i].handle)
+        /* Always do the comparison with handles lowercased */
+        for (i = 0; i < data.length; i++) {
+          handle = $filter('lowercase')(data[i].handle);
           users.push(handle);
         }
         ctrl.$asyncValidators.uniquehandle = function(modelValue, viewValue) {
-          var defer = $q.defer(),
-              entry = $filter('lowercase')(modelValue);
-          if(users.indexOf(entry) === -1) {
+          var defer = $q.defer();
+            entry = $filter('lowercase')(modelValue);
+          if (users.indexOf(entry) === -1) {
             defer.resolve();
-          }else{
+          } else {
             defer.reject();
           }
           return defer.promise;
@@ -24,24 +26,25 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
     }
   };
 }])
-.directive('uniqueEmail', ['Users', '$q', '$log', '$filter', function(Users, $q, $log, $filter) {
+.directive('uniqueEmail', ['Users', '$q', '$log', '$filter',
+  function(Users, $q, $log, $filter) {
   return {
     require: 'ngModel',
     link: function(scope, elm, attrs, ctrl) {
       var users = [];
 
       Users.query(function(data) {
-        for(i = 0; i < data.length; i++) {
+        for (i = 0; i < data.length; i++) {
           users.push($filter('lowercase')(data[i].email));
         }
 
         ctrl.$asyncValidators.uniqueemail = function(modelValue, viewValue) {
-          var defer = $q.defer(),
-              entry = $filter('lowercase')(modelValue);
+          var defer = $q.defer();
+          var entry = $filter('lowercase')(modelValue);
 
-          if(users.indexOf(entry) === -1){
+          if (users.indexOf(entry) === -1) {
             defer.resolve();
-          }else{
+          } else {
             defer.reject();
           }
           return defer.promise;
@@ -58,7 +61,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
     },
     link: function(scope, elm, attrs, ctrl) {
       ctrl.$validators.pwmatch = function(modelValue, viewValue) {
-        if(modelValue === scope.firstPassword) {
+        if (modelValue === scope.firstPassword) {
           return true;
         }
         return false;
@@ -66,14 +69,19 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
     }
   };
 })
-.directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log', 'AuthenticationSvc', 'AUTH', 'MessageSvc',
-                          function($rootScope, QueueSvc, QUEUE, AUDIO, $log, Auth, AUTH, MessageSvc) {
+.directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log',
+           'AuthenticationSvc', 'AUTH', 'MessageSvc',
+  function($rootScope, QueueSvc, QUEUE, AUDIO, $log, Auth, AUTH, MessageSvc) {
   return {
     restrict: 'E',
     link: function(scope, elm, attrs, ctrl) {
-      if(!Auth.isAuthenticated() || !scope.track || !scope.track.streamUrl) elm.hide();
-      scope.$watch(function() { return Auth.isAuthenticated() && (scope.track && !!scope.track.streamUrl) },  function(newVal, oldVal) {
-        if(!!newVal) {
+      if (!Auth.isAuthenticated() || !scope.track || !scope.track.streamUrl) {
+        elm.hide();
+      }
+      scope.$watch(function() {
+        return Auth.isAuthenticated() && (scope.track && !!scope.track.streamUrl);
+      }, function(newVal, oldVal) {
+        if (!!newVal) {
           elm.show();
         } else {
           elm.hide();
@@ -88,22 +96,24 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
 
       var player = document.createElement('audio');
       player.volume = 0.5;
-      var trackDurationSlider = document.getElementById('track-duration-slider');
-      var playerVolumeSlider = document.getElementById('player-volume-slider');
+      var trackDurationSlider =
+        document.getElementById('track-duration-slider');
+      var playerVolumeSlider  =
+        document.getElementById('player-volume-slider');
 
       // scope.audio.addEventListener('play', function() {
-      player.addEventListener('play', function() {        
+      player.addEventListener('play', function() {
         $rootScope.$broadcast(AUDIO.playing, scope.track);
       });
-      
+
       // scope.audio.addEventListener('pause', function() {
       player.addEventListener('pause', function() {
         $rootScope.$broadcast(AUDIO.paused, scope.track);
       });
-      
+
       // scope.audio.addEventListener('ended', function() {
       player.addEventListener('ended', function() {
-        $rootScope.$broadcast(AUDIO.ended, scope.track);        
+        $rootScope.$broadcast(AUDIO.ended, scope.track);
         scope.next();
       });
 
@@ -114,35 +124,35 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
       playerVolumeSlider.addEventListener('change', updatePlayerVolume);
       playerVolumeSlider.addEventListener('input', updatePlayerVolume);
 
-      function updateProgressBar(){
+      function updateProgressBar() {
         var progressWidth = '';
         var trackCurrentTime = player.currentTime;
         var tarckDuration = player.duration;
         scope.currentTime = trackCurrentTime;
 
-        var currentTimePercentage = Math.floor((100 * trackCurrentTime) / tarckDuration);
+        var currentTimePercentage =
+          Math.floor((100 * trackCurrentTime) / tarckDuration);
         //document.querySelector('.duration-spin').style.width = currentTimePercentage + '%';
         trackDurationSlider.value = currentTimePercentage;
         scope.$apply();
       }
 
-      function  updateTrackCurrenTime(){
+      function  updateTrackCurrenTime() {
         player.currentTime = trackDurationSlider.value * player.duration / 100;
-        scope.$apply();        
+        scope.$apply();
       }
 
-      function  updatePlayerVolume(){
+      function  updatePlayerVolume() {
         player.volume = playerVolumeSlider.value / 100;
-        scope.$apply();   
-        console.log(player.volume );     
+        scope.$apply();
+        console.log(player.volume);
       }
-
-      
 
       //scope.playing = !player.paused; //scope.audio.paused;
       /* On reload fetch and set last played song. */
-      scope.track = QueueSvc.getCurrentTrack() && QueueSvc.getCurrentTrack().track;
-      if(scope.track) {
+      scope.track =
+        QueueSvc.getCurrentTrack() && QueueSvc.getCurrentTrack().track;
+      if (scope.track) {
         player.src = scope.track.streamUrl;
       }
 
@@ -155,16 +165,16 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
       });
 
       scope.$on(AUDIO.set, function(event, track) {
-        scope.track = track; 
+        scope.track = track;
         player.src  = track.streamUrl;
         scope.duration = player.duration;
         scope.playPause();
-        if(!Auth.isAuthenticated()) {
+        if (!Auth.isAuthenticated()) {
           $rootScope.$broadcast(AUTH.notAuthenticated);
           MessageSvc.addMsg('danger', 'Log in first to access that resource!');
-        } 
+        }
         /*scope.audio.src = track.streamUrl;
-        scope.audio.play();*/ 
+        scope.audio.play();*/
       });
 
       scope.next = function() {
@@ -189,20 +199,21 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
         player.currentTime = 0;
       };
 
-      scope.mute = function (){
+      scope.mute = function() {
         player.muted = !player.muted;
-      }
+      };
 
-      scope.muted = function (){
+      scope.muted = function() {
         return player.muted;
-      }
+      };
 
       // var stop = $interval(function() { scope.$apply(); }, 500);
     },
     templateUrl: '/templates/zPlayer'
   };
 }])
-.directive('zAlbumListing', ['AlbumsSvc', 'TracksSvc', 'SessionSvc', '$log', function(Albums, Tracks, session, $log) {
+.directive('zAlbumListing', ['AlbumsSvc', 'TracksSvc', 'SessionSvc', '$log',
+  function(Albums, Tracks, session, $log) {
   return {
     restrict: 'E',
     scope: {
@@ -215,32 +226,35 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
         // add every track in the queue. Add function in AlbumsSvc to do so.
       };
 
-      scope.$watch(function(){ return scope.artist._id;}, function(val) {
-        if(val !== undefined) {
-          Albums.getByUser({ _id: val }, function(albums) {
+      scope.$watch(function() { return scope.artist._id;}, function(val) {
+        if (val !== undefined) {
+          Albums.getByUser({_id: val}, function(albums) {
             angular.forEach(albums, function(album) {
               album.duration    = 0;
               album.trackLength = 0;
               Tracks.find({a_id: album._id} , function(tracks) {
                 angular.forEach(tracks, function(track) {
-                    album.trackLength++;
-                    duration       = parseInt(track.duration);
-                    album.duration += duration;
+                  album.trackLength++;
+                  duration       = parseInt(track.duration);
+                  album.duration += duration;
                 });
               }, function(err) {});
               this.push(album);
             }, scope.albums);
             // scope.albums = albums;
           }, function(err) {});
-          if(!!session.getCurrentUser() && (val === session.getCurrentUser()._id)) scope.isOwner = true;
-        } 
+          if (!!session.getCurrentUser() &&
+            (val === session.getCurrentUser()._id)) {
+            scope.isOwner = true;
+          }
+        }
       });
     },
     templateUrl: '/templates/zAlbumListing'
   };
 }])
-.directive('zTrackListing', ['TracksSvc', 'SessionSvc', 'QueueSvc', '$log', 
-                            function(Tracks, session, Queue, $log) {
+.directive('zTrackListing', ['TracksSvc', 'SessionSvc', 'QueueSvc', '$log',
+  function(Tracks, session, Queue, $log) {
   return {
     restrict: 'E',
     scope: {
@@ -250,23 +264,27 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
       scope.isOwner   = false;
       scope.tracks    = [];
       scope.playlists = [];
-      
-      scope.$watch(function(){ return scope.for._id; }, function(val) {
-        if(val !== undefined) {
-          var resource = scope.for, //either an album or a playlist
-              key      = attrs.type='album' ? 'a_id' : 'p_id',
-              owner    = attrs.type='album' ? resource.artistId : resource.owner.id,
-              param    = {}; 
+
+      scope.$watch(function() { return scope.for._id; }, function(val) {
+        if (val !== undefined) {
+          var resource = scope.for; //either an album or a playlist
+          var key      = attrs.type = 'album' ? 'a_id' : 'p_id';
+          var owner    =
+            attrs.type = 'album' ? resource.artistId : resource.owner.id;
+          var param    = {};
           // populate search query with a_id || p_id as key and resource_id as value
-          param[key] = resource._id; 
-         
+          param[key] = resource._id;
+
           Tracks.find(param , function(tracks) {
             angular.forEach(tracks, function(track) {
-              Tracks.inflate(track._id, this, function(){}, function(){});
+              Tracks.inflate(track._id, this, function() {}, function() {});
             }, scope.tracks);
           }, function(err) {});
-          if(session.getCurrentUser() && (session.getCurrentUser()._id === owner)) scope.isOwner = true;
-        } 
+          if (session.getCurrentUser() &&
+            (session.getCurrentUser()._id === owner)) {
+            scope.isOwner = true;
+          }
+        }
       });
 
       scope.play = function(track) {
@@ -280,8 +298,8 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
     templateUrl: '/templates/zTrackListing'
   };
 }])
-.directive('zDetailedTrackListing', ['PlaylistsSvc', 'QueueSvc', '$log', 
-                                  function(Playlists, Queue, $log) {
+.directive('zDetailedTrackListing', ['PlaylistsSvc', 'QueueSvc', '$log',
+  function(Playlists, Queue, $log) {
   return {
     restrict: 'E',
     scope: {
@@ -306,7 +324,9 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
     restrict: 'E',
     link: function(scope, elm, attrs) {
       scope.playlists  = scope.tracks = scope.albums = scope.users = [];
-      if(angular.isUndefined(scope.searchTerm)) scope.searchTerm = '';
+      if (angular.isUndefined(scope.searchTerm)) {
+        scope.searchTerm = '';
+      }
       scope.playlists = Playlists.all;
       scope.tracks    = Tracks.all;
       scope.albums    = Albums.all;
@@ -328,8 +348,10 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
     templateUrl: '/templates/zSearchBox'
   };
 }])
-.directive('zPlaylistDropdown', ['$rootScope', 'PlaylistsSvc', 'PLAYLIST_EVENTS', 'AUTH', 'AuthenticationSvc', 'SessionSvc', 'MessageSvc', '$log', 
-                                function($rootScope, Playlists, PLAYLIST, AUTH, Auth, session, Message, $log) {
+.directive('zPlaylistDropdown', ['$rootScope', 'PlaylistsSvc',
+  'PLAYLIST_EVENTS', 'AUTH', 'AuthenticationSvc', 'SessionSvc', 'MessageSvc',
+  '$log', function($rootScope, Playlists, PLAYLIST, AUTH, Auth, session,
+    Message, $log) {
   return {
     restrict: 'E',
     scope: {
@@ -342,22 +364,27 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
       scope.playlists = [];
       scope.playlist  = {
         title: '',
-        owner: { id: '' }
+        owner: {id: ''}
       };
       scope.loggedIn  = Auth.isAuthenticated;
 
       function refresh() {
-        if(!currentUser) return scope.playlists = [];
-        Playlists.find({ u_id: currentUser._id }, function(playlists) {
+        if (!currentUser) {
+          scope.playlists = [];
+          return;
+        }
+        Playlists.find({u_id: currentUser._id}, function(playlists) {
           scope.playlists = playlists;
         }, function(err) {});
       }
 
-      scope.$watch(function() { return Auth.isAuthenticated(); }, 
+      scope.$watch(function() { return Auth.isAuthenticated(); },
                    function(newVal, oldVal) {
-        if(newVal !== oldVal) {
-          if(!!newVal) currentUser = session.getCurrentUser();
-          refresh()
+        if (newVal !== oldVal) {
+          if (!!newVal) {
+            currentUser = session.getCurrentUser();
+          }
+          refresh();
         }
       });
       scope.$on(PLAYLIST.updateSuccess, function() {
@@ -373,12 +400,14 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
         refresh();
       });
 
-      if(scope.loggedIn) refresh();
+      if (scope.loggedIn) {
+        refresh();
+      }
 
       scope.create = function(playlist) {
         playlist.owner.id = currentUser._id;
-        Playlists.create(playlist, function(created_playlist) {
-          $rootScope.$broadcast(PLAYLIST.createSuccess, created_playlist);
+        Playlists.create(playlist, function(createdPlaylist) {
+          $rootScope.$broadcast(PLAYLIST.createSuccess, createdPlaylist);
           scope.playlist.title = '';
         }, function(err) {
           $rootScope.$broadcast(PLAYLIST.createFailed);
@@ -386,12 +415,16 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
       };
 
       scope.addToPlaylist = function(event, playlist, track) {
-        if(!scope.adding) return;
+        if (!scope.adding) {
+          return;
+        }
         event.preventDefault();
-        Playlists.addTrack(playlist, track, function(){
-          Message.addMsg('success', track.title + ' added to ' + playlist.title);
+        Playlists.addTrack(playlist, track, function() {
+          Message.addMsg('success',
+            track.title + ' added to ' + playlist.title);
         }, function() {
-          Message.addMsg('danger', 'Something went wrong adding track to playlist!');
+          Message.addMsg('danger',
+            'Something went wrong adding track to playlist!');
         });
       };
     },
@@ -409,8 +442,8 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
       scope.cropPending = false;
 
       scope.readFile = function(elem) {
-        var file   = elem.files[0],
-            reader = new FileReader();
+        var file   = elem.files[0];
+        var reader = new FileReader();
         reader.onload = function() {
           scope.$apply(function() {
             scope.rawImage    = reader.result;
@@ -427,19 +460,19 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
         };
         scope.cropPending = false;
         return scope.onImgReady({imgFile: data});
-      };  
-     /*
+      };
+      /*
       * Converts data uri to Blob. Necessary for uploading.
       * @see http://stackoverflow.com/questions/4998908/convert-data-uri-to-file-then-append-to-formdata
       * @param  {String} dataURI
       * @return {Blob}
       */
       var dataURItoBlob = function(dataURI) {
-        var binary     = atob(dataURI.split(',')[1]),
-            mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0],
-            array      = [];
+        var binary     = atob(dataURI.split(',')[1]);
+        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+        var array      = [];
 
-        for(var i = 0; i < binary.length; i++) {
+        for (var i = 0; i < binary.length; i++) {
           array.push(binary.charCodeAt(i));
         }
 
@@ -448,4 +481,26 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter', function(Users,
     },
     templateUrl: '/templates/zImgCrop'
   };
-});
+})
+.directive('zAlbumCreator', ['$rootScope', '$document', 'AlbumsSvc',
+  'SessionSvc', 'ALBUM_EVENTS',
+  function($rootScope, doc, Albums, Session, ALBUM) {
+  return {
+    restrict: 'E',
+    link: function(scope, elm, attrs) {
+      scope.create = function(album) {
+        if(!album.artistId) {
+          album.artist    = {};
+          album.artist.id = Session.getCurrentUser()._id;
+        }
+        album.releaseDate = new Date();
+        Albums.create(album, function(createdAlbum) {
+          $rootScope.$broadcast(ALBUM.createSuccess, createdAlbum);
+        }, function(err) {
+          $rootScope.$broadcast(ALBUM.createFailed);
+        });
+      };
+    },
+    templateUrl: '/templates/zAlbumCreator'
+  };
+}]);

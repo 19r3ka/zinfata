@@ -86,7 +86,6 @@ app.use(zinfataErrorHandler());
 
 // catch-all error handler
 app.use(function(err, req, res, next) {
-
   var zinfataOAuthError = require('./lib/errors/ZinfataOAuthError');
   var zinfataError = require('./lib/errors/ZinfataError');
   console.error(err);

@@ -1,9 +1,9 @@
 function FileDataObject(data) {
-        var fd = new FormData();
-        angular.forEach(data, function(value, key) {
-            fd.append(key, value);
-        });
-        return fd;
+  var fd = new FormData();
+  angular.forEach(data, function(value, key) {
+    fd.append(key, value);
+  });
+  return fd;
 }
 app.factory('Users', ['$resource', function($resource) {
   return $resource('/api/users/:id', {id: '@_id'}, {
@@ -40,10 +40,10 @@ app.factory('Users', ['$resource', function($resource) {
             }
     },
     'getByUser': {
-			method:'GET',
-			url: '/api/albums/user/:userId',
-			params: {userId: '@_id'},
-			isArray: true
+      method:'GET',
+      url: '/api/albums/user/:userId',
+      params: {userId: '@_id'},
+      isArray: true
     }
   });
 }])
