@@ -6,7 +6,7 @@
             p.text-center You don't have any tracks in this album yet?
                 a(href='track/new')  Add one now!
         div(ng-show='!tracks.length && !isOwner')
-            p.text-center This album doesn\'t have any track yet!
+            p.text-center This album doesn't have any track yet!
         .track-list(ng-show='!!tracks.length')
             .track-item(ng-repeat='track in tracks')
                 .track-cover

@@ -270,7 +270,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
           var resource = scope.for; //either an album or a playlist
           var key      = attrs.type = 'album' ? 'a_id' : 'p_id';
           var owner    =
-            attrs.type = 'album' ? resource.artistId : resource.owner.id;
+            attrs.type = 'album' ? resource.artist.id : resource.owner.id;
           var param    = {};
           // populate search query with a_id || p_id as key and resource_id as value
           param[key] = resource._id;
@@ -280,6 +280,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
               Tracks.inflate(track._id, this, function() {}, function() {});
             }, scope.tracks);
           }, function(err) {});
+
           if (session.getCurrentUser() &&
             (session.getCurrentUser()._id === owner)) {
             scope.isOwner = true;

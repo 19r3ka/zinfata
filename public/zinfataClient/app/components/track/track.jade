@@ -8,14 +8,13 @@
                     .dropdown(class='pull-right')
                         a.dropdown-toggle(data-toggle='dropdown', id='dropdownMenu', aria-haspopup='true', aria-expanded='true')
                             span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
-                        ul.dropdown-menu(aria-labelledby='dropdownMenu')
-                            div(ng-show='canEdit')
-                                li(ng-click='edit(track)'): a(href='') 
-                                    span.glyphicon(class='glyphicon-pencil')
-                                    |  Edit info
-                                li(ng-click='delete(track)'): a.text-danger(href='')
-                                    span.glyphicon(class='glyphicon-remove')
-                                    | Delete
+                        ul.dropdown-menu(aria-labelledby='dropdownMenu', ng-show='canEdit')
+                            li(ng-click='edit(track)'): a(href='') 
+                                span.glyphicon(class='glyphicon-pencil')
+                                |  Edit info
+                            li(ng-click='delete(track)'): a.text-danger(href='')
+                                span.glyphicon(class='glyphicon-remove')
+                                |  Delete
                     h3 {{ track.title }}
                     h4: a(href='/album/{{ track.album.id }}') {{ track.album.title }}
                     h5: a(href='/user/{{ track.artist.id }}') {{ track.artist.handle }}
@@ -85,5 +84,3 @@ form(name='trackInfo', role='form', ng-if='creating || editing')
     .form-group
         button.btn-primary(class='form-control', type='submit', ng-click='create(track)', ng-show='creating', ng-disabled='trackInfo.$invalid') Upload track!
         button.btn-primary(class='form-control', type='submit', ng-click='update(track)', ng-show='canEdit && editing', ng-disabled='trackInfo.$invalid') Save changes!
-pre
-    {{track.title}}

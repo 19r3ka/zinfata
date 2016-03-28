@@ -1,4 +1,5 @@
-var mongoose = require('mongoose');
+var mongoose   = require('mongoose');
+var defaultArt = 'zinfataClient/assets/images/track-coverart-placeholder.png';
 
 var TrackSchema = new mongoose.Schema({
   title:        {type: String, required: true},
@@ -10,7 +11,7 @@ var TrackSchema = new mongoose.Schema({
   sharing:      {type: Boolean, default: false}, // should the track be available to others
   downloadable: {type: Boolean, default: false},
   albumId:      {type: mongoose.Schema.ObjectId, ref: 'Album', required: true},
-  coverArt:     {type: String, required: true},
+  coverArt:     {type: String, default: defaultArt},
   streamUrl:    {type: String, required: true},
   genre:        {type: String, lowercase: true, required: true},
   releaseDate:  {type: Date, required: true},
