@@ -6,7 +6,7 @@ var TrackSchema = new mongoose.Schema({
   artistId:     {type: mongoose.Schema.ObjectId, ref: 'User', required: true},
   feat:         {type: [{type: mongoose.Schema.ObjectId, ref: 'User'}]},      // for the IDs of all contributing artists
   size:         {type: String, required: true},
-  duration:     {type: String, required: true},
+  duration:     {type: Number, required: true},
   sharing:      {type: Boolean, default: false}, // should the track be available to others
   downloadable: {type: Boolean, default: false},
   albumId:      {type: mongoose.Schema.ObjectId, ref: 'Album', required: true},
