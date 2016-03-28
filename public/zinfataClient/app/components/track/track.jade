@@ -75,7 +75,7 @@ form(name='trackInfo', role='form', ng-if='creating || editing')
             option(value='') -- Choose a music genre --
     .form-group(ng-class="{ 'has-error': trackInfo.releaseDate.$invalid }")
         label(for='releaseDate') Release Date:
-        input.form-control(type='date', name='releaseDate', ng-model='track.releaseDate', max="{{track.album.releaseDate | date:'yyyy-MM-dd'}}", ng-disabled='!editing && !creating', required)
+        input.form-control(type='date', name='releaseDate', ng-model='track.releaseDate', max="{{track.album.releaseDate}}", ng-disabled='!editing && !creating', required)
         .help-block(ng-messages='trackInfo.releaseDate.$error', ng-show='trackInfo.releaseDate.$touched', ng-hide='trackInfo.releaseDate.$submitted')
             div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
     .form-group
@@ -86,4 +86,4 @@ form(name='trackInfo', role='form', ng-if='creating || editing')
         button.btn-primary(class='form-control', type='submit', ng-click='create(track)', ng-show='creating', ng-disabled='trackInfo.$invalid') Upload track!
         button.btn-primary(class='form-control', type='submit', ng-click='update(track)', ng-show='canEdit && editing', ng-disabled='trackInfo.$invalid') Save changes!
 pre
-    {{track.album}}
+    {{track.title}}

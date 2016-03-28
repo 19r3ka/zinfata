@@ -7,13 +7,13 @@ module.exports = function(wagner) {
   var UserModel;
   var AlbumModel;
   var TrackModel;
-  var ZError;
+  var zError;
 
   wagner.invoke(function(User, Album, Track, ZError) {
     UserModel     = User;
     AlbumModel    = Album;
     TrackModel    = Track;
-    ZError        = ZError;
+    Zerror        = ZError;
   });
   var User     = UserModel;
   var Album    = AlbumModel;
@@ -49,7 +49,7 @@ module.exports = function(wagner) {
     Track.find(function(err, tracks) {
       if (err) {return next(err);}
       if (!tracks.length) {
-        return next(new ZError('not_found', 'Track not found'));
+        return next(new Zerror('not_found', 'Track not found'));
       }
       res.json(tracks);
     });
@@ -67,8 +67,9 @@ module.exports = function(wagner) {
       downloadable: req.body.downloadable,
       genre:        req.body.genre
     });
-    if (req.body.feat && req.body.feat instanceof Array &&  req.body.feat.length > 0){
-        feat = req.body.feat;
+    if (req.body.feat && req.body.feat instanceof Array &&
+      req.body.feat.length > 0) {
+      feat = req.body.feat;
     }
     newTrack.feat = feat;
 
@@ -90,7 +91,7 @@ module.exports = function(wagner) {
       function(err, album) {
       if (err) {return next(err);}
       if (!album) {
-        return next(new ZError('bad_param', 'invalid album / artist match'));
+        return next(new Zerror('bad_param', 'invalid album / artist match'));
       }
       if (!newTrack.releaseDate || newTrack.releaseDate > album.releaseDate) {
         newTrack.releaseDate = album.releaseDate;
@@ -114,7 +115,7 @@ module.exports = function(wagner) {
     Track.findById(req.params.id, function(err, track) {
       if (err) {return next(err);}
       if (!track) {
-        return next(new ZError('not_found', 'Track not found'));
+        return next(new Zerror('not_found', 'Track not found'));
       }
       res.json(track);
     });
@@ -124,7 +125,7 @@ module.exports = function(wagner) {
     Track.findById(req.params.id, function(err, trackToUpdate) {
       if (err) {return next(err);}
       if (!trackToUpdate) {
-        return next(new ZError('not_found', 'Track not found'));
+        return next(new Zerror('not_found', 'Track not found'));
       }
       // Since it's a blind attribution, only update keys that already exit.
       for (var key in trackToUpdate) {
@@ -153,7 +154,7 @@ module.exports = function(wagner) {
     Track.findById(req.params.id, function(err, track) {
       if (err) {return next(err);}
       if (!track) {
-        return next(new ZError('not_found', 'Track not found'));
+        return next(new Zerror('not_found', 'Track not found'));
       }
       track.deleted = true;
       track.save(function(err, deletedTrack) {
@@ -168,10 +169,10 @@ module.exports = function(wagner) {
     Track.findById(req.params.id, function(err, track) {
       if (err) {return next(err);}
       if (!track) {
-        return next(new ZError('not_found', 'Track not found'));
+        return next(new Zerror('not_found', 'Track not found'));
       }
       if (!track.downloadable) {
-        return next(new ZError('forbidden', 'Track not downloadable'));
+        return next(new Zerror('forbidden', 'Track not downloadable'));
       }
       var downloadTitle = '[zinfata] ' + track.title;
       var downloadFile  = function(url) {
@@ -199,14 +200,14 @@ module.exports = function(wagner) {
         key = 'artistId';
         break;
       default:
-        next(new ZError('bad_param', 'invalid resource requested'));
+        next(new Zerror('bad_param', 'invalid resource requested'));
     }
 
     query[key] = req.params.resourceId;
     Track.find(query, function(err, tracks) {
       if (err) {return next(err);}
       if (!tracks) {
-        return next(new ZError('not_found', 'Track not found'));
+        return next(new Zerror('not_found', 'Track not found'));
       }
       res.json(tracks);
     });

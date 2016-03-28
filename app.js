@@ -2,6 +2,7 @@ var wagner = require('wagner-core');
 require('./dependencies')(wagner);
 
 var express        = require('express');
+var compression    = require('compression');
 var path           = require('path');
 var favicon        = require('serve-favicon');
 var logger         = require('morgan');
@@ -49,6 +50,8 @@ app.use(expressSession({
   resave: true,
   saveUninitialized: true
 }));
+/* Compress all outgoing responses */
+app.use(compression());
 // app.use(passport.initialize());
 // app.use(passport.session());
 

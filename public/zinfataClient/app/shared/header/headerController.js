@@ -1,13 +1,14 @@
-app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH', 'SessionSvc', 'MessageSvc', 'AuthenticationSvc', '$location', '$log',
-                              function($scope, $rootScope, AUTH, Session, MessageSvc, Auth, $location, $log) {
-  
+app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH', 'SessionSvc',
+  'MessageSvc', 'AuthenticationSvc', '$location', '$log', function($scope,
+  $rootScope, AUTH, Session, MessageSvc, Auth, $location, $log) {
+
   $scope.loggedIn = Auth.isAuthenticated;
   $scope.user     = Session.getCurrentUser();
-  
+
   $scope.$watch(function() {
     return Auth.isAuthenticated();
-  },  function(newVal, oldVal) {    
-    if(newVal !== oldVal) {
+  }, function(newVal, oldVal) {
+    if (newVal !== oldVal) {
       refresh();
     }
   });
@@ -23,7 +24,9 @@ app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH', 'SessionSvc', 'Mes
   $scope.userProfile = function(user) {
     var uri  = '#';
 
-    if(!!user && '_id' in user && user._id) uri = 'user/' + user._id;
+    if (!!user && '_id' in user && user._id) {
+      uri = 'user/' + user._id;
+    }
     return uri;
   };
 
@@ -33,7 +36,7 @@ app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH', 'SessionSvc', 'Mes
 
   $scope.logout = function() {
     Auth.logout(function(res) {
-      if(res) {
+      if (res) {
         MessageSvc.addMsg('success', 'You have been successfully logged out!');
         $rootScope.$broadcast(AUTH.logoutSuccess);
       } else {
@@ -45,6 +48,8 @@ app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH', 'SessionSvc', 'Mes
   };
 
   function refresh() {
-    if($scope.loggedIn) $scope.user = Session.getCurrentUser();
+    if ($scope.loggedIn) {
+      $scope.user = Session.getCurrentUser();
+    }
   }
 }]);

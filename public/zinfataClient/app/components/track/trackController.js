@@ -89,7 +89,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
       ** Get the albums pertaining to the track's artist
       ** And update all information relative to current track's album
       */
-      getUserAlbums($scope.track.atrist.id);
+      getUserAlbums($scope.track.artist.id);
 
       UsersSvc.get($scope.track.artist.id, function(artist) {
         $scope.track.artist.handle = artist.handle;
@@ -121,7 +121,8 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
         $scope.track.coverArt = coverArts[newValue];
       }
       $scope.track.album.releaseDate = releaseDates[newValue];
-      if ($scope.track.album.releaseDate < $scope.track.releaseDate) {
+      if (!!!$scope.track.releaseDate ||
+        ($scope.track.album.releaseDate < $scope.track.releaseDate)) {
         $scope.track.releaseDate = $scope.track.album.releaseDate;
       }
     }
@@ -141,9 +142,11 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
   $scope.$on(ALBUM.createSuccess, function(event, album) {
     $scope.albums.push(album);
     if (!$scope.track.album.id) {
+
+      releaseDates[album._id]        = new Date(album.releaseDate);
       $scope.track.album.id          = album._id;
       $scope.track.album.title       = album.title;
-      $scope.track.album.releaseDate = album.releaseDate;
+      // $log.debug(album.releaseDate);
     }
   });
 
@@ -188,6 +191,8 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
   $scope.create = function(track) {
     track.artist.id = Session.getCurrentUser()._id;
     delete track.streamUrl;
+    $log.debug('track to create: ');
+    $log.debug(track);
     TracksSvc.create(track, function(createdTrack) {
       $rootScope.$broadcast(TRACK_EVENTS.createSuccess, createdTrack);
       MessageSvc.addMsg('success',
