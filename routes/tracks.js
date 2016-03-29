@@ -67,8 +67,9 @@ module.exports = function(wagner) {
       downloadable: req.body.downloadable,
       genre:        req.body.genre
     });
-    if (req.body.feat && req.body.feat instanceof Array &&  req.body.feat.length > 0){
-        feat = req.body.feat;
+    if (req.body.feat && req.body.feat instanceof Array &&
+      req.body.feat.length > 0) {
+      feat = req.body.feat;
     }
     newTrack.feat = feat;
 

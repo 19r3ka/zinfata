@@ -34,6 +34,7 @@ nav.navbar(class='navbar-inverse', role='navigation', ng-controller='headerCtrl'
                   |  Register
 
     ul.nav(class=['navbar-right', 'navbar-nav'])
+      li(class='z-desktop', ng-show='loggedIn()'): a(href='track/new') Upload a track!
       li.dropdown(ng-show='loggedIn()', class='z-desktop')
         a.dropdown-toggle(data-toggle='dropdown')
           | {{ user.handle }}

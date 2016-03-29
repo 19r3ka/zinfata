@@ -1,7 +1,10 @@
 var wagner = require('wagner-core');
 require('./dependencies')(wagner);
 
+var fs             = require('fs');
 var express        = require('express');
+var compression    = require('compression');
+// var serveStatic    = require('serve-static');
 var path           = require('path');
 var favicon        = require('serve-favicon');
 var logger         = require('morgan');
@@ -30,6 +33,13 @@ var config     = wagner.invoke(function(Config) {return Config;});
 var authConfig = config.oauth2;
 var app        = express();
 
+if (!fs.existsSync('./public/audio/uploads')) {
+  fs.mkdirSync('./public/audio/uploads');
+}
+
+if (!fs.existsSync('./public/images/uploads')) {
+  fs.mkdirSync('./public/images/uploads');
+}
 //init auth server
 app.oauth = oauthserver(authConfig);
 
@@ -44,15 +54,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+// app.use(serveStatic(path.join(__dirname, 'public')));
 app.use(expressSession({
   secret: 'ElYemo',
   resave: true,
   saveUninitialized: true
 }));
+/* Compress all outgoing responses */
+app.use(compression());
 // app.use(passport.initialize());
 // app.use(passport.session());
 
-//routes required to manage oauth
+/* routes required to manage oauth */
 app.use('/clients/', oauthclients);
 app.post('/oauth2/token', app.oauth.grant());
 app.use('/oauth2/revoke', revoketokens);

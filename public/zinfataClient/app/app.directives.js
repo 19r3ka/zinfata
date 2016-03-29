@@ -14,7 +14,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
         }
         ctrl.$asyncValidators.uniquehandle = function(modelValue, viewValue) {
           var defer = $q.defer();
-            entry = $filter('lowercase')(modelValue);
+          var entry = $filter('lowercase')(modelValue);
           if (users.indexOf(entry) === -1) {
             defer.resolve();
           } else {
@@ -509,9 +509,12 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
   function($rootScope, doc, Albums, Session, ALBUM) {
   return {
     restrict: 'E',
+    scope: {
+      album: '='
+    },
     link: function(scope, elm, attrs) {
-      scope.create = function(album) {
-        if(!album.artistId) {
+      scope.save = function(album) {
+        if (!album.artistId) {
           album.artist    = {};
           album.artist.id = Session.getCurrentUser()._id;
         }
