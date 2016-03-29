@@ -93,6 +93,28 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
       scope.playing = false;
       scope.currentTime = 0;
       scope.isLoggedIn = Auth.isAuthenticated;
+      var expander = document.getElementById('expand-player-controllers');
+      var compresser = document.getElementById('compress-player-controllers');
+      var zplayerBottom = document.getElementById('z-player-bottom');
+
+      window.addEventListener('resize', function() {
+        if (document.documentElement.clientWidth >= 598 && zplayerBottom.className.match(/\s*expand-mobile/g)) {
+          zplayerBottom.className =  zplayerBottom.className.replace(/expand-mobile/g, '');
+        }
+      });
+
+      expander.addEventListener('click', function() {
+        if (!zplayerBottom.className.match(/\s+expand-mobile/)) {
+          zplayerBottom.className += 'expand-mobile';
+        }
+      });
+
+      compresser.addEventListener('click', function() {
+        console.log(zplayerBottom.className);
+        if (zplayerBottom.className.match(/\s*expand-mobile/)) {
+          zplayerBottom.className = zplayerBottom.className.replace(/expand-mobile/g, '');
+        }
+      });
 
       var player = document.createElement('audio');
       player.volume = 0.5;

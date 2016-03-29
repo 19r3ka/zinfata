@@ -134,7 +134,7 @@ a:hover{text-decoration: none;}
 .z-control-bt-container{
 	.z-control-bt, .z-track-duration-container,fa-volume-up,.volume-slider{vertical-align: middle;}
 }
-.z-player-bottom{
+#z-player-bottom{
 	//height: 70px;
 	background-color: #212121;
 	position: fixed;
@@ -143,7 +143,13 @@ a:hover{text-decoration: none;}
 	width: 100%;
 	color: #FFFFFF;
 	text-align: center;
-	padding: 10px 20px;
+	padding: 15px 20px;
+
+	.z-player-container{
+		display: inline-block;
+		vertical-align: middle;
+	}
+
 	.z-control-bt-container,.z-player-track-infos,.z-control-bt,.track-thumbnail{
 			display:inline-block;
 			vertical-align: middle;
@@ -179,9 +185,7 @@ a:hover{text-decoration: none;}
 	.z-control-bt-container{
 		padding-left: 15px;
 		//border: solid red;
-		.track-thumbnail{
-			margin-top: 10px;
-		}	
+	
 		.z-track-volume-container{
 			display: inline-block;
 			margin-left: 10px;
@@ -279,5 +283,86 @@ a:hover{text-decoration: none;}
 			font-size:14px;
 		}
 	}
+	#expand-player-controllers{
+		display: none;
+	}
 
+}
+
+.track-thumbnail{
+	width: 50px;
+	height: 50px;
+	@media (max-width:352px){
+		margin-bottom: 10px;
+	}
+}
+
+#expand-player-controllers{
+	display: block;
+}
+.p-mobile #z-player-bottom:not(.expand-mobile){
+	.z-track-duration-container{
+		display: none;
+	}
+	@media (max-width:598px){
+		.z-track-volume-container,.z-control-bt:not(.z-control-bt-play){
+			display: none;
+		}
+		#expand-player-controllers{
+			position: absolute;
+			right: 20px;
+			top: -15px;
+			right: 10px;
+			background-color: #212121;
+			border-radius: 5px;
+			display: inline-block;
+			padding: 0px 7px 7px;
+			cursor: pointer;
+		}
+
+	}
+	@media (max-width:494px){
+		.track-thumbnail{
+			display: none;
+		}
+	}
+	
+}
+#compress-player-controllers{
+	display: none;
+}
+
+.p-mobile #z-player-bottom.expand-mobile{
+	height: 100%;
+	background-color: rgb(10,10,10);
+	.z-player-container{
+		display: inline-block;
+		width: 100%;
+		vertical-align: middle;
+	}
+	.z-control-bt-container{
+		display: block;
+		padding-top: 30px;
+	}
+	.z-track-duration-container{
+		display: block;
+		padding-top: 15px;
+		#track-duration-slider{
+			width: 70%;
+			@media (max-width: 380px){
+				width: 100%;
+			}
+		}
+	}
+	#compress-player-controllers{
+		position: absolute;
+		right: 20px;
+		top: -2px;
+		right: 15px;
+		background-color: #212121;
+		border-radius: 5px;
+		display: inline-block;
+		padding: 2px 7px 7px;
+		cursor: pointer;
+	}
 }
