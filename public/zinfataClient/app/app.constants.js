@@ -7,6 +7,7 @@ app.constant('ROUTES', {
   loginFailed:          'auth-login-failed',
   mustLogIn:            'auth-log-in-first',
   logoutSuccess:        'auth-logout-success',
+  logoutFailed:         'auth-logout-failed',
   sessionTimeout:       'auth-session-timeout',
   authenticated:        'auth-authenticated',
   notAuthenticated:     'auth-not-authenticated',

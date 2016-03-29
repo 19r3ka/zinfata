@@ -12,6 +12,21 @@ var AlbumSchema = new mongoose.Schema({
   updatedAt:    {type: Date, default: Date.now}
 });
 
+AlbumSchema.statics.findActive = function(query, unique, callback) {
+  var album = this;
+
+  if (!query) {
+    query = {};
+  }
+  query.deleted = false;
+
+  if (unique) {
+    album.findOne(query, callback);
+  } else {
+    album.find(query, callback);
+  }
+};
+
 AlbumSchema.pre('save', function(next) {
   var album = this;
   if (album.isModified('title')) {album.titleLower = album.title;}
