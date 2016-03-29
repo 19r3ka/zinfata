@@ -164,14 +164,25 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
         scope.stop();
       });
 
+      scope.$on(AUTH.logoutSuccess, function() {
+        scope.stop();
+        scope.track = {};
+      });
+
+      scope.$on(AUTH.notAuthenticated, function() {
+        scope.stop();
+      });
+
       scope.$on(AUDIO.set, function(event, track) {
         scope.track = track;
         player.src  = track.streamUrl;
         scope.duration = player.duration;
-        scope.playPause();
+
         if (!Auth.isAuthenticated()) {
           $rootScope.$broadcast(AUTH.notAuthenticated);
-          MessageSvc.addMsg('danger', 'Log in first to access that resource!');
+          MessageSvc.addMsg('danger', 'Log in first to play music!');
+        } else {
+          scope.playPause();
         }
         /*scope.audio.src = track.streamUrl;
         scope.audio.play();*/

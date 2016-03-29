@@ -140,12 +140,12 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
   $scope.$watch(function() {
     return $scope.track.streamUrl;
   }, function(newValue, oldValue) {
-    if (newValue !== oldValue) {
+    // if (newValue !== oldValue) {
       var audio = new Audio(newValue);
       audio.onloadedmetadata = function() {
         $scope.track.duration = audio.duration;
       };
-    }
+    // }
   });
 
   $scope.$watch(function() {

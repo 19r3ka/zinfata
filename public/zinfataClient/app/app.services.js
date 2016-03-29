@@ -570,23 +570,18 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
   ________________________________________________________*/
 
 app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log',
-'TracksSvc', 'SessionSvc', function(queue, $rootScope, AUDIO, QUEUE, $log,
-TracksSvc, Session) {
+'TracksSvc', 'SessionSvc', 'AUTH', function(queue, $rootScope, AUDIO, QUEUE,
+$log, TracksSvc, Session, AUTH) {
   var self  = this;
-  var owner = Session.getCurrentUser() && Session.getCurrentUser()._id;
-
-  self.data = {
-    currentlyPlaying: {
-      index: null,
-      track: null
-    },
-    tracks: [] //index of tracks in queue
-  };
+  var owner = function() {
+    return Session.getCurrentUser() && Session.getCurrentUser()._id;
+  }
 
   self.playNext       = function() {
-    self.getTracks();
-    var queueLength = self.data.tracks.length;
-    var index       = self.data.currentlyPlaying.index + 1;
+    var tracks      = self.getTracks();
+    var nowPlaying  = self.getCurrentTrack();
+    var queueLength = tracks.length;
+    var index       = nowPlaying.index + 1;
 
     if (index >= queueLength) {
       index = 0;
@@ -598,9 +593,9 @@ TracksSvc, Session) {
   };
 
   self.playPrev       = function() {
-    self.getTracks();
-    var queueLength  = self.data.tracks.length;
-    var currentIndex = self.data.currentlyPlaying.index;
+    var tracks       = self.getTracks();
+    var queueLength  = tracks.length;
+    var currentIndex = self.getCurrentTrack().index;
     var index        = currentIndex - 1;
     if (index < 0) {
       index = queueLength - 1;
@@ -611,37 +606,38 @@ TracksSvc, Session) {
     });
   };
 
-  self.saveQueue       = function() {
-    queue.setData(owner + '.queue.tracks', self.data.tracks);
-    queue.setData(owner + '.queue.nowPlaying', self.data.currentlyPlaying);
+  self.saveQueue       = function(tracks, nowPlaying) {
+    if (tracks && Array.isArray(tracks)) {
+      queue.setData(owner() + '.queue.tracks', tracks);
+    }
+
+    if (!!nowPlaying) {
+      queue.setData(owner() + '.queue.nowPlaying', nowPlaying);
+    }
   };
 
   self.clearQueue     = function() {
-    self.data.tracks = [];
-    self.saveQueue();
+    self.saveQueue([]);
   };
 
   self.getCurrentTrack = function() {
-    return queue.getData(owner + '.queue.nowPlaying');
+    return queue.getData(owner() + '.queue.nowPlaying') || {};
   };
 
   self.addTrack        = function(track, playNext) {
-    self.getTracks();
-    playNext ? self.data.tracks.unshift : self.data.tracks.push(track._id);
-    self.saveQueue();
+    var tracks = self.getTracks();
+    playNext ? tracks.unshift(track._id) : tracks.push(track._id);
+    self.saveQueue(tracks);
   };
 
   self.getTracks       = function() {
-    if (!!!self.data.tracks.length) {
-      self.data.tracks = queue.getData(owner + '.queue.tracks') || [];
-    }
-    return self.data.tracks;
+    return queue.getData(owner() + '.queue.tracks') || [];
   };
 
   self.getTrackAt      = function(index, success, failure) {
-    self.getTracks();
-    if (!!self.data.tracks.length) {
-      TracksSvc.inflate(self.data.tracks[index], null, function(track) {
+    var tracks = self.getTracks();
+    if (!!tracks.length) {
+      TracksSvc.inflate(tracks[index], null, function(track) {
         success(track);
       }, function(err) {
         failure(err);
@@ -652,36 +648,45 @@ TracksSvc, Session) {
   };
 
   self.removeTrackAt   = function(index, success, failure) {
-    self.getTracks();
-    if (!!self.data.tracks.splice(index, 1).length) {
-      if (self.data.currentlyPlaying.index > index) {
-        self.data.currentlyPlaying.index--;
-      } else if (self.data.currentlyPlaying.index === index) {
-        if (index >= self.data.tracks.length) {
+    var tracks     = self.getTracks();
+    var nowPlaying = self.getCurrentTrack();
+
+    if (!!tracks.splice(index, 1).length) {
+      if (nowPlaying.index > index) {
+        nowPlaying.index--;
+      } else if (nowPlaying.index === index) {
+        if (index >= tracks.length) {
           index = 0;
         }
         self.getTrackAt(index, function(track) {
           self.play(track, index);
         }, function() {});
       }
-      self.saveQueue();
+      self.saveQueue(tracks, nowPlaying);
       success(index);
     } else {
       failure('Track removal from queue failed at index: ' + index);
     }
   };
   /* User clicks on a track's playNow button */
-  self.playNow         = function(track) {
-    var newIndex = 0;
-    var queueCue = self.data.currentlyPlaying.index;
+  self.playNow = function(track) {
+    var newIndex   = 0;
+    var queueCue   = 0;
+    var nowPlaying = self.getCurrentTrack();
+    var tracks     = self.getTracks();
 
-    self.getTracks();
+    if (nowPlaying) {
+      queueCue = nowPlaying.index;
+    }
+
     /* If there is a queue, stick the track in after
        the current index position */
-    if (!!self.data.tracks.length) {
-      self.data.tracks.splice(queueCue, 0, track._id);
-      newIndex = self.data.currentlyPlaying.index++;
-    } else { //there is no queue, add to end to create.
+    if (!!tracks.length && !!Object.keys(nowPlaying).length) {
+      tracks.splice(queueCue, 0, track._id);
+      newIndex = queueCue++;
+    } else if (!!tracks.length && !Object.keys(nowPlaying).length) { //there is no queue, add to end to create.
+      self.addTrack(track, true);
+    } else {
       self.addTrack(track);
     }
     self.play(track, newIndex);
@@ -694,10 +699,12 @@ TracksSvc, Session) {
         track = inflatedTrack;
       }, function(err) {return;});
     }
-    self.data.currentlyPlaying.index = index;
-    self.data.currentlyPlaying.track = track;
-    self.saveQueue();
-    $rootScope.$broadcast(AUDIO.set, self.data.currentlyPlaying.track);
+
+    var nowPlaying = self.getCurrentTrack();
+    nowPlaying.index = index;
+    nowPlaying.track = track;
+    self.saveQueue(null, nowPlaying);
+    $rootScope.$broadcast(AUDIO.set, nowPlaying.track);
   };
 }]);
 app.service('MessageSvc', function() {
