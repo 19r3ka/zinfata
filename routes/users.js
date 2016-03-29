@@ -139,7 +139,8 @@ module.exports = function(wagner) {
       if (!userToDelete) {
         return next(new Zerror('not_found', 'User not found'));
       }
-      userToDelete.deleted = true;
+      userToDelete.deleted   = true;
+      userToDelete.activated = false;
       userToDelete.save(function(err, deletedUser) {
         res.json(deletedUser);
       });
