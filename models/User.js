@@ -53,6 +53,21 @@ UserSchema.statics.getUser = function(handle, password, callback) {
   });
 };
 
+UserSchema.statics.findActive = function(query, unique, callback) {
+  var user = this;
+
+  if (!query) {
+    query = {};
+  }
+  query.deleted = false;
+
+  if (unique) {
+    user.findOne(query, callback);
+  } else {
+    user.find(query, callback);
+  }
+};
+
 UserSchema.methods.getMetadata = function() {
   //add key that you assume to be meta to the array
   var userMeta = ['_id', 'handle', 'email', 'role', 'activated'];
@@ -112,6 +127,7 @@ UserSchema.set('toJSON', {
     delete ret.email;
     delete ret.role;
     delete ret.activated;
+    delete ret.deleted;
     return ret;
   }
 });

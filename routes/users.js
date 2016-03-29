@@ -32,7 +32,7 @@ module.exports = function(wagner) {
 
   router.route('/')
   .get(function(req, res, next) { /* GET users listing. */
-    User.find(function(err, users) {
+    User.findActive({}, false, function(err, users) {
       if (err) { return next(err); }
       res.json(users);
     });
@@ -55,7 +55,8 @@ module.exports = function(wagner) {
       }
     });
     /* Checks if the email is taken */
-    User.findOne({email: req.body.email.toLowerCase()}, function(err, user) {
+    User.findOne({email: req.body.email.toLowerCase()},
+    function(err, user) {
       if (err) { return next(err); }
       //if (user) return next(new Error('duplicate: email'));
       if (user) {
@@ -112,14 +113,14 @@ module.exports = function(wagner) {
 
   router.route('/:id')
   .get(function(req, res, next) { /* GET specific user */
-    User.findById(req.params.id, function(err, user) {
+    User.findActive({_id: req.params.id}, true, function(err, user) {
       if (err)   {return next(err);}
       if (!user) {return next(new Zerror('not_found', 'User not found'));}
       res.json(user);
     });
   })
   .put(upload.single('avatar'), function(req, res, next) { /* UPDATE specific user */ //Must be protected somehow
-    User.findById(req.params.id, function(err, user) {
+    User.findActive({_id: req.params.id}, true, function(err, user) {
       if (err)   {return next(err);}
       if (!user) {return next(new Zerror('not_found', 'User not found'));}
       for (var key in user) {
@@ -134,7 +135,8 @@ module.exports = function(wagner) {
     });
   })
   .delete(function(req, res, next) { /* DELETE specific user */
-    User.findById(req.params.id, req.body, function(err, userToDelete) {
+    User.findActive({_id: req.params.id}, true,
+    function(err, userToDelete) {
       if (err) {return next(err);}
       if (!userToDelete) {
         return next(new Zerror('not_found', 'User not found'));
@@ -149,7 +151,7 @@ module.exports = function(wagner) {
   router.route('/handle/:handle')
   .get(function(req, res, next) {
     if ('handle' in req.params && !!req.params.handle) {
-      User.findOne({handleLower: req.params.handle.toLowerCase()},
+      User.findActive({handleLower: req.params.handle.toLowerCase()}, true,
         function(err, user) {
         if (err)   {return next(err);}
         if (!user) {return next(new Zerror('not_found', 'User not found'));}
@@ -163,7 +165,7 @@ module.exports = function(wagner) {
       if (err) {return next(err);}
       if (!token) {return next(new Zerror('not_found', 'Token not found'));}
       if (token.purpose === 'usr_activation') {
-        User.findById(token.userId, function(err, user) {
+        User.findActive({_id: token.userId}, true, function(err, user) {
           if (err)   {return next(err);}
           if (!user) {return next(new Zerror('not_found', 'User not found'));}
           user.activated = true;
@@ -178,7 +180,8 @@ module.exports = function(wagner) {
   });
   router.route('/tokenize/:action/:email')
   .get(function(req, res, next) {
-    User.findOne({email: req.params.email.toLowerCase()}, function(err, user) {
+    User.findActive({email: req.params.email.toLowerCase()}, true,
+    function(err, user) {
       if (err)   {return next(err);}
       if (!user) {return next(new Zerror('not_found', 'User not found'));}
       PwdToken.generateToken(function(newToken) {
