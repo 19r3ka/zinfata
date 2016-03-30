@@ -108,8 +108,8 @@ app.service('AuthenticationSvc', ['$rootScope', 'AUTH', 'ROUTES', 'SessionSvc',
 
 app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
 '$rootScope', function(Users, MessageSvc, $log, $location, $rootScope) {
-
-  this.create = function(user, success, failure) {
+  var self = this;
+  self.create = function(user, success, failure) {
     var newUser = new Users();
     for (var key in user) {
       newUser[key] = user[key];
@@ -121,7 +121,7 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
     });
   };
 
-  this.delete = function(user, success, failure) {
+  self.delete = function(user, success, failure) {
     Users.delete({id: user._id}, function(data) {
       return success(data);
     }, function(error) {
@@ -129,7 +129,7 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
     });
   };
 
-  this.update = function(user, success, failure) {
+  self.update = function(user, success, failure) {
     Users.get({id: user._id}, function(userToUpdate) {
       for (var key in userToUpdate) {
         if (!!user[key] && userToUpdate[key] !== user[key]) {
@@ -149,7 +149,7 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
     });
   };
 
-  this.get = function(id, success, failure) {
+  self.get = function(id, success, failure) {
     Users.get({id: id}, function(user) {
       if (!!user.avatarUrl &&
         (user.avatarUrl.search('user-avatar-placeholder') === -1)) {
@@ -162,7 +162,7 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
     });
   };
 
-  this.all = Users.query(function(collection) {
+  self.all = Users.query(function(collection) {
     var ret = [];
     angular.forEach(collection, function(item) {
       if (!!item.avatarUrl &&
@@ -177,7 +177,7 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
     $log.debug('Unable to get all the users!');
   });
 
-  this.findByHandle = function(handle, success, failure) {
+  self.findByHandle = function(handle, success, failure) {
     return Users.find({handle: handle}, function(user) {
       success(user);
     }, function(err) {
@@ -186,7 +186,9 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
   };
 }]);
 app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
-  this.create = function(data, success, failure) {
+  var self = this;
+
+  self.create = function(data, success, failure) {
     var newAlbum = new Albums(
       {
         title:         data.title,
@@ -202,7 +204,7 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
     });
   };
 
-  this.update = function(album, success, failure) {
+  self.update = function(album, success, failure) {
     Albums.get({id: album._id}, function(albumToUpdate) {
       for (var key in albumToUpdate) {
         if (!!album[key] && albumToUpdate[key] !== album[key]) {
@@ -221,7 +223,7 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
     });
   };
 
-  this.get = function(albumId, success, failure) {
+  self.get = function(albumId, success, failure) {
     Albums.get({id: albumId}, function(data) {
       data.artist = {id: data.artistId};
       delete data.artistId;
@@ -236,7 +238,7 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
     });
   };
 
-  this.all = Albums.query(function(collection) {
+  self.all = Albums.query(function(collection) {
     var ret = [];
     angular.forEach(collection, function(item) {
       item.artist = {id: item.artistId};
@@ -253,7 +255,7 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
     $log.debug('Unable to get all the albums!');
   });
 
-  this.getByUser = function(user, success, failure) {
+  self.getByUser = function(user, success, failure) {
     Albums.getByUser({userId: user._id}, function(albums) {
       angular.forEach(albums, function(data) {
         data.artist = {id: data.artistId};
@@ -270,7 +272,7 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
     });
   };
 
-  this.delete = function(album, success, failure) {
+  self.delete = function(album, success, failure) {
     Albums.delete({id: album._id}, function(data) {
       success(data);
     }, function(err) {
@@ -280,7 +282,9 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
 }]);
 app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
 'sessionStore', function(Tracks, $log, UsersSvc, AlbumsSvc, $window, store) {
-  this.create = function(track, success, failure) {
+  var self = this;
+
+  self.create = function(track, success, failure) {
     var newTrack = new Tracks({
       title:        track.title,
       artistId:     track.artist.id,
@@ -303,7 +307,7 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
     });
   };
 
-  this.update = function(track, success, failure) {
+  self.update = function(track, success, failure) {
     Tracks.get({id: track._id}, function(trackToUpdate) {
       for (var key in trackToUpdate) {
         if (!!track[key] && trackToUpdate[key] !== track[key]) {
@@ -328,7 +332,7 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
     });
   };
 
-  this.get = function(trackId, success, failure) {
+  self.get = function(trackId, success, failure) {
     Tracks.get({id: trackId}, function(data) {
       data.artist      = {id: data.artistId};
       data.album       = {id: data.albumId};
@@ -348,7 +352,7 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
     });
   };
 
-  this.all = Tracks.query(function(collection) {
+  self.all = Tracks.query(function(collection) {
     var ret = [];
     angular.forEach(collection, function(item) {
       item.artist      = {id: item.artistId};
@@ -370,7 +374,7 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
     $log.debug('Unable to get all the tracks!');
   });
 
-  this.find = function(query, success, failure) { // query must be a valid hash with a_id &| u_id
+  self.find = function(query, success, failure) { // query must be a valid hash with a_id &| u_id
     var search;
     if ('a_id' in query || 'u_id' in query) {
       search = query.a_id ? {resource: 'album', resource_id: query.a_id} : {resource: 'artist', resource_id: params.u_id};
@@ -400,11 +404,11 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
     }
   };
 
-  this.inflate = function(index, container, success, failure) {
+  self.inflate = function(index, container, success, failure) {
     if (!index) {
       return $log.debug('there is no index sent to Tracks.inflate.')
     }
-    this.get(index, function(track) {
+    self.get(index, function(track) {
       UsersSvc.get(track.artist.id, function(user) {
         track.artist.handle = user.handle;
       }, function(err) {
@@ -424,7 +428,7 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
     });
   };
 
-  this.downloadLink = function(track, success, failure) {
+  self.downloadLink = function(track, success, failure) {
     var accessKeys  = store.getData('accessKeys');
     var accessToken = accessKeys ? accessKeys.access_token : null;
     var downloadUrl = '/zinfataclient/tracks/' + track._id + '/download';
@@ -435,7 +439,7 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
     }
   };
 
-  this.delete = function(track, success, failure) {
+  self.delete = function(track, success, failure) {
     Tracks.delete({id: track._id}, function(data) {
       data.artist      = {id: data.artistId};
       data.album       = {id: data.albumId};
@@ -449,7 +453,9 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
   };
 }]);
 app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
-  this.create = function(playlist, success, failure) {
+  var self = this;
+
+  self.create = function(playlist, success, failure) {
     var newPlaylist = new Playlists({
       title:        playlist.title,
       // coverArt:     playlist.coverArt,
@@ -464,7 +470,7 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
     });
   };
 
-  this.update = function(playlist, success, failure) {
+  self.update = function(playlist, success, failure) {
     Playlists.get({id: playlist._id}, function(playlistToUpdate) {
       for (var key in playlistToUpdate) {
         if (!!playlist[key] && playlistToUpdate[key] !== playlist[key]) {
@@ -485,7 +491,7 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
     });
   };
 
-  this.get = function(playlistId, success, failure) {
+  self.get = function(playlistId, success, failure) {
     return Playlists.get({id: playlistId}, function(data) {
       data.owner = {id: data.ownerId};
       delete data.ownerId;
@@ -498,7 +504,7 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
     });
   };
 
-  this.all = Playlists.query(function(collection) {
+  self.all = Playlists.query(function(collection) {
     var ret = [];
     angular.forEach(collection, function(item) {
       item.owner = {id: item.ownerId};
@@ -510,7 +516,7 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
     $log.debug('Unable to get all the playlists!');
   });
 
-  this.find = function(query, success, failure) { // params must be a valid hash with a_id &| u_id
+  self.find = function(query, success, failure) { // params must be a valid hash with a_id &| u_id
     if ('u_id' in query) {
       query.resource    = 'owner';
       query.resource_id = query.u_id;
@@ -532,7 +538,7 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
     }
   };
 
-  this.delete = function(playlist, success, failure) {
+  self.delete = function(playlist, success, failure) {
     Playlists.delete({id: playlist._id}, function(data) {
       data.owner = {id: data.ownerId};
       delete data.ownerId;
@@ -545,7 +551,7 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
     });
   };
 
-  this.addTrack = function(playlist, track, success, failure) {
+  self.addTrack = function(playlist, track, success, failure) {
     Playlists.get({id: playlist._id}, function(playlistToUpdate) {
       playlistToUpdate.tracks.push(track._id);
       playlistToUpdate.$update(function(updatedPlaylist) {
@@ -558,7 +564,7 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
     });
   };
 
-  this.removeTrack = function(playlist, index, success, failure) {
+  self.removeTrack = function(playlist, index, success, failure) {
     Playlists.get({id: playlist._id}, function(playlistToUpdate) {
       playlistToUpdate.tracks.splice(index, 1);
       playlistToUpdate.$update(function(updatedPlaylist) {
@@ -701,13 +707,12 @@ $log, TracksSvc, Session, AUTH) {
   };
 
   self.play = function(track, index) {
-    if (!('album' in track &&
-      track.album.title) || ('artist' in track && track.artist.handle)) {
-      TracksSvc.inflate(track._id, null, function(inflatedTrack) {
-        track = inflatedTrack;
+    if (!('title' in track.album || 'handle' in track.artist)) {
+      track = TracksSvc.inflate(track._id, null, function(inflatedTrack) {
+        return inflatedTrack;
       }, function(err) {return;});
     }
-
+    $log.debug(track.artist.handle + ' : ' + track.album.title);
     var nowPlaying = self.getCurrentTrack();
     nowPlaying.index = index;
     nowPlaying.track = track;
