@@ -1,6 +1,7 @@
 app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH', 'SessionSvc',
-  'MessageSvc', 'AuthenticationSvc', '$location', '$log', function($scope,
-  $rootScope, AUTH, Session, MessageSvc, Auth, $location, $log) {
+  'MessageSvc', 'AuthenticationSvc', '$location', '$log', 'USER_EVENTS',
+  function($scope, $rootScope, AUTH, Session, MessageSvc, Auth, $location,
+  $log, USER) {
 
   $scope.loggedIn = Auth.isAuthenticated;
   $scope.user     = Session.getCurrentUser();
@@ -13,13 +14,9 @@ app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH', 'SessionSvc',
     }
   });
 
-  /*$scope.$on(AUTH.logoutSuccess, function() {
-    $scope.loggedIn = false;
+  $scope.$on(USER.deleteSuccess, function() {
+    $scope.logout();
   });
-
-  $scope.$on(AUTH.loginSuccess, function() {
-    refresh();
-  });*/
 
   $scope.userProfile = function(user) {
     var uri  = '#';
@@ -44,6 +41,7 @@ app.controller('headerCtrl', ['$scope', '$rootScope', 'AUTH', 'SessionSvc',
         Session.destroy();
         $rootScope.$broadcast(AUTH.logoutFailed);
       }
+      $location.path('/login');
     });
   };
 

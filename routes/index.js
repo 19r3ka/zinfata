@@ -1,7 +1,7 @@
-module.exports = function(wagner){
+module.exports = function(wagner) {
   var express = require('express');
   var router = express.Router();
-  var ZError = wagner.invoke(function(ZOAuthError){return ZOAuthError});
+  var ZError = wagner.invoke(function(ZOAuthError) {return ZOAuthError;});
   /*var passport = require('../config/passport');
 
   function isLoggedIn(req, res, next) {
@@ -11,7 +11,7 @@ module.exports = function(wagner){
 
   /* GET home page. */
 
-  router.get('/partials/:name', function (req, res) {
+  router.get('/partials/:name', function(req, res) {
     var name = req.params.name;
     res.render('app/components/' + name + '/' + name);
   });
@@ -22,12 +22,12 @@ module.exports = function(wagner){
   });
 
   router.get('/', function(req, res, next) {
-    res.render('index', { title: 'Zinfata' });
+    res.render('index', {title: 'Zinfata'});
   });
 
   router.get(/^\/(?!(api|partials|templates))/, function(req, res, next) {
-    res.render('index', { title: 'Zinfata' });
+    res.render('index', {title: 'Zinfata'});
   });
 
   return router;
-}
+};

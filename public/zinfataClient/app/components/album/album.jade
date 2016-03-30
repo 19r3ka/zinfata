@@ -44,3 +44,4 @@ form(name='albumForm', enctype= 'multipart/form-data', ng-if='editing || creatin
         button.btn(type='submit', ng-click='update(album)', ng-show='editing', class=['btn-primary', 'form-control'], ng-disabled='albumForm.$invalid') Update!
 
 z-track-listing(for='album', type='album', ng-if='!creating')
+    

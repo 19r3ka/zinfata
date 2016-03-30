@@ -6,11 +6,26 @@ var AlbumSchema = new mongoose.Schema({
   title:        {type: String, required: true, trim: true},
   titleLower:   {type: String, lowercase: true, select: false, trim: true},
   imageUrl:     {type: String, default: defaultUrl},
-  artistId:     { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
+  artistId:     {type: mongoose.Schema.ObjectId, ref: 'User', required: true},
   releaseDate:  {type: Date, required: true},
   deleted:      {type: Boolean, default: false},
   updatedAt:    {type: Date, default: Date.now}
 });
+
+AlbumSchema.statics.findActive = function(query, unique, callback) {
+  var album = this;
+
+  if (!query) {
+    query = {};
+  }
+  query.deleted = false;
+
+  if (unique) {
+    album.findOne(query, callback);
+  } else {
+    album.find(query, callback);
+  }
+};
 
 AlbumSchema.pre('save', function(next) {
   var album = this;

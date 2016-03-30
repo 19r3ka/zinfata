@@ -186,14 +186,25 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
         scope.stop();
       });
 
+      scope.$on(AUTH.logoutSuccess, function() {
+        scope.stop();
+        scope.track = {};
+      });
+
+      scope.$on(AUTH.notAuthenticated, function() {
+        scope.stop();
+      });
+
       scope.$on(AUDIO.set, function(event, track) {
         scope.track = track;
         player.src  = track.streamUrl;
         scope.duration = player.duration;
-        scope.playPause();
+
         if (!Auth.isAuthenticated()) {
           $rootScope.$broadcast(AUTH.notAuthenticated);
-          MessageSvc.addMsg('danger', 'Log in first to access that resource!');
+          MessageSvc.addMsg('danger', 'Log in first to play music!');
+        } else {
+          scope.playPause();
         }
         /*scope.audio.src = track.streamUrl;
         scope.audio.play();*/
@@ -292,7 +303,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
           var resource = scope.for; //either an album or a playlist
           var key      = attrs.type = 'album' ? 'a_id' : 'p_id';
           var owner    =
-            attrs.type = 'album' ? resource.artistId : resource.owner.id;
+            attrs.type = 'album' ? resource.artist.id : resource.owner.id;
           var param    = {};
           // populate search query with a_id || p_id as key and resource_id as value
           param[key] = resource._id;
@@ -302,6 +313,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
               Tracks.inflate(track._id, this, function() {}, function() {});
             }, scope.tracks);
           }, function(err) {});
+
           if (session.getCurrentUser() &&
             (session.getCurrentUser()._id === owner)) {
             scope.isOwner = true;
@@ -371,9 +383,9 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
   };
 }])
 .directive('zPlaylistDropdown', ['$rootScope', 'PlaylistsSvc',
-  'PLAYLIST_EVENTS', 'AUTH', 'AuthenticationSvc', 'SessionSvc', 'MessageSvc',
-  '$log', function($rootScope, Playlists, PLAYLIST, AUTH, Auth, session,
-    Message, $log) {
+'PLAYLIST_EVENTS', 'AUTH', 'AuthenticationSvc', 'SessionSvc', 'MessageSvc',
+'$log', function($rootScope, Playlists, PLAYLIST, AUTH, Auth, session,
+Message, $log) {
   return {
     restrict: 'E',
     scope: {

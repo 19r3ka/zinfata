@@ -10,9 +10,15 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
   var getUserAlbums  = function(id) {
     AlbumsSvc.getByUser({_id: id}, function(data) {
       if (!data.length) {return;}
-      $scope.track.album.title       = data[0].title;
-      $scope.track.album.releaseDate = data[0].releaseDate;
-      $scope.track.album.id          = data[0]._id;
+
+      /* When creating a new track. Default assign to first album */
+      if (!$scope.track.album.id) {
+        $scope.track.album.title       = data[0].title;
+        $scope.track.album.releaseDate = data[0].releaseDate;
+        $scope.track.album.id          = data[0]._id;
+        $scope.track.coverArt          = data[0].imageUrl;
+      }
+
       angular.forEach(data, function(album) {
         coverArts[album._id]      = album.imageUrl;
         releaseDates[album._id]   = album.releaseDate;
@@ -52,7 +58,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
       handle:  ''
     },
     streamUrl:   '',
-    coverArt:    'zinfataClient/assets/images/album-coverart-placeholder.png',
+    coverArt:    'zinfataClient/assets/images/track-coverart-placeholder.png',
     duration:    '',
     releaseDate: '',
     genre:       '',
@@ -109,6 +115,9 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
   */
   if ($scope.creating) {
     getUserAlbums(Session.getCurrentUser()._id);
+    if ($scope.track.coverArt.search('track-coverart-placeholder') !== -1) {
+      $scope.cover.unique = true;
+    }
   }
   /*
   ** Watch $scope.track.album.id to update the coverArt dynamically whenever the album selected changes
@@ -131,22 +140,28 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
   $scope.$watch(function() {
     return $scope.track.streamUrl;
   }, function(newValue, oldValue) {
-    if (newValue !== oldValue) {
+    // if (newValue !== oldValue) {
       var audio = new Audio(newValue);
       audio.onloadedmetadata = function() {
         $scope.track.duration = audio.duration;
       };
+    // }
+  });
+
+  $scope.$watch(function() {
+    return $scope.track.coverArt;
+  }, function(newValue) {
+    if (newValue.search('album-coverart-placeholder') !== -1) {
+      $scope.track.coverArt = newValue.replace('album', 'track');
     }
   });
 
   $scope.$on(ALBUM.createSuccess, function(event, album) {
     $scope.albums.push(album);
     if (!$scope.track.album.id) {
-
       releaseDates[album._id]        = new Date(album.releaseDate);
       $scope.track.album.id          = album._id;
       $scope.track.album.title       = album.title;
-      // $log.debug(album.releaseDate);
     }
   });
 
@@ -191,8 +206,6 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
   $scope.create = function(track) {
     track.artist.id = Session.getCurrentUser()._id;
     delete track.streamUrl;
-    $log.debug('track to create: ');
-    $log.debug(track);
     TracksSvc.create(track, function(createdTrack) {
       $rootScope.$broadcast(TRACK_EVENTS.createSuccess, createdTrack);
       MessageSvc.addMsg('success',
