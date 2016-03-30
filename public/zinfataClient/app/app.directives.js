@@ -361,9 +361,9 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
   };
 }])
 .directive('zPlaylistDropdown', ['$rootScope', 'PlaylistsSvc',
-  'PLAYLIST_EVENTS', 'AUTH', 'AuthenticationSvc', 'SessionSvc', 'MessageSvc',
-  '$log', function($rootScope, Playlists, PLAYLIST, AUTH, Auth, session,
-    Message, $log) {
+'PLAYLIST_EVENTS', 'AUTH', 'AuthenticationSvc', 'SessionSvc', 'MessageSvc',
+'$log', function($rootScope, Playlists, PLAYLIST, AUTH, Auth, session,
+Message, $log) {
   return {
     restrict: 'E',
     scope: {

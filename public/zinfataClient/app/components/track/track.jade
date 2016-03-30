@@ -49,8 +49,10 @@ form(name='trackInfo', role='form', ng-if='creating || editing')
                         label
                             input(type='checkbox', name='coverArtToggle', ng-model='cover.unique', ng-change='updateCoverArt(cover.unique)')
                         |  This track has its own cover art!
-                        label(ng-show='cover.unique') Cover Art:
-                            z-img-crop(on-img-ready='updateCoverImage(imgFile)')
+                        br
+                        div(ng-show='cover.unique')
+                            label(for='img-crop') Cover Art:
+                            z-img-crop#img-crop(on-img-ready='updateCoverImage(imgFile)')
                             
     .form-group
         input.form-control(type='text', name='title', ng-min-length='1', placeholder='Title', ng-model='track.title', ng-disabled='!editing && !creating' required)                
