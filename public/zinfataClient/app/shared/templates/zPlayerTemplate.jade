@@ -1,19 +1,22 @@
-
-.z-player-bottom(ng-show="isLoggedIn()")
+#z-player-bottom(ng-show="isLoggedIn()")
+  .cent
   .z-player-container
     .cent
-    img(ng-src='{{ track.coverArt }}' alt='cover art' width='50px' class='track-thumbnail')
+    img(ng-src='{{ track.coverArt }}' alt='cover art' class='track-thumbnail')
     .z-player-track-infos
       span.z-player-track-title
-        a(href='/track/{{ track._id }}') {{ track.title }}
+        a(href='/track/{{ track._id }}') {{ track.title | limitTo:40 }} 
+          span(ng-if="track.title.length > 40") ...
       br/
       | by
       span.z-player-track-author
-        a(href='/user/{{ track.artist.id }}') {{ track.artist.handle }}
+        a(href='/user/{{ track.artist.id }}') {{ track.artist.handle | limitTo:30  }}
+          span(ng-if="track.artist.handle.length > 30") ...
       br/
       | From
       span.z-player-track-album
-        a(href='/album/{{ track.album.id }}') {{ track.album.title }}
+        a(href='/album/{{ track.album.id }}') {{ track.album.title | limitTo:25 }}
+          span(ng-if="track.album.title.length > 25") ...
     .z-control-bt-container
       .cent
       .z-control-bt.z-control-bt-stop(ng-click='stop()')
@@ -40,5 +43,9 @@
           {{ currentTime | duration2time  }}
           | / 
           {{ track.duration | duration2time  }}
+    #expand-player-controllers
+      i.fa.fa-chevron-up
+    #compress-player-controllers
+      i.fa.fa-chevron-down
      
 

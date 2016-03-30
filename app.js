@@ -16,6 +16,7 @@ var expressSession = require('express-session');
 var oauthserver    = require('oauth2-server');
 
 var updateinterceptor        = require('./routes/updateinterceptor')(wagner);
+var userstatuschecker        = require('./routes/userstatuschecker')(wagner);
 var routes                   = require('./routes/index')(wagner);
 var users                    = require('./routes/users')(wagner);//add dependencie
 var albums                   = require('./routes/albums')(wagner);
@@ -67,7 +68,7 @@ app.use(compression());
 
 /* routes required to manage oauth */
 app.use('/clients/', oauthclients);
-app.post('/oauth2/token', app.oauth.grant());
+app.post('/oauth2/token', userstatuschecker, app.oauth.grant());
 app.use('/oauth2/revoke', revoketokens);
 app.use('/oauth2/me', oauthinfo);
 
