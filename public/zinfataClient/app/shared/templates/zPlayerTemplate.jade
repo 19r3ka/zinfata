@@ -1,9 +1,8 @@
-
 #z-player-bottom(ng-show="isLoggedIn()")
   .cent
   .z-player-container
     .cent
-    img(ng-src='{{ track.coverArt }}' alt='cover art' sytle='background-image: url("{{ track.coverArt }}")' class='track-thumbnail')
+    img(ng-src='{{ track.coverArt }}' alt='cover art' class='track-thumbnail')
     .z-player-track-infos
       span.z-player-track-title
         a(href='/track/{{ track._id }}') {{ track.title | limitTo:40 }} 
