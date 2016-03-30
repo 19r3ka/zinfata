@@ -279,7 +279,7 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
   };
 }]);
 app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
-  'sessionStore', function(Tracks, $log, UsersSvc, AlbumsSvc, $window, store) {
+'sessionStore', function(Tracks, $log, UsersSvc, AlbumsSvc, $window, store) {
   this.create = function(track, success, failure) {
     var newTrack = new Tracks({
       title:        track.title,
@@ -311,6 +311,14 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
         }
       }
       trackToUpdate.albumId = track.album.id;
+
+      if ('imageFile' in track && track.imageFile) {
+        trackToUpdate.imageFile = track.imageFile;
+      }
+
+      if ('audioFile' in track && track.audioFile) {
+        trackToUpdate.audioFile = track.audioFile;
+      }
 
       trackToUpdate.$update(function(updatedTrack) {
         success(updatedTrack);
