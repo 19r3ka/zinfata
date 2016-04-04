@@ -46,23 +46,25 @@ module.exports = function(wagner) {
       password:  req.body.password
     });
 
-    /* Checks if the handle is taken */
-    User.findOne({handleLower: req.body.handle.toLowerCase()},
+    if (user && user.handle && user.email) {
+      /* Checks if the handle is taken */
+      User.findOne({handleLower: user.handle.toLowerCase()},
+        function(err, user) {
+        if (err) { return next(err); }
+        if (user) {
+          return next(new Zerror('bad_param', 'handle is already in use'));
+        }
+      });
+      /* Checks if the email is taken */
+      User.findOne({email: user.email.toLowerCase()},
       function(err, user) {
-      if (err) { return next(err); }
-      if (user) {
-        return next(new Zerror('bad_param', 'handle is already in use'));
-      }
-    });
-    /* Checks if the email is taken */
-    User.findOne({email: req.body.email.toLowerCase()},
-    function(err, user) {
-      if (err) { return next(err); }
-      //if (user) return next(new Error('duplicate: email'));
-      if (user) {
-        return next(new Zerror('bad_param', 'email is already in use'));
-      }
-    });
+        if (err) { return next(err); }
+        //if (user) return next(new Error('duplicate: email'));
+        if (user) {
+          return next(new Zerror('bad_param', 'email is already in use'));
+        }
+      });
+    }
 
     user.save(function(err, newUser) {
       if (err) {

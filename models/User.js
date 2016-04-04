@@ -27,7 +27,7 @@ var UserSchema = new mongoose.Schema({
   role:            {type: String, default: 'fan', trim: true},
   whatsapp:        {type: String, default: '', trim: true},
   activated:       {type: Boolean, default: false},
-  deleted:         {type: Boolean, default: false},
+  deleted:         {type: Boolean, default: false, select: false},
   updatedAt:       {type: Date, default: Date.now}
 });
 
@@ -125,7 +125,6 @@ UserSchema.set('toJSON', {
     delete ret.handleLower;
     delete ret.password;
     delete ret.email;
-    delete ret.role;
     delete ret.activated;
     delete ret.deleted;
     return ret;
