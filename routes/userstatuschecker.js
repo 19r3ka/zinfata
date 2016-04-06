@@ -1,5 +1,5 @@
 /**
-This module ensure that a user can only login if he is not delected (deleted field in User model set as false)
+This module ensure that a user can only login if he is not deleted (deleted field in User model set to false)
 **/
 module.exports =  function(wagner) {
   return function(req, res, next) {
@@ -36,9 +36,7 @@ module.exports =  function(wagner) {
             });
           break;
         }
-
       });
-
     } else { return next(); }
   };
 };

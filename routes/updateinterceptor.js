@@ -12,7 +12,7 @@ module.exports = function(wagner){
 	          return next();
 	        } else {
 	    		console.log(route + ' ' + method + ' access denied ');
-	        	return next(new ZError('forbidden', 'Your are not the album owner. Only the ' + route + ' owner can ' + method + ' it'));
+	        	return next(new ZError('forbidden', 'You are not the album owner. Only the ' + route + ' owner can ' + method + ' it'));
 	        }
 		});
 	}

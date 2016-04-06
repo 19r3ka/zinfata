@@ -22,27 +22,30 @@ describe('Users', function() {
   before(function(done) {
     mongoose.connect('mongodb://localhost/zTest');
     mongo = mongoose.connection;
+    mongo.on('error', function(err) {
+      done(err);
+    });
     mongo.once('open', function() {
-      console.log('Connected to zTest database.');
+      console.log('Connected to ' + mongo.name.toUpperCase() + ' database.');
       mongo.db.dropDatabase(function() {
-        console.log('Dropped the zTest database.');
-        done();
+        console.log('Dropped the ' + mongo.name.toUpperCase() + ' database.');
       });
+      done();
     });
   });
 
   after(function(done) {
     mongo.db.dropDatabase(function() {
-      console.log('zTest Database dropped.');
+      console.log(mongo.name + ' Database dropped.');
       mongo.close(function() {
-        console.log('Mongo DB close.');
+        console.log('Mongo DB closed.');
         done();
       });
     });
   });
 
   describe('Mongoose model...', function() {
-    beforeEach(function() {
+    beforeEach(function(done) {
       payload  = {
         firstName:  'Snoop',
         lastName:   'Dogg',
@@ -50,6 +53,7 @@ describe('Users', function() {
         email:      'snoopy@dogpound.com',
         password:   'qwertyui'
       };
+      done();
     });
 
     describe('Adding a new document...', function() {

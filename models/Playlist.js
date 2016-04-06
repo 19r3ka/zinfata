@@ -4,7 +4,7 @@ var TrackSchema = require('./Track.js');
 var PlaylistSchema = new mongoose.Schema({
   title:       {type: String, required: true, trim: true},
   titleLower:  {type: String, lowercase: true, trim: true, select: false},
-  ownerId:     { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
+  ownerId:     {type: mongoose.Schema.ObjectId, ref: 'User', required: true},
   tracks:      {type: Array, default: []},
   deleted:     {type: Boolean, default: false},
   updatedAt:   {type: Date, default: Date.now}

@@ -2,13 +2,14 @@ var mongoose    = require('mongoose');
 var bcrypt      = require('bcrypt');
 var crypto      = require('crypto');
 
-var emailRegex  = new RegExp('^[-a-z0-9~!$%^&*_=+}{\\\'?]+(\\.[-a-z0-9~' +
-                            '!$%^&*_=+}{\\\'?]+)*@([a-z0-9_][a-z0-9_]*' +
-                            '(\\.[-a-z0-9_]+)*\\.(aero|arpa|biz|com|coop|' +
-                            'edu|gov|info|int|mil|museum|name|net|org|' +
-                            'pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\\.' +
-                            '[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))' +
-                            '(:[0-9]{1,5})?$','i');
+var emailRegex  = new RegExp(
+  '^[-a-z0-9~!$%^&*_=+}{\\\'?]+(\\.[-a-z0-9~' +
+  '!$%^&*_=+}{\\\'?]+)*@([a-z0-9_][a-z0-9_]*' +
+  '(\\.[-a-z0-9_]+)*\\.(aero|arpa|biz|com|coop|' +
+  'edu|gov|info|int|mil|museum|name|net|org|' +
+  'pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\\.' +
+  '[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))' +
+  '(:[0-9]{1,5})?$','i');
 var handleRegex = new RegExp('^[a-zA-Z0-9_]{3,}$');
 var defaultUrl  = 'zinfataClient/assets/images/user-avatar-placeholder.png';
 
@@ -66,6 +67,12 @@ UserSchema.statics.findActive = function(query, unique, callback) {
   } else {
     user.find(query, callback);
   }
+};
+
+UserSchema.statics.validate = function(id, respond) {
+  userModel.findById(id, function(err, usr) {
+    respond(!!usr);
+  });
 };
 
 UserSchema.methods.getMetadata = function() {

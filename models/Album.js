@@ -1,12 +1,17 @@
-var mongoose   = require('mongoose');
-var defaultUrl = 'zinfataClient/assets/images/album-coverart-placeholder.png';
+var mongoose      = require('mongoose');
+var User          = require('./User.js');
+var defaultUrl    =
+  'zinfataClient/assets/images/album-coverart-placeholder.png';
+var userValidator = [User.validate,
+  'The value of `{PATH}` is not valid.'];
 
 var AlbumSchema = new mongoose.Schema({
 
   title:        {type: String, required: true, trim: true},
   titleLower:   {type: String, lowercase: true, select: false, trim: true},
   imageUrl:     {type: String, default: defaultUrl},
-  artistId:     {type: mongoose.Schema.ObjectId, ref: 'User', required: true},
+  artistId:     {type: mongoose.Schema.ObjectId, ref: 'User', required: true,
+    validate: userValidator},
   releaseDate:  {type: Date, required: true},
   deleted:      {type: Boolean, default: false},
   updatedAt:    {type: Date, default: Date.now}
@@ -14,7 +19,6 @@ var AlbumSchema = new mongoose.Schema({
 
 AlbumSchema.statics.findActive = function(query, unique, callback) {
   var album = this;
-
   if (!query) {
     query = {};
   }

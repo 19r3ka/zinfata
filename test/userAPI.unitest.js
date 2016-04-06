@@ -23,12 +23,11 @@ var apiClient = {
 
 describe('Querying the api users endpoints', function() {
   before(function(done) {
-    mongoose.connect('mongodb://localhost/zTest');
-    mongo = mongoose.connection;
+    mongo = mongoose.createConnection('mongodb://localhost/zTest');
     mongo.once('open', function() {
-      console.log('Connected to zTest database.');
+      console.log('Connected to ' + mongo.name.toUpperCase() + ' database.');
       mongo.db.dropDatabase(function() {
-        console.log('Dropped the zTest database.');
+        console.log('Dropped the ' + mongo.name.toUpperCase() + ' database.');
         done();
       });
     });
@@ -36,14 +35,14 @@ describe('Querying the api users endpoints', function() {
 
   after(function(done) {
     mongo.db.dropDatabase(function() {
-      console.log('zTest Database dropped.');
+      console.log(mongo.name + ' Database dropped.');
       mongo.close(function() {
-        console.log('Mongo DB close.');
+        console.log('Mongo DB closed.');
         done();
       });
     });
   });
-
+  
   describe('POSTing', function() {
     beforeEach(function() {
       payload  = {

@@ -14,12 +14,14 @@ module.exports = function(wagner) {
   router.post('/', function(req, res, next) {
     //utils.checkIsValidPost(req, next);
     if (!req.is('application/x-www-form-urlencoded'))  {
-      error = new ZError('invalid_request', 'Method must be POST with application/x-www-form-urlencoded encoding');
+      error = new ZError('invalid_request',
+        'Method must be POST with application/x-www-form-urlencoded encoding');
       return next(error);
     }
 
     if (!req.body.username || !req.body.password)  {
-      error = new ZError('invalid_request', 'Missing parameters. \'username\' and \'password\' are required');
+      error = new ZError('invalid_request',
+        'Missing parameters. \'username\' and \'password\' are required');
       return next(error);
     }
     //proxy.web(req, res, {target: 'http://localhost:3000/oauth2/token'})
@@ -46,13 +48,15 @@ module.exports = function(wagner) {
   router.post('/refresh', function(req, res, next) {
     //utils.checkIsValidPost(req, next);
     if (!req.is('application/x-www-form-urlencoded'))  {
-      error = new ZError('invalid_request', 'Method must be POST with application/x-www-form-urlencoded encoding');
-      return next(error); 
+      error = new ZError('invalid_request',
+        'Method must be POST with application/x-www-form-urlencoded encoding');
+      return next(error);
     }
 
     if (!req.body.refresh_token) {
-      error = new ZError('invalid_request', 'Missing parameters. \'refresh_token\' is required');
-      return next(error);   
+      error = new ZError('invalid_request',
+        'Missing parameters. \'refresh_token\' is required');
+      return next(error);
     }
 
     request.post({
@@ -78,24 +82,30 @@ module.exports = function(wagner) {
   router.post('/revoke', function(req, res, next) {
     //utils.checkIsValidPost(req, next);
     if (!req.is('application/x-www-form-urlencoded'))  {
-      error = new ZError('invalid_request', 'Method must be POST with application/x-www-form-urlencoded encoding');
-      return next(error); 
+      error = new ZError('invalid_request',
+        'Method must be POST with application/x-www-form-urlencoded encoding');
+      return next(error);
     }
     //utils.checkIsValidTokenRevokeRequest(req, next);
     if (!req.body.token_type_hint) {
-      error = new ZError('invalid_request', 'Missing parameters. \'token_type_hint\' is required');
-      return next(error); 
+      error = new ZError('invalid_request',
+        'Missing parameters. \'token_type_hint\' is required');
+      return next(error);
     }
 
     //if (!req.body.token_type_hint.match('refresh_token|acces_token')) {
-    if (req.body.token_type_hint != 'refresh_token' && req.body.token_type_hint != 'access_token') {
-      error = new ZError('invalid_request', '\'token_type_hint\' parameter value must be either \'refresh_token\' or \'access_token\'');
-      return next(error); 
+    if (req.body.token_type_hint != 'refresh_token' &&
+      req.body.token_type_hint != 'access_token') {
+      error = new ZError('invalid_request', 
+        '\'token_type_hint\' parameter value must be ' +
+        'either \'refresh_token\' or \'access_token\'');
+      return next(error);
     }
 
     if (!req.body.token) {
-      error = new ZError('invalid_request', 'Missing parameters. \'token\' is required');
-      return next(error); 
+      error = new ZError('invalid_request',
+        'Missing parameters. \'token\' is required');
+      return next(error);
     }
     var token_type_hint = req.body.token_type_hint;
     var token = req.body.token;
