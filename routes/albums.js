@@ -46,9 +46,14 @@ module.exports = function(wagner) {
 
   router.route('/user/:userId') // get all albums with given user id
   .get(function(req, res, next) {
-    Album.findActive({artistId: req.params.userId}, false, function(err, albums) {
-      if (err) {return next(err);}
-      if (!albums) {return next(new Zerror('not_found', 'User has no album'));}
+    Album.findActive({artistId: req.params.userId}, false,
+    function(err, albums) {
+      if (err) {
+        return next(err);
+      }
+      if (!albums.length) {
+        return next(new Zerror('not_found', 'User has no album'));
+      }
       res.json(albums);
     });
   });

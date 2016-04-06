@@ -1,50 +1,49 @@
 var should   = require('chai').should();
-var request  = require('supertest');
 var mongoose = require('mongoose');
 var User     = require('../models/User.js');
-var Album    = require('../models/Album.js');
+var Playlist = require('../models/Playlist.js');
+
 var Oauth2   = require('../models/OAuthAccessToken.js');
 var Client   = require('../models/OAuthClient.js');
+var request  = require('supertest');
 var app      = require('../app.js');
 var api      = request(app);
+
+var endpoint = '/api/playlists/';
+var saveTkn  = '/oauth2/token/';
+var payload  = {};
 
 var mongo;
 var clientId;
 var userId;
-var albumId;
-var album2Id;
-var endpoint = '/api/albums/';
-var saveTkn  = '/oauth2/token/';
-var token    = '5703d23005g65c2f479e2f3m';
-var expires  = 9600;
-var payload  = {};
+var playlistId;
+var playlist2Id;
+var token;
+var token2;
+
+var dummyUser1 = {
+  firstName:  'Matt',
+  lastName:   'Murdock',
+  handle:     'DareDevil',
+  email:      'Fearless@devilskitchen.fr',
+  password:   'qwertyui'
+};
+
+var dummyUser2 = {
+  firstName:  'Tony',
+  lastName:   'Stark',
+  handle:     'IronMan',
+  email:      'flashymillionaire@starksco.tg',
+  password:   'qwertyui'
+};
 
 var fakeApp = {
   clientId:     'thisismysupercoolclientid',
   clientSecret: 'thisIsSomethingAbsolutelyDarkAndSecret',
   redirectUri:  'http://www.myapp.com'
 };
-var dummyUser1 = {
-  firstName: 'Barry',
-  lastName:  'Allen',
-  handle:    'TheFlash',
-  email:     'scarletspeedster@ccpd.com',
-  password:  'qwertyui'
-};
-var dummyUser2 = {
-  firstName: 'Clark',
-  lastName:  'Kent',
-  handle:    'Superman',
-  email:     'manofsteel@thedailybugle.com',
-  password:  'qwertyui'
-};
-var dummyAlbum = {
-  title:       'NGTD',
-  releaseDate: new Date(),
-  artistId:    ''
-};
 
-describe('Accessing Album Endpoints', function() {
+describe('Working With Playlist Endpoints', function() {
   before(function(done) {
     mongoose.connect('mongodb://localhost/zTest');
     mongo = mongoose.connection;
@@ -55,8 +54,8 @@ describe('Accessing Album Endpoints', function() {
       console.log('Connected to ' + mongo.name.toUpperCase() + ' database.');
       mongo.db.dropDatabase(function() {
         console.log('Dropped the ' + mongo.name.toUpperCase() + ' database.');
-        done();
       });
+      done();
     });
   }); // End before
 
@@ -66,7 +65,7 @@ describe('Accessing Album Endpoints', function() {
         done(err);
       }
       if (usr) {
-        userId = usr._id;
+        userId = usr._id.toString();
       }
       done();
     });
@@ -115,9 +114,8 @@ describe('Accessing Album Endpoints', function() {
 
   describe('Accessing endpoints with/without valid bearer token', function() {
     it('returns 400 without access token is header', function(done) {
-      api.post(endpoint)
+      api.get(endpoint)
       .type('form')
-      .send(payload)
       .expect(400)
       .end(function(err, res) {
         should.not.exist(err);
@@ -130,10 +128,9 @@ describe('Accessing Album Endpoints', function() {
     }); // END returns 400 without accesstoken in header
 
     it('returns 400 with malformed bearer token', function(done) {
-      api.post(endpoint)
+      api.get(endpoint)
       .type('form')
       .set('Authorization', 'bearer ' + token)
-      .send(payload)
       .expect(400)
       .end(function(err, res) {
         should.not.exist(err);
@@ -146,10 +143,9 @@ describe('Accessing Album Endpoints', function() {
     }); //END when title is missing
 
     it('returns 401 with invalid bearer token', function(done) {
-      api.post(endpoint)
+      api.get(endpoint)
       .type('form')
       .set('Authorization', 'Bearer 5703d23005g65c2f479e2Y3m')
-      .send(payload)
       .expect(401)
       .end(function(err, res) {
         should.not.exist(err);
@@ -165,8 +161,7 @@ describe('Accessing Album Endpoints', function() {
       api.get(endpoint)
       .type('form')
       .set('Authorization', 'Bearer ' + token)
-      .send(payload)
-      .expect(200)
+      .expect(404)
       .end(function(err, res) {
         if (err) {
           return done(err);
@@ -176,13 +171,12 @@ describe('Accessing Album Endpoints', function() {
     }); //END 'returns 400 when bearer token valid'
   }); // END 'testing access token in header'
 
-  describe('POSTing an album', function() {
+  describe('POSTing New Playlist', function() {
     beforeEach(function(done) {
-      payload = {};
-      for (var key in dummyAlbum) {
-        payload[key] = dummyAlbum[key];
-      }
-      payload.artistId = userId.toString();
+      payload = {
+        title:   'Uncanny Xmen',
+        ownerId: userId
+      };
       done();
     });
 
@@ -203,10 +197,10 @@ describe('Accessing Album Endpoints', function() {
           'parameter `title` is required.|');
         done();
       });
-    }); // END 'when title is missing'
+    }); // - fails when missing title
 
-    it('returns 400 when releaseDate is missing', function(done) {
-      delete payload.releaseDate;
+    it('returns 400 when ownerId is missing', function(done) {
+      delete payload.ownerId;
       api.post(endpoint)
       .type('form')
       .set('Authorization', 'Bearer ' + token)
@@ -219,31 +213,12 @@ describe('Accessing Album Endpoints', function() {
         res.body.should.have.property('status', 400);
         res.body.should.have.property('error', 'bad_param');
         res.body.should.have.property('error_description',
-          'parameter `releaseDate` is required.|');
+          'parameter `ownerId` is required.|');
         done();
       });
-    }); // END 'when releaseDate is missing'
+    }); // - fails when missing ownerId
 
-    it('returns 400 when artistId is missing', function(done) {
-      delete payload.artistId;
-      api.post(endpoint)
-      .type('form')
-      .set('Authorization', 'Bearer ' + token)
-      .send(payload)
-      .expect(400)
-      .end(function(err, res) {
-        if (err) {
-          done(err);
-        }
-        res.body.should.have.property('status', 400);
-        res.body.should.have.property('error', 'bad_param');
-        res.body.should.have.property('error_description',
-          'parameter `artistId` is required.|');
-        done();
-      });
-    }); // END 'when artistId is missing'
-
-    it('returns 201 when required fields are present', function(done) {
+    it('returns 201 with all required fields', function(done) {
       api.post(endpoint)
       .type('form')
       .set('Authorization', 'Bearer ' + token)
@@ -251,22 +226,57 @@ describe('Accessing Album Endpoints', function() {
       .expect(201)
       .end(function(err, res) {
         if (err) {
-          return done(err);
+          done(err);
         }
-        albumId = res.body._id;
-        res.body.should.have.property('title', dummyAlbum.title);
-        res.body.should.have.property('releaseDate');
-        res.body.should.have.property('artistId');
+        playlistId = res.body._id;
+        res.body.should.have.property('title', payload.title);
         res.body.should.not.have.property('titleLower');
+        res.body.should.not.have.property('deleted');
+        res.body.should.have.property('ownerId');
+        res.body.should.have.property('_id');
+        res.body.should.have.property('updatedAt');
         done();
       });
-    }); // END 'when all is OK'
-  }); // END 'posting an album'
+    }); // - works when all is OK
+  }); // - POSTing new playlist
 
-  describe('PUTing an album', function() {
-    it('changes the album title to \'Clone Wars\'', function(done) {
-      payload.title = 'Clone Wars';
-      api.put(endpoint + albumId)
+  describe('PUTing Existing Playlist', function() {
+    beforeEach(function(done) {
+      payload = {
+        title: 'Xmen 2099'
+      };
+      done();
+    });
+    it('fails without a valid accesstoken', function(done) {
+      api.put(endpoint)
+      .type('form')
+      .set('Authorization', 'Bearer ' + '5703d23005g65c2f479e2Y3m')
+      .send(payload)
+      .expect(401)
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        done();
+      });
+    }); // no update without valid token
+
+    it('fails without a valid playlist id', function(done) {
+      api.put(endpoint + '5703d23005g65c2f479e2Y3m')
+      .type('form')
+      .set('Authorization', 'Bearer ' + token)
+      .send(payload)
+      .expect(404)
+      .end(function(err, res) {
+        if (err) {
+          done(err);
+        }
+        done();
+      });
+    }); // no update without valid id
+
+    it('changes the playlist title to \'Xmen 2099\'', function(done) {
+      api.put(endpoint + playlistId)
       .type('form')
       .set('Authorization', 'Bearer ' + token)
       .send(payload)
@@ -276,53 +286,34 @@ describe('Accessing Album Endpoints', function() {
           return done(err);
         }
         res.body.should.have.property('title', payload.title);
-        res.body.should.have.property('releaseDate');
-        res.body.should.have.property('artistId');
         res.body.should.not.have.property('titleLower');
-        Album.findById(albumId, function(err, album) {
-          album.should.have.property('title', payload.title);
+        Playlist.findById(playlistId, function(err, pl) {
+          pl.should.have.property('title', payload.title);
         });
         done();
       });
-    }); // 'changes album title'
+    }); // 'changes playlist title'
 
-    it('fails without a valid access token', function(done) {
-      payload.title = 'Drone Wars';
-      api.put(endpoint + albumId)
-      .type('form')
-      .set('Authorization', 'Bearer 5703d23005g65c2f479e2Y3m')
-      .send(payload)
-      .expect(401)
-      .end(function(err, res) {
-        should.not.exist(err);
-        res.body.should.have.property('code', 401);
-        res.body.should.have.property('error', 'invalid_token');
-        res.body.should.have.property('error_description',
-          'The access token provided is invalid.');
-        done();
-      });
-    }); // END 'update fails without valid access token'
-  }); // END 'puting an album'
+  }); // - PUTing existing playlist
 
-  describe('GETing...', function() {
-    describe('All the albums', function() {
+  describe('GETing Existing Playlist...', function() {
+    describe('All The Playlists', function() {
       before(function(done) {
-        Album.create({
-          title:       'Revenge of the Sith',
-          releaseDate: new Date(),
-          artistId:    userId
-        }, function(err, secondAlbum) {
+        Playlist.create({
+          title:   'Matrix Reloaded',
+          ownerId: userId
+        }, function(err, sp) {
           if (err) {
             console.log(err);
           }
-          if (secondAlbum) {
-            album2Id = secondAlbum._id;
+          if (sp) {
+            playlist2Id = sp._id;
           }
           done();
         });
-      }); // END before
+      }); // End before
 
-      it('returns an array with all two albums', function(done) {
+      it('returns an array with all two playlists', function(done) {
         api.get(endpoint)
         .type('form')
         .set('Authorization', 'Bearer ' + token)
@@ -335,34 +326,33 @@ describe('Accessing Album Endpoints', function() {
           res.body.should.have.length(2);
           done();
         });
-      });// END 'returns an array of length 2'
+      }); // returns array of 2
 
-      it('returns an array with one non-deleted album', function(done) {
-        Album.update({
-            _id: album2Id
-          }, {
-            deleted: true
-          }, function(err, res) {
-            api.get(endpoint)
-            .type('form')
-            .set('Authorization', 'Bearer ' + token)
-            .expect(200)
-            .end(function(err, res) {
-              if (err) {
-                return done(err);
-              }
-              res.body.should.be.an.Array;
-              res.body.should.have.length(1);
-              done();
-            });
-          }
-        );
-      });// END 'returns an array of length 1'
-    }); // END 'All the albums'
+      it('return an array with non-deleted playlist', function(done) {
+        Playlist.update({
+          _id: playlist2Id
+        }, {
+          deleted: true
+        }, function(err, res) {
+          api.get(endpoint)
+          .type('form')
+          .set('Authorization', 'Bearer ' + token)
+          .expect(200)
+          .end(function(err, res) {
+            if (err) {
+              return done(err);
+            }
+            res.body.should.be.an.Array;
+            res.body.should.have.length(1);
+            done();
+          });
+        });
+      });// returns array of 1
+    }); // all the playlist
 
-    describe('Specific album', function(done) {
-      it('fails to find deleted album', function(done) {
-        api.get(endpoint + album2Id)
+    describe('Specific Playlist', function() {
+      it('fails to find deleted playlist', function(done) {
+        api.get(endpoint + playlist2Id)
         .type('form')
         .set('Authorization', 'Bearer ' + token)
         .expect(404)
@@ -372,14 +362,14 @@ describe('Accessing Album Endpoints', function() {
           }
           res.body.should.have.property('status', 404);
           res.body.should.have.property('error', 'not_found');
-          res.body.should.have.property('error_description', 
-            'Album not found');
+          res.body.should.have.property('error_description',
+            'Playlist not found');
           done();
         });
-      }); // 'fails to find deleted album'
+      }); // 'fails to find deleted playlist'
 
-      it('finds non-deleted album', function(done) {
-        api.get(endpoint + albumId)
+      it('finds non-deleted playlist', function(done) {
+        api.get(endpoint + playlistId)
         .type('form')
         .set('Authorization', 'Bearer ' + token)
         .expect(200)
@@ -389,17 +379,15 @@ describe('Accessing Album Endpoints', function() {
           }
           res.body.should.have.property('_id');
           res.body.should.have.property('title', payload.title);
-          res.body.should.have.property('artistId');
-          res.body.should.have.property('releaseDate');
-          res.body.should.have.property('imageUrl');
+          res.body.should.have.property('ownerId');
           res.body.should.have.property('updatedAt');
           done();
         });
-      }); // 'finds non-deleted album'
-    }); // 'Specific album'
-  }); // END 'Geting albums'
+      }); // 'finds non-deleted playlist'
+    }); // specific playlist
+  }); // - GETing existing playlist
 
-  describe('DELETing album', function() {
+  describe('DELETing Existing Playlist', function() {
     before(function(done) {
       User.create(dummyUser2, function(err, usr) {
         if (err) {
@@ -424,8 +412,8 @@ describe('Accessing Album Endpoints', function() {
       });
     });
 
-    it('fails to delete deleted album', function(done) {
-      api.delete(endpoint + album2Id)
+    it('fails to delete deleted playlist', function(done) {
+      api.delete(endpoint + playlist2Id)
       .type('form')
       .set('Authorization', 'Bearer ' + token)
       .expect(404)
@@ -436,13 +424,13 @@ describe('Accessing Album Endpoints', function() {
         res.body.should.have.property('status', 404);
         res.body.should.have.property('error', 'not_found');
         res.body.should.have.property('error_description',
-          'Album not found');
+          'Playlist not found');
         done();
       });
-    }); // 'fails to delete album'
+    }); // 'fails to delete playlist'
 
-    it('fails when not the owner of album', function(done) {
-      api.delete(endpoint + albumId)
+    it('fails when not the owner of playlist', function(done) {
+      api.delete(endpoint + playlistId)
       .type('form')
       .set('Authorization', 'Bearer ' + token2)
       .expect(403)
@@ -455,10 +443,10 @@ describe('Accessing Album Endpoints', function() {
         res.body.should.have.property('error_description');
         done();
       });
-    }); // END fails when not owner of album
+    }); // END fails when not owner of playlist
 
-    it('deletes non-deleted album', function(done) {
-      api.delete(endpoint + albumId)
+    it('deletes non-deleted playlist', function(done) {
+      api.delete(endpoint + playlistId)
       .type('form')
       .set('Authorization', 'Bearer ' + token)
       .expect(200)
@@ -466,14 +454,14 @@ describe('Accessing Album Endpoints', function() {
         if (err) {
           return done(err);
         }
-        Album.findById(albumId, function(err, album) {
+        Playlist.findById(playlistId, function(err, playlist) {
           if (err) {
             return done(err);
           }
-          album.deleted.should.be.true;
+          playlist.deleted.should.be.true;
         });
         done();
       });
-    }); // END deletes non-deleted album
-  }); // END 'Deleting album'
+    }); // END deletes non-deleted playlist
+  }); // - DELETing existing playlist
 });

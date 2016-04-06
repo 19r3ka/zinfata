@@ -37,31 +37,35 @@ var zClient = {
   redirectUri:  'http://zinfata.com/test_callback'
 };
 
-var clientId = client.id;
+var clientId = client.id.toLowerCase();
 var userId;
 var mongo;
 
 describe('OAuth2 API endpoints', function() {
   before(function(done) {
-    mongo = mongoose.createConnection('mongodb://localhost/zTest');
+    mongoose.connect('mongodb://localhost/zTest');
+    mongo = mongoose.connection;
+    mongo.on('error', function(err) {
+      done(err);
+    });
     mongo.once('open', function() {
       console.log('Connected to ' + mongo.name.toUpperCase() + ' database.');
       mongo.db.dropDatabase(function() {
         console.log('Dropped the ' + mongo.name.toUpperCase() + ' database.');
-        done();
       });
+      done();
     });
-  });
+  }); // End before
 
   after(function(done) {
     mongo.db.dropDatabase(function() {
-      console.log(mongo.name + ' Database dropped.');
+      console.log(mongo.name + ' database dropped.');
       mongo.close(function() {
         console.log('Mongo DB closed.');
         done();
       });
     });
-  });
+  }); // End after
 
   describe('Accessing API client endpoints', function() {
     beforeEach(function() {
@@ -135,7 +139,7 @@ describe('OAuth2 API endpoints', function() {
         .end(function(err, res) {
           should.not.exist(err);
           res.body.should.have.property('_id');
-          res.body.should.have.property('clientId', client.id);
+          res.body.should.have.property('clientId', client.id.toLowerCase());
           res.body.should.have.property('clientSecret', client.secret);
           res.body.should.have.property('redirectUri', client.redirect);
           done();
@@ -179,9 +183,11 @@ describe('OAuth2 API endpoints', function() {
         api.get(clientEndpoint + clientId)
         .expect(200)
         .end(function(err, res) {
-          should.not.exist(err);
+          if (err) {
+            return done(err);
+          }
           res.body.should.have.property('_id');
-          res.body.should.have.property('clientId', client.id);
+          res.body.should.have.property('clientId', client.id.toLowerCase());
           res.body.should.have.property('clientSecret', client.secret);
           res.body.should.have.property('redirectUri', client.redirect);
           done();
@@ -197,7 +203,7 @@ describe('OAuth2 API endpoints', function() {
         done();
       });
 
-      it('returns 400 without client_secret present.', function(done) {
+      /*it('returns 400 without client_secret present.', function(done) {
         payload = {};
         api.delete(clientEndpoint + clientId)
         .type('form')
@@ -205,15 +211,11 @@ describe('OAuth2 API endpoints', function() {
         .expect(400)
         .end(function(err, res) {
           should.not.exist(err);
-          /*res.body.should.have.property('code', 400);
-          res.body.should.have.property('error', 'invalid_request');
-          res.body.should.have.property('error_description',
-            'The client id is already in use');*/
           done();
         });
-      });
+      });*/
 
-      it('returns 404 with wrong client_id.', function(done) {
+      it('returns 404 with wrong client_secret.', function(done) {
         payload.client_secret = 'bogusSecret';
         api.delete(clientEndpoint + clientId)
         .type('form')

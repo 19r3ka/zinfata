@@ -14,15 +14,13 @@ module.exports = function(wagner) {
 
   router.route('/')
   .get(function(req, res, next) { // GET all playlists listing.
-
-    Playlist.find(function(err, playlists) {
+    Playlist.findActive('', false, function(err, playlists) {
       if (err) {return next(err);}
       if (!playlists.length) {
         return next(new ZErr('not_found', 'Playlist not found'));
       }
       res.json(playlists);
-    }); 
-
+    });
   })
   .post(function(req, res, next) { // POST new album
     var pl  = req.body;
@@ -40,14 +38,14 @@ module.exports = function(wagner) {
 
     newPlaylist.save(function(err, playlist) {
       if (err) {return next(err);}
-      res.json(playlist);
+      res.status(201).json(playlist);
     });
   });
 
   router.route('/:resource/:resourceId')
   .get(function(req, res, next) {
     if ('resource' in req.params && req.params.resource === 'owner') {
-      Playlist.find({ownerId: req.params.resourceId}, function(err, playlists) {
+      Playlist.findActive({ownerId: req.params.resourceId}, false, function(err, playlists) {
         if (err) {return next(err);}
         if (!playlists.length) {
           return next(new ZErr('not_found', 'Playlists not found'));
@@ -59,7 +57,7 @@ module.exports = function(wagner) {
 
   router.route('/:id')
   .get(function(req, res, next) { // GET specific album by ID
-    Playlist.findById(req.params.id, function(err, playlist) {
+    Playlist.findActive({_id: req.params.id}, true, function(err, playlist) {
       if (err) {return next(err);}
       if (!playlist) {
         return next(new ZErr('not_found', 'Playlist not found'));
@@ -68,8 +66,10 @@ module.exports = function(wagner) {
     });
   })
   .put(function(req, res, next) { // UPDATE album info by ID
-    Playlist.findById(req.params.id, function(err, playlist) {
-      if (err) {return next(err);}
+    Playlist.findActive({_id: req.params.id}, true, function(err, playlist) {
+      if (err) {
+        return next(err);
+      }
       if (!playlist) {
         return next(new ZErr('not_found', 'Playlist not found'));
       }
@@ -88,14 +88,18 @@ module.exports = function(wagner) {
     });
   })
   .delete(function(req, res, next) { // DELETE album by ID
-    Playlist.findById(req.params.id, function(err, playlist) {
-      if (err) {return next(err);}
+    Playlist.findActive({_id: req.params.id}, true, function(err, playlist) {
+      if (err) {
+        return next(err);
+      }
       if (!playlist) {
         return next(new ZErr('not_found', 'Playlist not found'));
       }
       playlist.deleted = true;
       playlist.save(function(err, deletedPlaylist) {
-        if (err) {return next(err);}
+        if (err) {
+          return next(err);
+        }
         res.json(deletedPlaylist);
       });
     });

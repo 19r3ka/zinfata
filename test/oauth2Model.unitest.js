@@ -27,25 +27,29 @@ var mongo;
 
 describe('Authenticating Users', function() {
   before(function(done) {
-    mongo = mongoose.createConnection('mongodb://localhost/zTest');
+    mongoose.connect('mongodb://localhost/zTest');
+    mongo = mongoose.connection;
+    mongo.on('error', function(err) {
+      done(err);
+    });
     mongo.once('open', function() {
       console.log('Connected to ' + mongo.name.toUpperCase() + ' database.');
       mongo.db.dropDatabase(function() {
         console.log('Dropped the ' + mongo.name.toUpperCase() + ' database.');
-        done();
       });
+      done();
     });
-  });
+  }); // End before
 
   after(function(done) {
     mongo.db.dropDatabase(function() {
-      console.log(mongo.name + ' Database dropped.');
+      console.log(mongo.name + ' database dropped.');
       mongo.close(function() {
         console.log('Mongo DB closed.');
         done();
       });
     });
-  });
+  }); // End after
 
   before(function(done) {
     payload = {
