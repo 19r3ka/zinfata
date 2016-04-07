@@ -6,7 +6,6 @@ var userValidator = [User.validate,
   'The value of `{PATH}` is not valid.'];
 
 var AlbumSchema = new mongoose.Schema({
-
   title:        {type: String, required: true, trim: true},
   titleLower:   {type: String, lowercase: true, select: false, trim: true},
   imageUrl:     {type: String, default: defaultUrl},
@@ -31,6 +30,12 @@ AlbumSchema.statics.findActive = function(query, unique, callback) {
   }
 };
 
+AlbumSchema.statics.validate = function(id, respond) {
+  albumModel.findById(id, function(err, alb) {
+    respond(!!alb);
+  });
+};
+
 AlbumSchema.pre('save', function(next) {
   var album = this;
   if (album.isModified('title')) {album.titleLower = album.title;}
@@ -45,4 +50,5 @@ AlbumSchema.set('toJSON', {
   }
 });
 
-module.exports = mongoose.model('Album', AlbumSchema);
+var albumModel = mongoose.model('Album', AlbumSchema);
+module.exports = albumModel;

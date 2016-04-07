@@ -1,26 +1,8 @@
 var should   = require('chai').should();
 var mongoose = require('mongoose');
-var User     = require('../models/User.js');
-var Playlist = require('../models/Playlist.js');
 
-var Oauth2   = require('../models/OAuthAccessToken.js');
-var Client   = require('../models/OAuthClient.js');
-var request  = require('supertest');
-var app      = require('../app.js');
-var api      = request(app);
-
-var endpoint = '/api/playlists/';
-var saveTkn  = '/oauth2/token/';
-var payload  = {};
-
-var mongo;
-var clientId;
 var userId;
-var playlistId;
-var playlist2Id;
-var token;
-var token2;
-
+var payload  = {};
 var dummyUser1 = {
   firstName:  'Matt',
   lastName:   'Murdock',
@@ -28,6 +10,13 @@ var dummyUser1 = {
   email:      'Fearless@devilskitchen.fr',
   password:   'qwertyui'
 };
+
+/* API Testing Configuration Supplement Files*/
+var request  = require('supertest');
+var Oauth2   = require('../models/OAuthAccessToken.js');
+var Client   = require('../models/OAuthClient.js');
+var app      = require('../app.js');
+var api      = request(app);
 
 var dummyUser2 = {
   firstName:  'Tony',
@@ -42,6 +31,20 @@ var fakeApp = {
   clientSecret: 'thisIsSomethingAbsolutelyDarkAndSecret',
   redirectUri:  'http://www.myapp.com'
 };
+var mongo;
+var clientId;
+var token;
+var token2;
+
+var saveTkn  = '/oauth2/token/';
+
+/*Test Specific Variables */
+var endpoint = '/api/playlists/';
+
+var User     = require('../models/User.js');
+var Playlist = require('../models/Playlist.js');
+var playlistId;
+var playlist2Id;
 
 describe('Working With Playlist Endpoints', function() {
   before(function(done) {

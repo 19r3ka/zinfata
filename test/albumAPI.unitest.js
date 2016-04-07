@@ -1,23 +1,12 @@
 var should   = require('chai').should();
-var request  = require('supertest');
 var mongoose = require('mongoose');
-var User     = require('../models/User.js');
-var Album    = require('../models/Album.js');
+var request  = require('supertest');
+
+/*API test configuration files*/
 var Oauth2   = require('../models/OAuthAccessToken.js');
 var Client   = require('../models/OAuthClient.js');
 var app      = require('../app.js');
 var api      = request(app);
-
-var mongo;
-var clientId;
-var userId;
-var albumId;
-var album2Id;
-var endpoint = '/api/albums/';
-var saveTkn  = '/oauth2/token/';
-var token    = '5703d23005g65c2f479e2f3m';
-var expires  = 9600;
-var payload  = {};
 
 var fakeApp = {
   clientId:     'thisismysupercoolclientid',
@@ -38,6 +27,25 @@ var dummyUser2 = {
   email:     'manofsteel@thedailybugle.com',
   password:  'qwertyui'
 };
+var payload  = {};
+var mongo;
+var userId;
+var clientId;
+var token;
+var token2;
+
+var saveTkn  = '/oauth2/token/';
+
+/*Test specific files*/
+var endpoint = '/api/albums/';
+
+var User     = require('../models/User.js');
+var Album    = require('../models/Album.js');
+
+var albumId;
+var album2Id;
+var expires  = 9600;
+
 var dummyAlbum = {
   title:       'NGTD',
   releaseDate: new Date(),

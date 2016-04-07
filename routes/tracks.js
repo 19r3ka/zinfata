@@ -27,7 +27,6 @@ module.exports = function(wagner) {
   var storage  = multer.diskStorage({
         destination: function(req, file, cb) {
           var folder = '';
-          console.log(file);
           if (file.fieldname === 'imageFile') {
             folder = 'public/images/uploads';
           } else {
@@ -46,8 +45,10 @@ module.exports = function(wagner) {
   router.route('/')
   // GET all songs listing.
   .get(function(req, res, next) {
-    Track.find(function(err, tracks) {
-      if (err) {return next(err);}
+    Track.findActive('', false, function(err, tracks) {
+      if (err) {
+        return next(err);
+      }
       if (!tracks.length) {
         return next(new ZErr('not_found', 'Track not found'));
       }
@@ -62,7 +63,7 @@ module.exports = function(wagner) {
       title:        req.body.title,
       artistId:     req.body.artistId,
       albumId:      req.body.albumId,
-      releaseDate:  req.body.releaseDate || '',
+      releaseDate:  req.body.releaseDate,
       duration:     req.body.duration,
       downloadable: req.body.downloadable,
       genre:        req.body.genre
@@ -88,31 +89,43 @@ module.exports = function(wagner) {
      *Make sure artist exists and that the album is really his
      *before attempting to save
     */
-    Album.find({artistId: newTrack.artistId, _id: newTrack.albumId},
-      function(err, album) {
-      if (err) {return next(err);}
-      if (!album) {
-        return next(new ZErr('bad_param', 'invalid album / artist match'));
-      }
-      if (!newTrack.releaseDate || newTrack.releaseDate > album.releaseDate) {
-        newTrack.releaseDate = album.releaseDate;
-      }
-    });
+    if (newTrack.artistId && newTrack.albumId) {
+      Album.findActive({artistId: newTrack.artistId, _id: newTrack.albumId},
+        true, function(err, album) {
+        if (err) {
+          return next(err);
+        }
+        if (!album) {
+          return next(new ZErr('bad_param', 'invalid album / artist match'));
+        }
+        if (!newTrack.releaseDate || newTrack.releaseDate > album.releaseDate) {
+          newTrack.releaseDate = album.releaseDate;
+        }
+      });
+    }
+
     newTrack.save(function(err, track) {
-      if (err) {return next(err);}
-      User.findById(track.artistId, function(err, user) {
-        if (err) {console.log(err);}
-        if (user.role !== 'artist') {user.role = 'artist';}
+      if (err) {
+        return next(err);
+      }
+      // user becomes artist as soon as he has uploaded at least one track
+      User.findActive({_id: track.artistId}, true, function(err, user) {
+        if (err) {
+          console.log(err);
+        }
+        if (user.role !== 'artist') {
+          user.role = 'artist';
+        }
         user.save();
       });
-      res.json(track);
+      res.status(201).json(track);
     });
   });
 
   router.route('/:id')
   // GET specific track by ID
   .get(function(req, res, next) {
-    Track.findById(req.params.id, function(err, track) {
+    Track.findActive({_id: req.params.id}, true, function(err, track) {
       if (err) {return next(err);}
       if (!track) {
         return next(new ZErr('not_found', 'Track not found'));
@@ -122,7 +135,7 @@ module.exports = function(wagner) {
   })
   // UPDATE album info by ID
   .put(uploadParams, function(req, res, next) {
-    Track.findById(req.params.id, function(err, trackToUpdate) {
+    Track.findActive({_id: req.params.id}, true, function(err, trackToUpdate) {
       if (err) {return next(err);}
       if (!trackToUpdate) {
         return next(new ZErr('not_found', 'Track not found'));
@@ -152,14 +165,16 @@ module.exports = function(wagner) {
     });
   })
   .delete(function(req, res, next) {// DELETE album by ID
-    Track.findById(req.params.id, function(err, track) {
+    Track.findActive({_id: req.params.id}, true, function(err, track) {
       if (err) {return next(err);}
       if (!track) {
         return next(new ZErr('not_found', 'Track not found'));
       }
       track.deleted = true;
       track.save(function(err, deletedTrack) {
-        if (err) {return next(err);}
+        if (err) {
+          return next(err);
+        }
         res.json(deletedTrack);
       });
     });
@@ -167,7 +182,7 @@ module.exports = function(wagner) {
 
   router.route('/:id/download')
   .get(function(req, res, next) {
-    Track.findById(req.params.id, function(err, track) {
+    Track.findActive({_id: req.params.id}, true, function(err, track) {
       if (err) {return next(err);}
       if (!track) {
         return next(new ZErr('not_found', 'Track not found'));
@@ -205,9 +220,11 @@ module.exports = function(wagner) {
     }
 
     query[key] = req.params.resourceId;
-    Track.find(query, function(err, tracks) {
-      if (err) {return next(err);}
-      if (!tracks) {
+    Track.findActive(query, false, function(err, tracks) {
+      if (err) {
+        return next(err);
+      }
+      if (!tracks.length) {
         return next(new ZErr('not_found', 'Track not found'));
       }
       res.json(tracks);

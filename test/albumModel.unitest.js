@@ -186,32 +186,31 @@ describe('Working with albums', function() {
       });
 
       it('works with non-deleted albums', function(done) {
-          Album.findActive(query, true, function(err, album) {
-            should.not.exist(err);
-            should.exist(album);
-            album.should.have.property('_id');
-            album.should.have.property('releaseDate');
-            album.should.have.property('artistId');
-            album.should.have.property('title', dummyAlbum.title);
-            album.should.have.property('imageUrl');
-            done();
-          });
+        Album.findActive(query, true, function(err, album) {
+          should.not.exist(err);
+          should.exist(album);
+          album.should.have.property('_id');
+          album.should.have.property('releaseDate');
+          album.should.have.property('artistId');
+          album.should.have.property('title', dummyAlbum.title);
+          album.should.have.property('imageUrl');
+          done();
         });
+      });
 
-        it('fails to find deleted users', function(done) {
-          Album.update({
-            title: dummyAlbum.title
-          }, {
-            deleted: true
-          }, function(err, res) {
-            console.log(res);
-            Album.findActive(query, true, function(err, album) {
-            should.not.exist(album);
-            should.not.exist(err);
-            done();
-          });
-          });
+      it('fails to find deleted users', function(done) {
+        Album.update({
+          title: dummyAlbum.title
+        }, {
+          deleted: true
+        }, function(err, res) {
+          Album.findActive(query, true, function(err, album) {
+          should.not.exist(album);
+          should.not.exist(err);
+          done();
         });
-    }); // End 'By Title'
+        });
+      });
+    }); // End 'By Deletion Status'
   }); // End 'Getting existing album'
 });
