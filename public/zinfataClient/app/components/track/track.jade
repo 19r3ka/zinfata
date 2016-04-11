@@ -65,7 +65,7 @@ form(name='trackInfo', role='form', ng-if='creating || editing')
         .div
             label(for='album') Album:
             .pull-right
-                a(href='/album/new') + Quickly Create Album
+                a(href='/album/new') + Quickly create album
         select.form-control(name='album', ng-model='track.album.id', ng-options='album._id as album.title for album in albums', required)
             option(value='') -- Choose this track's album --
         .well(ng-show='!albums.length')

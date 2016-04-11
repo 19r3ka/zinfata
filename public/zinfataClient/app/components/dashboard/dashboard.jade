@@ -2,13 +2,15 @@
   .page-header  
     h2 Latest Posts 
       .small  Hear the latest music from the Zinfata Community!
-  .panel(ng-show='!tracks.lenth')
+  .panel(ng-show='!tracks.length')
     .panel-heading
       h3.panel-title Amazing! It seems no one has posted on Zinfata yet!
     .panel-body
       p.center-block
         a.btn(type='button', class='center-block btn-primary', href='/track/new') Be the first uploader ever!
-      .track-list(ng-show='!!tracks.length')
+  .panel(ng-show='!!tracks.length')
+    .panel-body
+      .track-list
         .track-item(ng-repeat='track in tracks')
           .track-cover
             img.img-responsive(class='center-block', name='coverArt', width='50', alt='{{ track.title }}', ng-src='{{ track.coverArt }}')

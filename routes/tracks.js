@@ -45,10 +45,10 @@ module.exports = function(wagner) {
   router.route('/')
   // GET all songs listing.
   .get(function(req, res, next) {
-    Track.findActive('', false)
-         .sort('-updatedAt')
-         .limit(100)
-         .exec(function(err, tracks) {
+    Track.find({deleted: false})
+   .sort('-updatedAt')
+   .limit(100)
+   .exec(function(err, tracks) {
       if (err) {
         return next(err);
       }
@@ -106,7 +106,6 @@ module.exports = function(wagner) {
         }
       });
     }
-    console.log('newTrack.coverArt is ' + newTrack.coverArt);
     newTrack.save(function(err, track) {
       if (err) {
         return next(err);

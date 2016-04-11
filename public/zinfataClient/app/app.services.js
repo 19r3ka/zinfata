@@ -339,7 +339,8 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
       data.releaseDate = new Date(data.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
       delete data.artistId;
       delete data.albumId;
-      if (!!data.coverArt) {
+      if (!!data.coverArt &&
+        (data.coverArt.search('track-coverart-placeholder') === -1)) {
         data.coverArt = '../../' + data.coverArt.split('/').slice(1).join('/');
       }
       if (!!data.streamUrl) {
@@ -352,27 +353,46 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
     });
   };
 
-  self.latest = Tracks.query(function(collection) {
-    var ret = [];
-    angular.forEach(collection, function(item) {
-      item.artist      = {id: item.artistId};
-      item.album       = {id: item.albumId};
-      item.releaseDate = new Date(item.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
-      delete item.artistId;
-      delete item.albumId;
-      if ('coverArt' in item && !!item.coverArt) {
-        item.coverArt = '../../' + item.coverArt.split('/').slice(1).join('/');
-      }
-      if ('streamUrl' in item && !!item.streamUrl) {
-        item.streamUrl = '../../' +
-          item.streamUrl.split('/').slice(1).join('/');
-      }
-      this.push(item);
-    }, ret);
-    return ret;
-  }, function(err) {
-    $log.debug('Unable to get all the tracks!');
-  });
+  self.latest = function(success, failure) {
+    Tracks.query(function(collection) {
+      var ret = [];
+      angular.forEach(collection, function(item) {
+        item.artist      = {id: item.artistId};
+        item.album       = {id: item.albumId};
+        item.releaseDate = new Date(item.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
+        delete item.artistId;
+        delete item.albumId;
+        //
+        // The following is taken from the inflate code
+        //
+        UsersSvc.get(item.artist.id, function(user) {
+          item.artist.handle = user.handle;
+        }, function(err) {
+          $log.error('Error inflating track artist info: ' + err);
+        });
+        AlbumsSvc.get(item.album.id, function(album) {
+          item.album.title  = album.title;
+        }, function(err) {
+          $log.error('Error inflating track album info: ' + err);
+        });
+        //
+        // End of the inflate code
+        // 
+        if ('coverArt' in item && !!item.coverArt &&
+          (item.coverArt.search('track-coverart-placeholder') === -1)) {
+          item.coverArt = '../../' + item.coverArt.split('/').slice(1).join('/');
+        }
+        if ('streamUrl' in item && !!item.streamUrl) {
+          item.streamUrl = '../../' +
+            item.streamUrl.split('/').slice(1).join('/');
+        }
+        this.push(item);
+      }, ret);
+      success(ret);
+    }, function(err) {
+      failure('Could query all the tracks!');
+    });
+  };
 
   self.find = function(query, success, failure) { // query must be a valid hash with a_id &| u_id
     var search;
@@ -406,7 +426,7 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
 
   self.inflate = function(index, container, success, failure) {
     if (!index) {
-      return $log.debug('there is no index sent to Tracks.inflate.')
+      return $log.debug('there is no index sent to Tracks.inflate.');
     }
     self.get(index, function(track) {
       UsersSvc.get(track.artist.id, function(user) {
@@ -420,7 +440,7 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
         $log.error('Error inflating track album info: ' + err);
       });
       if (!!container) {
-        container.push(track); 
+        container.push(track);
       }
       success(track);
     }, function(err) {
