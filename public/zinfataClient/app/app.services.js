@@ -352,7 +352,7 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
     });
   };
 
-  self.all = Tracks.query(function(collection) {
+  self.latest = Tracks.query(function(collection) {
     var ret = [];
     angular.forEach(collection, function(item) {
       item.artist      = {id: item.artistId};

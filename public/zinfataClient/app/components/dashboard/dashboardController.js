@@ -1,6 +1,4 @@
-app.controller('dashboardCtrl', ['$scope', 'Users', 'UsersSvc', function($scope, Users, UsersSvc) {
-    $scope.users = UsersSvc.users;
-    $scope.delete = function(user) {
-      UsersSvc.delete(user._id);
-    };
+app.controller('dashboardCtrl', ['$scope', 'TracksSvc',
+function($scope, Tracks) {
+  $scope.tracks = Tracks.latest;
 }]);

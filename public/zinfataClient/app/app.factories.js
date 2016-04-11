@@ -50,7 +50,7 @@ app.factory('Users', ['$resource', function($resource) {
 .factory('Playlists', ['$resource', function($resource) {
   return $resource('/api/playlists/:id', {id: '@_id'}, {
     'update': {method: 'PUT'},
-    'find':   { method: 'GET', 
+    'find':   { method: 'GET',
       isArray: true,
       url: '/api/playlists/:resource/:resource_id',
       params: {resource: '@resource', resource_id: '@resource_id'}
@@ -60,7 +60,7 @@ app.factory('Users', ['$resource', function($resource) {
 .factory('Tracks', ['$resource', function($resource) {
   return $resource('/api/tracks/:id', {id: '@_id'}, {
     'update': {
-      method:'PUT',
+      method: 'PUT',
       transformRequest: FileDataObject,
       headers: {
         'Content-Type': undefined,
@@ -76,7 +76,7 @@ app.factory('Users', ['$resource', function($resource) {
       }
     },
     'find': { 
-      method: 'GET', 
+      method: 'GET',
       isArray: true,
       url: '/api/tracks/:resource/:resource_id',
       params: {resource: '@resource', resource_id: '@resoureceId'}

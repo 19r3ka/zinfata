@@ -1,6 +1,8 @@
 .panel(class='panel-primary')
     .panel-heading
         h4.panel-title Albums
+            .pull-right
+                a(href='/album/new') + Add album
     .panel-body
         div(ng-show='!albums.length && isOwner')
             p.text-center You don't have any albums yet?
