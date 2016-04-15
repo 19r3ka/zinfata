@@ -16,6 +16,9 @@ ALBUM_EVENTS, $log) {
   $scope.creating = false;
   $scope.canEdit  = false;
 
+  $scope.pageTitle = 'Add New Album';
+  $scope.pageDescription = 'Quickly upload a new album to Zinfata.';
+
   if ($location.path() === '/album/new') {
     $scope.creating = true;
   }
@@ -32,7 +35,12 @@ ALBUM_EVENTS, $log) {
         $scope.canEdit = true;
       }
       if ($location.path() === '/album/' + $routeParams.albumId + '/edit') {
-        $scope.canEdit ? $scope.editing = true : $location.path('album/' + $routeParams.albumId);
+        $scope.canEdit ? $scope.editing = true : $location.path('album/' +
+          $routeParams.albumId);
+        if ($scope.editing) {
+          $scope.pageTitle = 'Edit Album Info';
+          $scope.pageDescription = 'Edit this album basic information.'
+        }
       }
       Users.get($scope.album.artist.id, function(user) {
         $scope.album.artist.handle = user.handle;

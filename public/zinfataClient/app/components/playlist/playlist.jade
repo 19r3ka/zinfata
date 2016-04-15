@@ -1,80 +1,86 @@
-form(name='PlaylistForm', role='form')
-    //- .form-group
-        img(name='coverArt', ng-src='{{playlist.imageUrl}}')
-        div(ng-show='editing || creating')
-            label(for='coverArt') Cover Art:
-                input.form-control(type='file', name='coverArt', accept='image/*', ng-model='playlist.coverArt', onchange='angular.element(this).scope().readFile(this)')
-    .form-group
-        input.form-control(type='text', name='title', placeholder='Enter playlist name', ng-model='playlist.title', ng-disabled='!editing && !creating', autofocus, required)
-        div(ng-if='!editing && !creating')
-            ul.list-inline
-                li
-                    |  Created by
-                    em
-                        a(href='/user/{{ playlist.owner.id }}')   {{ playlist.owner.handle }}
-                li.dropdown(class='pull-right', ng-show='canEdit && !editing')
-                    a.dropdown-toggle(data-toggle='dropdown', id='dropdownMenu', aria-haspopup='true', aria-expanded='true')
-                        span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
-                    ul.dropdown-menu(aria-labelledby='dropdownMenu')
-                        li(ng-click='edit(playlist)'): a(href='') 
-                            span.glyphicon(class='glyphicon-pencil')
-                            |  Edit Info
-                        li.bg-danger(ng-click='delete(playlist)'): a(href='')
-                            span.glyphicon(class='glyphicon-remove')
-                            | Delete
-            ul.list-inline(class='metrics')
-                li: ng-pluralize(count='playlistTracks.length', when="{'0': '0 track', '1': '1 track', 'other': '{} tracks'}")
+.jumbotron(ng-if='!creating && !editing')
+    .row
+        {{ playlist.title }}
+        ul.list-inline
+            li
+                |  Created by
+                em
+                    a(href='/user/{{ playlist.owner.id }}')   {{ playlist.owner.handle }}
+            li.dropdown(class='pull-right', ng-show='canEdit && !editing')
+                a.dropdown-toggle(data-toggle='dropdown', id='dropdownMenu', aria-haspopup='true', aria-expanded='true')
+                    span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
+                ul.dropdown-menu(aria-labelledby='dropdownMenu')
+                    li(ng-click='edit(playlist)'): a(href='') 
+                        span.glyphicon(class='glyphicon-pencil')
+                        |  Edit Info
+                    li.bg-danger(ng-click='delete(playlist)'): a(href='')
+                        span.glyphicon(class='glyphicon-remove')
+                        | Delete
+        ul.list-inline(class='metrics')
+            li: ng-pluralize(count='playlistTracks.length', when="{'0': '0 track', '1': '1 track', 'other': '{} tracks'}")
 
-                li duration: {{ playlist.duration | duration2time }}               
-    .form-group
-        button.btn(type='submit', ng-click='create(playlist)', ng-show='creating', class=['btn-primary', 'form-control'], ng-disabled='playlistForm.$invalid') Create Playlist!
-        button.btn(type='submit', ng-click='update(playlist)', ng-show='editing', class=['btn-primary', 'form-control'], ng-disabled='playlistForm.$invalid') Save Changes!
-
-div(ng-show='!creating && !playlistTracks.length')
-    .panel(class='panel-warning')
-        .panel-heading
-            .panel-title This playlist is <em>empty</em> !
-        .panel-body
-            p.text-center This playlist doesn't contain any tracks yet!
-div(ng-if='!creating && !!playlistTracks.length')
-    table.table(class='table-striped table-hover table-condensed')
-        thead
-            tr
-                th.col-md-4 Title
-                th.col-md-4 Album
-                th.col-md-2 Artist
-                th.col-md-1 Duration
-                //- td Length -- TODO: record track's length into database
-                //- options for interacting with the song
-                th.col-md-1 
-        tbody
-            tr(ng-repeat='track in playlistTracks')
-                td 
-                    a(href='/track/{{track._id}}') {{ track.title }} 
-                td
-                    a(href='/album/{{track.album.id}}') {{ track.album.title }} 
-                td 
-                    a(href='/user/{{track.artist.id}}') {{ track.artist.handle }}
-                td.text-center(class='small') 
-                    {{ track.duration | duration2time }}
-                td
-                    .dropdown(class='pull-right')
-                        a.dropdown-toggle(data-toggle='dropdown')
-                            span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
-                        ul.dropdown-menu
-                            li: a(href='', ng-click='play(track)') 
-                                span.glyphicon(class='glyphicon-play')
-                                |  Play now
-                            li: a(href='#', ng-click='addToQueue(track)') 
-                                span.glyphicon(class='glyphicon-list')
-                                |  Queue up
-                            li.dropdown
-                                a.dropdown-toggle(href='#', data-toggle='dropdown')
-                                    span.glyphicon(class='glyphicon-plus')
-                                    |  Add to
-                                    span.caret
-                                z-playlist-dropdown(track='track')
-                            li(ng-click='removeTrack($index)'): a(href='#')
-                                span.glyphicon(class='glyphicon-remove')
-                                span.text-danger  Remove
-                                
+            li duration: {{ playlist.duration | duration2time }}
+.z-content-area(class='col-s-12 col-md-10 col-md-offset-1')
+    div(ng-show='!creating && !editing && !playlistTracks.length')
+        .panel(class='panel-warning')
+            .panel-heading
+                .panel-title This playlist is <em>empty</em> !
+            .panel-body
+                p.text-center This playlist doesn't contain any tracks yet!
+    div(ng-if='!creating && !editing && !!playlistTracks.length')
+        table.table(class='table-striped table-hover table-condensed')
+            thead
+                tr
+                    th.col-md-4 Title
+                    th.col-md-4 Album
+                    th.col-md-2 Artist
+                    th.col-md-1 Duration
+                    //- td Length -- TODO: record track's length into database
+                    //- options for interacting with the song
+                    th.col-md-1 
+            tbody
+                tr(ng-repeat='track in playlistTracks')
+                    td 
+                        a(href='/track/{{track._id}}') {{ track.title }} 
+                    td
+                        a(href='/album/{{track.album.id}}') {{ track.album.title }} 
+                    td 
+                        a(href='/user/{{track.artist.id}}') {{ track.artist.handle }}
+                    td.text-center(class='small') 
+                        {{ track.duration | duration2time }}
+                    td
+                        .dropdown(class='pull-right')
+                            a.dropdown-toggle(data-toggle='dropdown')
+                                span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
+                            ul.dropdown-menu
+                                li: a(href='', ng-click='play(track)') 
+                                    span.glyphicon(class='glyphicon-play')
+                                    |  Play now
+                                li: a(href='#', ng-click='addToQueue(track)') 
+                                    span.glyphicon(class='glyphicon-list')
+                                    |  Queue up
+                                li.dropdown
+                                    a.dropdown-toggle(href='#', data-toggle='dropdown')
+                                        span.glyphicon(class='glyphicon-plus')
+                                        |  Add to
+                                        span.caret
+                                    z-playlist-dropdown(track='track')
+                                li(ng-click='removeTrack($index)'): a(href='#')
+                                    span.glyphicon(class='glyphicon-remove')
+                                    span.text-danger  Remove
+    .z-s-content-area(class='col-md-8 col-md-offset-2')
+        .page-header(ng-if='editing || creating')
+            h3 {{ pageTitle }}
+                .small {{ pageDescription }}
+        form(name='PlaylistForm', role='form', ng-if='editing || creating')
+            //- .form-group
+                img(name='coverArt', ng-src='{{playlist.imageUrl}}')
+                div(ng-show='editing || creating')
+                    label(for='coverArt') Cover Art:
+                        input.form-control(type='file', name='coverArt', accept='image/*', ng-model='playlist.coverArt', onchange='angular.element(this).scope().readFile(this)')
+            .form-group
+                input.form-control(type='text', name='title', placeholder='Enter playlist name', ng-model='playlist.title', ng-disabled='!editing && !creating', autofocus, required)             
+            .form-group
+                button.btn(type='submit', ng-click='create(playlist)', ng-show='creating', class=['btn-primary', 'form-control'], ng-disabled='playlistForm.$invalid') Create Playlist!
+                button.btn(type='submit', ng-click='update(playlist)', ng-show='editing', class=['btn-primary', 'form-control'], ng-disabled='playlistForm.$invalid') Save Changes!
+                                        

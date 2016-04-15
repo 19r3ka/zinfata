@@ -1,5 +1,11 @@
 nav.navbar(class='navbar-inverse', role='navigation', ng-controller='headerCtrl')
   .container-fluid
+    ul.nav(id='navDropdownMenu', class=['navbar-left', 'navbar-nav'], ng-show='loggedIn()')
+        li.dropdown
+          a(class='dropdown-toggle', role='button', data-toggle='dropdown', data-target='#')
+            span(class='glyphicon glyphicon-menu-hamburger')
+          .dropdown-menu
+            include ../sidebar/sidebar
     .navbar-header
       a.navbar-brand(href='/') ZINFATA
     ul.nav(id='mobile-menu', class=['navbar-right', 'navbar-nav'])

@@ -16,23 +16,20 @@ html.no-js
       script(src='/zinfataClient/assets/libs/bootstrap-3.3.5/js/bootstrap.js')
       script(src='/zinfataClient/assets/libs/angular-1.4.5/angular.js')
   body.container(ng-app='zinfataClient')
-    .row
-      <!--[if lt IE 8]>
-      p.browsehappy
-        | You are using an <strong>outdated</strong> browser.
-        | Please <a href="http://browsehappy.com/">upgrade your browser</a>
-        | to improve your experience.
-      <![endif]-->
-      block header
-        include app/shared/header/header
-    .row
-      block messages
-        include app/shared/messages/messageBox
-    .row
-      #sidebar
-        block sidebar
-          include app/shared/sidebar/sidebar
-      block content
-    .row
-      block media
-        include app/shared/player/player
+    <!--[if lt IE 8]>
+    p.browsehappy
+      | You are using an <strong>outdated</strong> browser.
+      | Please <a href="http://browsehappy.com/">upgrade your browser</a>
+      | to improve your experience.
+    <![endif]-->
+    block header
+      include app/shared/header/header
+    .container-fluid
+      .row
+        block messages
+          include app/shared/messages/messageBox
+      .row
+        block content
+      .row
+        block media
+          include app/shared/player/player

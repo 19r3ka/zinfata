@@ -10,7 +10,7 @@
                             span.glyphicon(class='glyphicon-remove')
                             | Delete
                 button.btn-primary(ng-click='update(user)', ng-show='editing', ng-disabled='userProfile.$invalid') Update!
-.jumbotron
+.jumbotron(ng-hide='editing')
     .row
         .col-md-4
             img.img-circle(class='img-responsive center-block', name= 'avatar', alt='{{ user.handle }}', ng-src='{{ user.avatarUrl }}')
@@ -28,31 +28,35 @@
                             | Delete
             h3 {{ fullname(user) }}
             .metrics
+.z-content-area(class='col-s-12 col-md-10 col-md-offset-1')
+    .z-s-content-area(class='col-md-8 col-md-offset-2')
+        .page-header(ng-if='canEdit && editing')
+            h3 Edit Your Profile
+                .small Introduce yourself to the Zinfata Community.
+        form(name='userProfile', role='form', novalidate, ng-if='canEdit && editing')
+            .form-group(ng-hide='!editing')
+                label(for='avatarInput') Choose your avatar:
+                z-img-crop(on-img-ready='updateAvatar(imgFile)')
+                //- input.form-control(type='file', name='avatar', id='avatarInput', accept='image/jpeg,image/jpg,image/png', onchange='angular.element(this).scope().readFile(this)')
+                //- .crop-area(ng-show='cropPending', class='center-block', style='width:auto; height:350px;')  
+                    img-crop(image='rawImage', result-image='croppedImage')
+                    button.center-block(type='button', class='btn btn-primary', ng-click='updateAvatar(croppedImage)') Crop image
+            .form-group
+                label(for='firstName') First name:
+                input.form-control(type='text', name='firstName', id='firstName', placeholder='First Name', ng-model='user.firstName', ng-disabled='!editing', required)
+            .form-group
+                label(for='lastName') Last name:
+                input.form-control(type='text', name='lastName', id='lastName', placeholder='Last Name', ng-model='user.lastName', ng-disabled='!editing', required)
+            .form-group
+                label(for='handle') Handle:	
+                input.form-control(type='text', name='handle', id='handle', placeholder='Handle', ng-model='user.handle', ng-disabled='!editing', required)
+            .form-group
+                label(for='email') Email:
+                input.form-control(type='email', name='email', id='email', placeholder='Email', ng-model='user.email', ng-disabled='!editing', required)
+            .form-group
+                label(for='whatsapp') Whatsapp number:
+                input.form-control(type='tel', name='whatsapp', id='whatsapp', placeholder='Whatsapp N*', ng-model='user.whatsapp', ng-disabled='!editing')
+            .form-group
+                button.btn-primary(class='form-control', ng-click='update(user)', ng-show='editing', ng-disabled='userProfile.$invalid') Update!
 
-form(name='userProfile', role='form', novalidate, ng-if='canEdit')
-    .form-group(ng-hide='!editing')
-        label(for='avatarInput') Choose your avatar:
-        z-img-crop(on-img-ready='updateAvatar(imgFile)')
-        //- input.form-control(type='file', name='avatar', id='avatarInput', accept='image/jpeg,image/jpg,image/png', onchange='angular.element(this).scope().readFile(this)')
-        //- .crop-area(ng-show='cropPending', class='center-block', style='width:auto; height:350px;')  
-            img-crop(image='rawImage', result-image='croppedImage')
-            button.center-block(type='button', class='btn btn-primary', ng-click='updateAvatar(croppedImage)') Crop image
-    .form-group
-        label(for='firstName') First name:
-        input.form-control(type='text', name='firstName', id='firstName', placeholder='First Name', ng-model='user.firstName', ng-disabled='!editing', required)
-    .form-group
-        label(for='lastName') Last name:
-        input.form-control(type='text', name='lastName', id='lastName', placeholder='Last Name', ng-model='user.lastName', ng-disabled='!editing', required)
-    .form-group
-        label(for='handle') Handle:	
-        input.form-control(type='text', name='handle', id='handle', placeholder='Handle', ng-model='user.handle', ng-disabled='!editing', required)
-    .form-group
-        label(for='email') Email:
-        input.form-control(type='email', name='email', id='email', placeholder='Email', ng-model='user.email', ng-disabled='!editing', required)
-    .form-group
-        label(for='whatsapp') Whatsapp number:
-        input.form-control(type='tel', name='whatsapp', id='whatsapp', placeholder='Whatsapp N*', ng-model='user.whatsapp', ng-disabled='!editing')
-    .form-group
-        button.btn-primary(class='form-control', ng-click='update(user)', ng-show='editing', ng-disabled='userProfile.$invalid') Update!
-
-z-album-listing(artist='user')
+    z-album-listing(artist='user', ng-hide='editing')

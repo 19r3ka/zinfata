@@ -71,6 +71,8 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
 
   $scope.albums = [];
   $scope.creating = $scope.editing = false;
+  $scope.pageTitle = 'Add New Track'
+  $scope.pageDescription = 'Upload a new song for the world to enjoy.'
 
   if ($location.path() === '/track/new') {
     $scope.creating = true;
@@ -89,6 +91,10 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
       if ($location.path() === '/track/' + $routeParams.trackId + '/edit') {
         $scope.canEdit ? $scope.editing = true : $location.path('track/' +
         $routeParams.trackId);
+        if ($scope.editing) {
+          $scope.pageDescription = 'Edit this track\'s information';
+          $scope.pageTitle = 'Edit Track Information';
+        }
       }
 
       /*
