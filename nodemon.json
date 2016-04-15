@@ -1,6 +1,8 @@
 {
 	"restartable": "rs",
+	"script": "./bin/www",
 	"colours": true,
+	"verbose": true,
 	"ignore": [
 		".git",
 		"node_modules/**/*",
@@ -9,12 +11,6 @@
 		"zinfata.sublime-*",
 		"public/**/*"
 	],
-	"verbose": false,
-	"execMap": {
-		"js": "node --harmony",
-		"py": "python",
-		"rb": "ruby"
-	},
 	"watch": ["*.*"],
 	"env": {
 		"NODE_ENV": "development"

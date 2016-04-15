@@ -30,7 +30,7 @@ function runCommand(command) {
 /*
 ** Configures Nodemon as a Gulp task using the nodemon.json settings
 */
-gulp.task('nodemon', ['start-mongo'], function() {
+gulp.task('nodemon', function() {
   var nodeConfig = require('fs').readFileSync('nodemon.json','utf8');
   var started    = false;
   // nodemon(JSON.parse(nodeConfig))
@@ -41,6 +41,9 @@ gulp.task('nodemon', ['start-mongo'], function() {
       started = true;
     }
   })
+  .on('restart', function () {
+    console.log('restarted!');
+  });
   /*.on('restart', function() {
     setTimeout(function() {
       browserSync.reload({

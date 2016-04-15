@@ -5,7 +5,7 @@ html.no-js
     meta(charset='utf-8')
     meta(http-equiv='X-UA-Compatible', content='IE=edge')
     title= title
-    meta(name='description', content='Le plateforme de la musique togolaise.')
+    meta(name='description', content='La plateforme de la musique togolaise.')
     meta(name='viewport', content='width=device-width, initial-scale=1')
     link(rel='stylesheet', href='/zinfataClient/assets/libs/bootstrap-3.3.5/css/bootstrap.css')
     link(rel='stylesheet', href='/zinfataClient/assets/libs/font-awesome-4.5.0/css/font-awesome.min.css')
@@ -29,13 +29,10 @@ html.no-js
       block messages
         include app/shared/messages/messageBox
     .row
-      .col-md-2#sidebar
+      #sidebar
         block sidebar
           include app/shared/sidebar/sidebar
-      .col-md-7
-        block content
-
-      .col-md-3
-      
-    block media
-      include app/shared/player/player
+      block content
+    .row
+      block media
+        include app/shared/player/player
