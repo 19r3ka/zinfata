@@ -1,6 +1,8 @@
 .panel(class='panel-primary')
     .panel-heading
         h4.panel-title Tracks
+            .pull-right
+                a(href='/track/new') + Add track
     .panel-body
         div(ng-show='!tracks.length && isOwner')
             p.text-center You don't have any tracks in this album yet?
@@ -37,4 +39,3 @@
                                 |  Add to
                                 span.caret
                             z-playlist-dropdown(track='track')
- 

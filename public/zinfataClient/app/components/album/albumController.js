@@ -39,7 +39,7 @@ ALBUM_EVENTS, $log) {
           $routeParams.albumId);
         if ($scope.editing) {
           $scope.pageTitle = 'Edit Album Info';
-          $scope.pageDescription = 'Edit this album basic information.'
+          $scope.pageDescription = 'Edit this album basic information.';
         }
       }
       Users.get($scope.album.artist.id, function(user) {
