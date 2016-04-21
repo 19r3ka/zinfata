@@ -9,13 +9,9 @@ html.no-js
     meta(name='viewport', content='width=device-width, initial-scale=1')
     link(rel='stylesheet', href='/zinfataClient/assets/libs/bootstrap-3.3.5/css/bootstrap.css')
     link(rel='stylesheet', href='/zinfataClient/assets/libs/font-awesome-4.5.0/css/font-awesome.min.css')
-    link(rel='stylesheet', href="../stylesheets/style.min.css")
     link(rel='stylesheet', href='/zinfataClient/assets/libs/ngImgCrop/ng-img-crop.css')
-    block scripts
-      script(src='/zinfataClient/assets/libs/jquery/jquery-2.1.4.min.js')
-      script(src='/zinfataClient/assets/libs/bootstrap-3.3.5/js/bootstrap.js')
-      script(src='/zinfataClient/assets/libs/angular-1.4.5/angular.js')
-  body.container(ng-app='zinfataClient')
+    link(rel='stylesheet', href="../stylesheets/style.css")
+  body(ng-app='zinfataClient')
     <!--[if lt IE 8]>
     p.browsehappy
       | You are using an <strong>outdated</strong> browser.
@@ -23,13 +19,16 @@ html.no-js
       | to improve your experience.
     <![endif]-->
     block header
-      include app/shared/header/header
-    .container-fluid
-      .row
-        block messages
-          include app/shared/messages/messageBox
-      .row
-        block content
-      .row
-        block media
-          include app/shared/player/player
+      include app/shared/header/header    
+    block messages
+      include app/shared/messages/messageBox  
+    
+    block content
+    
+    block media
+      include app/shared/player/player
+
+    block scripts
+      script(src='/zinfataClient/assets/libs/jquery/jquery-2.1.4.min.js')
+      script(src='/zinfataClient/assets/libs/bootstrap-3.3.5/js/bootstrap.js')
+      script(src='/zinfataClient/assets/libs/angular-1.4.5/angular.js')

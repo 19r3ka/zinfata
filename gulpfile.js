@@ -1,35 +1,76 @@
 var gulp         = require('gulp');
-var concat       = require('gulp-concat');
-var less         = require('gulp-less');
-var jshint       = require('gulp-jshint');
-var jscs         = require('gulp-jscs');
+/*var useref     = require('gulp-useref');
+var uglify       = require('gulp-uglify');
+var imagemin     = require('gulp-imagemin');
+var gulpIf       = require('gulp-if');
+var del          = require('del');*/
+var minify       = require('gulp-cssmin');
 var cache        = require('gulp-cached');
-var rename       = require('gulp-rename');
-var autoprefixer = require('gulp-autoprefixer');
-var nodemon      = require('gulp-nodemon');
-var cssmin       = require('gulp-cssmin');
+var less         = require('gulp-less');
 var runSequence  = require('run-sequence');
+var nodemon      = require('gulp-nodemon');
+var concat       = require('gulp-concat');
+var csscomb      = require('gulp-csscomb');
+var autoprefixer = require('gulp-autoprefixer');
 var browserSync  = require('browser-sync').create();
-var exec         = require('child_process').exec;
 
-var running      = false;
+var zClient      = 'public/zinfataClient/';
+var dest         = 'public/dist/';
+var cssFolder    = 'public/stylesheets/';
+var html         = zClient + 'app/*.jade';
+var images       = zClient + 'assets/images/';
+var lessFiles    = cssFolder + 'less/*.less';
 
-/*
-** Executes cli commands with Gulp
-*/
-function runCommand(command) {
-  return function(cb) {
-    exec(command, function(err, stdout, stderr) {
-      console.log(stdout);
-      console.log(stderr);
-      cb(err);
-    });
-  };
-}
+/*gulp.task('useref', function() {
+  return gulp.src(html)
+  .pipe(useref())
+  // Only minify javascript
+  .pipe(gulpIf('*.js', uglify()))
+  //  Only minify css
+  .pipe(gulpIf('*.css', minify()))
+  .pipe(gulp.dest(dest));
+});
 
-/*
-** Configures Nodemon as a Gulp task using the nodemon.json settings
-*/
+gulp.task('tinyImg', function() {
+  return gulp.src(images + '**.+(png|jpg|jpeg|gif|svg)')
+  .pipe(cache(imagemin({
+    interlaced: true
+  })))
+  .pipe(gulp.dest(dest + images));
+});
+
+gulp.task('clean:dist', function() {
+  return del.sync(dest);
+});
+
+gulp.task('clean:cache', function(cb) {
+  return cache.clearAll(cb);
+});*/
+
+gulp.task('less', function() {
+  return gulp.src(lessFiles)
+  .pipe(concat('style.less'))
+  .pipe(less())
+  .on('error', function(err) {
+    console.error(err.toString());
+    this.emit('end');
+  })
+  .pipe(autoprefixer())
+  .pipe(csscomb())
+  .pipe(gulp.dest(cssFolder))
+  .pipe(browserSync.reload({
+    stream: true
+  }));
+});
+
+gulp.task('browserSync', function() {
+  return browserSync.init(null, {
+    proxy: 'http://localhost:3000',
+    files: ['public/zinfataClient/**/*.*'],
+    port: 7000
+  });
+});
+
 gulp.task('nodemon', function() {
   var nodeConfig = require('fs').readFileSync('nodemon.json','utf8');
   var started    = false;
@@ -41,101 +82,24 @@ gulp.task('nodemon', function() {
       started = true;
     }
   })
-  .on('restart', function () {
-    console.log('restarted!');
-  });
-  /*.on('restart', function() {
+  .on('restart', function() {
+    console.log('restarting!');
     setTimeout(function() {
       browserSync.reload({
         stream: false
       });
     }, 1000);
-  })*/;
-});
-
-/*
-** Watches custom CSS files and starts 'compilecss' task
-*/
-gulp.task('watch', ['compilecss'], function() {
-  gulp.watch(['./public/stylesheets/style-css.css',
-              './public/stylesheets/less/*.less'],
-              ['compilecss']);
-});
-
-/*
-** Start the mongo database
-*/
-gulp.task('start-mongo', function() {
-  return runCommand('mongod');
-});
-
-/*
-** Compiles CSS by running 'less' and 'css' in sequence
-*/
-gulp.task('compilecss', function() {
-  runSequence('less', 'css');
-});
-
-/*
-** Convert all '.less' files under '/stylesheets/less' folder into 'style-less.css'
-*/
-gulp.task('less', function() {
-  gulp.src('./public/stylesheets/less/*.less')
-  .pipe(concat('style-less.less'))
-  .pipe(less())
-  .pipe(gulp.dest('./public/stylesheets/'));
-});
-
-/*
-** cocatenate 'style-css.css' and  'style-less-css' to 'style.css'
-** add vendor prefix to 'style.css'
-** minify 'style.css' to 'style.min.css'
-*/
-gulp.task('css', function() {
-  setTimeout(function() {
-    gulp.src(['./public/stylesheets/style-less.css',
-              './public/stylesheets/style-css.css'])
-    .pipe(concat('style.css'))
-    .pipe(autoprefixer())
-    .pipe(gulp.dest('./public/stylesheets/'))//--
-    .pipe(cssmin())
-    .pipe(rename('style.min.css'))
-    .pipe(gulp.dest('./public/stylesheets/'));
-  }, 1000);
-});
-
-/*
-** Sets up browser-sync
-*/
-gulp.task('browser-sync', ['nodemon'], function() {
-  return browserSync.init(null, {
-    proxy: 'http://localhost:3000',
-    files: ['public/zinfataClient/**/*.*'],//files: ['public/**/*.*'], //,'public/zinfataClient/index.jade', 'public/stylesheets/style-css.css','public/zinfataClient/layout.jade','public/stylesheets/style.min.css'
-    // browser: ['google chrome'],//iceweasel,chromium
-    // online: true,
-    // reloadOnRestart: true,
-    port: 7000
   });
 });
 
-/* Lints the changed files */
-gulp.task('lint', function() {
-  return gulp.src('./**/*.js')
-    .pipe(cache('linting'))
-    .pipe(jshint())
-    .pipe(jshint.reporter())
-    .pipe(jshint.reporter('fail'))
-    .pipe(jscs())
-    .pipe(jscs.reporter());
+gulp.task('watch', ['nodemon', 'browserSync', 'less'], function() {
+  gulp.watch(lessFiles, ['less']);
 });
 
-/*
-** Starts the mongo database before nodemon and eventually browser-sync
-*/
-gulp.task('default', ['browser-sync'], function() {
-  gulp.watch(
-    ['./public/stylesheets/style-css.css', './public/stylesheets/less/*.less'],
-    ['compilecss']
-  );
-  // gulp.watch('./**/*.js', ['lint']);
+gulp.task('default', function(cb) {
+  runSequence(['less', 'nodemon', 'browserSync', 'watch'], cb);
+});
+
+gulp.task('build', function(cb) {
+  runSequence('clean:dist', ['less', 'useref', 'images'], cb);
 });

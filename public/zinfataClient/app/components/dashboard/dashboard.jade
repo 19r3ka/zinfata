@@ -1,9 +1,18 @@
-.jumbotron
-  .center-block(class='bottom')
-    p Rediscover Togo music: from the old-time favorites to new-school hotties!
-    input.z-search-box(class='input-lg', type='text', name='homepageSearch', placeholder='Search for artists, albums, and tracks...')
-    p or 
-    a.btn(type='button', class='btn-default', name='homepageUpload', href='track/new') Add your own
+.jumbotron  
+  .container
+    h1.text-center Rediscover Togo music:
+      .small from the old-time favorites to new-school hotties!
+    .row
+      .col-md-12
+        .bottom
+          .row
+            .col-md-6(class='col-sm-12 col-md-offset-1')
+              input.form-control(class='z-search-box input-lg', type='text', name='homepageSearch', placeholder='Search for artists, albums, and tracks...')  
+            .col-md-1(class='col-sm-12')  
+              p.text-center or 
+            .col-md-4(class='col-sm-12')  
+              a.btn(type='button', class='btn-default btn-lg', name='homepageUpload', href='track/new') Add your own
+.container
 .row
   .z-content-area(class='col-s-12 col-md-10 col-md-offset-1')
     div(ng-show='loggedIn()')

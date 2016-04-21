@@ -1,4 +1,30 @@
+/* Default palette
+   Generated via materialpalette.com
+*/
 /* track list */
+body {
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1em;
+  background-color: #f7f7f7;
+  color: #212121;
+}
+.z-content-area {
+  background-color: white;
+}
+nav.navbar {
+  background-color: #E64A19;
+  color: #FFCCBC;
+  border: none;
+}
+nav.navbar a:link,
+nav.navbar a:visited,
+nav.navbar a:hover,
+nav.navbar a:active {
+  color: #FFCCBC;
+}
+.jumbotron {
+  background-color: #FFCCBC;
+}
 .cent {
   display: inline-block;
   height: 100%;
