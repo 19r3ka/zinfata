@@ -1,23 +1,23 @@
-li: a(href='search')
+li.menu-item: a(href='search')
   span.glyphicon(class='glyphicon-search')
   |  Search
-  //- li: a(href='#')
-    span.glyphicon(class='glyphicon-globe')
-    |  Discover
-  //- li: a(href='#')
-    span.glyphicon(class='glyphicon-heart')
-    |  Follow
-  //- li: a(href='#')
-    span.glyphicon(class='glyphicon-star')
-    |  Starred
-  li: a(href='queue')
-    span.glyphicon(class='glyphicon-list-alt')
-    |  Play Queue
-  //- li: a(href='#')
-    span.glyphicon(class='glyphicon-music')
-    |  My Music
-  li.dropdown
-    a.dropdown-toggle(href='#', data-toggle='dropdown')
-      span.glyphicon(class='glyphicon-list')
-      |  My Playlists
-    z-playlist-dropdown
+//- li: a(href='#')
+  span.glyphicon(class='glyphicon-globe')
+  |  Discover
+//- li: a(href='#')
+  span.glyphicon(class='glyphicon-heart')
+  |  Follow
+//- li: a(href='#')
+  span.glyphicon(class='glyphicon-star')
+  |  Starred
+li: a(href='queue')
+  span.glyphicon(class='glyphicon-list-alt')
+  |  Play Queue
+//- li: a(href='#')
+  span.glyphicon(class='glyphicon-music')
+  |  My Music
+li.dropdown
+  a.dropdown-toggle(href='#', data-toggle='dropdown')
+    span.glyphicon(class='glyphicon-list')
+    |  My Playlists
+  z-playlist-dropdown

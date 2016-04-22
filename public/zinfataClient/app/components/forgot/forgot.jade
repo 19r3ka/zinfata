@@ -1,12 +1,15 @@
-.z-content-area(class='col-s-12 col-md-10 col-md-offset-1')
-    .z-s-content-area(class='col-md-8 col-md-offset-2')
-        .page-header
-            h3 Forgot Your Password?
-                .small Please enter the email where to send you the password-reset link.
-        form(name='resetPasswordForm', role='form', novalidate)
-            .form-group(ng-class="{ 'has-error': resetPasswordForm.resetEmail.$touched && resetPasswordForm.resetEmail.$invalid }")
-                input.form-control(type='email', name='resetEmail', placeholder='Email address', ng-model='email', required)
-                .help-block(ng-messages='resetPasswordForm.resetEmail.$error', ng-show='resetPasswordForm.resetEmail.$touched')
-                        div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
-            .form-group
-                button.btn(type='submit', class=['btn-primary', 'form-control'], ng-disabled='resetPasswordForm.$invalid', ng-click='reset(email)') Reset!
+.container
+    .row
+        .col-s-12(class='col-md-10 col-md-offset-1')
+            .col-md-8(class='col-md-offset-2')
+                .z-content-area
+                    .page-header
+                        h3 Forgot Your Password?
+                            .small Please enter the email where to send you the password-reset link.
+                    form(name='resetPasswordForm', role='form', novalidate)
+                        .form-group(ng-class="{ 'has-error': resetPasswordForm.resetEmail.$touched && resetPasswordForm.resetEmail.$invalid }")
+                            input.form-control(type='email', name='resetEmail', placeholder='Email address', ng-model='email', required)
+                            .help-block(ng-messages='resetPasswordForm.resetEmail.$error', ng-show='resetPasswordForm.resetEmail.$touched')
+                                    div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
+                        .form-group
+                            button.z-btn(type='submit', class=['form-control'], ng-disabled='resetPasswordForm.$invalid', ng-click='reset(email)') Reset!

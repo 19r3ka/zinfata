@@ -1,44 +1,40 @@
 nav.navbar(class='navbar-inverse navbar-fixed-top', role='navigation', ng-controller='headerCtrl')
   .container-fluid
-    ul.nav(class='navbar-left navbar-nav hidden-xs hidden-sm', ng-show='loggedIn()')
-      li.dropdown
-        button(class='dropdown-toggle', role='button', data-toggle='dropdown', data-target='#')
-          span.sr-only Toggle navigation
-          span.icon-bar
-          span.icon-bar
-          span.icon-bar
-        ul.dropdown-menu
-          include ../sidebar/sidebar_inline
-  .navbar-header
-    button.navbar-toggle(type='button', class='collapsed', data-toggle='collapse',
-      data-target='#z-navbar-collapse' aria-expanded='false')
-      span.sr-only Toggle navigation
-      span.icon-bar
-      span.icon-bar
-      span.icon-bar
-    a.navbar-brand(href='/') ZINFATA
-  .navbar-collapse(class='collapse', id='z-navbar-collapse')
-    ul.nav(class='navbar-right navbar-nav')
-      li(class='hidden-xs hidden-sm', ng-show='loggedIn()')
-        a.navbar-btn( type='button', class='btn btn-default', href='track/new') Upload a track!
-      li.dropdown(class='hidden-xs hidden-sm', ng-show='loggedIn()')
-        a.dropdown-toggle(href='#', data-toggle='dropdown')
-          | {{ user.handle }}
-          b.caret
-        ul.dropdown-menu
-          li.menu-item: a(href= '{{ userProfile(user) }}' )
-            span.glyphicon(class='glyphicon-user')
-            |   Profile
-          //- li.menu-item: a(href= '{{ userSettings(user) }}') Settings 
-      li: a(href='#', ng-show='loggedIn()', ng-click='logout()')
-        span.glyphicon(class='glyphicon-log-out') 
-        |   Log Out
-      li: a(href='login', ng-hide='loggedIn()')
-        span.glyphicon(class='glyphicon-log-in')
-        |   Log In
-      li: a(href='register', ng-hide='loggedIn()') Register
-      li.divider(role='separator')
-      include ../sidebar/sidebar_inline
+    .navbar-header
+      button.navbar-toggle(type='button', class='collapsed', data-toggle='collapse',
+        data-target='#z-navbar-collapse' aria-expanded='false')
+        span.sr-only Toggle navigation
+        span.icon-bar
+        span.icon-bar
+        span.icon-bar
+      a.navbar-brand(href='/') ZINFATA
+    .navbar-collapse(class='collapse', id='z-navbar-collapse')
+      ul.nav(class='navbar-right navbar-nav')
+        li(class='hidden-xs hidden-sm', ng-show='loggedIn()')
+          button.navbar-btn(type='button', class='btn btn-default', href='track/new') Upload a track!
+        li.dropdown(class='hidden-xs hidden-sm', ng-show='loggedIn()')
+          a.dropdown-toggle(href='#', data-toggle='dropdown', class='text-capitalize')
+            span.z-text-emphasize
+              | {{ user.handle }}
+            b.caret
+          ul.dropdown-menu
+            include ../sidebar/sidebar_inline
+            li.divider
+            li.menu-item: a(href='{{ userProfile(user) }}')
+              span.glyphicon(class='glyphicon-user')
+              |   Profile
+            //- li.menu-item: a(href= '{{ userSettings(user) }}') Settings 
+            li.menu-item: a(href='#', ng-show='loggedIn()', ng-click='logout()')
+              span.glyphicon(class='glyphicon-log-out')
+              |   Log Out
+        li(class='hidden-md hidden-lg', ng-show='loggedIn()')
+          a.text-capitalize(href='{{ userProfile(user) }}') {{ user.handle }}'s profile
+        li: a(href='login', ng-hide='loggedIn()')
+          span.glyphicon(class='glyphicon-log-in')
+          |   Log In
+        li: a(href='register', ng-hide='loggedIn()') Register
+        li.divider(role='separator')
+        include ../sidebar/sidebar_inline_md
     //- ul.nav(id='mobile-menu', class=['navbar-right', 'navbar-nav'])
     //-     li.dropdown
     //-       a(class='dropdown-toggle', role='button', data-toggle='dropdown', data-target='#')

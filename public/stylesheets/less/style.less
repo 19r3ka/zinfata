@@ -2,22 +2,31 @@
 @jumbotron-bg-url: '../../images/home_jumbotron_bg.jpg';
 @search-icon: '../../images/search_icon.svg';
 @min-padding: 20px;
+@default-font-size: 14px;
+@big-font-size: @default-font-size / .75;
+@small-font-size: @default-font-size * .75;
+@default-padding: 10px;
+
+html, body {
+	height: 100%;
+}
 
 body {
 	font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	padding: 0, 0, 90px, 0;
-	margin: 0;
-	margin-top: 50px;
-	font-size: 1em;
+	margin-top: 50px; 
+	box-sizing: content-box;
+	font-size: @default-font-size;
 	background-color: @background-color;
 	color: @primary-text-color;
 }
+
 
 nav.navbar {
 	background-color: @dark-primary-color;
 	color: @text-icon-color;
 	border: none;
-	font-size: 12px;
+	font-size: @small-font-size;
 	.boxShadow();
 	a {
 		&:link, &:visited, &:hover, &:active {
@@ -27,32 +36,66 @@ nav.navbar {
 	button {
 		border: none;
 	}
-	li {
+	.navbar-btn {
+		position: relative;
+		right: 15px;
+		background: transparent;
+		color: @light-primary-color;
+		border: thin solid @light-primary-color;
 		&:hover {
-			background-color: @primary-color;
+			border: none;
+			background-color: @dark-primary-color;
+			color: white;
 		}
 	}
-	.navbar-collapse {
+	ul {
+		.navbar-right {
+			padding-right: 20px; /*causes highlight on hover not to extend completely to the right*/
+		}
+		.dropdown-menu {
+			background: @dark-primary-color;
+			li:hover {
+				background-color: @primary-color
+			}
+		}
+	}
+	#z-navbar-collapse.in {
 		.boxShadow(3);
+		li {
+			&:hover {
+				background-color: @primary-color;
+			}
+		}
+	}
+	.z-text-emphasize {
+		font-size: @default-font-size;
+		font-weight: bold;
 	}
 }
 
 a {
-  color: @primary-color;
-	&:hover {
+  &:link, &:visited {
+  	color: @primary-color; 	
+  }
+	&:hover, &:active {
 		text-decoration: none;
+		color: @dark-primary-color;
 	}	
 }
 
-.z-content-area {
-	background-color: white;
-	height: 100%;
-	.boxShadow();
+.container {
+	min-height: 90%;
 }
 
-.z-search-box {
-	padding-left: 50px;
-	background: white url(@search-icon) 5px 5px no-repeat;
+.page-header {
+	color: @primary-color;
+	margin-top: 0;
+}
+
+.modal-dialog {
+	.close, .modal-header {
+		color: @dark-primary-color;
+	}
 }
 
 .jumbotron {
@@ -102,6 +145,114 @@ a {
 	.small {
 		color: white;
 	}
+}
+
+.z-content-area {
+	background-color: white;
+	float: none;
+	margin: 20px;
+	margin-top: 0px;
+	padding: 10px 30px;
+	height: 100%;
+	.boxShadow();
+}
+
+.z-secondary-text {
+	color: @secondary-text-color;
+}
+
+.z-vcentered {
+	display: block;
+	float: none;
+	vertical-align: middle;
+	padding: 10px 10px;
+}
+
+.z-ellipsis {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	width: 100%;
+	&:hover {
+		overflow: visible;
+		text-overflow: none;
+	}
+}
+
+.z-search-box {
+	padding-left: 50px;
+	background: white url(@search-icon) 5px 5px no-repeat;
+}
+
+.z-track {
+	border: none;
+	border-bottom: 1px solid @divider-color;
+	padding-top: @default-padding;
+	padding-bottom: @default-padding;
+	a > span.glyphicon:hover {
+		color: @dark-primary-color;
+	}
+	img.media-object {
+		.boxShadow();
+	}
+}
+
+.z-btn {
+  background-color: #FF5722;
+  border-color: #FF5722;
+  .boxShadow();
+  transition: all 500ms;
+  color: white;
+  /*&:hover, &:focus, &:active, &.active {
+  	background-color: #ff4408;
+  	border-color: #ee3900;
+		.elevate(1);
+  }
+  .disabled {
+  	background-color: #ff4408;
+  	border-color: #ee3900;
+  	&:hover, &:focus, &:active, &.active {
+	  	background-color: #ff4408;
+	  	border-color: #ee3900;
+	  }	
+	 	[disabled] {
+			background-color: #ff4408;
+	  	border-color: #ee3900;
+	  	&:hover, &:focus, &:active, &.active {
+		  	background-color: #ff4408;
+		  	border-color: #ee3900;
+		  }
+	 	}
+  }*/
+}
+.z-btn:hover,
+.z-btn:focus,
+.z-btn:active,
+.z-btn.active {
+  background-color: #ff4408;
+  border-color: #ee3900;
+	.elevate(1);
+
+}
+.z-btn.disabled:hover,
+.z-btn.disabled:focus,
+.z-btn.disabled:active,
+.z-btn.disabled.active,
+.z-btn[disabled]:hover,
+.z-btn[disabled]:focus,
+.z-btn[disabled]:active,
+.z-btn[disabled].active,
+fieldset[disabled] .z-btn:hover,
+fieldset[disabled] .z-btn:focus,
+fieldset[disabled] .z-btn:active,
+fieldset[disabled] .z-btn.active {
+  background-color: #FF5722;
+  border-color: #FF5722;
+  box-shadow: none;
+  transform: none;
+  color: black;
+  opacity: .65;
+  cursor: not-allowed;
 }
 
 .cent {
