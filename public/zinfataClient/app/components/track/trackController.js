@@ -51,7 +51,8 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
     title:       '',
     album:  {
       id:      null,
-      title:   ''
+      title:   '',
+      coverArt: ''
     },
     artist: {
       id:      null,
@@ -71,8 +72,8 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
 
   $scope.albums = [];
   $scope.creating = $scope.editing = false;
-  $scope.pageTitle = 'Add New Track'
-  $scope.pageDescription = 'Upload a new song for the world to enjoy.'
+  $scope.pageTitle = 'Add New Track';
+  $scope.pageDescription = 'Upload a new song for the world to enjoy.';
 
   if ($location.path() === '/track/new') {
     $scope.creating = true;
@@ -104,7 +105,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
       getUserAlbums($scope.track.artist.id);
 
       UsersSvc.get($scope.track.artist.id, function(artist) {
-        $scope.track.artist.handle = artist.handle;
+        $scope.track.artist.handle    = artist.handle;
       }, function(err) {
         $log.error('could not fetch track artist: ' +
           $scope.track.artist.id);

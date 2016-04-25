@@ -1,4 +1,4 @@
-.panel(class='panel-primary')
+.panel(class='z-list-box')
     .panel-heading
         h4.panel-title Tracks
             .pull-right
@@ -9,7 +9,48 @@
                 a(href='track/new')  Add one now!
         div(ng-show='!tracks.length && !isOwner')
             p.text-center This album doesn't have any track yet!
-        .track-list(ng-show='!!tracks.length')
+        .z-list(ng-show='!!tracks.length')
+            .z-track(ng-repeat='track in tracks')
+                .media
+                    .media-left
+                        a(href='#')
+                            img.media-object(name='coverArt', width='75', ng-src='{{ track.coverArt }}', alt='{{ track.title }}')
+                    .media-body
+                      .row
+                        .col-sm-7(class='col-md-6 col-xs-7')
+                            h4.media-heading(class='z-ellipsis'): a(href='track/{{ track._id }}') {{ track.title }}
+                                .small: a(href='album/{{ track.album.id }}') {{ track.album.title }}
+                            h6: a(href='user/{{ track.artist.id }}') {{ track.artist.handle }}
+                        .col-sm-5(class='col-md-6 col-xs-5')
+                            .pull-right
+                                ul.list-inline(class='z-vcentered z-secondary-text hidden-xs hidden-sm')
+                                    li.small {{ track.genre }}
+                                    li.small {{ track.duration | duration2time }}
+                                    //- li: a(href='#', ng-click='favorite(track)')
+                                        span.glyphicon(class='glyphicon-heart-empty')
+                                    li: a(href='#', ng-click='addToQueue(track)')
+                                        span.glyphicon(class='glyphicon-list')
+                                    li: a.dropdown-toggle(href='#', data-toggle='dropdown')
+                                        span.glyphicon(class='glyphicon-plus')
+                                    z-playlist-dropdown(track='track')
+                                    li(ng-click='play(track)'): a(href='#')
+                                        span.glyphicon(class='glyphicon-play')
+                                ul.list-unstyled(class='z-secondary-text hidden-md hidden-lg')
+                                    li.text-right(class='small') {{ track.genre }}
+                                    li.text-right(class='small') {{ track.duration | duration2time }}
+                                    li.pull-right: ul.list-inline
+                                        //- li: a(href='#', ng-click='favorite(track)')
+                                            span.glyphicon(class='glyphicon-heart-empty')
+                                        li: a(href='#', ng-click='addToQueue(track)')
+                                            span.glyphicon(class='glyphicon-list')
+                                        li: a.dropdown-toggle(href='#', data-toggle='dropdown')
+                                          span.glyphicon(class='glyphicon-plus')
+                                        z-playlist-dropdown(track='track')
+                                        li(ng-click='play(track)'): a(href='#')
+                                            span.glyphicon(class='glyphicon-play')
+
+
+        //- .track-list(ng-show='!!tracks.length')
             .track-item(ng-repeat='track in tracks')
                 .track-cover
                     img.img-responsive(class='center-block', name='coverArt', width='50', alt='{{ track.title }}', ng-src='{{ track.coverArt }}')

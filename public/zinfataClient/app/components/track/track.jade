@@ -1,96 +1,138 @@
-.jumbotron(ng-if='!creating && !editing')
+.jumbotron(ng-hide='creating || editing', class='z-id-card', ng-style='{"background-image": url({{ track.album.coverArt }})}')
+    .z-blur
+    .container
+        .row
+            .col-md-10(class='col-md-offset-1')
+                .col-sm-12(class='col-md-3')
+                    img.img-circle(class='img-responsive center-block', name= 'coverArt', alt='{{ track.title }}', ng-src='{{ track.coverArt }}')
+                .col-sm-12(class='col-md-9')
+                    .z.vcentered
+                        h1.text-capitalize {{ track.title }}
+                            .small: a(href='/album/{{ track.album.id }}') {{ track.album.title }}
+                            //- .dropdown(class='pull-right')
+                            //-     a.dropdown-toggle(data-toggle='dropdown', id='dropdownMenu', aria-haspopup='true', aria-expanded='true')
+                            //-         span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
+                            //-     ul.dropdown-menu(aria-labelledby='dropdownMenu', ng-show='canEdit')
+                            //-         li(ng-click='edit(track)'): a(href='') 
+                            //-             span.glyphicon(class='glyphicon-pencil')
+                            //-             |  Edit info
+                            //-         li(ng-click='delete(track)'): a.text-danger(href='')
+                            //-             span.glyphicon(class='glyphicon-remove')
+                            //-             |  Delete    
+                        h3#username: a(href='/user/{{ track.artist.id }}') {{ track.artist.handle }}
+                        br
+                        .metrics
+                            ul.list-inline
+                                li.text-capitalize Genre: {{ track.genre }}
+                                li.text-capitalize Duration: {{ track.duration | duration2time }} 
+                        br
+                        .interactions
+                            ul.list-inline
+                                li: a(href='', ng-click='play(track)') 
+                                    span.glyphicon(class='glyphicon-play')         
+                                li: a(href='', ng-click='addToQueue(track)') 
+                                    span.glyphicon(class='glyphicon-list')
+                                li.dropdown
+                                    a.dropdown-toggle(href='#', data-toggle='dropdown')
+                                        span.glyphicon(class='glyphicon-plus')
+                                    z-playlist-dropdown(track='track')
+                                li: a(href='#', ng-click='download(track)', ng-show='track.downloadable') 
+                                    span.glyphicon(class='glyphicon-download-alt')
+
+.container
     .row
-        .col-md-4
-            img.img-circle(class='img-responsive center-block', height='200', name= 'coverArt', alt='{{ track.title }}', ng-src='{{ track.coverArt }}')
-        .col-md-8
-            .row
-                .col-md-12
-                    .dropdown(class='pull-right')
-                        a.dropdown-toggle(data-toggle='dropdown', id='dropdownMenu', aria-haspopup='true', aria-expanded='true')
-                            span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
-                        ul.dropdown-menu(aria-labelledby='dropdownMenu', ng-show='canEdit')
-                            li(ng-click='edit(track)'): a(href='') 
-                                span.glyphicon(class='glyphicon-pencil')
-                                |  Edit info
-                            li(ng-click='delete(track)'): a.text-danger(href='')
-                                span.glyphicon(class='glyphicon-remove')
-                                |  Delete
-                    h3 {{ track.title }}
-                    h4: a(href='/album/{{ track.album.id }}') {{ track.album.title }}
-                    h5: a(href='/user/{{ track.artist.id }}') {{ track.artist.handle }}
-            
-                    ul.list-inline(class='metrics')
-                        li Duration: {{ track.duration | duration2time }} 
-                        li Genre: {{ track.genre }}
-                    ul.list-inline(class='interactions')
-                        li: a(href='', ng-click='play(track)') 
-                            span.glyphicon(class='glyphicon-play')
-                            |  Play now
-                        li: a(href='', ng-click='addToQueue(track)') 
-                            span.glyphicon(class='glyphicon-list')
-                            |  Queue up
-                        li.dropdown
-                            a.dropdown-toggle(href='#', data-toggle='dropdown')
-                                span.glyphicon(class='glyphicon-plus')
-                                |  Add to
-                                span.caret
-                            z-playlist-dropdown(track='track')
-                        li: a(href='#', ng-click='download(track)', ng-show='track.downloadable') 
-                            span.glyphicon(class='glyphicon-download-alt')
-                            |  Download
-.z-content-area(class='col-s-12 col-md-10 col-md-offset-1')
-    .z-s-content-area(class='col-md-8 col-md-offset-2')
-        .page-header(ng-if='editing || creating')
-            h3 {{ pageTitle }}
-                .small {{ pageDescription }}
-        form(name='trackInfo', role='form', ng-if='creating || editing')
-            .form-group
-                .row
-                    .col-md-3
-                         img.img-circle(class='img-responsive center-block', height='100', name='coverArtPreview', alt='{{ track.title }}', ng-src='{{ track.coverArt }}')
-                    .col-md-9
-                        .row
-                            .col-md-12
-                                label
-                                    input(type='checkbox', name='coverArtToggle', ng-model='cover.unique', ng-change='updateCoverArt(cover.unique)')
-                                |  This track has its own cover art!
-                                br
-                                div(ng-show='cover.unique')
-                                    label(for='img-crop') Cover Art:
-                                    z-img-crop#img-crop(on-img-ready='updateCoverImage(imgFile)')
-                                    
-            .form-group
-                input.form-control(type='text', name='title', ng-min-length='1', placeholder='Title', ng-model='track.title', ng-disabled='!editing && !creating' required)                
-            .form-group
-                label(for='music') Track:
-                input.form-control(type='file', name='music', accept='audio/*', onchange='angular.element(this).scope().readFile(this)', ng-required='!track.streamUrl')
-                //- audio(name='musicPreview', ng-src='{{ track.streamUrl }}', preload='auto', loop='true', ng-show='track.streamUrl', controls)
-                            |  Your browser does not support this type of audio file !
-            .form-group
-                .div
-                    label(for='album') Album:
-                    .pull-right
-                        a(href='/album/new') + Quickly create album
-                select.form-control(name='album', ng-model='track.album.id', ng-options='album._id as album.title for album in albums', required)
-                    option(value='') -- Choose this track's album --
-                .well(ng-show='!albums.length')
-                    p.text-center You don't have any albums yet. 
-                        a(href='album/new') Create an album first.
-                        |  Or quickly add one below! 
-                    z-album-creator
-            .form-group
-                label(for='genre') Genre:   
-                select.form-control(name='genre', ng-model='track.genre', ng-options='(genre | uppercase) for genre in musicGenres | orderBy: genre', required)
-                    option(value='') -- Choose a music genre --
-            .form-group(ng-class="{ 'has-error': trackInfo.releaseDate.$invalid }")
-                label(for='releaseDate') Release Date:
-                input.form-control(type='date', name='releaseDate', ng-model='track.releaseDate', max="{{track.album.releaseDate}}", ng-disabled='!editing && !creating', required)
-                .help-block(ng-messages='trackInfo.releaseDate.$error', ng-show='trackInfo.releaseDate.$touched', ng-hide='trackInfo.releaseDate.$submitted')
-                    div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
-            .form-group
-                label
-                    input(type='checkbox', name='DownloadToggle', ng-model='track.downloadable')
-                |  This track may be downloaded!
-            .form-group
-                button.btn-primary(class='form-control', type='submit', ng-click='create(track)', ng-show='creating', ng-disabled='trackInfo.$invalid') Upload track!
-                button.btn-primary(class='form-control', type='submit', ng-click='update(track)', ng-show='canEdit && editing', ng-disabled='trackInfo.$invalid') Save changes!
+        .col-sm-12(class='col-xs-12 col-md-10 col-md-offset-1')
+            .z-content-area
+                div(ng-if='canEdit && editing')
+                    .row
+                        .col-md-8(class='col-md-offset-2')
+                            .page-header(ng-if='editing || creating')
+                                h3 {{ pageTitle }}
+                                    .small {{ pageDescription }}
+                            form(name='trackInfo', role='form', ng-if='creating || editing')
+                                .form-group
+                                    .row
+                                        .col-md-3
+                                             img.img-circle(class='img-responsive center-block', height='100', name='coverArtPreview', alt='{{ track.title }}', ng-src='{{ track.coverArt }}')
+                                        .col-md-9
+                                            .row
+                                                .col-md-12
+                                                    label
+                                                        input(type='checkbox', name='coverArtToggle', ng-model='cover.unique', ng-change='updateCoverArt(cover.unique)')
+                                                    |  This track has its own cover art!
+                                                    br
+                                                    div(ng-show='cover.unique')
+                                                        label(for='img-crop') Cover Art:
+                                                        z-img-crop#img-crop(on-img-ready='updateCoverImage(imgFile)')
+                                                        
+                                .form-group
+                                    input.form-control(type='text', name='title', ng-min-length='1', placeholder='Title', ng-model='track.title', ng-disabled='!editing && !creating' required)                
+                                .form-group
+                                    label(for='music') Track:
+                                    input.form-control(type='file', name='music', accept='audio/*', onchange='angular.element(this).scope().readFile(this)', ng-required='!track.streamUrl')
+                                    //- audio(name='musicPreview', ng-src='{{ track.streamUrl }}', preload='auto', loop='true', ng-show='track.streamUrl', controls)
+                                                |  Your browser does not support this type of audio file !
+                                .form-group
+                                    .div
+                                        label(for='album') Album:
+                                        .pull-right
+                                            a(href='/album/new') + Quickly create album
+                                    select.form-control(name='album', ng-model='track.album.id', ng-options='album._id as album.title for album in albums', required)
+                                        option(value='') -- Choose this track's album --
+                                    .well(ng-show='!albums.length')
+                                        p.text-center You don't have any albums yet. 
+                                            a(href='album/new') Create an album first.
+                                            |  Or quickly add one below! 
+                                        z-album-creator
+                                .form-group
+                                    label(for='genre') Genre:   
+                                    select.form-control(name='genre', ng-model='track.genre', ng-options='(genre | uppercase) for genre in musicGenres | orderBy: genre', required)
+                                        option(value='') -- Choose a music genre --
+                                .form-group(ng-class="{ 'has-error': trackInfo.releaseDate.$invalid }")
+                                    label(for='releaseDate') Release Date:
+                                    input.form-control(type='date', name='releaseDate', ng-model='track.releaseDate', max="{{track.album.releaseDate}}", ng-disabled='!editing && !creating', required)
+                                    .help-block(ng-messages='trackInfo.releaseDate.$error', ng-show='trackInfo.releaseDate.$touched', ng-hide='trackInfo.releaseDate.$submitted')
+                                        div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
+                                .form-group
+                                    label
+                                        input(type='checkbox', name='DownloadToggle', ng-model='track.downloadable')
+                                    |  This track may be downloaded!
+                                .form-group
+                                    button.btn-primary(class='form-control', type='submit', ng-click='create(track)', ng-show='creating', ng-disabled='trackInfo.$invalid') Upload track!
+                                    button.btn-primary(class='form-control', type='submit', ng-click='update(track)', ng-show='canEdit && editing', ng-disabled='trackInfo.$invalid') Save changes!
+                div(ng-hide='editing')
+                    .row
+                        .col-sm-12(class='col-md-3')
+                            section(ng-if='canEdit')
+                                h4 Track
+                                ul.list-unstyled
+                                    li(ng-click='edit(track)'): a(href='#') 
+                                        span.glyphicon(class='glyphicon-pencil')
+                                        |  Edit info
+                                    li(ng-click='delete(track)'): a.text-danger(href='#')
+                                        span.glyphicon(class='glyphicon-remove')
+                                        |  Delete
+                            section.interactions
+                                ul.list-unstyled
+                                    li: button.z-btn(type='button', class='btn btn-default', ng-click='download(track)', ng-show='track.downloadable')
+                                        |   Download this track
+                                    li: a(href='', ng-click='play(track)') 
+                                        span.glyphicon(class='glyphicon-play')
+                                        |   Play now
+                                    li: a(href='', ng-click='addToQueue(track)') 
+                                        span.glyphicon(class='glyphicon-list')
+                                        |   Queue up
+                                    li.dropdown
+                                        a.dropdown-toggle(href='#', data-toggle='dropdown')
+                                            span.glyphicon(class='glyphicon-plus')
+                                            |   Add to...
+                                            b.caret
+                                        z-playlist-dropdown(track='track')
+                                //- Add social media share buttons here
+                                
+                        .col-sm-12(class='col-md-9')
+                            section
+                                h4 About
+                                p.
+                                    this is where you tell us all about this track giving indepth insights and
+                                    context to visitors. { track.about }

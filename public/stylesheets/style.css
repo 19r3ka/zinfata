@@ -43,6 +43,10 @@ body
     color: #212121;
     background-color: #f7f7f7;
 }
+form label
+{
+    color: #e64a19;
+}
 nav.navbar
 {
     font-size: 10.5px;
@@ -125,6 +129,17 @@ h6
 {
     color: #e64a19;
 }
+.alert
+{
+    position: fixed;
+    z-index: 3;
+
+    width: 100%;
+    margin: 0;
+    padding-left: 50px;
+
+    box-shadow: 0 3px 6px rgba(0, 0, 0, .16), 0 3px 6px rgba(0, 0, 0, .23);
+}
 .container
 {
     min-height: 90%;
@@ -199,7 +214,7 @@ h6
     border: none;
     background-color: #ff5722;
 }
-@media (max-width: 990px)
+@media (max-width: 960px)
 {
     .jumbotron .z-bottom a.btn
     {
@@ -208,11 +223,44 @@ h6
         margin: 0 auto;
     }
 }
+@media (max-width: 960px)
+{
+    .jumbotron h1,
+    .jumbotron h2,
+    .jumbotron h3,
+    .jumbotron h4,
+    .jumbotron h5,
+    .jumbotron h6,
+    .jumbotron .metrics,
+    .jumbotron .interactions
+    {
+        text-align: center;
+    }
+}
 .jumbotron h1
 {
     text-shadow: 0 0 25px black;
 }
-.jumbotron .small
+.jumbotron .small,
+.jumbotron #username
+{
+    color: white;
+}
+.jumbotron .small a:link,
+.jumbotron #username a:link,
+.jumbotron .small a:visited,
+.jumbotron #username a:visited
+{
+    color: white;
+}
+.jumbotron .small a:hover,
+.jumbotron #username a:hover,
+.jumbotron .small a:active,
+.jumbotron #username a:active
+{
+    color: #ff5722;
+}
+.jumbotron .metrics
 {
     color: white;
 }
@@ -267,7 +315,8 @@ h6
 
     background: white url('../../images/search_icon.svg') 5px 5px no-repeat;
 }
-.z-list-box
+.z-list-box,
+#z-queue
 {
     margin: 0;
     padding: 0;
@@ -296,7 +345,8 @@ h6
 }
 .z-track,
 .z-album,
-.z-playlist
+.z-playlist,
+#z-queue .panel-heading
 {
     padding-top: 10px;
     padding-bottom: 10px;
@@ -381,6 +431,45 @@ fieldset[disabled] .z-btn.active
     border-color: #ff5722;
     background-color: #ff5722;
     box-shadow: none;
+}
+#z-queue .panel-heading
+{
+    padding-right: 0;
+    padding-left: 0;
+}
+#z-queue .panel-body
+{
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+}
+#z-queue h1,
+#z-queue h2,
+#z-queue h3,
+#z-queue h4,
+#z-queue th
+{
+    color: #e64a19;
+}
+#z-queue td
+{
+    vertical-align: middle;
+
+    color: #727272;
+}
+#z-queue td a:link,
+#z-queue td a:visited
+{
+    color: #727272;
+}
+#z-queue td a span.glyphicon
+{
+    color: #ff5722;
+}
+#z-queue td a:hover,
+#z-queue td a:active
+{
+    color: #e64a19;
 }
 .cent
 {

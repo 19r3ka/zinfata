@@ -1,4 +1,5 @@
-#messageBox(ng-controller='messageCtrl')
-    .alert(class=['alert-{{message.type}}', 'alert-dismissable'], role='alert', ng-show='!!message.text')
-      button.close(type='button', data-dismiss='alert', aria-hidden='true') &times;
-      | {{message.text}}
+#z-message-box(ng-controller='messageCtrl')
+  .alert(class=['alert-{{ message.type }}', 'alert-dismissable'], role='alert', ng-show='!!message.text')
+    button.close(type='button', data-dismiss='alert', aria-hidden='true') &times;
+    i(class='{{ icon }}', aria-hidden='true')
+    |   {{ message.text }}

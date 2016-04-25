@@ -9,17 +9,17 @@
                 a(href='album/new')  Create one now!
         div(ng-show='!albums.length && !isOwner')
             p.text-center This user has no album!
-        .z-list
+        .z-list(ng-show='!!albums.length')
             .z-album(ng-repeat='album in albums')
               .media
                 .media-left
                   a(href='#')
-                    img.media-object(name='coverArt', width='64', ng-src='{{ album.imageUrl }}', alt='{{ album.title }}')
+                    img.media-object(name='coverArt', width='75', ng-src='{{ album.imageUrl }}', alt='{{ album.title }}')
                 .media-body
                   .row
                     .col-sm-7(class='col-md-7 col-xs-7')
                       h4.media-heading(class='z-ellipsis'): a(href='album/{{ album._id }}') {{ album.title }}
-                      h6: a(href='user/{{ album.artist.id }}') {{ album.artist.handle }}
+                      h6: a(href='user/{{ artist._id }}') {{ artist.handle }}
                     .col-sm-5(class='col-md-5 col-xs-5')
                       .pull-right
                         .metrics

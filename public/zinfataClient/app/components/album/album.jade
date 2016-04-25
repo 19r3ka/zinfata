@@ -1,51 +1,64 @@
-.jumbotron(ng-if='!creating && !editing')
+.jumbotron(ng-hide='creating || editing', class='z-id-card', ng-style='background-image: url({{ album.artist.avatarUrl }})')
+    .z-blur
+    .container
+        .row
+            .col-md-10(class='col-md-offset-1')
+                .col-sm-12(class='col-md-3')
+                    img.img-circle(class='img-responsive center-block', id='avatar', name= 'coverArt', 
+                        alt='{{ album.title }}', ng-src='{{ album.imageUrl }}')
+                .col-sm-12(class='col-md-9')
+                    .z.vcentered
+                        h1.text-capitalize {{ album.title }}
+                            .small: a(href='/user/{{ album.artist.id }}') {{ album.artist.handle }}
+                        br
+                        .metrics
+                            ul.list-inline
+                                li.text-capitalize: ng-pluralize(count='album.trackLength', when="{'0': '0 track', '1': '1 track', 'other': '{} tracks'}")
+                                li.text-capitalize duration: {{ album.duration | duration2time }}
+.container
     .row
-        .col-md-4
-            img.img-circle(class='img-responsive center-block', name= 'coverArt', alt='{{ album.title }}', ng-src='{{ album.imageUrl }}')
-        .col-md-8
-            .pull-right
-                .dropdown
-                    a.dropdown-toggle(data-toggle='dropdown', id='dropdownMenu', aria-haspopup='true', aria-expanded='true')
-                        span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
-                    ul.dropdown-menu(aria-labelledby='dropdownMenu')
-                        //- li(ng-click='play(album)'): a(href='')
-                            span.glyphicon(class='glyphicon-play')
-                            |  Play
-                        //- li(ng-click='queueUp(album)'): a(href='')
-                            span.glyphicon(class='glyphicon-list-alt')
-                            |  Add to queue
-                        div(ng-show='canEdit && !editing')
-                            li(ng-click='edit(album)'): a(href='') 
-                                span.glyphicon(class='glyphicon-pencil')
-                                |  Edit info
-                            li.bg-danger(ng-click='delete(album)'): a(href='')
-                                span.glyphicon(class='glyphicon-remove')
-                                | Delete
-            h3 {{ album.title }}
-            h4: a(href='/user/{{ album.artist.id }}') {{ album.artist.handle }}
-            .metrics
-                ul.list-inline
-                    li: ng-pluralize(count='album.trackLength', when="{'0': '0 track', '1': '1 track', 'other': '{} tracks'}")
-                    li duration: {{ album.duration | duration2time }}
-.z-content-area(class='col-s-12 col-md-10 col-md-offset-1')
-    .z-s-content-area(class='col-md-8 col-md-offset-2')
-        .page-header(ng-if='editing || creating')
-            h3 {{ pageTitle }}
-                .small {{ pageDescription }}
-        form(name='albumForm', enctype= 'multipart/form-data', ng-if='editing || creating', role='form', novalidate)
-            .form-group
-                img.img-circle(class='img-responsive center-block', name= 'coverArt', width='200', alt='{{ album.title }}', ng-src='{{ album.imageUrl }}')
-            .form-group
-                input.form-control(type='text', name='title', id='title', placeholder='Title', ng-model='album.title', ng-disabled='!editing && !creating', required)
-            .form-group
-                label(for='coverArt') Cover Art:
-                z-img-crop(on-img-ready='updateCoverImage(imgFile)')
-            .form-group
-                label(for='releaseDate') Release Date:
-                input.form-control(type='date', name='releaseDate', id='releaseDate', ng-model='album.releaseDate', ng-disabled='!editing && !creating', required)
-            .form-group
-                button.btn(type='submit', ng-click='create(album)', ng-show='creating', class=['btn-primary', 'form-control'], ng-disabled='albumForm.$invalid') Create Album!
-                button.btn(type='submit', ng-click='update(album)', ng-show='editing', class=['btn-primary', 'form-control'], ng-disabled='albumForm.$invalid') Update!
+        .col-sm-12(class='col-xs-12 col-md-10 col-md-offset-1')
+            .z-content-area
+                div(ng-if='canEdit && editing')
+                    .row
+                        .col-md-8(class='col-md-offset-2')
+                            .page-header(ng-if='editing || creating')
+                                h3 {{ pageTitle }}
+                                    .small {{ pageDescription }}
+                            form(name='albumForm', enctype= 'multipart/form-data', ng-if='editing || creating', role='form', novalidate)
+                                .form-group
+                                    img.img-circle(class='img-responsive center-block', name= 'coverArt', width='200', alt='{{ album.title }}', ng-src='{{ album.imageUrl }}')
+                                .form-group
+                                    input.form-control(type='text', name='title', id='title', placeholder='Title', ng-model='album.title', ng-disabled='!editing && !creating', required)
+                                .form-group
+                                    label(for='coverArt') Cover Art:
+                                    z-img-crop(on-img-ready='updateCoverImage(imgFile)')
+                                .form-group
+                                    label(for='releaseDate') Release Date:
+                                    input.form-control(type='date', name='releaseDate', id='releaseDate', ng-model='album.releaseDate', ng-disabled='!editing && !creating', required)
+                                .form-group
+                                    button.z-btn(type='submit', ng-click='create(album)', ng-show='creating', class=['form-control'], ng-disabled='albumForm.$invalid') Create Album!
+                                    button.z-btn(type='submit', ng-click='update(album)', ng-show='editing', class=['form-control'], ng-disabled='albumForm.$invalid') Update!
+                div(ng-hide='editing')
+                    .row
+                        .col-sm-12(class='col-md-3')
+                            section(ng-if='canEdit')
+                                h4 Album
+                                ul.list-unstyled
+                                    li(ng-click='edit(album)'): a(href='') 
+                                        span.glyphicon(class='glyphicon-pencil')
+                                        |  Edit info
+                                    li(ng-click='delete(album)'): a(href='')
+                                        span.glyphicon(class='glyphicon-remove')
+                                        |  Delete
+                            section
+                                h3: a(href='/user/{{ album.artist.id }}') {{ album.artist.handle }} 
 
-    z-track-listing(for='album', type='album', ng-if='!creating && !editing')
+                        .col-sm-12(class='col-md-9')
+                            section
+                                h4 About
+                                p.
+                                    this is where you tell us all about this album giving indepth insights and
+                                    context to visitors. { album.about }
+                            z-track-listing(for='album', type='album', ng-if='!creating && !editing')
         

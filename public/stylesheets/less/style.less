@@ -6,6 +6,7 @@
 @big-font-size: @default-font-size / .75;
 @small-font-size: @default-font-size * .75;
 @default-padding: 10px;
+@small-screen: 960px;
 
 html, body {
 	height: 100%;
@@ -21,7 +22,11 @@ body {
 	color: @primary-text-color;
 }
 
-
+form {
+	label {
+		color: @dark-primary-color;
+	}
+}
 nav.navbar {
 	background-color: @dark-primary-color;
 	color: @text-icon-color;
@@ -87,6 +92,15 @@ h1, h2, h3, h4, h5, h6 {
 	color: @dark-primary-color;
 }
 
+.alert {
+	position: fixed;
+	width: 100%;
+	z-index: 3;
+	margin: 0;
+	padding-left: 50px;
+	.boxShadow(2);
+}
+
 .container {
 	min-height: 90%;
 }
@@ -144,16 +158,32 @@ h1, h2, h3, h4, h5, h6 {
 				background-color: @primary-color;
 				color: white;
 			}
-			@media (max-width: 990px) {
+			@media (max-width: @small-screen) {
 				display: block;
 				margin: 0 auto;
 			}
 		}
 	}
+	@media(max-width: @small-screen) {
+		h1, h2, h3, h4, h5, h6, .metrics, .interactions {
+			text-align: center;
+		}
+	}
 	h1 {
 		text-shadow: 0 0 25px black;
 	}
-	.small {
+	.small, #username {
+		color: white;
+		a {
+			&:link, &:visited {
+				color: white;
+			}
+			&:hover, &:active {
+				color: @primary-color;
+			}
+		}
+	}
+	.metrics {
 		color: white;
 	}
 }
@@ -222,7 +252,7 @@ h1, h2, h3, h4, h5, h6 {
 	}
 }
 
-.z-track, .z-album, .z-playlist  {
+.z-track, .z-album, .z-playlist {
 	border: none;
 	border-bottom: 1px solid @divider-color;
 	padding-top: @default-padding;
@@ -291,6 +321,40 @@ fieldset[disabled] .z-btn.active {
   color: black;
   opacity: .65;
   cursor: not-allowed;
+}
+
+#z-queue {
+	&:extend(.z-list-box);
+	.panel-heading {
+		&:extend(.z-track);
+		padding-right: 0;
+		padding-left: 0;
+	}
+	.panel-body {
+		padding-right: 0;
+		padding-left: 0;
+		padding-bottom: 0;
+	}
+	h1, h2, h3, h4, th {
+		color: @dark-primary-color;
+	}
+	td {
+		// &:extend(.z-ellipsis);
+		color: @secondary-text-color;
+		vertical-align: middle;
+		a {
+			&:link, &:visited {
+				color: @secondary-text-color;		
+			}
+			span.glyphicon {
+				color: @primary-color;
+			}
+			&:hover, &:active {
+				color: @dark-primary-color;
+			}
+
+		}
+	}
 }
 
 .cent {

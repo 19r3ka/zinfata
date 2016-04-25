@@ -44,6 +44,7 @@ ALBUM_EVENTS, $log) {
       }
       Users.get($scope.album.artist.id, function(user) {
         $scope.album.artist.handle = user.handle;
+        $scope.album.artist.avatarUrl = user.avatarUrl;
       }, function(err) {
         $scope.album.artist = 'Unknown';
       });
