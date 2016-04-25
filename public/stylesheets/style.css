@@ -133,23 +133,32 @@ a:active
 }
 .jumbotron
 {
-    min-height: 400px;
+    position: relative;
+
+    min-height: 300px;
     margin-top: 50px;
 
     color: #ff5722;
-    background: -webkit-linear-gradient(rgba(0, 0, 0, .1), rgba(0, 0, 0, .6)), url('../../images/home_jumbotron_bg.jpg') no-repeat center center;
-    background:         linear-gradient(rgba(0, 0, 0, .1), rgba(0, 0, 0, .6)), url('../../images/home_jumbotron_bg.jpg') no-repeat center center;
+    background: -webkit-linear-gradient(rgba(0, 0, 0, .2), rgba(0, 0, 0, .6)), url('../../images/home_jumbotron_bg.jpg') no-repeat center center;
+    background:         linear-gradient(rgba(0, 0, 0, .2), rgba(0, 0, 0, .6)), url('../../images/home_jumbotron_bg.jpg') no-repeat center center;
     background-size: cover;
     box-shadow: 0 1px 3px rgba(0, 0, 0, .12), 0 1px 2px rgba(0, 0, 0, .24);
 }
-@media (max-width: 990px)
+.jumbotron .z-blur
 {
-    .jumbotron
-    {
-        height: 50%;
-    }
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: inherit;
+
+    -webkit-filter: blur(10px);
+            filter: blur(10px);
 }
-.jumbotron .bottom
+.jumbotron .z-bottom
 {
     display: block;
     float: none;
@@ -159,14 +168,14 @@ a:active
 
     vertical-align: middle;
 }
-.jumbotron .bottom p
+.jumbotron .z-bottom p
 {
     padding-top: 5px;
     padding-bottom: 5px;
 
     color: white;
 }
-.jumbotron .bottom a.btn
+.jumbotron .z-bottom a.btn
 {
     max-width: 50%;
 
@@ -175,7 +184,7 @@ a:active
     background-color: transparent;
     /* center-block on small screen*/
 }
-.jumbotron .bottom a.btn:hover
+.jumbotron .z-bottom a.btn:hover
 {
     color: white;
     border: none;
@@ -183,7 +192,7 @@ a:active
 }
 @media (max-width: 990px)
 {
-    .jumbotron .bottom a.btn
+    .jumbotron .z-bottom a.btn
     {
         display: block;
 
@@ -237,6 +246,11 @@ a:active
     overflow: visible;
 
     text-overflow: none;
+}
+.z-id-card #avatar,
+.z-id-card #cover-art
+{
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .12), 0 1px 2px rgba(0, 0, 0, .24);
 }
 .z-search-box
 {

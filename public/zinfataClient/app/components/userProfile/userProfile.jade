@@ -1,62 +1,79 @@
-//- .pull-right
-                .dropdown(ng-show='canEdit() && !editing')
-                    button.btn-default(class='dropdown-toggle', type='button', id='dropdownMenu', data-toggle='dropdown', aria-haspopup='true', aria-expanded='true')
-                        span(class='caret')
-                    ul.dropdown-menu(aria-labelledby='dropdownMenu')
-                        li(ng-click='edit(user)'): a(href='') 
-                            span.glyphicon(class='glyphicon-pencil')
-                            |  Edit Info
-                        li.bg-danger(ng-click='delete(user)'): a(href='')
-                            span.glyphicon(class='glyphicon-remove')
-                            | Delete
-                button.btn-primary(ng-click='update(user)', ng-show='editing', ng-disabled='userProfile.$invalid') Update!
-.jumbotron(ng-hide='editing')
+.jumbotron(ng-hide='editing', class='z-id-card')
+    .z-blur
+    .container
+        .row
+            .col-md-10(class='col-md-offset-1')
+                .col-sm-12(class='col-md-3')
+                    img.img-circle(class='img-responsive center-block', id='avatar', name= 'avatar', 
+                        alt='{{ user.handle }}', ng-src='{{ user.avatarUrl }}')
+                .col-sm-12(class='col-md-9')
+                    .z.vcentered
+                        h1.text-capitalize {{ user.handle }}
+.container
     .row
-        .col-md-4
-            img.img-circle(class='img-responsive center-block', name= 'avatar', alt='{{ user.handle }}', ng-src='{{ user.avatarUrl }}')
-        .col-md-8
-            .pull-right
-                .dropdown(ng-show='canEdit && !editing')
-                    a.dropdown-toggle(data-toggle='dropdown', id='dropdownMenu', aria-haspopup='true', aria-expanded='true')
-                        span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
-                    ul.dropdown-menu(aria-labelledby='dropdownMenu')
-                        li(ng-click='edit(user)'): a(href='') 
-                            span.glyphicon(class='glyphicon-pencil')
-                            |  Edit Info
-                        li.bg-danger(ng-click='delete(user)'): a(href='')
-                            span.glyphicon(class='glyphicon-remove')
-                            | Delete
-            h3 {{ fullname(user) }}
-            .metrics
-.z-content-area(class='col-s-12 col-md-10 col-md-offset-1')
-    .z-s-content-area(class='col-md-8 col-md-offset-2')
-        .page-header(ng-if='canEdit && editing')
-            h3 Edit Your Profile
-                .small Introduce yourself to the Zinfata Community.
-        form(name='userProfile', role='form', novalidate, ng-if='canEdit && editing')
-            .form-group(ng-hide='!editing')
-                label(for='avatarInput') Choose your avatar:
-                z-img-crop(on-img-ready='updateAvatar(imgFile)')
-                //- input.form-control(type='file', name='avatar', id='avatarInput', accept='image/jpeg,image/jpg,image/png', onchange='angular.element(this).scope().readFile(this)')
-                //- .crop-area(ng-show='cropPending', class='center-block', style='width:auto; height:350px;')  
-                    img-crop(image='rawImage', result-image='croppedImage')
-                    button.center-block(type='button', class='btn btn-primary', ng-click='updateAvatar(croppedImage)') Crop image
-            .form-group
-                label(for='firstName') First name:
-                input.form-control(type='text', name='firstName', id='firstName', placeholder='First Name', ng-model='user.firstName', ng-disabled='!editing', required)
-            .form-group
-                label(for='lastName') Last name:
-                input.form-control(type='text', name='lastName', id='lastName', placeholder='Last Name', ng-model='user.lastName', ng-disabled='!editing', required)
-            .form-group
-                label(for='handle') Handle:	
-                input.form-control(type='text', name='handle', id='handle', placeholder='Handle', ng-model='user.handle', ng-disabled='!editing', required)
-            .form-group
-                label(for='email') Email:
-                input.form-control(type='email', name='email', id='email', placeholder='Email', ng-model='user.email', ng-disabled='!editing', required)
-            .form-group
-                label(for='whatsapp') Whatsapp number:
-                input.form-control(type='tel', name='whatsapp', id='whatsapp', placeholder='Whatsapp N*', ng-model='user.whatsapp', ng-disabled='!editing')
-            .form-group
-                button.btn-primary(class='form-control', ng-click='update(user)', ng-show='editing', ng-disabled='userProfile.$invalid') Update!
+        .col-sm-12(class='col-xs-12 col-md-10 col-md-offset-1')
+            .z-content-area
+                div(ng-if='canEdit && editing')
+                    .row
+                        .col-md-8(class='col-md-offset-2')
+                            .page-header
+                                h3 Edit Your Profile
+                                    .small Introduce yourself to the Zinfata Community.
+                            form(name='userProfile', role='form', novalidate, ng-if='canEdit && editing')
+                                .form-group(ng-hide='!editing')
+                                    label(for='avatarInput') Choose your avatar:
+                                    z-img-crop(on-img-ready='updateAvatar(imgFile)')
+                                    //- input.form-control(type='file', name='avatar', id='avatarInput', accept='image/jpeg,image/jpg,image/png', onchange='angular.element(this).scope().readFile(this)')
+                                    //- .crop-area(ng-show='cropPending', class='center-block', style='width:auto; height:350px;')  
+                                        img-crop(image='rawImage', result-image='croppedImage')
+                                        button.center-block(type='button', class='btn btn-primary', ng-click='updateAvatar(croppedImage)') Crop image
+                                .form-group
+                                    label(for='firstName') First name:
+                                    input.form-control(type='text', name='firstName', id='firstName', placeholder='First Name', ng-model='user.firstName', ng-disabled='!editing', required)
+                                .form-group
+                                    label(for='lastName') Last name:
+                                    input.form-control(type='text', name='lastName', id='lastName', placeholder='Last Name', ng-model='user.lastName', ng-disabled='!editing', required)
+                                .form-group
+                                    label(for='handle') Handle: 
+                                    input.form-control(type='text', name='handle', id='handle', placeholder='Handle', ng-model='user.handle', ng-disabled='!editing', required)
+                                .form-group
+                                    label(for='email') Email:
+                                    input.form-control(type='email', name='email', id='email', placeholder='Email', ng-model='user.email', ng-disabled='!editing', required)
+                                .form-group
+                                    label(for='whatsapp') Whatsapp number:
+                                    input.form-control(type='tel', name='whatsapp', id='whatsapp', placeholder='Whatsapp N*', ng-model='user.whatsapp', ng-disabled='!editing')
+                                .form-group
+                                    button.z-btn(class='form-control', ng-click='update(user)', ng-show='editing', ng-disabled='userProfile.$invalid') Update!
 
-    z-album-listing(artist='user', ng-hide='editing')
+                div(ng-hide='editing')
+                    .row
+                        .col-sm-12(class='col-md-3')
+                            section(ng-if='canEdit')
+                                h4 Your account
+                                ul.list-unstyled
+                                    li(ng-click='edit(user)'): a(href='#') 
+                                        span.glyphicon(class='glyphicon-pencil')
+                                        |  Edit info
+                                    li(ng-click='delete(user)'): a.text-danger(href='#')
+                                        span.glyphicon(class='glyphicon-remove')
+                                        |  Delete account
+                            section
+                                h4 Connect
+                                ul.list-unstyled
+                                    li: a(href='#') 
+                                        i.fa(class='fa-globe')
+                                        |  Official website
+                                    li: a(href='#')
+                                        i.fa(class='fa-facebook')
+                                        |    Facebook
+                                    li: a(href='#')
+                                        i.fa(class='fa-twitter')
+                                        |  Twitter
+                        .col-sm-12(class='col-md-9')
+                            section
+                                h4 Bio
+                                p.
+                                    This will be the section where users will add their own special bio '{ user.bio }'.
+                                    Also we must be sure to add a default message like 'this user has no bio at all!'
+
+                            z-album-listing(artist='user')
