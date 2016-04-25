@@ -83,6 +83,10 @@ a {
 	}	
 }
 
+h1, h2, h3, h4, h5, h6 {
+	color: @dark-primary-color;
+}
+
 .container {
 	min-height: 90%;
 }
@@ -197,7 +201,28 @@ a {
 	background: white url(@search-icon) 5px 5px no-repeat;
 }
 
-.z-track {
+.z-list-box {
+	padding: 0;
+	margin: 0;
+	.panel-heading {
+		padding: 0;
+		padding-top: 10px;
+	}
+	.panel-title {
+		color: @dark-primary-color;
+		padding-bottom: 10px;
+		border-bottom: 1px solid @divider-color;
+		font-weight: bold;
+		a {
+			font-weight: lighter;
+		}
+	}
+	.panel-body {
+		padding: 0;
+	}
+}
+
+.z-track, .z-album, .z-playlist  {
 	border: none;
 	border-bottom: 1px solid @divider-color;
 	padding-top: @default-padding;
