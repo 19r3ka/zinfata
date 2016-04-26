@@ -20,6 +20,8 @@
                                 h3 Edit Your Profile
                                     .small Introduce yourself to the Zinfata Community.
                             form(name='userProfile', role='form', novalidate, ng-if='canEdit && editing')
+                                .form-group
+                                    img.img-circle(class='img-responsive center-block', name= 'avatar', width='200', alt='{{ user.handle }}', ng-src='{{ user.avatarUrl }}')
                                 .form-group(ng-hide='!editing')
                                     label(for='avatarInput') Choose your avatar:
                                     z-img-crop(on-img-ready='updateAvatar(imgFile)')

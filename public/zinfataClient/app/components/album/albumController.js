@@ -10,6 +10,7 @@ ALBUM_EVENTS, $log) {
     artist: {
       id:        ''
     },
+    about:       '',
     releaseDate: ''
   };
   $scope.editing  = false;

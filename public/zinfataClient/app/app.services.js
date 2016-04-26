@@ -212,6 +212,7 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
         title:         data.title,
         coverArt:      data.coverArt,
         artistId:      data.artist.id,
+        about:         data.about,
         releaseDate:   data.releaseDate
       }
     );
@@ -225,7 +226,7 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
   self.update = function(album, success, failure) {
     Albums.get({id: album._id}, function(albumToUpdate) {
       for (var key in albumToUpdate) {
-        if (!!album[key] && albumToUpdate[key] !== album[key]) {
+        if (!!album[key] && (albumToUpdate[key] !== album[key])) {
           albumToUpdate[key] = album[key];
         }
       }

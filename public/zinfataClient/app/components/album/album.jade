@@ -1,4 +1,4 @@
-.jumbotron(ng-hide='creating || editing', class='z-id-card', ng-style='background-image: url({{ album.artist.avatarUrl }})')
+.jumbotron(ng-hide='creating || editing', class='z-id-card')
     .z-blur
     .container
         .row
@@ -19,7 +19,7 @@
     .row
         .col-sm-12(class='col-xs-12 col-md-10 col-md-offset-1')
             .z-content-area
-                div(ng-if='canEdit && editing')
+                div(ng-if='creating || (canEdit && editing)')
                     .row
                         .col-md-8(class='col-md-offset-2')
                             .page-header(ng-if='editing || creating')
@@ -34,12 +34,15 @@
                                     label(for='coverArt') Cover Art:
                                     z-img-crop(on-img-ready='updateCoverImage(imgFile)')
                                 .form-group
+                                    label(for='about') About: 
+                                    textarea.form-control(name='about', id='about', placeholder='Tell Us More About This Album', ng-model='album.about', ng-disabled='!editing && !creating', rows='5', maxlength='1000')
+                                .form-group
                                     label(for='releaseDate') Release Date:
                                     input.form-control(type='date', name='releaseDate', id='releaseDate', ng-model='album.releaseDate', ng-disabled='!editing && !creating', required)
                                 .form-group
                                     button.z-btn(type='submit', ng-click='create(album)', ng-show='creating', class=['form-control'], ng-disabled='albumForm.$invalid') Create Album!
                                     button.z-btn(type='submit', ng-click='update(album)', ng-show='editing', class=['form-control'], ng-disabled='albumForm.$invalid') Update!
-                div(ng-hide='editing')
+                div(ng-hide='editing || creating')
                     .row
                         .col-sm-12(class='col-md-3')
                             section(ng-if='canEdit')
@@ -56,9 +59,8 @@
 
                         .col-sm-12(class='col-md-9')
                             section
-                                h4 About
+                                h4 About This Album
                                 p.
-                                    this is where you tell us all about this album giving indepth insights and
-                                    context to visitors. { album.about }
+                                    {{ album.about }}
                             z-track-listing(for='album', type='album', ng-if='!creating && !editing')
-        
+      

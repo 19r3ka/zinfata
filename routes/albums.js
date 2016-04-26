@@ -31,11 +31,14 @@ module.exports = function(wagner) {
     var newAlbum = new Album({
       title:          data.title,
       artistId:       data.artistId,
+      about:          data.about,
       releaseDate:    data.releaseDate
     });
+
     if (!!req.file) {
       newAlbum.imageUrl = req.file.path;
     }
+
     newAlbum.save(function(err, savedAlbum) {
       if (err) {
         return next(err);
@@ -74,13 +77,22 @@ module.exports = function(wagner) {
   // UPDATE album info by ID
   .put(upload.single('coverArt'), function(req, res, next) {
     Album.findActive({_id: req.params.id}, true, function(err, album) {
-      if (err) {return next(err);}
-      if (!album) {return next(new Zerror('not_found', 'Album not found'));}
-      // Since it's a blind attribution, only update keys that already exit.
+      if (err) {
+        return next(err);
+      }
+
+      if (!album) {
+        return next(new Zerror('not_found', 'Album not found'));
+      }
+
+      // Since it's a blind attribution, only update keys that already exist.
       for (var key in album) {
         if (!!req.body[key]) {album[key] = req.body[key];}
       }
-      if (!!req.file) {album.imageUrl = req.file.path;}
+
+      if (!!req.file) {
+        album.imageUrl = req.file.path;
+      }
       album.save(function(err, updatedAlbum) {
         if (err) {return next(err);}
         res.json(updatedAlbum);

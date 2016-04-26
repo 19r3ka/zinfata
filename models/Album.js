@@ -13,6 +13,7 @@ var AlbumSchema = new mongoose.Schema({
     validate: userValidator},
   releaseDate:  {type: Date, required: true},
   deleted:      {type: Boolean, default: false},
+  about:        {type: String, default: '', trim: true},
   updatedAt:    {type: Date, default: Date.now}
 });
 
