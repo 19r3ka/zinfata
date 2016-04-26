@@ -45,7 +45,7 @@
                 div(ng-hide='editing || creating')
                     .row
                         .col-sm-12(class='col-md-3')
-                            section(ng-if='canEdit')
+                            section(ng-if='canEdit && !editing')
                                 h4 Album
                                 ul.list-unstyled
                                     li(ng-click='edit(album)'): a(href='') 
@@ -58,7 +58,7 @@
                                 h3: a(href='/user/{{ album.artist.id }}') {{ album.artist.handle }} 
 
                         .col-sm-12(class='col-md-9')
-                            section
+                            section(ng-show='album.about')
                                 h4 About This Album
                                 p.
                                     {{ album.about }}

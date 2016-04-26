@@ -9,16 +9,6 @@
                     .z.vcentered
                         h1.text-capitalize {{ track.title }}
                             .small: a(href='/album/{{ track.album.id }}') {{ track.album.title }}
-                            //- .dropdown(class='pull-right')
-                            //-     a.dropdown-toggle(data-toggle='dropdown', id='dropdownMenu', aria-haspopup='true', aria-expanded='true')
-                            //-         span.glyphicon(class='glyphicon-option-horizontal', aria-hidden='true')
-                            //-     ul.dropdown-menu(aria-labelledby='dropdownMenu', ng-show='canEdit')
-                            //-         li(ng-click='edit(track)'): a(href='') 
-                            //-             span.glyphicon(class='glyphicon-pencil')
-                            //-             |  Edit info
-                            //-         li(ng-click='delete(track)'): a.text-danger(href='')
-                            //-             span.glyphicon(class='glyphicon-remove')
-                            //-             |  Delete    
                         h3#username: a(href='/user/{{ track.artist.id }}') {{ track.artist.handle }}
                         br
                         .metrics
@@ -43,13 +33,13 @@
     .row
         .col-sm-12(class='col-xs-12 col-md-10 col-md-offset-1')
             .z-content-area
-                div(ng-if='canEdit && editing')
+                div(ng-if='creating || (canEdit && editing)')
                     .row
                         .col-md-8(class='col-md-offset-2')
                             .page-header(ng-if='editing || creating')
                                 h3 {{ pageTitle }}
                                     .small {{ pageDescription }}
-                            form(name='trackInfo', role='form', ng-if='creating || editing')
+                            form(name='trackInfo', role='form', ng-if='creating || editing', novalidate)
                                 .form-group
                                     .row
                                         .col-md-3
@@ -94,16 +84,22 @@
                                     .help-block(ng-messages='trackInfo.releaseDate.$error', ng-show='trackInfo.releaseDate.$touched', ng-hide='trackInfo.releaseDate.$submitted')
                                         div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
                                 .form-group
+                                    label(for='about') About: 
+                                    textarea.form-control(name='about', id='about', placeholder='Tell Us More About This Track', ng-model='track.about', ng-disabled='!editing && !creating', rows='5', maxlength='1000')
+                                .form-group
+                                    label(for='lyrics') Lyrics: 
+                                    textarea.form-control(name='lyrics', id='lyrics', placeholder='Add The Lyrics To Your Song So The World Can Sing Along', ng-model='track.lyrics', ng-disabled='!editing && !creating', rows='5', maxlength='2000')
+                                .form-group
                                     label
                                         input(type='checkbox', name='DownloadToggle', ng-model='track.downloadable')
                                     |  This track may be downloaded!
                                 .form-group
-                                    button.btn-primary(class='form-control', type='submit', ng-click='create(track)', ng-show='creating', ng-disabled='trackInfo.$invalid') Upload track!
-                                    button.btn-primary(class='form-control', type='submit', ng-click='update(track)', ng-show='canEdit && editing', ng-disabled='trackInfo.$invalid') Save changes!
-                div(ng-hide='editing')
+                                    button.z-btn(class='form-control', type='submit', ng-click='create(track)', ng-show='creating', ng-disabled='trackInfo.$invalid') Upload track!
+                                    button.z-btn(class='form-control', type='submit', ng-click='update(track)', ng-show='canEdit && editing', ng-disabled='trackInfo.$invalid') Save changes!
+                div(ng-hide='creating || editing')
                     .row
                         .col-sm-12(class='col-md-3')
-                            section(ng-if='canEdit')
+                            section(ng-if='canEdit && !editing')
                                 h4 Track
                                 ul.list-unstyled
                                     li(ng-click='edit(track)'): a(href='#') 
@@ -131,8 +127,11 @@
                                 //- Add social media share buttons here
                                 
                         .col-sm-12(class='col-md-9')
-                            section
+                            section(ng-show='track.about')
                                 h4 About
                                 p.
-                                    this is where you tell us all about this track giving indepth insights and
-                                    context to visitors. { track.about }
+                                    {{ track.about }}
+                            section#lyrics(ng-show='track.lyrics')
+                                h4 Lyrics
+                                pre.
+                                    {{ track.lyrics }}

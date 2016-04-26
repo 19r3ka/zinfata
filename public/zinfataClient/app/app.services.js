@@ -209,11 +209,11 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
   self.create = function(data, success, failure) {
     var newAlbum = new Albums(
       {
-        title:         data.title,
-        coverArt:      data.coverArt,
-        artistId:      data.artist.id,
         about:         data.about,
-        releaseDate:   data.releaseDate
+        artistId:      data.artist.id,
+        coverArt:      data.coverArt,
+        releaseDate:   data.releaseDate,
+        title:         data.title
       }
     );
     newAlbum.$save(function(savedAlbum) {
@@ -282,7 +282,8 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
         data.releaseDate = new Date(data.releaseDate);
         if (!!data.imageUrl &&
           (data.imageUrl.search('album-coverart-placeholder') === -1)) {
-          data.imageUrl = '../../' + data.imageUrl.split('/').slice(1).join('/');
+          data.imageUrl = '../../' +
+            data.imageUrl.split('/').slice(1).join('/');
         }
       });
       success(albums);
@@ -305,18 +306,20 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
 
   self.create = function(track, success, failure) {
     var newTrack = new Tracks({
-      title:        track.title,
-      artistId:     track.artist.id,
+      about:        track.about,
       albumId:      track.album.id,
-      feat:         track.feat,
-      streamUrl:    track.streamUrl,
-      duration:     track.duration,
-      coverArt:     track.coverArt,
-      imageFile:    track.imageFile,
+      artistId:     track.artist.id,
       audioFile:    track.audioFile,
-      releaseDate:  track.releaseDate,
+      coverArt:     track.coverArt,
       downloadable: track.downloadable,
-      genre:        track.genre
+      duration:     track.duration,
+      feat:         track.feat,
+      genre:        track.genre,
+      imageFile:    track.imageFile,
+      lyrics:       track.lyrics,
+      releaseDate:  track.releaseDate,
+      streamUrl:    track.streamUrl,
+      title:        track.title
     });
 
     newTrack.$save(function(savedTrack) {
@@ -496,10 +499,10 @@ app.service('PlaylistsSvc', ['Playlists', '$log', function(Playlists, $log) {
 
   self.create = function(playlist, success, failure) {
     var newPlaylist = new Playlists({
-      title:        playlist.title,
       // coverArt:     playlist.coverArt,
       ownerId:      playlist.owner.id,
-      Tracks:       playlist.tracks
+      title:        playlist.title,
+      tracks:       playlist.tracks
     });
 
     newPlaylist.$save(function(savedPlaylist) {

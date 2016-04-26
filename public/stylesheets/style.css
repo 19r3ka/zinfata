@@ -47,6 +47,11 @@ form label
 {
     color: #e64a19;
 }
+#lyrics pre.ng-binding
+{
+    border: none;
+    background: none;
+}
 ul .dropdown-menu
 {
     background: #e64a19;

@@ -49,6 +49,8 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
 
   $scope.track = {
     title:       '',
+    about:       '',
+    lyrics:      '',
     album:  {
       id:      null,
       title:   '',

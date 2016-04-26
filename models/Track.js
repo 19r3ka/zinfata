@@ -23,6 +23,8 @@ var TrackSchema = new mongoose.Schema({
   streamUrl:    {type: String, required: true},
   genre:        {type: String, lowercase: true, required: true},
   releaseDate:  {type: Date, required: true},
+  about:        {type: String, default: '', trim: true},
+  lyrics:       {type: String, default: '', trim: true},
   deleted:      {type: Boolean, default: false},
   updatedAt:    {type: Date, default: Date.now}
 });

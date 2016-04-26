@@ -68,6 +68,8 @@ module.exports = function(wagner) {
       albumId:      req.body.albumId,
       releaseDate:  req.body.releaseDate,
       duration:     req.body.duration,
+      about:        req.body.about,
+      lyrics:       req.body.lyrics,
       downloadable: req.body.downloadable,
       genre:        req.body.genre
     });
@@ -138,16 +140,21 @@ module.exports = function(wagner) {
   // UPDATE album info by ID
   .put(uploadParams, function(req, res, next) {
     Track.findActive({_id: req.params.id}, true, function(err, trackToUpdate) {
-      if (err) {return next(err);}
+      if (err) {
+        return next(err);
+      }
+
       if (!trackToUpdate) {
         return next(new ZErr('not_found', 'Track not found'));
       }
+
       // Since it's a blind attribution, only update keys that already exit.
       for (var key in trackToUpdate) {
         if (!!req.body[key]) {
           trackToUpdate[key] = req.body[key];
         }
       }
+
       if (!!req.files.imageFile) {
         trackToUpdate.coverArt = req.files.imageFile[0].path;
       } else if ('coverArt' in req.body &&
