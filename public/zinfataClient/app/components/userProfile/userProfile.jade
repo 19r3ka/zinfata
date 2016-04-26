@@ -37,11 +37,23 @@
                                     label(for='handle') Handle: 
                                     input.form-control(type='text', name='handle', id='handle', placeholder='Handle', ng-model='user.handle', ng-disabled='!editing', required)
                                 .form-group
+                                    label(for='bio') Bio: 
+                                    textarea.form-control(name='bio', id='bio', placeholder='Tell Us More About You', ng-model='user.bio', ng-disabled='!editing', rows='5', maxlength='1000')
+                                .form-group
                                     label(for='email') Email:
                                     input.form-control(type='email', name='email', id='email', placeholder='Email', ng-model='user.email', ng-disabled='!editing', required)
                                 .form-group
                                     label(for='whatsapp') Whatsapp number:
                                     input.form-control(type='tel', name='whatsapp', id='whatsapp', placeholder='Whatsapp N*', ng-model='user.whatsapp', ng-disabled='!editing')
+                                .form-group
+                                    label(for='facebook') Facebook Page:
+                                    input.form-control(type='url', name='facebook', id='facebook', pattern='http://(www)\.facebook\.com\/(.+)|https://(www)\.facebook\.com\/(.+)', placeholder='Facebook Address', ng-model='user.facebook', ng-disabled='!editing')
+                                .form-group
+                                    label(for='twitter') Twitter Page:
+                                    input.form-control(type='url', name='twitter', id='twitter', pattern='http://(www)\.twitter\.com\/(.+)|https://(www)\.twitter\.com\/(.+)', placeholder='Twitter Address', ng-model='user.twitter', ng-disabled='!editing')
+                                .form-group
+                                    label(for='website') Official Website:
+                                    input.form-control(type='url', name='website', id='website', placeholder='Offcial Website URL', ng-model='user.website', ng-disabled='!editing')
                                 .form-group
                                     button.z-btn(class='form-control', ng-click='update(user)', ng-show='editing', ng-disabled='userProfile.$invalid') Update!
 
@@ -57,23 +69,22 @@
                                     li(ng-click='delete(user)'): a.text-danger(href='#')
                                         span.glyphicon(class='glyphicon-remove')
                                         |  Delete account
-                            section
+                            section(ng-show='user.website || user.facebook || user.twitter')
                                 h4 Connect
                                 ul.list-unstyled
-                                    li: a(href='#') 
+                                    li: a(ng-href='{{ user.website }}', ng-show='user.website') 
                                         i.fa(class='fa-globe')
                                         |  Official website
-                                    li: a(href='#')
+                                    li: a(ng-href='{{ user.facebook }}', ng-show='user.facebook')
                                         i.fa(class='fa-facebook')
                                         |    Facebook
-                                    li: a(href='#')
+                                    li: a(ng-href='{{ user.twitter }}', ng-show='user.twitter')
                                         i.fa(class='fa-twitter')
                                         |  Twitter
                         .col-sm-12(class='col-md-9')
-                            section
+                            section(ng-show='user.bio')
                                 h4 Bio
                                 p.
-                                    This will be the section where users will add their own special bio '{ user.bio }'.
-                                    Also we must be sure to add a default message like 'this user has no bio at all!'
+                                    {{ user.bio }}
 
                             z-album-listing(artist='user')

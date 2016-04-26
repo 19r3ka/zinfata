@@ -27,6 +27,13 @@ form {
 		color: @dark-primary-color;
 	}
 }
+
+ul {
+	.dropdown-menu {
+		background: @dark-primary-color;
+	}
+}
+
 nav.navbar {
 	background-color: @dark-primary-color;
 	color: @text-icon-color;
@@ -57,12 +64,6 @@ nav.navbar {
 		.navbar-right {
 			padding-right: 20px; /*causes highlight on hover not to extend completely to the right*/
 		}
-		.dropdown-menu {
-			background: @dark-primary-color;
-			li:hover {
-				background-color: @primary-color
-			}
-		}
 	}
 	#z-navbar-collapse.in {
 		.boxShadow(3);
@@ -79,6 +80,7 @@ nav.navbar {
 }
 
 a {
+	color: @secondary-text-color;
   &:link, &:visited {
   	color: @primary-color; 	
   }

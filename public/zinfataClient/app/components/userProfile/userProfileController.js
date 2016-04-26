@@ -6,6 +6,8 @@ USER_EVENTS, $routeParams, $log, $location, Session) {
     Session.getCurrentUser() && Sesion.getCurrentUser()._id ||
     null;
 
+  $scope.fbRegex = /(?:https?:\/\/)?(?:www\.)?facebook\.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[\w\-]*\/)*([\w\-]*)/;
+
   $scope.user         = {};
   $scope.editing      = false;
   $scope.canEdit      = false;

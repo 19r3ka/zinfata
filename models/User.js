@@ -25,8 +25,12 @@ var UserSchema = new mongoose.Schema({
                     unique: true, lowercase: true, trim: true},
   password:        {type: String, required: true, trim: true, select: false},
   avatarUrl:       {type: String, trim: true, default: defaultUrl},
+  bio:             {type: String, default: '', trim: true},
   role:            {type: String, default: 'fan', trim: true},
   whatsapp:        {type: String, default: '', trim: true},
+  facebook:        {type: String, default: '', trim: true},
+  twitter:         {type: String, default: '', trim: true},
+  website:         {type: String, default: '', trim: true},
   activated:       {type: Boolean, default: false},
   deleted:         {type: Boolean, default: false, select: false},
   updatedAt:       {type: Date, default: Date.now}
@@ -77,7 +81,7 @@ UserSchema.statics.validate = function(id, respond) {
 
 UserSchema.methods.getMetadata = function() {
   //add key that you assume to be meta to the array
-  var userMeta = ['_id', 'handle', 'email', 'role', 'activated'];
+  var userMeta = ['_id', 'handle', 'email', 'role', 'activated', 'deleted'];
   var size     = userMeta.length;
   var metaKey;
   var meta     = {};
@@ -131,7 +135,7 @@ UserSchema.set('toJSON', {
     delete ret.lastNameLower;
     delete ret.handleLower;
     delete ret.password;
-    delete ret.email;
+    // delete ret.email;
     delete ret.activated;
     delete ret.deleted;
     return ret;

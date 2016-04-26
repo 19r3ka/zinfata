@@ -132,7 +132,7 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
   self.update = function(user, success, failure) {
     Users.get({id: user._id}, function(userToUpdate) {
       for (var key in userToUpdate) {
-        if (!!user[key] && userToUpdate[key] !== user[key]) {
+        if (!!user[key] && (userToUpdate[key] !== user[key])) {
           userToUpdate[key] = user[key];
         }
       }
@@ -140,6 +140,24 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
         userToUpdate.avatar = user.avatar;
         delete userToUpdate.avatarUrl;
       }
+      /* Eventually delete all these 4 following ifs. 
+         They are probably not necessary. */
+      if (user.facebook) {
+        userToUpdate.facebook = user.facebook;
+      }
+
+      if (user.bio) {
+        userToUpdate.bio = user.bio;
+      }
+
+      if (user.twitter) {
+        userToUpdate.twitter = user.twitter;
+      }
+
+      if (user.website) {
+        userToUpdate.website = user.website;
+      }
+
       userToUpdate.$update(function(updatedUser) {
         return success(updatedUser);
       }, function(err) {

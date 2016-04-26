@@ -47,6 +47,10 @@ form label
 {
     color: #e64a19;
 }
+ul .dropdown-menu
+{
+    background: #e64a19;
+}
 nav.navbar
 {
     font-size: 10.5px;
@@ -87,14 +91,6 @@ nav.navbar ul .navbar-right
     padding-right: 20px;
     /*causes highlight on hover not to extend completely to the right*/
 }
-nav.navbar ul .dropdown-menu
-{
-    background: #e64a19;
-}
-nav.navbar ul .dropdown-menu li:hover
-{
-    background-color: #ff5722;
-}
 nav.navbar #z-navbar-collapse.in
 {
     box-shadow: 0 10px 20px rgba(0, 0, 0, .19), 0 6px 6px rgba(0, 0, 0, .23);
@@ -107,6 +103,10 @@ nav.navbar .z-text-emphasize
 {
     font-size: 14px;
     font-weight: bold;
+}
+a
+{
+    color: #727272;
 }
 a:link,
 a:visited

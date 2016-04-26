@@ -116,20 +116,35 @@ module.exports = function(wagner) {
   router.route('/:id')
   .get(function(req, res, next) { /* GET specific user */
     User.findActive({_id: req.params.id}, true, function(err, user) {
-      if (err)   {return next(err);}
-      if (!user) {return next(new Zerror('not_found', 'User not found'));}
+      if (err)   {
+        return next(err);
+      }
+      if (!user) {
+        return next(new Zerror('not_found', 'User not found'));
+      }
       res.json(user);
     });
   })
   .put(upload.single('avatar'), function(req, res, next) { /* UPDATE specific user */ //Must be protected somehow
     User.findActive({_id: req.params.id}, true, function(err, user) {
-      if (err)   {return next(err);}
-      if (!user) {return next(new Zerror('not_found', 'User not found'));}
+      if (err)   {
+        return next(err);
+      }
+
+      if (!user) {
+        return next(new Zerror('not_found', 'User not found'));
+      }
+
       for (var key in user) {
         if (key === 'role' || key === 'activated') {continue;}
-        if (!!req.body[key]) {user[key] = req.body[key];}
+        if (!!req.body[key]) {
+          user[key] = req.body[key];
+        }
       }
-      if (!!req.file) {user.avatarUrl = req.file.path;}
+
+      if (!!req.file) {
+        user.avatarUrl = req.file.path;
+      }
       user.save(function(err, updatedUser) {
         if (err) {return next(err);}
         res.json(updatedUser);
