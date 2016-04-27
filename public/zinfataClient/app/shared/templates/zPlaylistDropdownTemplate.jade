@@ -1,4 +1,4 @@
-.list-group(ng-show='loggedIn()')    
+.list-group(ng-show='loggedIn')    
     form.form-inline
         .form-group
             .input-group
@@ -7,7 +7,8 @@
                     span.glyphicon(class='glyphicon-plus')
     a.list-group-item(ng-repeat='pl in playlists', ng-click='addToPlaylist($event, pl, track)', ng-href='playlist/{{pl._id }}')
         {{ pl.title }}
-div(ng-show='!loggedIn()')
+div(ng-hide='loggedIn')
     p.small(class='text-center')
-        a(href='login')  Log in now
+        a(href='login').
+            Log in now
         |  to see playlists

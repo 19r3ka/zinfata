@@ -7,7 +7,7 @@
                     img.img-circle(class='img-responsive center-block', id='avatar', name= 'coverArt', 
                         alt='{{ album.title }}', ng-src='{{ album.imageUrl }}')
                 .col-sm-12(class='col-md-9')
-                    .z.vcentered
+                    .z-vcentered
                         h1.text-capitalize {{ album.title }}
                             .small: a(href='/user/{{ album.artist.id }}') {{ album.artist.handle }}
                         br
@@ -48,10 +48,10 @@
                             section(ng-if='canEdit && !editing')
                                 h4 Album
                                 ul.list-unstyled
-                                    li(ng-click='edit(album)'): a(href='') 
+                                    li(ng-click='edit(album)'): a(href='#') 
                                         span.glyphicon(class='glyphicon-pencil')
                                         |  Edit info
-                                    li(ng-click='delete(album)'): a(href='')
+                                    li(ng-click='delete(album)'): a(href='#')
                                         span.glyphicon(class='glyphicon-remove')
                                         |  Delete
                             section

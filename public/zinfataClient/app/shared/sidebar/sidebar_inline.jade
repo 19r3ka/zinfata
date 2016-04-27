@@ -16,8 +16,8 @@ li: a(href='queue')
 //- li: a(href='#')
   span.glyphicon(class='glyphicon-music')
   |  My Music
-li.dropdown
-  a.dropdown-toggle(href='#', data-toggle='dropdown')
+//- li.z-dropdown
+  a.z-dropdown-toggle(href='#', data-toggle='dropdown', ng-click='toggleContent()')
     span.glyphicon(class='glyphicon-list')
     |  My Playlists
   z-playlist-dropdown

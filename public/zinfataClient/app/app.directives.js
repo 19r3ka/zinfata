@@ -69,6 +69,26 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
     }
   };
 })
+.directive('zDropdown', ['$document', '$window', function(doc, win) {
+  return {
+    restrict: 'A',
+    link: function(scope, elm, attrs) {
+      var menu = doc.getElementByClassName('z-dropdown-menu');
+      /*Show/hide dropdown menu alternatively when user click on toggle*/
+      scope.toggleContent = function() {
+        menu.classList.toggle('z-show');
+      };
+      /* Hide dropdown when user clicks elsewhere */
+      win.onclick = function(event) {
+        if (!event.target.matches('z-dropdown-toggle')) {
+          if (menu.classList.contains('z-show')) {
+            menu.classList.remove('z-show');
+          }
+        }
+      };
+    }
+  };
+}])
 .directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log',
            'AuthenticationSvc', 'AUTH', 'MessageSvc',
   function($rootScope, QueueSvc, QUEUE, AUDIO, $log, Auth, AUTH, MessageSvc) {
@@ -392,7 +412,8 @@ Message, $log) {
       track: '='
     },
     link: function(scope, elm, attrs) {
-      elm.addClass('dropdown-menu');
+      // elm.addClass('dropdown-menu');
+      elm.addClass('z-dropdown-menu');
 
       var currentUser = session.getCurrentUser();
       scope.playlists = [];
@@ -400,7 +421,11 @@ Message, $log) {
         title: '',
         owner: {id: ''}
       };
-      scope.loggedIn  = Auth.isAuthenticated;
+      scope.loggedIn  = Auth.isAuthenticated();
+
+      if (attrs.track) {
+        scope.adding = true;
+      }
 
       function refresh() {
         if (!currentUser) {

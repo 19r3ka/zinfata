@@ -30,9 +30,10 @@
                                         span.glyphicon(class='glyphicon-heart-empty')
                                     li: a(href='#', ng-click='addToQueue(track)')
                                         span.glyphicon(class='glyphicon-list')
-                                    li: a.dropdown-toggle(href='#', data-toggle='dropdown')
-                                        span.glyphicon(class='glyphicon-plus')
-                                    z-playlist-dropdown(track='track')
+                                    //- li.dropdown
+                                        a.dropdown-toggle(href='#', data-toggle='dropdown')
+                                            span.glyphicon(class='glyphicon-plus')
+                                        z-playlist-dropdown(track='track')
                                     li(ng-click='play(track)'): a(href='#')
                                         span.glyphicon(class='glyphicon-play')
                                 ul.list-unstyled(class='z-secondary-text hidden-md hidden-lg')
@@ -43,9 +44,10 @@
                                             span.glyphicon(class='glyphicon-heart-empty')
                                         li: a(href='#', ng-click='addToQueue(track)')
                                             span.glyphicon(class='glyphicon-list')
-                                        li: a.dropdown-toggle(href='#', data-toggle='dropdown')
-                                          span.glyphicon(class='glyphicon-plus')
-                                        z-playlist-dropdown(track='track')
+                                        //- li.dropdown
+                                            a.dropdown-toggle(href='#', data-toggle='dropdown')
+                                                span.glyphicon(class='glyphicon-plus')
+                                            z-playlist-dropdown(track='track')
                                         li(ng-click='play(track)'): a(href='#')
                                             span.glyphicon(class='glyphicon-play')
 

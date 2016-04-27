@@ -15,18 +15,18 @@ $rootScope, AUTH, AuthSvc, MessageSvc, $location, $log) {
       $scope.loginForm.$setPristine();
       $location.path('dashboard');
     }, function(err) {
+      var message;
       if (err === 'mustActivateAccount') {
-        MessageSvc.addMsg('danger',
-          'You must activate your account to access all the music.' +
+        message = 'You must activate your account to access all the music.' +
           'Check the email we sent you for the activation link.' +
           'Or enter your email address below to have us send you' +
-          ' a new validation link.');
-        AuthSvc.logout(function() {});
+          ' a new validation link.';
         $location.path('register/activate');
       } else {
-        MessageSvc.addMsg('danger', 'Login failed! Try again later.');
-        $location.path('login?failure');
+        message = 'Login failed! Try again later.';
+        $location.path('login');
       }
+        MessageSvc.addMsg('danger', message);
     });
   };
 }]);
