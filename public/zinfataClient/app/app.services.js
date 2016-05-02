@@ -765,18 +765,18 @@ $log, TracksSvc, Session, AUTH) {
 app.service('MessageSvc', function() {
   this.message = null;
 
-  this.getMsg   = function() {
+  this.getMsg = function() {
     return this.message;
   };
 
-  this.addMsg   = function(type, text) {
+  this.addMsg = function(type, text) {
     this.message = {
       type: type,
       text: text
     };
   };
 
-  this.clearQueue = function() {
+  this.clear = function() {
     this.message = null;
   };
 });

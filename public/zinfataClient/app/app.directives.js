@@ -541,6 +541,28 @@ Message, $log) {
     templateUrl: '/templates/zImgCrop'
   };
 })
+.directive('zMessageBox', ['$rootScope', 'MessageSvc', '$timeout',
+function($rootScope, MessageSvc, $timeout) {
+  return {
+    restrict: 'E',
+    link: function(scope, elm, attrs) {
+      scope.$watch(function() {
+        return MessageSvc.getMsg();
+      }, function(newVal, oldVal) {
+        if (!!newVal) {
+          scope.message = newVal;
+          elm.show();
+          scope.icon    = (scope.message.type === 'success') ?
+          'fa fa-check' : 'fa fa-exclamation';
+          timeout(function() {
+            elm.hide();
+          }, 5000);
+        }
+      });
+    },
+    templateUrl: '/template/zMessageBox'
+  };
+}])
 .directive('zAlbumCreator', ['$rootScope', '$document', 'AlbumsSvc',
   'SessionSvc', 'ALBUM_EVENTS',
   function($rootScope, doc, Albums, Session, ALBUM) {

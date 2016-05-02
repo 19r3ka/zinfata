@@ -26,7 +26,7 @@ $rootScope, AUTH, AuthSvc, MessageSvc, $location, $log) {
         message = 'Login failed! Try again later.';
         $location.path('login');
       }
-        MessageSvc.addMsg('danger', message);
+      MessageSvc.addMsg('danger', message);
     });
   };
 }]);
