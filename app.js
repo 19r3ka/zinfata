@@ -31,6 +31,7 @@ var zinfataOAuthErrorHandler = require('./lib/errors/ZinfataOAuthErrorHandler');
 var zinfataErrorHandler      = require('./lib/errors/ZinfataErrorHandler');
 
 var config     = wagner.invoke(function(Config) {return Config;});
+var config2    = require('./config');
 var authConfig = config.oauth2;
 var app        = express();
 
