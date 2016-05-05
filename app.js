@@ -4,6 +4,7 @@ require('./dependencies')(wagner);
 var fs             = require('fs');
 var express        = require('express');
 var compression    = require('compression');
+var chalk          = require('chalk');
 // var serveStatic    = require('serve-static');
 var path           = require('path');
 var favicon        = require('serve-favicon');
@@ -11,7 +12,7 @@ var logger         = require('morgan');
 var cookieParser   = require('cookie-parser');
 var bodyParser     = require('body-parser');
 var mongoose       = require('mongoose');
-var passport       = require('passport');
+// var passport       = require('passport');
 var expressSession = require('express-session');
 var oauthserver    = require('oauth2-server');
 
@@ -31,7 +32,7 @@ var zinfataOAuthErrorHandler = require('./lib/errors/ZinfataOAuthErrorHandler');
 var zinfataErrorHandler      = require('./lib/errors/ZinfataErrorHandler');
 
 var config     = wagner.invoke(function(Config) {return Config;});
-var config2    = require('./config');
+var config2    = require('./config/config2');
 var authConfig = config.oauth2;
 var app        = express();
 
@@ -114,11 +115,25 @@ app.use(function(err, req, res, next) {
 });
 
 //Connect to Mongoose (Mongo DB driver)
-mongoose.connect(config[app.get('env')].db.url);
+mongoose.connect(config2.db.uri);
 var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
+db.on('error', console.error.bind(console, 'Connection error:'));
 db.once('open', function() {
-  console.log('connection successful');
+  console.log(chalk.green('Connection successful to database'));
+});
+
+app.listen(config2.port, config2.host, function() {
+  var server = (process.env.NODE_ENV === 'secure' ? 'https://' : 'http://') +
+    config2.host + ':' + config2.port;
+
+  console.log('----');
+  console.log(chalk.green(config2.app.title));
+  console.log();
+  console.log(chalk.green('Environment:     ' + process.env.NODE_ENV));
+  console.log(chalk.green('Server:          ' + server));
+  console.log(chalk.green('Database:        ' + config2.db.uri));
+  console.log(chalk.green('App version:     ' + config2.zinfata.version));
+  console.log('----');
 });
 
 module.exports = app;

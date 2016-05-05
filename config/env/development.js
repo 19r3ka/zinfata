@@ -2,14 +2,14 @@ var defaultEnvConfig = require('./default');
 
 module.exports = {
   db: {
-    uri: 'mongodb://' + (process.env.DB_HOST || 'localhost') + 'zinfata',
+    uri: 'mongodb://' + (process.env.DB_HOST || 'localhost') + '/zinfata',
     credentials: {
       user: '',
       pass: ''
     }
   },
   app: {
-    title: defaultEnvConfig + ' - Dev Mode'
+    title: defaultEnvConfig.app.title + ' - Dev Mode'
   },
   mailer: {
     from: process.env.MAILER_FROM || 'Zinfata',

@@ -10,10 +10,10 @@ var validateEnvVariables = function() {
   console.log();
   if (!files.length) {
     if (process.env.NODE_ENV) {
-      console.error(chalk.red('Error: no configuration files found for ' +
+      console.error(chalk.yellow('Error: no configuration files found for ' +
         process.env.NODE_ENV + '. Defaulting to dev environment.'));
     } else {
-      console.error(chalk.red('Error: Node environment not defined. ' +
+      console.error(chalk.yellow('Error: Node environment not defined. ' +
         'Defaulting to dev environment.'));
     }
   }

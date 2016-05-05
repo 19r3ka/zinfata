@@ -3,7 +3,7 @@ module.exports = function(wagner) {
   var express  = require('express');
   var router   = express.Router();
 
-  var passport = require('../config/passport.js');
+  // var passport = require('../config/passport.js');
   var ZErr;
   var PlaylistModel;
   wagner.invoke(function(ZError, Playlist) {
