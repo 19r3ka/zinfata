@@ -1,7 +1,7 @@
 var mongoose      = require('mongoose');
 var User          = require('./User.js');
 var defaultUrl    =
-  'zinfataClient/assets/images/album-coverart-placeholder.png';
+  'images/album-coverart-placeholder.png';
 var userValidator = [User.validate,
   'The value of `{PATH}` is not valid.'];
 

@@ -5,7 +5,7 @@ $location, $routeParams, Session, Tracks, Queue, AlbumsSvc, Users, MessageSvc,
 ALBUM_EVENTS, $log) {
   $scope.album = {
     coverArt:    '',
-    imageUrl:    'zinfataClient/assets/images/album-coverart-placeholder.png',
+    imageUrl:    'images/album-coverart-placeholder.png',
     title:       '',
     artist: {
       id:        ''

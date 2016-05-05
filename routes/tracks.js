@@ -19,6 +19,8 @@ module.exports = function(wagner) {
   var Album    = AlbumModel;
   var Track    = TrackModel;
   var multer   = require('multer');
+  var config   = require('../config/config2');
+
   /*
   ** Used to customize the destination directory of
   ** files according to form fieldname. Image will go to
@@ -28,9 +30,9 @@ module.exports = function(wagner) {
         destination: function(req, file, cb) {
           var folder = '';
           if (file.fieldname === 'imageFile') {
-            folder = 'public/images/uploads';
+            folder = config.uploads.images.dest;
           } else {
-            folder = 'public/audio/uploads';
+            folder = config.uploads.audio.dest;
           }
           cb(null, folder);
         }

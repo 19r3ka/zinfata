@@ -61,7 +61,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
       handle:  ''
     },
     streamUrl:   '',
-    coverArt:    'zinfataClient/assets/images/track-coverart-placeholder.png',
+    coverArt:    'images/track-coverart-placeholder.png',
     duration:    '',
     releaseDate: '',
     genre:       '',

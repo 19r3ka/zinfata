@@ -1,6 +1,7 @@
 module.exports = function(wagner) {
   var express  = require('express');
   var router   = express.Router();
+  var config   = require('../config/config2');
 
   var mongoose = require('mongoose');
   //var User     = require('../models/User.js');
@@ -10,7 +11,7 @@ module.exports = function(wagner) {
 
   var multer   = require('multer');
   var upload   = multer({
-    dest: 'public/images/uploads'
+    dest: config.uploads.images.dest
   });
 
   var userModel;

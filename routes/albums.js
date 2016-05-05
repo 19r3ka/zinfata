@@ -1,12 +1,13 @@
 module.exports = function(wagner) {
 
   var express  = require('express');
+  var config   = require('../config/config2');
   var router   = express.Router();
 
   // var passport = require('../config/passport.js');
   var multer   = require('multer');
   var upload   = multer(
-      {dest: 'public/images/uploads'}
+      {dest: config.uploads.images.dest}
   );
 
   var Zerror;

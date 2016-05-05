@@ -1,5 +1,5 @@
 var mongoose   = require('mongoose');
-var defaultArt = 'zinfataClient/assets/images/track-coverart-placeholder.png';
+var defaultArt = 'images/track-coverart-placeholder.png';
 var User       = require('./User.js');
 var Album      = require('./Album.js');
 var userValidator  = [User.validate,

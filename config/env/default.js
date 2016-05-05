@@ -12,13 +12,13 @@ module.exports = {
   favicon: '',
   uploads: {
     images: {
-      dest: '',
+      dest: 'uploads/images',
       limits: {
         fileSize: 5 * 1024 * 1024
       }
     },
     sounds: {
-      dest: '',
+      dest: 'uploads/audio',
       limits: {
         fileSize: 10 * 1024 * 1024
       }

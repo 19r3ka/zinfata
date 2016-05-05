@@ -43,5 +43,5 @@ zinfata.sublime-project
 zinfata.sublime-workspace
 
 # User generated data
-public/audio/uploads/*
-public/images/uploads/*
+public/dist/
+uploads
