@@ -26,6 +26,17 @@ var initGlobalConfig = function() {
   // ensure NODE_ENV is set
   validateEnvVariables();
 
+  // load default asset variables
+  var defaultAssets = require(path.join(process.cwd(),
+    'config/assets/default'));
+
+  // load environment specific assets
+  var envAssets = require(path.join(process.cwd(), 'config/assets/' +
+    process.env.NODE_ENV) || {});
+
+  // concat assets
+  var asset = _.extend(defaultAssets, envAssets);
+
   // load default config variables
   var defaultConfig = require(path.join(process.cwd(), 'config/env/default'));
 

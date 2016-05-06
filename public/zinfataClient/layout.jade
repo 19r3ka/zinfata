@@ -10,7 +10,7 @@ html.no-js
     link(rel='stylesheet', href='/lib/bootstrap-3.3.5/css/bootstrap.css')
     link(rel='stylesheet', href='/lib/font-awesome-4.5.0/css/font-awesome.min.css')
     link(rel='stylesheet', href='/lib/ngImgCrop/ng-img-crop.css')
-    link(rel='stylesheet', href="../stylesheets/style.css")
+    link(rel='stylesheet', href="/dist/css/zinfataApp.css")
   body(ng-app='zinfataClient')
     <!--[if lt IE 8]>
     p.browsehappy
@@ -22,7 +22,7 @@ html.no-js
       include app/shared/header/header    
     block messages
       //- z-message-box
-      include app/shared/messages/messageBox  
+      include app/shared/messages/messageBox
     
     block content
     
