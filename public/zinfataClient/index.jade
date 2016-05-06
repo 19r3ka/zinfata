@@ -1,5 +1,12 @@
 extends layout
 
+append head
+    <!-- build:js css/zinfataApp.min.css -->
+    <!-- inject:css -->
+    link(rel='stylesheet', href='/dist/css/zinfataApp.css')
+    <!-- endinject -->
+    <!-- endbuild -->
+
 block content
     div(ng-view)
         //- .jumbotron
@@ -10,10 +17,6 @@ block content
         //-         block z-s-content-area
 
 append scripts
-    script(src='lib/angular-1.4.5/angular-resource.js')
-    script(src='lib/angular-1.4.5/angular-route.js')
-    script(src='lib/angular-1.4.5/angular-messages.js')
-    script(src='lib/ngImgCrop/ng-img-crop.js')
     <!-- build:js js/zinfataApp.min.js -->
     //- script(src='zinfataClient/app/app.module.js')
     //- script(src='zinfataClient/app/app.factories.js')
@@ -43,5 +46,8 @@ append scripts
     //- script(src='zinfataClient/app/components/search/searchController.js')
 
     //- script(src='javascripts/default.js')
-    script(src='dist/js/zinfataApp.js')
+    <!-- inject:js -->
+    script(src='/dist/js/zinfataApp.js')
+    <!-- endinject -->
+    //- script(src='dist/js/zinfataApp.js')
     <!-- endbuild -->

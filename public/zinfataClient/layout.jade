@@ -7,10 +7,12 @@ html.no-js
     title= title
     meta(name='description', content='La plateforme de la musique togolaise.')
     meta(name='viewport', content='width=device-width, initial-scale=1')
-    link(rel='stylesheet', href='/lib/bootstrap-3.3.5/css/bootstrap.css')
-    link(rel='stylesheet', href='/lib/font-awesome-4.5.0/css/font-awesome.min.css')
-    link(rel='stylesheet', href='/lib/ngImgCrop/ng-img-crop.css')
-    link(rel='stylesheet', href="/dist/css/zinfataApp.css")
+    block head
+      <!-- inject:css -->
+      <!-- endinject -->
+      link(rel='stylesheet', href='/lib/bootstrap-3.3.5/css/bootstrap.css')
+      link(rel='stylesheet', href='/lib/font-awesome-4.5.0/css/font-awesome.min.css')
+      link(rel='stylesheet', href='/lib/ngImgCrop/ng-img-crop.css')
   body(ng-app='zinfataClient')
     <!--[if lt IE 8]>
     p.browsehappy
@@ -30,6 +32,14 @@ html.no-js
       include app/shared/player/player
 
     block scripts
-      script(src='/lib/jquery/jquery-2.1.4.min.js')
-      script(src='/lib/bootstrap-3.3.5/js/bootstrap.js')
-      script(src='/lib/angular-1.4.5/angular.js')
+      <!-- inject:js -->
+      //- inject vendor-concatenated js code here.
+      script(src='/dist/js/vendors.js')
+      <!-- endinject -->
+      //- script(src='/lib/jquery/jquery-2.1.4.min.js')
+      //- script(src='/lib/bootstrap-3.3.5/js/bootstrap.js')
+      //- script(src='/lib/angular-1.4.5/angular.js')
+      //- script(src='lib/angular-1.4.5/angular-resource.js')
+      //- script(src='lib/angular-1.4.5/angular-route.js')
+      //- script(src='lib/angular-1.4.5/angular-messages.js')
+      //- script(src='lib/ngImgCrop/ng-img-crop.js')

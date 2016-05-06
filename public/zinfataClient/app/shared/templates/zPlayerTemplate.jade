@@ -39,9 +39,9 @@
       .z-track-duration-container
         .cent
         input(id="track-duration-slider"  type="range" min="0" max="100" value="0")
-        .duration-infos
+        .duration-infos.
           {{ currentTime | duration2time  }}
-          | / 
+          / 
           {{ track.duration | duration2time  }}
     #expand-player-controllers
       i.fa.fa-chevron-up

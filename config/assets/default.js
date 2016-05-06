@@ -7,7 +7,7 @@ module.exports = {
         'public/lib/ngImgCrop/ng-img-crop.css'
       ],
       js: [
-        'public/lib/jquery/jquery-2.1.4.js',
+        'public/lib/jquery/jquery-2.1.4.min.js',
         'public/lib/bootstrap-3.3.5/js/bootstrap.js',
         'public/lib/angular-1.4.5/angular.js',
         'public/lib/angular-1.4.5/angular-resource.js',

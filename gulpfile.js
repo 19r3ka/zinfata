@@ -8,7 +8,7 @@ var gulp         = require('gulp');
 var gutil        = require('gulp-util');
 var gulpIf       = require('gulp-if');
 var useref       = require('gulp-useref');
-// var inject       = require('gulp-inject');
+var inject       = require('gulp-inject');
 var concat       = require('gulp-concat');
 var imagemin     = require('gulp-imagemin');
 var less         = require('gulp-less');
@@ -18,10 +18,8 @@ var uglify       = require('gulp-uglify');
 var minify       = require('gulp-cssmin');
 var cache        = require('gulp-cached');
 var nodemon      = require('gulp-nodemon');
-var $sort        = require('gulp-angular-filesort');
+// var $sort        = require('gulp-angular-filesort');
 
-var isDev        = true;
-var isProd       = false;
 var defAssets    = require('./config/assets/default');
 
 var dest         = 'public/dist/';
@@ -36,11 +34,35 @@ gulp.task('useref', function() {
   return gulp.src(defAssets.client.views)
   .pipe(useref())
   // Only uglify javascript
-  // .pipe(gulpIf('*.js', uglify()))
+  .pipe(gulpIf('*.js', uglify()))
   //  Only minify css
-  // .pipe(gulpIf('*.css', minify()))
+  .pipe(gulpIf('*.css', minify()))
   .pipe(gulp.dest(dest));
 });
+
+gulp.task('inject-vendors', function() {
+  var vendorAssets = _.union(defAssets.client.lib.js, defAssets.client.lib.css);
+  var vendors      = gulp.src(vendorAssets, {read: false}, {name: 'vendors'});
+
+  var vendorStream = gulp.src(defAssets.client.lib.css)
+      .pipe(concat('vendors.css'))
+      .pipe(gulp.dest(dest + 'css'));
+
+  return gulp.src(zClient + 'layout.jade')
+  .pipe(inject(vendorStream))
+  .pipe(gulp.dest(zClient));
+});
+
+gulp.task('inject-own', function() {
+  var appAssets    = _.union(dest + 'zinfataApp.js', dest + 'zinfataApp.css');
+  var app          = gulp.src(appAssets, {read: false});
+
+  return gulp.src(zClient + 'index.jade')
+  .pipe(inject(app))
+  .pipe(gulp.dest(zClient));
+});
+
+gulp.task('inject-files', ['inject-vendors', 'inject-own']);
 
 gulp.task('tinyImg', function() {
   return gulp.src(defAssets.client.img)
@@ -61,14 +83,24 @@ gulp.task('clean:cache', function(cb) {
 gulp.task('js', function() {
   var assets = _.union([zClient + 'app/app.module.js'],
       defAssets.client.js);
-  console.log(assets);
   return gulp.src(assets)
   .pipe(concat('zinfataApp.js'))
-  .pipe($sort())
   .pipe(gulp.dest(dest + 'js/'))
   .pipe(browserSync.reload({
     stream: true
   }));
+});
+
+gulp.task('js:vendors', function() {
+  return gulp.src(defAssets.client.lib.js)
+  .pipe(concat('vendors.js'))
+  .pipe(gulp.dest(dest + 'js'));
+});
+
+gulp.task('css:vendors', function() {
+  return gulp.src(defAssets.client.lib.css)
+  .pipe(concat('vendors.css'))
+  .pipe(gulp.dest(dest + 'css'));
 });
 
 gulp.task('less', function() {
@@ -105,26 +137,14 @@ gulp.task('nodemon', function() {
   });
 });
 
-/*gulp.task('inject-files', function() {
-  var vendorAssets = _.union(defAssets.client.lib.js, defAssets.client.lib.css);
-  var vendors      = gulp.src(vendorAssets, {read: false});
-
-  var appAssets    = _.union(dest + 'zinfataApp.js', dest + 'zinfataApp.css');
-  var app          = gulp.src(appAssets, {read: false});
-
-  return gulp.src(zClient + 'index.jade')
-  .pipe(inject(series(vendors, app)))
-  .pipe(gulp.dest(zClient));
-});*/
-
 gulp.task('watch', ['nodemon', 'browserSync', 'less', 'js'], function() {
   gulp.watch(defAssets.client.less, ['less']);
   gulp.watch(defAssets.client.js, ['js']);
 });
 
 gulp.task('default', function(cb) {
-  runSequence(['less', 'js', 'nodemon', 'browserSync',
-    'watch'], cb);
+  runSequence(['less', 'css:vendors','js', 'js:vendors', 'nodemon',
+    'browserSync', 'watch'], cb);
 });
 
 gulp.task('build', function(cb) {
