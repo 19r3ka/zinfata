@@ -17,10 +17,10 @@ module.exports = {
       ]
     },
     css: [
-      'public/dist/style.min.css'
+      'public/dist/zinfata-*.min.min.css'
     ],
     js: [
-      'public/dist/application.min.js'
+      'public/dist/zinfata-*.min.min.js'
     ],
     img: [
       'public/dist/images/*.png',

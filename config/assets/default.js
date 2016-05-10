@@ -17,7 +17,7 @@ module.exports = {
       ]
     },
     css: [
-      'public/stylesheets/zinfataApp.css'
+      'public/stylesheets/*.css'
     ],
     less: [
       'public/stylesheets/less/*.less'
