@@ -1,11 +1,10 @@
 extends layout
 
 append head
-    <!-- build:js css/zinfataApp.min.css -->
-    <!-- inject:css -->
-    link(rel='stylesheet', href='/dist/css/zinfataApp.css')
-    <!-- endinject -->
-    <!-- endbuild -->
+    //- inject:css
+    //- endinject
+    //- Default stylesheet used in development (!versioned, !minified)
+    link(rel="stylesheet", href='/stylesheets/zinfata.css')
 
 block content
     div(ng-view)
@@ -17,37 +16,34 @@ block content
         //-         block z-s-content-area
 
 append scripts
-    <!-- build:js js/zinfataApp.min.js -->
-    //- script(src='zinfataClient/app/app.module.js')
-    //- script(src='zinfataClient/app/app.factories.js')
-    //- script(src='zinfataClient/app/app.directives.js')
-    //- script(src='zinfataClient/app/app.routes.js')
-    //- script(src='zinfataClient/app/app.constants.js')
-    //- script(src='zinfataClient/app/app.services.js')
-    //- script(src='zinfataClient/app/app.filters.js')
+    //- inject:js
+    //- endinject
+    script(src='zinfataClient/app/app.module.js')
+    script(src='zinfataClient/app/app.factories.js')
+    script(src='zinfataClient/app/app.directives.js')
+    script(src='zinfataClient/app/app.routes.js')
+    script(src='zinfataClient/app/app.constants.js')
+    script(src='zinfataClient/app/app.services.js')
+    script(src='zinfataClient/app/app.filters.js')
 
-    //- script(src='zinfataClient/app/shared/header/headerController.js')
-    //- script(src='zinfataClient/app/shared/messages/formMessages.js')
-    //- script(src='zinfataClient/app/shared/messages/messageController.js')
-    //- script(src='/zinfataClient/app/shared/player/playerController.js')
-    //- script(src='/zinfataClient/app/shared/sidebar/sidebarController.js')
+    script(src='zinfataClient/app/shared/header/headerController.js')
+    script(src='zinfataClient/app/shared/messages/formMessages.js')
+    script(src='zinfataClient/app/shared/messages/messageController.js')
+    script(src='/zinfataClient/app/shared/player/playerController.js')
+    script(src='/zinfataClient/app/shared/sidebar/sidebarController.js')
         
-    //- script(src='zinfataClient/app/components/dashboard/dashboardController.js')
-    //- script(src='zinfataClient/app/components/registration/registerController.js')
-    //- script(src='zinfataClient/app/components/tokenValidator/tokenController.js')
-    //- script(src='zinfataClient/app/components/login/loginController.js')
-    //- script(src='zinfataClient/app/components/forgot/forgotController.js')
-    //- script(src='zinfataClient/app/components/passwordReset/passwordResetController.js')
-    //- script(src='zinfataClient/app/components/userProfile/userProfileController.js')
-    //- script(src='zinfataClient/app/components/album/albumController.js')
-    //- script(src='zinfataClient/app/components/track/trackController.js')
-    //- script(src='zinfataClient/app/components/playlist/playlistController.js')
-    //- script(src='zinfataClient/app/components/queue/queueController.js')
-    //- script(src='zinfataClient/app/components/search/searchController.js')
+    script(src='zinfataClient/app/components/dashboard/dashboardController.js')
+    script(src='zinfataClient/app/components/registration/registerController.js')
+    script(src='zinfataClient/app/components/tokenValidator/tokenController.js')
+    script(src='zinfataClient/app/components/login/loginController.js')
+    script(src='zinfataClient/app/components/forgot/forgotController.js')
+    script(src='zinfataClient/app/components/passwordReset/passwordResetController.js')
+    script(src='zinfataClient/app/components/userProfile/userProfileController.js')
+    script(src='zinfataClient/app/components/album/albumController.js')
+    script(src='zinfataClient/app/components/track/trackController.js')
+    script(src='zinfataClient/app/components/playlist/playlistController.js')
+    script(src='zinfataClient/app/components/queue/queueController.js')
+    script(src='zinfataClient/app/components/search/searchController.js')
 
     //- script(src='javascripts/default.js')
-    <!-- inject:js -->
-    script(src='/dist/js/zinfataApp.js')
-    <!-- endinject -->
-    //- script(src='dist/js/zinfataApp.js')
-    <!-- endbuild -->
+    

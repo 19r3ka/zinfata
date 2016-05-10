@@ -7,7 +7,8 @@ module.exports = {
   port: process.env.port || 'PROD_PORT',
   host: process.env.host || 'PROD_HOST',
   db: {
-    uri: 'mongodb://' + (process.env.DB_HOST || 'localhost') + 'zinfata',
+    uri: process.env.MONGODB_URI || 'mongodb://' + (process.env.DB_HOST ||
+      'localhost') + 'zinfata',
     credentials: {
       user: '',
       pass: ''

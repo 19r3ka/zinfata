@@ -36,12 +36,12 @@ var config2    = require('./config/config2');
 var authConfig = config.oauth2;
 var app        = express();
 
-if (!fs.existsSync('./public/audio/uploads')) {
-  fs.mkdirSync('./public/audio/uploads');
+if (!fs.existsSync('./uploads/audio')) {
+  fs.mkdirSync('././uploads/audio');
 }
 
-if (!fs.existsSync('./public/images/uploads')) {
-  fs.mkdirSync('./public/images/uploads');
+if (!fs.existsSync('./uploads/images')) {
+  fs.mkdirSync('./uploads/images');
 }
 //init auth server
 app.oauth = oauthserver(authConfig);

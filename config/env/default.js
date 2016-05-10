@@ -10,6 +10,12 @@ module.exports = {
   host: process.env.host || 'localhost',
   logo: '',
   favicon: '',
+  oauth2:  {
+    model:                require('../../models/OAuth'),
+    grants:               ['password', 'refresh_token'],
+    accessTokenLifetime:  900, // 15 minutes
+    refreshTokenLifetime: 604800 // 1 week
+  },
   uploads: {
     images: {
       dest: 'uploads/images',

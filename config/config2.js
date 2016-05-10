@@ -6,7 +6,7 @@ var glob  = require('glob');
 var path  = require('path');
 
 var validateEnvVariables = function() {
-  var files = glob.sync('./config/env' + process.env.NODE_ENV + '.js');
+  var files = glob.sync('./config/env/' + process.env.NODE_ENV + '.js');
   console.log();
   if (!files.length) {
     if (process.env.NODE_ENV) {
