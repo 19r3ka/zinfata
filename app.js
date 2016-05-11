@@ -9,11 +9,11 @@ var chalk          = require('chalk');
 var path           = require('path');
 var favicon        = require('serve-favicon');
 var logger         = require('morgan');
-var cookieParser   = require('cookie-parser');
+// var cookieParser   = require('cookie-parser');
 var bodyParser     = require('body-parser');
 var mongoose       = require('mongoose');
 // var passport       = require('passport');
-var expressSession = require('express-session');
+// var expressSession = require('express-session');
 var oauthserver    = require('oauth2-server');
 
 var updateinterceptor        = require('./routes/updateinterceptor')(wagner);
@@ -55,14 +55,14 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser());
+// app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 // app.use(serveStatic(path.join(__dirname, 'public')));
-app.use(expressSession({
-  secret: 'ElYemo',
-  resave: true,
-  saveUninitialized: true
-}));
+// app.use(expressSession({
+//   secret: 'ElYemo',
+//   resave: true,
+//   saveUninitialized: true
+// }));
 /* Compress all outgoing responses */
 app.use(compression());
 // app.use(passport.initialize());
