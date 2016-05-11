@@ -37,7 +37,7 @@ var authConfig = config.oauth2;
 var app        = express();
 
 if (!fs.existsSync('./uploads/audio')) {
-  fs.mkdirSync('././uploads/audio');
+  fs.mkdirSync('./uploads/audio');
 }
 
 if (!fs.existsSync('./uploads/images')) {
