@@ -67,10 +67,12 @@ gulp.task('inject-prod', ['compress', 'clean:index'], function() {
     ]), {read: false}
   );
 
-  return gulp.src(dest + 'index.jade')
+  return gulp.src([dest + 'index.jade'])
   .pipe(inject(vendorStream, {starttag: '//- vendors:{{ext}}',
     transform: tagify}))
   .pipe(inject(zStream, {transform: tagify}))
+  // Change layout path in new /dist/layout.jade to link to zinfataClient/layout
+  .pipe(replace('extends layout', 'extends ../zinfataClient/layout'))
   .pipe(gulp.dest(dest));
 });
 

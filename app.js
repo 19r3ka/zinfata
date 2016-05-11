@@ -47,7 +47,7 @@ if (!fs.existsSync('./uploads/images')) {
 app.oauth = oauthserver(authConfig);
 
 // view engine setup
-app.set('views', path.join(__dirname, 'public/zinfataClient/'));
+app.set('views', path.join(__dirname, 'public/'));
 app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public

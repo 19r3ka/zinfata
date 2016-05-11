@@ -1,7 +1,8 @@
 module.exports = function(wagner) {
-  var express = require('express');
-  var router = express.Router();
-  var ZError = wagner.invoke(function(ZOAuthError) {return ZOAuthError;});
+  var express  = require('express');
+  var router   = express.Router();
+  var ZError   = wagner.invoke(function(ZOAuthError) {return ZOAuthError;});
+  var index    = 'zinfataClient/index';
   /*var passport = require('../config/passport');
 
   function isLoggedIn(req, res, next) {
@@ -9,24 +10,26 @@ module.exports = function(wagner) {
     return next(new Error('forbidden'));
   }*/
 
-  /* GET home page. */
+  if (express().get('env') !== 'development') {
+    index = 'dist/index';
+  }
 
   router.get('/partials/:name', function(req, res) {
     var name = req.params.name;
-    res.render('app/components/' + name + '/' + name);
+    res.render('zinfataClient/app/components/' + name + '/' + name);
   });
 
   router.get('/templates/:name', function(req, res) {
     var name = req.params.name;
-    res.render('app/shared/templates/' + name + 'Template');
+    res.render('zinfataClient/app/shared/templates/' + name + 'Template');
   });
 
   router.get('/', function(req, res, next) {
-    res.render('index', {title: 'Zinfata'});
+    res.render(index, {title: 'Zinfata'});
   });
 
   router.get(/^\/(?!(api|partials|templates))/, function(req, res, next) {
-    res.render('index', {title: 'Zinfata'});
+    res.render(index, {title: 'Zinfata'});
   });
 
   return router;
