@@ -222,7 +222,8 @@ gulp.task('browserSync', function() {
 gulp.task('nodemon', function() {
   return nodemon({
     script: 'app.js',
-    nodeArgs: ['--debug'],
+    nodeArgs: ['--debug', '--trace-sync-io', '--optimize_for_size',
+    '--max_old_space_size=460', '--gc_interval=100'],
     ext: 'js, html',
     watch: _.union(defAssets.server.models, defAssets.server.routes,
       defAssets.server.config, defAssets.server.gulpConfig)
