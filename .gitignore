@@ -45,3 +45,4 @@ zinfata.sublime-workspace
 # User generated data
 public/dist/
 uploads
+.env

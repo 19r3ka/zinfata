@@ -4,8 +4,8 @@ module.exports = {
     privateKey: './config/sslcerts/key.pem',
     certificate: './config/sslcerts/cert.pem'
   },
-  port: process.env.port || 'PROD_PORT',
-  host: process.env.host || 'PROD_HOST',
+  port: process.env.PORT || 'PROD_PORT',
+  host: process.env.HOST || 'PROD_HOST',
   db: {
     uri: process.env.MONGODB_URI || 'mongodb://' + (process.env.DB_HOST ||
       'localhost') + 'zinfata',

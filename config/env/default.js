@@ -6,8 +6,8 @@ module.exports = {
     keywords: 'togo music, musique togolaise',
     GATrackingID: process.env.GA_TRACKING_ID
   },
-  port: process.env.port || 3000,
-  host: process.env.host || 'localhost',
+  port: process.env.PORT || 3000,
+  host: process.env.HOST || 'localhost',
   logo: '',
   favicon: '',
   oauth2:  {

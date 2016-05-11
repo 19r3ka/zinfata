@@ -122,18 +122,18 @@ db.once('open', function() {
   console.log(chalk.green('Connection successful to database'));
 });
 
-app.listen(config2.port, config2.host, function() {
-  var server = (process.env.NODE_ENV === 'secure' ? 'https://' : 'http://') +
-    config2.host + ':' + config2.port;
+/*app.listen(config2.port, config2.host, function() {*/
+var server = (process.env.NODE_ENV === 'secure' ? 'https://' : 'http://') +
+  config2.host + ':' + config2.port;
 
-  console.log('----');
-  console.log(chalk.green(config2.app.title));
-  console.log();
-  console.log(chalk.green('Environment:     ' + process.env.NODE_ENV));
-  console.log(chalk.green('Server:          ' + server));
-  console.log(chalk.green('Database:        ' + config2.db.uri));
-  console.log(chalk.green('App version:     ' + config2.zinfata.version));
-  console.log('----');
-});
+console.log('----');
+console.log(chalk.green(config2.app.title));
+console.log();
+console.log(chalk.green('Environment:     ' + process.env.NODE_ENV));
+console.log(chalk.green('Server:          ' + server));
+console.log(chalk.green('Database:        ' + config2.db.uri));
+console.log(chalk.green('App version:     ' + config2.zinfata.version));
+console.log('----');
+/*});*/
 
 module.exports = app;

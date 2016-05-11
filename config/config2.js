@@ -16,9 +16,9 @@ var validateEnvVariables = function() {
       console.error(chalk.yellow('Error: Node environment not defined. ' +
         'Defaulting to dev environment.'));
     }
+    process.env.NODE_ENV = 'development';
   }
 
-  process.env.NODE_ENV = 'development';
   console.log(chalk.white('')); // reset console colors
 };
 
