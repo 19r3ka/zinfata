@@ -32,71 +32,71 @@
 .container
     .row
         .col-sm-12(class='col-xs-12 col-md-10 col-md-offset-1')
-            .z-content-area
-                div(ng-if='creating || (canEdit && editing)')
-                    .row
-                        .col-md-8(class='col-md-offset-2')
-                            .page-header(ng-if='editing || creating')
-                                h3 {{ pageTitle }}
-                                    .small {{ pageDescription }}
-                            form(name='trackInfo', role='form', ng-if='creating || editing', novalidate)
-                                .form-group
-                                    .row
-                                        .col-md-3
-                                             img.img-circle(class='img-responsive center-block', height='100', name='coverArtPreview', alt='{{ track.title }}', ng-src='{{ track.coverArt }}')
-                                        .col-md-9
-                                            .row
-                                                .col-md-12
-                                                    label
-                                                        input(type='checkbox', name='coverArtToggle', ng-model='cover.unique', ng-change='updateCoverArt(cover.unique)')
-                                                    |  This track has its own cover art!
-                                                    br
-                                                    div(ng-show='cover.unique')
-                                                        label(for='img-crop') Cover Art:
-                                                        z-img-crop#img-crop(on-img-ready='updateCoverImage(imgFile)')
-                                                        
-                                .form-group
-                                    input.form-control(type='text', name='title', ng-min-length='1', placeholder='Title', ng-model='track.title', ng-disabled='!editing && !creating' required)                
-                                .form-group
-                                    label(for='music') Track:
-                                    input.form-control(type='file', name='music', accept='audio/*', onchange='angular.element(this).scope().readFile(this)', ng-required='!track.streamUrl')
-                                    //- audio(name='musicPreview', ng-src='{{ track.streamUrl }}', preload='auto', loop='true', ng-show='track.streamUrl', controls)
-                                                |  Your browser does not support this type of audio file !
-                                .form-group
-                                    .div
-                                        label(for='album') Album:
-                                        .pull-right
-                                            a(href='/album/new') + Quickly create album
-                                    select.form-control(name='album', ng-model='track.album.id', ng-options='album._id as album.title for album in albums', required)
-                                        option(value='') -- Choose this track's album --
-                                    .well(ng-show='!albums.length')
-                                        p.text-center You don't have any albums yet. 
-                                            a(href='album/new') Create an album first.
-                                            |  Or quickly add one below! 
-                                        z-album-creator
-                                .form-group
-                                    label(for='genre') Genre:   
-                                    select.form-control(name='genre', ng-model='track.genre', ng-options='(genre | uppercase) for genre in musicGenres | orderBy: genre', required)
-                                        option(value='') -- Choose a music genre --
-                                .form-group(ng-class="{ 'has-error': trackInfo.releaseDate.$invalid }")
-                                    label(for='releaseDate') Release Date:
-                                    input.form-control(type='date', name='releaseDate', ng-model='track.releaseDate', max="{{track.album.releaseDate}}", ng-disabled='!editing && !creating', required)
-                                    .help-block(ng-messages='trackInfo.releaseDate.$error', ng-show='trackInfo.releaseDate.$touched', ng-hide='trackInfo.releaseDate.$submitted')
-                                        div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
-                                .form-group
-                                    label(for='about') About: 
-                                    textarea.form-control(name='about', id='about', placeholder='Tell Us More About This Track', ng-model='track.about', ng-disabled='!editing && !creating', rows='5', maxlength='1000')
-                                .form-group
-                                    label(for='lyrics') Lyrics: 
-                                    textarea.form-control(name='lyrics', id='lyrics', placeholder='Add The Lyrics To Your Song So The World Can Sing Along', ng-model='track.lyrics', ng-disabled='!editing && !creating', rows='5', maxlength='2000')
-                                .form-group
-                                    label
-                                        input(type='checkbox', name='DownloadToggle', ng-model='track.downloadable')
-                                    |  This track may be downloaded!
-                                .form-group
-                                    button.z-btn(class='form-control', type='submit', ng-click='create(track)', ng-show='creating', ng-disabled='trackInfo.$invalid') Upload track!
-                                    button.z-btn(class='form-control', type='submit', ng-click='update(track)', ng-show='canEdit && editing', ng-disabled='trackInfo.$invalid') Save changes!
-                div(ng-hide='creating || editing')
+            div(ng-if='creating || (canEdit && editing)')
+                .z-form-box
+                    .z-content-area
+                        .page-header(ng-if='editing || creating')
+                            h3 {{ pageTitle }}
+                                .small {{ pageDescription }}
+                        form(name='trackInfo', role='form', ng-if='creating || editing', novalidate)
+                            .form-group
+                                .row
+                                    .col-md-3
+                                         img.img-circle(class='img-responsive center-block', height='100', name='coverArtPreview', alt='{{ track.title }}', ng-src='{{ track.coverArt }}')
+                                    .col-md-9
+                                        .row
+                                            .col-md-12
+                                                label
+                                                    input(type='checkbox', name='coverArtToggle', ng-model='cover.unique', ng-change='updateCoverArt(cover.unique)')
+                                                |  This track has its own cover art!
+                                                br
+                                                div(ng-show='cover.unique')
+                                                    label(for='img-crop') Cover Art:
+                                                    z-img-crop#img-crop(on-img-ready='updateCoverImage(imgFile)')
+                                                    
+                            .form-group
+                                input.form-control(type='text', name='title', ng-min-length='1', placeholder='Title', ng-model='track.title', ng-disabled='!editing && !creating' required)                
+                            .form-group
+                                label(for='music') Track:
+                                input.form-control(type='file', name='music', accept='audio/*', onchange='angular.element(this).scope().readFile(this)', ng-required='!track.streamUrl')
+                                //- audio(name='musicPreview', ng-src='{{ track.streamUrl }}', preload='auto', loop='true', ng-show='track.streamUrl', controls)
+                                            |  Your browser does not support this type of audio file !
+                            .form-group
+                                .div
+                                    label(for='album') Album:
+                                    .pull-right
+                                        a(href='/album/new') + Quickly create album
+                                select.form-control(name='album', ng-model='track.album.id', ng-options='album._id as album.title for album in albums', required)
+                                    option(value='') -- Choose this track's album --
+                                .well(ng-show='!albums.length')
+                                    p.text-center You don't have any albums yet. 
+                                        a(href='album/new') Create an album first.
+                                        |  Or quickly add one below! 
+                                    z-album-creator
+                            .form-group
+                                label(for='genre') Genre:   
+                                select.form-control(name='genre', ng-model='track.genre', ng-options='(genre | uppercase) for genre in musicGenres | orderBy: genre', required)
+                                    option(value='') -- Choose a music genre --
+                            .form-group(ng-class="{ 'has-error': trackInfo.releaseDate.$invalid }")
+                                label(for='releaseDate') Release Date:
+                                input.form-control(type='date', name='releaseDate', ng-model='track.releaseDate', max="{{track.album.releaseDate}}", ng-disabled='!editing && !creating', required)
+                                .help-block(ng-messages='trackInfo.releaseDate.$error', ng-show='trackInfo.releaseDate.$touched', ng-hide='trackInfo.releaseDate.$submitted')
+                                    div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
+                            .form-group
+                                label(for='about') About: 
+                                textarea.form-control(name='about', id='about', placeholder='Tell Us More About This Track', ng-model='track.about', ng-disabled='!editing && !creating', rows='5', maxlength='1000')
+                            .form-group
+                                label(for='lyrics') Lyrics: 
+                                textarea.form-control(name='lyrics', id='lyrics', placeholder='Add The Lyrics To Your Song So The World Can Sing Along', ng-model='track.lyrics', ng-disabled='!editing && !creating', rows='5', maxlength='2000')
+                            .form-group
+                                label
+                                    input(type='checkbox', name='DownloadToggle', ng-model='track.downloadable')
+                                |  This track may be downloaded!
+                            .form-group
+                                button.z-btn(class='form-control', type='submit', ng-click='create(track)', ng-show='creating', ng-disabled='trackInfo.$invalid') Upload track!
+                                button.z-btn(class='form-control', type='submit', ng-click='update(track)', ng-show='canEdit && editing', ng-disabled='trackInfo.$invalid') Save changes!
+            div(ng-hide='creating || editing')
+                .z-content-area
                     .row
                         .col-sm-12(class='col-md-3')
                             section(ng-if='canEdit && !editing')

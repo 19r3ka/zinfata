@@ -9,31 +9,32 @@
                                 ng-pluralize(count='queueTracks.length', when="{'0': '0 track', '1': '1 track', 'other': '{} tracks'}")
                                 |, duration: {{ queueDuration | duration2time }}
                     .panel-body
-                        table.table(class='table-striped table-hover table-condensed')
-                            thead
-                                tr
-                                    th.col-md-1(class='col-sm-1 col-xs-1')
-                                    th.col-md-4(class='col-sm-4 col-xs-4') Title
-                                    th.col-md-3(class='col-sm-3 col-xs-3') Album
-                                    th.col-md-2(class='col-sm-2 col-xs-2') Artist
-                                    th.col-md-1(class='col-sm-1 col-xs-1') Duration
-                                    //- td Length -- TODO: record track's length into database
-                                    //- options for interacting with the song
-                                    th.col-md-1(class='col-sm-1 col-xs-1') 
-                            tbody
-                                tr(ng-repeat='item in queueTracks track by $index')
-                                    td
-                                        a(href='#', ng-click='playPause($event, $index)')
-                                            span.glyphicon(ng-show='$index !== nowLoaded', class='glyphicon-play')
-                                            span.glyphicon(ng-show='$index === nowLoaded', class='glyphicon-volume-up')
-                                    td 
-                                        a(href='/track/{{item._id}}') {{ item.title }} 
-                                    td
-                                        a(href='/album/{{item.album.id}}') {{ item.album.title }} 
-                                    td 
-                                        a(href='/user/{{item.artist.id}}') {{ item.artist.handle }}
-                                    td.text-center(class='small') 
-                                        {{ item.duration | duration2time }}
-                                    td
-                                        a(type="button", class='close', aria-label='Close', ng-click='removeTrack($index)')
-                                            span(aria-hidden="true") &times;  
+                        .table-responsive
+                            table.table(class='table-striped table-hover table-condensed')
+                                thead
+                                    tr
+                                        th.col-md-1(class='col-sm-1 col-xs-1')
+                                        th.col-md-4(class='col-sm-4 col-xs-4') Title
+                                        th.col-md-3(class='col-sm-3 col-xs-3') Album
+                                        th.col-md-2(class='col-sm-2 col-xs-2') Artist
+                                        th.col-md-1(class='col-sm-1 col-xs-1') Duration
+                                        //- td Length -- TODO: record track's length into database
+                                        //- options for interacting with the song
+                                        th.col-md-1(class='col-sm-1 col-xs-1') 
+                                tbody
+                                    tr(ng-repeat='item in queueTracks track by $index')
+                                        td
+                                            a(href='#', ng-click='playPause($event, $index)')
+                                                span.glyphicon(ng-show='$index !== nowLoaded', class='glyphicon-play')
+                                                span.glyphicon(ng-show='$index === nowLoaded', class='glyphicon-volume-up')
+                                        td 
+                                            a(href='/track/{{item._id}}') {{ item.title }} 
+                                        td
+                                            a(href='/album/{{item.album.id}}') {{ item.album.title }} 
+                                        td 
+                                            a(href='/user/{{item.artist.id}}') {{ item.artist.handle }}
+                                        td.text-center(class='small') 
+                                            {{ item.duration | duration2time }}
+                                        td
+                                            a(type="button", class='close', aria-label='Close', ng-click='removeTrack($index)')
+                                                span(aria-hidden="true") &times;  

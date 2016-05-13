@@ -29,19 +29,28 @@ hi-res laptops and desktops
 html,
 body
 {
+    font-size: 1em;
+
     height: 100%;
 }
 body
 {
     font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 14px;
 
     box-sizing: content-box;
-    margin-top: 50px;
-    padding: 0, 0, 90px, 0;
+    margin-top: 30px;
+    padding: 0 0 90px 0;
 
     color: #212121;
     background-color: #f7f7f7;
+}
+@media (max-width: 767px)
+{
+    body .container > .row > .col-xs-12
+    {
+        margin: 0;
+        padding: 0;
+    }
 }
 form label
 {
@@ -58,12 +67,17 @@ ul .dropdown-menu
 }
 nav.navbar
 {
-    font-size: 10.5px;
-
     color: #ffccbc;
     border: none;
     background-color: #e64a19;
     box-shadow: 0 1px 3px rgba(0, 0, 0, .12), 0 1px 2px rgba(0, 0, 0, .24);
+}
+@media (min-width: 768px)
+{
+    nav.navbar
+    {
+        font-size: .75em;
+    }
 }
 nav.navbar a:link,
 nav.navbar a:visited,
@@ -106,7 +120,7 @@ nav.navbar #z-navbar-collapse.in li:hover
 }
 nav.navbar .z-text-emphasize
 {
-    font-size: 14px;
+    font-size: 1em;
     font-weight: bold;
 }
 a
@@ -141,7 +155,7 @@ h6
 
     width: 100%;
     margin: 0;
-    padding-left: 50px;
+    padding-left: 10px;
 
     box-shadow: 0 3px 6px rgba(0, 0, 0, .16), 0 3px 6px rgba(0, 0, 0, .23);
 }
@@ -165,7 +179,9 @@ h6
     position: relative;
 
     min-height: 300px;
+    max-height: 100%;
     margin-top: 50px;
+    margin-bottom: 0;
 
     color: #ff5722;
     background: -webkit-linear-gradient(rgba(0, 0, 0, .2), rgba(0, 0, 0, .6)), url('../../images/home_jumbotron_bg.jpg') no-repeat center center;
@@ -219,7 +235,7 @@ h6
     border: none;
     background-color: #ff5722;
 }
-@media (max-width: 960px)
+@media (max-width: 992px)
 {
     .jumbotron .z-bottom a.btn
     {
@@ -228,7 +244,7 @@ h6
         margin: 0 auto;
     }
 }
-@media (max-width: 960px)
+@media (max-width: 992px)
 {
     .jumbotron h1,
     .jumbotron h2,
@@ -274,12 +290,29 @@ h6
     float: none;
 
     height: 100%;
-    margin: 20px;
-    margin-top: 0;
-    padding: 10px 30px;
+    margin: 1px 10px;
+    padding: 1px 10px;
+    padding-top: 5px;
 
     background-color: white;
     box-shadow: 0 1px 3px rgba(0, 0, 0, .12), 0 1px 2px rgba(0, 0, 0, .24);
+}
+@media (min-width: 768px)
+{
+    .z-content-area
+    {
+        margin: 20px;
+        margin-top: 0;
+        padding: 25px 30px 15px;
+    }
+}
+@media (min-width: 768px)
+{
+    .z-form-box
+    {
+        max-width: 65%;
+        margin: 0 auto;
+    }
 }
 .z-secondary-text
 {
@@ -494,35 +527,35 @@ fieldset[disabled] .z-btn.active
     vertical-align: middle;
 }
 /* menu */
-@media (max-width: 1000px)
+@media (max-width: 992px - 1)
 {
     #mobile-menu
     {
         display: block;
     }
 }
-@media (min-width: 1001px)
+@media (min-width: 992px)
 {
     #mobile-menu
     {
         display: none;
     }
 }
-@media (max-width: 1000px)
+@media (max-width: 992px - 1)
 {
     #sidebar
     {
         display: none;
     }
 }
-@media (min-width: 1001px)
+@media (min-width: 992px)
 {
     #sidebar
     {
         display: block;
     }
 }
-@media (max-width: 1000px)
+@media (max-width: 992px - 1)
 {
     .nav > .z-desktop
     {

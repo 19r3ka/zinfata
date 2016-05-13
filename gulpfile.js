@@ -36,6 +36,7 @@ var images       = 'public/images/';
 var lessFiles    = cssFolder + 'less/*.less';
 var JSFile       = 'zinfata-' + version + '.js';
 var CSSFile      = 'zinfata-' + version + '.css';
+
 // For cache-busting purposes, append md5 hash to filename
 // hash will change with file content updates
 var JSMinFile    = function() {
