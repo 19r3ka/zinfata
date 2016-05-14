@@ -51,8 +51,8 @@
                                                 |  This track has its own cover art!
                                                 br
                                                 div(ng-show='cover.unique')
-                                                    label(for='img-crop') Cover Art:
-                                                    z-img-crop#img-crop(on-img-ready='updateCoverImage(imgFile)')
+                                                    label(for='coverArt') Cover Art:
+                                                    z-img-crop(name='coverArt', on-img-ready='updateCoverImage(imgFile)')
                                                     
                             .form-group
                                 input.form-control(type='text', name='title', ng-min-length='1', placeholder='Title', ng-model='track.title', ng-disabled='!editing && !creating' required)                
@@ -79,7 +79,7 @@
                                     option(value='') -- Choose a music genre --
                             .form-group(ng-class="{ 'has-error': trackInfo.releaseDate.$invalid }")
                                 label(for='releaseDate') Release Date:
-                                input.form-control(type='date', name='releaseDate', ng-model='track.releaseDate', max="{{track.album.releaseDate}}", ng-disabled='!editing && !creating', required)
+                                input.form-control(type='date', name='releaseDate', ng-model='track.releaseDate', max="{{track.album.releaseDate}}", ng-disabled='!editing && !creating', datepicker, required)
                                 .help-block(ng-messages='trackInfo.releaseDate.$error', ng-show='trackInfo.releaseDate.$touched', ng-hide='trackInfo.releaseDate.$submitted')
                                     div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
                             .form-group

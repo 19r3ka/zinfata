@@ -31,13 +31,15 @@
                                 input.form-control(type='text', name='title', id='title', placeholder='Title', ng-model='album.title', ng-disabled='!editing && !creating', required)
                             .form-group
                                 label(for='coverArt') Cover Art:
-                                z-img-crop(on-img-ready='updateCoverImage(imgFile)')
+                                z-img-crop(name='coverArt', on-img-ready='updateCoverImage(imgFile)')
                             .form-group
                                 label(for='about') About: 
                                 textarea.form-control(name='about', id='about', placeholder='Tell Us More About This Album', ng-model='album.about', ng-disabled='!editing && !creating', rows='5', maxlength='1000')
-                            .form-group
+                            .form-group(ng-class="{ 'has-error': albumForm.releaseDate.$touched && albumForm.releaseDate.$invalid }")
                                 label(for='releaseDate') Release Date:
-                                input.form-control(type='date', name='releaseDate', id='releaseDate', ng-model='album.releaseDate', ng-disabled='!editing && !creating', required)
+                                input.form-control(type='date', name='releaseDate', id='releaseDate', ng-model='album.releaseDate', ng-disabled='!editing && !creating', datepicker, required)
+                                .help-block(ng-messages='albumForm.releaseDate.$error', ng-show='albumForm.releaseDate.$touched', ng-hide='registerForm.$submitted')
+                                    div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
                             .form-group
                                 button.z-btn(type='submit', ng-click='create(album)', ng-show='creating', class=['form-control'], ng-disabled='albumForm.$invalid') Create Album!
                                 button.z-btn(type='submit', ng-click='update(album)', ng-show='editing', class=['form-control'], ng-disabled='albumForm.$invalid') Update!

@@ -4,10 +4,12 @@ module.exports = {
       css: [
         'public/lib/bootstrap-3.3.5/css/bootstrap.min.css',
         'public/lib/font-awesome-4.5.0/css/font-awesome.min.css',
+        'public/lib/jquery-ui-1.11.4/jquery-ui.css',
         'public/lib/ngImgCrop/ng-img-crop.css'
       ],
       js: [
         'public/lib/jquery/jquery-2.1.4.min.js',
+        'public/lib/jquery-ui-1.11.4/jquery-ui.min.js',
         'public/lib/bootstrap-3.3.5/js/bootstrap.min.js',
         'public/lib/angular-1.4.5/angular.min.js',
         'public/lib/angular-1.4.5/angular-resource.min.js',

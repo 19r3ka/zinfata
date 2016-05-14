@@ -3,6 +3,7 @@ extends layout
 append head
     //- vendors:css
     link(rel="stylesheet", href="/lib/bootstrap-3.3.5/css/bootstrap.css")
+    link(rel="stylesheet", href="/lib/jquery-ui-1.11.4/jquery-ui.css")
     link(rel="stylesheet", href="/lib/font-awesome-4.5.0/css/font-awesome.css")
     link(rel="stylesheet", href="/lib/ngImgCrop/ng-img-crop.css")
     //- endinject
@@ -10,7 +11,6 @@ append head
     //- inject:css
     link(rel="stylesheet", href="/stylesheets/zinfata.css")
     //- endinject
-
 block content
     div(ng-view)
         //- .jumbotron
@@ -23,15 +23,18 @@ block content
 append scripts
     //- vendors:js
     script(src="/lib/jquery/jquery-2.1.4.min.js")
+    script(src="/lib/jquery-ui-1.11.4/jquery-ui.js")
     script(src="/lib/bootstrap-3.3.5/js/bootstrap.js")
     script(src="/lib/angular-1.4.5/angular.js")
     script(src="/lib/angular-1.4.5/angular-resource.js")
     script(src="/lib/angular-1.4.5/angular-route.js")
     script(src="/lib/angular-1.4.5/angular-messages.js")
     script(src="/lib/ngImgCrop/ng-img-crop.js")
+    script(src="/lib/modernizr/modernizr.js")
     //- endinject
 
     //- inject:js
+    //- script(src="/javascripts/feature-detects.js")
     script(src="/zinfataClient/app/app.module.js")
     script(src="/zinfataClient/app/app.constants.js")
     script(src="/zinfataClient/app/app.directives.js")
@@ -57,3 +60,4 @@ append scripts
     script(src="/zinfataClient/app/shared/player/playerController.js")
     script(src="/zinfataClient/app/shared/sidebar/sidebarController.js")
     //- endinject
+    
