@@ -563,6 +563,40 @@ function($rootScope, MessageSvc, $timeout) {
     templateUrl: '/template/zMessageBox'
   };
 }])
+.directive('datepicker', [function() {
+  return {
+    restrict: 'A',
+    require:  'ngModel',
+    link: function(scope, elm, attrs, ctrl) {
+      function updateModel(dateText) {
+        scope.$apply(function() {
+          ctrl.$setViewValue(dateText);
+        });
+      }
+
+      var options = {
+        dateFormat: 'yy-mm-dd',
+        onSelect: function(dateText) {
+          updateModel(dateText);
+        }
+      };
+
+      if (!Modernizr.inputtypes.date) {
+        elm.datepicker(options);
+      }
+    }
+  };
+}])
+.directive('zCollapse', ['$document', function($document) {
+  return {
+    restrict: 'A',
+    link: function(scope, elm) {
+      elm.on('click', 'a', function() {
+        elm.collapse('hide');
+      });
+    }
+  };
+}])
 .directive('zAlbumCreator', ['$rootScope', '$document', 'AlbumsSvc',
   'SessionSvc', 'ALBUM_EVENTS',
   function($rootScope, doc, Albums, Session, ALBUM) {

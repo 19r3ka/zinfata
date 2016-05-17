@@ -17,32 +17,34 @@
                                 li.text-capitalize duration: {{ album.duration | duration2time }}
 .container
     .row
-        .col-sm-12(class='col-xs-12 col-md-10 col-md-offset-1')
-            .z-content-area
-                div(ng-if='creating || (canEdit && editing)')
-                    .row
-                        .col-md-8(class='col-md-offset-2')
-                            .page-header(ng-if='editing || creating')
-                                h3 {{ pageTitle }}
-                                    .small {{ pageDescription }}
-                            form(name='albumForm', enctype= 'multipart/form-data', ng-if='editing || creating', role='form', novalidate)
-                                .form-group
-                                    img.img-circle(class='img-responsive center-block', name= 'coverArt', width='200', alt='{{ album.title }}', ng-src='{{ album.imageUrl }}')
-                                .form-group
-                                    input.form-control(type='text', name='title', id='title', placeholder='Title', ng-model='album.title', ng-disabled='!editing && !creating', required)
-                                .form-group
-                                    label(for='coverArt') Cover Art:
-                                    z-img-crop(on-img-ready='updateCoverImage(imgFile)')
-                                .form-group
-                                    label(for='about') About: 
-                                    textarea.form-control(name='about', id='about', placeholder='Tell Us More About This Album', ng-model='album.about', ng-disabled='!editing && !creating', rows='5', maxlength='1000')
-                                .form-group
-                                    label(for='releaseDate') Release Date:
-                                    input.form-control(type='date', name='releaseDate', id='releaseDate', ng-model='album.releaseDate', ng-disabled='!editing && !creating', required)
-                                .form-group
-                                    button.z-btn(type='submit', ng-click='create(album)', ng-show='creating', class=['form-control'], ng-disabled='albumForm.$invalid') Create Album!
-                                    button.z-btn(type='submit', ng-click='update(album)', ng-show='editing', class=['form-control'], ng-disabled='albumForm.$invalid') Update!
-                div(ng-hide='editing || creating')
+        .col-xs-12(class='col-sm-12 col-md-10 col-md-offset-1')
+            div(ng-if='creating || (canEdit && editing)')
+                .z-form-box
+                    .z-content-area
+                        .page-header(ng-if='editing || creating')
+                            h3 {{ pageTitle }}
+                                .small {{ pageDescription }}
+                        form(name='albumForm', enctype= 'multipart/form-data', ng-if='editing || creating', role='form', novalidate)
+                            .form-group
+                                img.img-circle(class='img-responsive center-block', name= 'coverArt', width='200', alt='{{ album.title }}', ng-src='{{ album.imageUrl }}')
+                            .form-group
+                                input.form-control(type='text', name='title', id='title', placeholder='Title', ng-model='album.title', ng-disabled='!editing && !creating', required)
+                            .form-group
+                                label(for='coverArt') Cover Art:
+                                z-img-crop(name='coverArt', on-img-ready='updateCoverImage(imgFile)')
+                            .form-group
+                                label(for='about') About: 
+                                textarea.form-control(name='about', id='about', placeholder='Tell Us More About This Album', ng-model='album.about', ng-disabled='!editing && !creating', rows='5', maxlength='1000')
+                            .form-group(ng-class="{ 'has-error': albumForm.releaseDate.$touched && albumForm.releaseDate.$invalid }")
+                                label(for='releaseDate') Release Date:
+                                input.form-control(type='date', name='releaseDate', id='releaseDate', ng-model='album.releaseDate', ng-disabled='!editing && !creating', datepicker, required)
+                                .help-block(ng-messages='albumForm.releaseDate.$error', ng-show='albumForm.releaseDate.$touched', ng-hide='registerForm.$submitted')
+                                    div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
+                            .form-group
+                                button.z-btn(type='submit', ng-click='create(album)', ng-show='creating', class=['form-control'], ng-disabled='albumForm.$invalid') Create Album!
+                                button.z-btn(type='submit', ng-click='update(album)', ng-show='editing', class=['form-control'], ng-disabled='albumForm.$invalid') Update!
+            div(ng-hide='editing || creating')
+                .z-content-area
                     .row
                         .col-sm-12(class='col-md-3')
                             section(ng-if='canEdit && !editing')

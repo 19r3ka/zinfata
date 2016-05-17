@@ -1,6 +1,6 @@
 {
   "name": "zinfata",
-  "version": "0.0.1",
+  "version": "0.1.7",
   "private": true,
   "description": "The first digital platform dedicated to Togo music distribution.",
   "keywords": [
@@ -63,6 +63,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-replace": "0.5.4",
     "gulp-uglify": "^1.5.3",
+    "imagemin": "^4.0.0",
     "jshint": "^2.8.0",
     "karma": "^0.13.22",
     "karma-chai": "^0.1.0",

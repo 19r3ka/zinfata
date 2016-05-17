@@ -25,6 +25,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
         if (album._id === $scope.track.album.id) {
           $scope.track.album.title       = album.title;
           $scope.track.album.releaseDate = album.releaseDate;
+          $scope.track.album.coverArt    = album.imageUrl;
           if ($scope.track.coverArt !== album.imageUrl) {
             $scope.cover.unique = true;
             /* Save the original unique cover art in case we need to revert back to it

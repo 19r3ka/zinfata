@@ -36,6 +36,7 @@ var images       = 'public/images/';
 var lessFiles    = cssFolder + 'less/*.less';
 var JSFile       = 'zinfata-' + version + '.js';
 var CSSFile      = 'zinfata-' + version + '.css';
+
 // For cache-busting purposes, append md5 hash to filename
 // hash will change with file content updates
 var JSMinFile    = function() {
@@ -222,7 +223,8 @@ gulp.task('browserSync', function() {
 gulp.task('nodemon', function() {
   return nodemon({
     script: 'app.js',
-    nodeArgs: ['--debug'],
+    nodeArgs: ['--debug', '--optimize_for_size', '--max_old_space_size=460',
+      '--gc_interval=100'],
     ext: 'js, html',
     watch: _.union(defAssets.server.models, defAssets.server.routes,
       defAssets.server.config, defAssets.server.gulpConfig)
