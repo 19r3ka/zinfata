@@ -145,6 +145,7 @@ h1, h2, h3, h4, h5, h6 {
       rgba(0, 0, 0, 0.6)
     ), url('../../images/home_jumbotron_bg.jpg') no-repeat center center;
 	background-size: cover;
+	z-index: 1;
 	.z-blur {
 		position: absolute;
 		top: 0;
@@ -157,7 +158,7 @@ h1, h2, h3, h4, h5, h6 {
 	.z-vcentered {
     background-color: rgba(0, 0, 0, 0.2);
 	}
-	.boxShadow();
+	.boxShadow(2);
 	.z-bottom {
 		display: block;
 		min-width: 75%;
@@ -222,6 +223,7 @@ h1, h2, h3, h4, h5, h6 {
 		margin: 20px;
 		margin-top: 0px;
 	}
+	z-index: -1;
 	.boxShadow();
 }
 
