@@ -587,6 +587,16 @@ function($rootScope, MessageSvc, $timeout) {
     }
   };
 }])
+.directive('zCollapse', ['$document', function($document) {
+  return {
+    restrict: 'A',
+    link: function(scope, elm) {
+      elm.on('click', 'a', function() {
+        elm.collapse('hide');
+      });
+    }
+  };
+}])
 .directive('zAlbumCreator', ['$rootScope', '$document', 'AlbumsSvc',
   'SessionSvc', 'ALBUM_EVENTS',
   function($rootScope, doc, Albums, Session, ALBUM) {
