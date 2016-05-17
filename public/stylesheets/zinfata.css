@@ -203,6 +203,10 @@ h6
     -webkit-filter: blur(10px);
             filter: blur(10px);
 }
+.jumbotron .z-vcentered
+{
+    background-color: rgba(0, 0, 0, .2);
+}
 .jumbotron .z-bottom
 {
     display: block;

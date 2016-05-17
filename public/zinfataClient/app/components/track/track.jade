@@ -1,4 +1,4 @@
-.jumbotron(ng-hide='creating || editing', class='z-id-card', ng-style='{"background-image": url({{ track.album.coverArt }})}')
+.jumbotron(ng-hide='creating || editing', class='z-id-card', style='background-image:url({{ track.album.coverArt }})')
     .z-blur
     .container
         .row
@@ -6,7 +6,7 @@
                 .col-sm-12(class='col-md-3')
                     img.img-circle(class='img-responsive center-block', name= 'coverArt', alt='{{ track.title }}', ng-src='{{ track.coverArt }}')
                 .col-sm-12(class='col-md-9')
-                    .z.vcentered
+                    .z-vcentered
                         h1.text-capitalize {{ track.title }}
                             .small: a(href='/album/{{ track.album.id }}') {{ track.album.title }}
                         h3#username: a(href='/user/{{ track.artist.id }}') {{ track.artist.handle }}
