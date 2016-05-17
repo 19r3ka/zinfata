@@ -25,6 +25,12 @@ body {
 			margin: 0px;
 		} 
 	}
+	.container > .row > .col-sm-12 {
+		@media(max-width: (@screen-tablet - 1)) {
+			padding: 0px;
+			margin: 0px;
+		} 
+	}
 }
 
 form {
@@ -39,7 +45,6 @@ form {
 		background: none;
 	}
 }
-
 
 ul {
 	.dropdown-menu {
@@ -215,8 +220,8 @@ h1, h2, h3, h4, h5, h6 {
 	background-color: white;
 	float: none;
 	height: 100%;
-	margin: 1px 10px;
-	padding: 1px 10px;
+	margin: 1px 1px;
+	padding: 1px 5px;
 	padding-top: 5px; 
 	@media(min-width: @screen-tablet) {
 		padding: 25px 30px 15px;
