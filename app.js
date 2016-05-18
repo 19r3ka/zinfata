@@ -26,7 +26,7 @@ var playlists                = require('./routes/playlists')(wagner);
 var oauthclients             = require('./routes/oauthclients')(wagner);
 var zinfataClientProxy       = require('./routes/zinfataclientproxy')(wagner);
 var revoketokens             = require('./routes/revoketokens')(wagner);
-var creds                    = require('./routes/getCreds')(wagner);
+var search                   = require('./routes/search')(wagner);
 var oauthinfo                = require('./routes/oauthinfo')(wagner);
 var zinfataOAuthErrorHandler = require('./lib/errors/ZinfataOAuthErrorHandler');
 var zinfataErrorHandler      = require('./lib/errors/ZinfataErrorHandler');
@@ -78,7 +78,7 @@ app.use('/oauth2/me', oauthinfo);
 app.use('/zinfataclient', zinfataClientProxy);
 // Define the routes to use in the app
 app.use('/api/users', users);
-app.use('/creds', creds);
+app.use('/api/search', search);
 app.all(/\/api\/*/, app.oauth.authorise());
 app.all('/api/:route/:id', updateinterceptor);
 //user must have access token
