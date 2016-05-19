@@ -3,7 +3,7 @@
         form(name='searchForm', role='form', novalidate)
                 .input-group
                     span.input-group-addon(class='glyphicon glyphicon-search')
-                    input.form-control(type='text', ng-model='searchTerm', placeholder='Search users, tracks, albums, and playlists')
+                    input.form-control(type='text', ng-model='searchTerm', ng-model-options={ debounce: 1000 } ,placeholder='Search users, tracks, albums, and playlists')
     .panel-body
         h4(ng-show='!!tracks.length') Tracks
         .list-group

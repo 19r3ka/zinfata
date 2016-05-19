@@ -1,7 +1,7 @@
 module.exports = function(wagner) {
   var router = require('express').Router();
   router.route('/')
-  .post(function(req, res, next) {
+  .get(function(req, res, next) {
     wagner.invoke(function(User, Album, Track, ZError) {
       if (!req.query.q) {
         return next(new ZError('invalid_request', 'You must specify a search query.'));
@@ -23,7 +23,7 @@ module.exports = function(wagner) {
       };
 
       if (offset) {
-        query.updatedAt = { $lte: offset }
+        query.updatedAt = { $lt: offset }
       }
 
       Track.find(query)

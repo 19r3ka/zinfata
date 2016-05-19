@@ -88,7 +88,7 @@ app.factory('Users', ['$resource', function($resource) {
     }
   });
 }])
-.factory('AccessToken', function($resource){
+.factory('AccessToken', ['$resource', function($resource){
   return $resource('/zinfataclient/:resource', {resource: '@resource'}, {
     'getUser': {
       method: 'GET',
@@ -106,9 +106,9 @@ app.factory('Users', ['$resource', function($resource) {
       params: {resource: 'refresh'}
     }   
   });
-})
+}])
 .factory('localStore', ['$window', '$rootScope', '$log', 
-                        function($window, $rootScope, $log){
+  function($window, $rootScope, $log){
   /* Implements access to the local store to enable saving
      queued tracks from one page to the other */
 

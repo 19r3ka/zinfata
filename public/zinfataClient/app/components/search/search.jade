@@ -1,1 +1,6 @@
-z-search-box
+input.z-search-box(type='search', class= 'input-lg', name='searchBox', ng-model='search.term', 
+ng-model-options='{ debounce: 1000 }', ng-change='goFetch(search.term)', z-search-box) 
+
+pre
+  {{ search.term }}
+  {{ scope.tracks }}

@@ -372,34 +372,39 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
     templateUrl: '/templates/zDetailedTrackListing'
   };
 }])
-.directive('zSearchBox', ['PlaylistsSvc', 'TracksSvc', 'AlbumsSvc', 'UsersSvc',
-                         function(Playlists, Tracks, Albums, Users) {
+.directive('zSearchBox', ['TracksSvc', 'AlbumsSvc', 'UsersSvc', '$http',
+  function(Tracks, Albums, Users, $http) {
   return {
-    restrict: 'E',
-    link: function(scope, elm, attrs) {
-      scope.playlists  = scope.tracks = scope.albums = scope.users = [];
-      if (angular.isUndefined(scope.searchTerm)) {
-        scope.searchTerm = '';
-      }
-      scope.playlists = Playlists.all;
-      scope.tracks    = Tracks.all;
-      scope.albums    = Albums.all;
-      scope.users     = Users.all;
+    restrict: 'A',
+    require: 'ngModel',
+    link: function(scope, elm, attrs, ngModel) {
+      scope.tracks = scope.albums = scope.users = [];
+      scope.search = {term: ''};
+      var endpoint = 'api/search';
+      var config   = {
+        params: {
+          q: scope.search.term,
+        },
+        cache: true
+      };
 
-      /*Playlists.query(function(playlists) {
-        scope.playlists = playlists;
-      });
-      Tracks.query(function(tracks) {
-        scope.tracks = tracks;
-      });
-      Albums.query(function(albums) {
-        scope.albums = albums;
-      });
-      Users.query(function(users) {
-        scope.users = users;
-      });*/
+      scope.goFetch = function goFetch(query) {
+        console.log('go go goFetch!')
+        if (query) {
+          config.params.q = query;
+          $http.get(endpoint, config).then(function(response) {
+            var data = response.data;
+            scope.tracks = data.tracks;
+            scope.albums = data.albums;
+            scope.users  = data.users;
+
+            console.log(scope.tracks);
+            console.log(scope.albums);
+            console.log(scope.users);
+          });
+        }  
+      }
     },
-    templateUrl: '/templates/zSearchBox'
   };
 }])
 .directive('zPlaylistDropdown', ['$rootScope', 'PlaylistsSvc',
