@@ -372,39 +372,49 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
     templateUrl: '/templates/zDetailedTrackListing'
   };
 }])
-.directive('zSearchBox', ['TracksSvc', 'AlbumsSvc', 'UsersSvc', '$http',
-  function(Tracks, Albums, Users, $http) {
+.directive('zSearchBox', ['$http', function($http) {
   return {
-    restrict: 'A',
-    require: 'ngModel',
-    link: function(scope, elm, attrs, ngModel) {
-      scope.tracks = scope.albums = scope.users = [];
-      scope.search = {term: ''};
+    restrict: 'E',
+    // require: 'ngModel',
+    link: function(scope, elm, attrs, ctrl) {
+      scope.search = {searchTerm: ''};
       var endpoint = 'api/search';
+      var searches = [];
       var config   = {
         params: {
-          q: scope.search.term,
+          q: scope.search.searchTerm,
         },
         cache: true
       };
 
+      function isNewSearchTerm(query) {
+        if (searches.length) {
+          for (var i = 0; i < searches.length; i++) {
+            if (searches[i] === query || query.search(searches[i]) === 0) {
+              return false;
+            }
+
+            if (searches[i].search(query) === 0) {
+              searches[i] = query;
+              return true;
+            }
+          }
+        }
+        // if it's truly a new search...
+        searches.push(query);
+        return true;
+      }
+
       scope.goFetch = function goFetch(query) {
-        console.log('go go goFetch!')
-        if (query) {
+        if (query && isNewSearchTerm(query)) {
           config.params.q = query;
           $http.get(endpoint, config).then(function(response) {
-            var data = response.data;
-            scope.tracks = data.tracks;
-            scope.albums = data.albums;
-            scope.users  = data.users;
-
-            console.log(scope.tracks);
-            console.log(scope.albums);
-            console.log(scope.users);
+            scope.search = response.data;
           });
-        }  
-      }
+        }
+      };
     },
+    templateUrl: '/templates/zSearchBox'
   };
 }])
 .directive('zPlaylistDropdown', ['$rootScope', 'PlaylistsSvc',

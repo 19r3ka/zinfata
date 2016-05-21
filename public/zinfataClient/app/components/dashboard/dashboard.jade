@@ -16,36 +16,49 @@
 .container
     .row
         .col-sm-12(class='col-md-10 col-md-offset-1')
-          .z-content-area
-            div(ng-show='loggedIn()')
-              .page-header
-                h2 Latest Posts 
-                  .small  Hear the latest music from the Zinfata Community!
-              .panel(ng-show='!tracks.length')
-                .panel-heading
-                  h3.panel-title Amazing! It seems no one has posted on Zinfata yet!
-                .panel-body
-                  p.center-block
-                    a.z-btn(type='button', class='center-block', href='/track/new') Be the first uploader ever!
-              .panel(ng-show='!!tracks.length')
-                .panel-body
-                  .z-list
-                    .z-track(ng-repeat='track in tracks')
-                      .media
-                        .media-left
-                          a(href='#')
-                            img.media-object(name='coverArt', width='75', ng-src='{{ track.coverArt }}', alt='{{ track.title }}')
-                        .media-body
-                          .row
-                            .col-sm-7(class='col-md-7 col-xs-7')
-                              h4.media-heading(class='z-ellipsis'): a(href='track/{{ track._id }}') {{ track.title }}
-                                .small: a(href='album/{{ track.album.id }}') {{ track.album.title }}
-                              h6: a(href='user/{{ track.artist.id }}') {{ track.artist.handle }}
-                            .col-sm-5(class='col-md-5 col-xs-5')
-                              .pull-right
-                                ul.list-inline(class='z-vcentered z-secondary-text hidden-xs hidden-sm')
-                                  li.small {{ track.genre }}
-                                  li.small {{ track.duration | duration2time }}
+          .z-content-area(ng-show='loggedIn()')
+            .page-header
+              h2 Latest Posts 
+                .small  Hear the latest music from the Zinfata Community!
+            .panel(ng-show='!tracks.length')
+              .panel-heading
+                h3.panel-title Amazing! It seems no one has posted on Zinfata yet!
+              .panel-body
+                p.center-block
+                  a.z-btn(type='button', class='center-block', href='/track/new') Be the first uploader ever!
+            .panel(ng-show='!!tracks.length')
+              .panel-body
+                .z-list
+                  .z-track(ng-repeat='track in tracks')
+                    .media
+                      .media-left
+                        a(href='#')
+                          img.media-object(name='coverArt', width='75', ng-src='{{ track.coverArt }}', alt='{{ track.title }}')
+                      .media-body
+                        .row
+                          .col-sm-7(class='col-md-7 col-xs-7')
+                            h4.media-heading(class='z-ellipsis'): a(href='track/{{ track._id }}') {{ track.title }}
+                              .small: a(href='album/{{ track.album.id }}') {{ track.album.title }}
+                            h6: a(href='user/{{ track.artist.id }}') {{ track.artist.handle }}
+                          .col-sm-5(class='col-md-5 col-xs-5')
+                            .pull-right
+                              ul.list-inline(class='z-vcentered z-secondary-text hidden-xs hidden-sm')
+                                li.small {{ track.genre }}
+                                li.small {{ track.duration | duration2time }}
+                                //- li: a(href='#', ng-click='favorite(track)')
+                                  span.glyphicon(class='glyphicon-heart-empty')
+                                li: a(href='#', ng-click='addToQueue(track)')
+                                  span.glyphicon(class='glyphicon-list')
+                                //- li.dropdown
+                                  a.dropdown-toggle(href='#', data-toggle='dropdown')
+                                    span.glyphicon(class='glyphicon-plus')
+                                  z-playlist-dropdown(track='track')
+                                li(ng-click='play(track)'): a(href='#')
+                                  span.glyphicon(class='glyphicon-play')
+                              ul.list-unstyled(class='z-secondary-text hidden-md hidden-lg')
+                                li.text-right(class='small') {{ track.genre }}
+                                li.text-right(class='small') {{ track.duration | duration2time }}
+                                li.pull-right: ul.list-inline
                                   //- li: a(href='#', ng-click='favorite(track)')
                                     span.glyphicon(class='glyphicon-heart-empty')
                                   li: a(href='#', ng-click='addToQueue(track)')
@@ -56,17 +69,3 @@
                                     z-playlist-dropdown(track='track')
                                   li(ng-click='play(track)'): a(href='#')
                                     span.glyphicon(class='glyphicon-play')
-                                ul.list-unstyled(class='z-secondary-text hidden-md hidden-lg')
-                                  li.text-right(class='small') {{ track.genre }}
-                                  li.text-right(class='small') {{ track.duration | duration2time }}
-                                  li.pull-right: ul.list-inline
-                                    //- li: a(href='#', ng-click='favorite(track)')
-                                      span.glyphicon(class='glyphicon-heart-empty')
-                                    li: a(href='#', ng-click='addToQueue(track)')
-                                      span.glyphicon(class='glyphicon-list')
-                                    //- li.dropdown
-                                      a.dropdown-toggle(href='#', data-toggle='dropdown')
-                                        span.glyphicon(class='glyphicon-plus')
-                                      z-playlist-dropdown(track='track')
-                                    li(ng-click='play(track)'): a(href='#')
-                                      span.glyphicon(class='glyphicon-play')
