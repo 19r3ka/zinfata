@@ -140,7 +140,7 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
         userToUpdate.avatar = user.avatar;
         delete userToUpdate.avatarUrl;
       }
-      /* Eventually delete all these 4 following ifs. 
+      /* Eventually delete all these 4 following ifs.
          They are probably not necessary. */
       if (user.facebook) {
         userToUpdate.facebook = user.facebook;
@@ -169,11 +169,6 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
 
   self.get = function(id, success, failure) {
     Users.get({id: id}, function(user) {
-      if (!!user.avatarUrl &&
-        (user.avatarUrl.search('user-avatar-placeholder') === -1)) {
-        user.avatarUrl = '../../' +
-          user.avatarUrl.split('/').slice(1).join('/');
-      }
       success(user);
     }, function(err) {
       failure(err);
@@ -181,16 +176,7 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
   };
 
   self.all = Users.query(function(collection) {
-    var ret = [];
-    angular.forEach(collection, function(item) {
-      if (!!item.avatarUrl &&
-        (item.avatarUrl.search('user-avatar-placeholder') === -1)) {
-        item.avatarUrl = '../../' +
-          item.avatarUrl.split('/').slice(1).join('/');
-      }
-      this.push(item);
-    }, ret);
-    return ret;
+    return collection;
   }, function(err) {
     $log.debug('Unable to get all the users!');
   });

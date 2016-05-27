@@ -166,6 +166,18 @@ module.exports = function(wagner) {
       });
     });
   });
+
+  router.route('/:id/tof')
+  .get(function(req, res, next) {
+    User.findActive({_id: req.params.id}, true,
+    function(err, user) {
+      if (err) {return next(err);}
+      if (!user) {return next(new Zerror('not_found', 'User not found'));}
+      console.log(user.avatarUrl);
+      res.sendFile(process.cwd() + '/' + user.avatarUrl);
+    });
+  });
+
   router.route('/handle/:handle')
   .get(function(req, res, next) {
     if ('handle' in req.params && !!req.params.handle) {

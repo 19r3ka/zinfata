@@ -4,7 +4,7 @@
     placeholder='Search for artists, albums, and tracks...')
 
     ul.dropdown-menu(class='list-unstyled')
-        li.menu-item(ng-show='!!u.length') Users
+        li.menu-item(class='z-search-box-title', ng-show='!!u.length') Users
             ul.z-list(class='list-unstyled')
                 li.z-track(ng-repeat='user in (u = (search.users | filter: search.searchTerm))'): a(href='/user/{{user._id}}')
                     .media
