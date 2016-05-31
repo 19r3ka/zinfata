@@ -162,12 +162,11 @@ app.factory('Users', ['$resource', function($resource) {
     request: function(config) {
       var accessKeys  = store.getData('accessKeys'),
           accessToken = accessKeys ? accessKeys.access_token : null; 
-    
-      if(accessToken) {
+      if (accessToken) {
         config.headers.authorization = 'Bearer ' + accessToken;
       }
 
-      if(config.url.search('zinfataclient') !== -1) {
+      if (config.url.search('zinfataclient') !== -1) {
         config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
         config.data = serialize(config.data);
       }

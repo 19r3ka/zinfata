@@ -4,7 +4,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
   'QueueSvc', function($scope, $sce, $rootScope, $location, $routeParams, $log,
   UsersSvc, Session, TracksSvc, PlaylistsSvc, TRACK_EVENTS, AlbumsSvc, ALBUM,
   MessageSvc, QueueSvc) {
-  var userAddedFile  = '';
+  var userAddedFile  = 'images/track-coverart-placeholder.png'; // default image
   var coverArts      = {};
   var releaseDates   = {};
   var getUserAlbums  = function(id) {
@@ -17,21 +17,23 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
         $scope.track.album.releaseDate = data[0].releaseDate;
         $scope.track.album.id          = data[0]._id;
         $scope.track.coverArt          = data[0].imageUrl;
+        $scope.track.img               = '/assets/albums/' + data[0]._id + '/tof';
       }
 
       angular.forEach(data, function(album) {
-        coverArts[album._id]      = album.imageUrl;
+        // coverArts[album._id]      = album.imageUrl;
         releaseDates[album._id]   = album.releaseDate;
         if (album._id === $scope.track.album.id) {
           $scope.track.album.title       = album.title;
           $scope.track.album.releaseDate = album.releaseDate;
           $scope.track.album.coverArt    = album.imageUrl;
-          if ($scope.track.coverArt !== album.imageUrl) {
-            $scope.cover.unique = true;
-            /* Save the original unique cover art in case we need to revert back to it
-               when the user unchecks 'cover.unique' without uploading new cover afterwards */
-            userAddedFile       = $scope.track.coverArt;
-          }
+          $scope.track.album.img         = '/assets/albums/' + album._id + '/tof';
+          // if ($scope.track.coverArt !== album.imageUrl) {
+          //   $scope.cover.unique = true;
+          //    Save the original unique cover art in case we need to revert back to it
+          //      when the user unchecks 'cover.unique' without uploading new cover afterwards 
+          //   userAddedFile       = $scope.track.coverArt;
+          // }
         }
       });
       $scope.albums = data;
@@ -78,6 +80,8 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
   $scope.pageTitle = 'Add New Track';
   $scope.pageDescription = 'Upload a new song for the world to enjoy.';
 
+  $scope.track.img = $scope.track.coverArt;
+
   if ($location.path() === '/track/new') {
     $scope.creating = true;
   }
@@ -85,7 +89,8 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
   if ($routeParams.trackId) {
     TracksSvc.get($routeParams.trackId, function(data) {
       $scope.track            = data;
-      $scope.track.streamUrl  = $sce.trustAsResourceUrl(data.streamUrl);
+      $scope.track.img        = '/assets/tracks/' + $scope.track._id + '/tof';
+      // $scope.track.streamUrl  = $sce.trustAsResourceUrl(data.streamUrl);
 
       if (!!$scope.track.artist.id &&
         ($scope.track.artist.id === Session.getCurrentUser()._id)) {
@@ -136,8 +141,9 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
     return $scope.track.album.id;
   }, function(newValue, oldValue) {
     if (newValue !== oldValue) {
-      if (!$scope.cover.unique && !!coverArts[newValue]) {
-        $scope.track.coverArt = coverArts[newValue];
+      if (!$scope.cover.unique /*&& !!coverArts[newValue] */) {
+        // $scope.track.coverArt = coverArts[newValue];
+        $scope.track.img = '/assets/albums/' + newValue + '/tof';
       }
       $scope.track.album.releaseDate = releaseDates[newValue];
       if (!!!$scope.track.releaseDate ||
@@ -147,6 +153,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
     }
   });
 
+  /* Indispensable avoir la duree du morceau */
   $scope.$watch(function() {
     return $scope.track.streamUrl;
   }, function(newValue, oldValue) {
@@ -257,15 +264,18 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
 
   $scope.updateCoverArt = function(unique) {
     if (!unique) {
-      $scope.track.coverArt = coverArts[$scope.track.album.id];
+      // $scope.track.coverArt = coverArts[$scope.track.album.id];
+      $scope.track.img = '/assets/albums/' + $scope.track.album.id + '/tof';
     } else {
-      $scope.track.coverArt = userAddedFile;
+      // $scope.track.coverArt = userAddedFile;
+      $scope.track.img = userAddedFile;
     }
   };
 
   $scope.updateCoverImage = function(image) {
     $scope.track.imageFile = image.file;
     $scope.track.coverArt  = userAddedFile = image.url;
+    $scope.track.img = image.url;
   };
 
   $scope.download = function(track) {

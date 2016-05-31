@@ -283,6 +283,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
         if (val !== undefined) {
           Albums.getByUser({_id: val}, function(albums) {
             angular.forEach(albums, function(album) {
+              album.img = '/assets/albums/' + album._id + '/tof';
               album.duration    = 0;
               album.trackLength = 0;
               Tracks.find({a_id: album._id} , function(tracks) {
@@ -296,6 +297,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
             }, scope.albums);
             // scope.albums = albums;
           }, function(err) {});
+
           if (!!session.getCurrentUser() &&
             (val === session.getCurrentUser()._id)) {
             scope.isOwner = true;
@@ -328,9 +330,11 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
           // populate search query with a_id || p_id as key and resource_id as value
           param[key] = resource._id;
 
-          Tracks.find(param , function(tracks) {
+          Tracks.find(param, function(tracks) {
             angular.forEach(tracks, function(track) {
-              Tracks.inflate(track._id, this, function() {}, function() {});
+              Tracks.inflate(track._id, this, function(track) {
+                track.img = '/assets/tracks/' + track._id + '/tof';
+              }, function() {});
             }, scope.tracks);
           }, function(err) {});
 
@@ -410,6 +414,32 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
           config.params.q = query;
           $http.get(endpoint, config).then(function(response) {
             scope.search = response.data;
+            if (scope.search.users.length) {
+              var users = [];
+              angular.forEach(scope.search.users, function(user) {
+                user.img = '/assets/users/' + user._id + '/tof';
+                this.push(user);
+              }, users);
+              scope.search.users = users;
+            }
+
+            if (scope.search.albums.length) {
+              var albums = [];
+              angular.forEach(scope.search.albums, function(album) {
+                album.img = '/assets/albums/' + album._id + '/tof';
+                this.push(album);
+              }, albums);
+              scope.search.albums = albums;
+            }
+
+            if (scope.search.tracks.length) {
+              var tracks = [];
+              angular.forEach(scope.search.tracks, function(track) {
+                track.img = '/assets/tracks/' + track._id + '/tof';
+                this.push(track);
+              }, tracks);
+              scope.search.tracks = tracks;
+            }
           });
         }
       };

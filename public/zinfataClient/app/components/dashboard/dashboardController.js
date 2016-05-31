@@ -5,7 +5,12 @@ app.controller('dashboardCtrl', ['$scope', 'TracksSvc', 'SessionSvc', '$log',
     return !!Session.getCurrentUser();
   };
   Tracks.latest(function(tracks) {
-    $scope.tracks = tracks;
+    var latest = []
+    angular.forEach(tracks, function(track) {
+      track.img = '/assets/tracks/' + track._id + '/tof';
+      latest.push(track);
+    })
+    $scope.tracks = latest;
   }, function(err) {
     $log.debug(err);
   });

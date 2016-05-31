@@ -23,6 +23,7 @@ var users                    = require('./routes/users')(wagner);//add dependenc
 var albums                   = require('./routes/albums')(wagner);
 var tracks                   = require('./routes/tracks')(wagner);
 var playlists                = require('./routes/playlists')(wagner);
+var assets                   = require('./routes/assets')(wagner);
 var oauthclients             = require('./routes/oauthclients')(wagner);
 var zinfataClientProxy       = require('./routes/zinfataclientproxy')(wagner);
 var revoketokens             = require('./routes/revoketokens')(wagner);
@@ -73,6 +74,7 @@ app.use('/clients/', oauthclients);
 app.post('/oauth2/token', userstatuschecker, app.oauth.grant());
 app.use('/oauth2/revoke', revoketokens);
 app.use('/oauth2/me', oauthinfo);
+app.use('/assets', assets); //temporary fix to bypass oauth
 
 //zfclient proxy route
 app.use('/zinfataclient', zinfataClientProxy);

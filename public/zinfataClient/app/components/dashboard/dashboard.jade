@@ -26,7 +26,8 @@
                 h3.panel-title Amazing! It seems no one has posted on Zinfata yet!
               .panel-body
                 p.center-block
-                  a.z-btn(type='button', class='center-block', href='/track/new') Be the first uploader ever!
+                  a.z-btn(type='button', class='btn btn-default center-block btn-lg', href='/track/new')
+                    |   Be the first uploader ever!
             .panel(ng-show='!!tracks.length')
               .panel-body
                 .z-list
@@ -34,7 +35,7 @@
                     .media
                       .media-left
                         a(href='#')
-                          img.media-object(name='coverArt', width='75', ng-src='{{ track.coverArt }}', alt='{{ track.title }}')
+                          img.media-object(name='coverArt', width='75', ng-src='{{ track.img }}', alt='{{ track.title }}')
                       .media-body
                         .row
                           .col-sm-7(class='col-md-7 col-xs-7')

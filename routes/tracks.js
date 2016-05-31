@@ -32,7 +32,7 @@ module.exports = function(wagner) {
           if (file.fieldname === 'imageFile') {
             folder = config.uploads.images.dest;
           } else {
-            folder = config.uploads.audio.dest;
+            folder = config.uploads.sounds.dest;
           }
           cb(null, folder);
         }

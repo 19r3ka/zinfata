@@ -13,9 +13,8 @@ USER_EVENTS, $routeParams, $log, $location, Session) {
   $scope.canEdit      = false;
 
   UsersSvc.get(userId, function(user) {
-    delete user.avatarUrl; // temporary fix to not override avatarUrl;
     $scope.user = user;
-    $scope.user.avatarUrl = '/api/users/' + userId + '/tof';
+    $scope.user.img = '/assets/users/' + userId + '/tof';
 
     if (Session.getCurrentUser()._id === $scope.user._id) {
       $scope.canEdit = true;
@@ -64,6 +63,6 @@ USER_EVENTS, $routeParams, $log, $location, Session) {
 
   $scope.updateAvatar = function(image) {
     $scope.user.avatar    = image.file;
-    $scope.user.avatarUrl = image.url;
+    $scope.user.img       = image.url;
   };
 }]);

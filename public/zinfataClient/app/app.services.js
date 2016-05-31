@@ -233,10 +233,6 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
       data.artist = {id: data.artistId};
       delete data.artistId;
       data.releaseDate = new Date(data.releaseDate);  // AngularJs 1.3+ only accept valid Date format and not string equilavent
-      if (!!data.imageUrl &&
-        (data.imageUrl.search('album-coverart-placeholder') === -1)) {
-        data.imageUrl = '../../' + data.imageUrl.split('/').slice(1).join('/');
-      }
       success(data);
     }, function(err) {
       failure(err);
@@ -249,10 +245,6 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
       item.artist = {id: item.artistId};
       delete item.artistId;
       item.releaseDate = new Date(item.releaseDate);  // AngularJs 1.3+ only accept valid Date format and not string equilavent
-      if (!!item.imageUrl &&
-        (item.imageUrl.search('album-coverart-placeholder') === -1)) {
-        item.imageUrl = '../../' + item.imageUrl.split('/').slice(1).join('/');
-      }
       this.push(item);
     }, ret);
     return ret;
@@ -266,11 +258,6 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
         data.artist = {id: data.artistId};
         delete data.artistId;
         data.releaseDate = new Date(data.releaseDate);
-        if (!!data.imageUrl &&
-          (data.imageUrl.search('album-coverart-placeholder') === -1)) {
-          data.imageUrl = '../../' +
-            data.imageUrl.split('/').slice(1).join('/');
-        }
       });
       success(albums);
     }, function(err) {

@@ -1,10 +1,10 @@
-.jumbotron(ng-hide='creating || editing', class='z-id-card', style='background-image:url({{ track.album.coverArt }})')
+.jumbotron(ng-hide='creating || editing', class='z-id-card', style='background-image:url({{ track.album.img }})')
     .z-blur
     .container
         .row
             .col-md-10(class='col-md-offset-1')
                 .col-sm-12(class='col-md-3')
-                    img.img-circle(class='img-responsive center-block', name= 'coverArt', alt='{{ track.title }}', ng-src='{{ track.coverArt }}')
+                    img.img-circle(class='img-responsive center-block', name= 'coverArt', alt='{{ track.title }}', ng-src='{{ track.img }}')
                 .col-sm-12(class='col-md-9')
                     .z-vcentered
                         h1.text-capitalize {{ track.title }}
@@ -42,7 +42,7 @@
                             .form-group
                                 .row
                                     .col-md-3
-                                         img.img-circle(class='img-responsive center-block', height='100', name='coverArtPreview', alt='{{ track.title }}', ng-src='{{ track.coverArt }}')
+                                         img.img-circle(class='img-responsive center-block', height='100', name='coverArtPreview', alt='{{ track.title }}', ng-src='{{ track.img }}')
                                     .col-md-9
                                         .row
                                             .col-md-12

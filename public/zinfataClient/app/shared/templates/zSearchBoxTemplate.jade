@@ -10,7 +10,7 @@
                     .media
                         .media-left
                             img.media-object(name='avatar', width='35',
-                            ng-src='{{ user.avatarUrl }}', alt='{{ user.handle }}')
+                            ng-src='{{ user.img }}', alt='{{ user.handle }}')
                         .media-body
                             h5.media-heading {{ user.handle }}
                                 .small {{ user.firstName }} {{ user.lastName }}
@@ -20,17 +20,17 @@
                     .media
                         .media-left
                             img.media-object(name='coverArt', width='35',
-                            ng-src='{{ album.coverArt }}', alt='{{ album.title }}')
+                            ng-src='{{ album.img }}', alt='{{ album.title }}')
                         .media-body
                             h5.media-heading {{ album.title }}
                                 .small {{ user.handle }}
         li.menu-item(ng-show='!!t.length') Tracks
             ul.z-list(class='list-unstyled')
-                li.z-track(ng-repeat='album in (t = (search.tracks | filter: search.searchTerm))'): a(href='/track/{{track._id}}')
+                li.z-track(ng-repeat='track in (t = (search.tracks | filter: search.searchTerm))'): a(href='/track/{{track._id}}')
                     .media
                         .media-left
                             img.media-object(name='coverArt', width='35',
-                            ng-src='{{ track.coverArt }}', alt='{{ track.title }}')
+                            ng-src='{{ track.img }}', alt='{{ track.title }}')
                         .media-body
                             h5.media-heading {{ track.title }}
                                 .small {{ user.handle }} 

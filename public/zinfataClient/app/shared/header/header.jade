@@ -11,7 +11,8 @@ nav.navbar(class='navbar-inverse navbar-fixed-top', role='navigation', ng-contro
     .navbar-collapse(class='collapse', id='z-navbar-collapse', z-collapse)
       ul.nav(class='navbar-right navbar-nav')
         li(class='hidden-xs hidden-sm', ng-show='loggedIn()')
-          button.navbar-btn(type='button', class='btn btn-default btn-sm'): a(href='track/new') Upload a track!
+          button.navbar-btn(type='button', class='btn btn-default btn-sm')
+            a(href='track/new') Upload a track!
         li.dropdown(class='hidden-xs hidden-sm', ng-show='loggedIn()')
           a.dropdown-toggle(href='#', data-toggle='dropdown', class='text-capitalize')
             span.z-text-emphasize
