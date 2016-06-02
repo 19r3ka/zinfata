@@ -198,6 +198,10 @@ h6
     background-size: cover;
     box-shadow: 0 3px 6px rgba(0, 0, 0, .16), 0 3px 6px rgba(0, 0, 0, .23);
 }
+.jumbotron p
+{
+    margin-bottom: 0;
+}
 .jumbotron .z-blur
 {
     position: absolute;
@@ -367,6 +371,10 @@ h6
     padding-left: 50px;
 
     background: white url('../../images/search_icon.svg') 5px 5px no-repeat;
+}
+.z-search-result
+{
+    padding: 10px;
 }
 .z-list-box,
 #z-queue
