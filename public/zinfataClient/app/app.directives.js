@@ -95,10 +95,10 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
   return {
     restrict: 'E',
     link: function(scope, elm, attrs, ctrl) {
-      if (!Auth.isAuthenticated() || !scope.track || !scope.track.streamUrl) {
+      /*if (!Auth.isAuthenticated() || !scope.track || !scope.track.streamUrl) {
         elm.hide();
-      }
-      scope.$watch(function() {
+      }*/
+      /*scope.$watch(function() {
         return Auth.isAuthenticated() && (scope.track && !!scope.track.streamUrl);
       }, function(newVal, oldVal) {
         if (!!newVal) {
@@ -106,159 +106,158 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
         } else {
           elm.hide();
         }
-      });
+      });*/
 
-      // scope.audio = new Audio();
-      //var player = elm.find('audio')[0];
-      scope.playing = false;
-      scope.currentTime = 0;
+      // scope.playing = false;
+      // scope.currentTime = 0;
       scope.isLoggedIn = Auth.isAuthenticated;
-      var expander = document.getElementById('expand-player-controllers');
-      var compresser = document.getElementById('compress-player-controllers');
-      var zplayerBottom = document.getElementById('z-player-bottom');
+      // var expander = document.getElementById('expand-player-controllers');
+      // var compresser = document.getElementById('compress-player-controllers');
+      // var zplayerBottom = document.getElementById('z-player-bottom');
 
-      window.addEventListener('resize', function() {
-        if (document.documentElement.clientWidth >= 598 && zplayerBottom.className.match(/\s*expand-mobile/g)) {
-          zplayerBottom.className =  zplayerBottom.className.replace(/expand-mobile/g, '');
-        }
-      });
+      // window.addEventListener('resize', function() {
+      //   if (document.documentElement.clientWidth >= 598 && zplayerBottom.className.match(/\s*expand-mobile/g)) {
+      //     zplayerBottom.className =  zplayerBottom.className.replace(/expand-mobile/g, '');
+      //   }
+      // });
 
-      expander.addEventListener('click', function() {
-        if (!zplayerBottom.className.match(/\s+expand-mobile/)) {
-          zplayerBottom.className += 'expand-mobile';
-        }
-      });
+      // expander.addEventListener('click', function() {
+      //   if (!zplayerBottom.className.match(/\s+expand-mobile/)) {
+      //     zplayerBottom.className += 'expand-mobile';
+      //   }
+      // });
 
-      compresser.addEventListener('click', function() {
-        console.log(zplayerBottom.className);
-        if (zplayerBottom.className.match(/\s*expand-mobile/)) {
-          zplayerBottom.className = zplayerBottom.className.replace(/expand-mobile/g, '');
-        }
-      });
+      // compresser.addEventListener('click', function() {
+      //   console.log(zplayerBottom.className);
+      //   if (zplayerBottom.className.match(/\s*expand-mobile/)) {
+      //     zplayerBottom.className = zplayerBottom.className.replace(/expand-mobile/g, '');
+      //   }
+      // });
 
-      var player = document.createElement('audio');
-      player.volume = 0.5;
-      var trackDurationSlider =
-        document.getElementById('track-duration-slider');
-      var playerVolumeSlider  =
-        document.getElementById('player-volume-slider');
+      // var player = document.createElement('audio');
+      // player.volume = 0.5;
+      // var trackDurationSlider =
+      //   document.getElementById('track-duration-slider');
+      // var playerVolumeSlider  =
+      //   document.getElementById('player-volume-slider');
 
-      // scope.audio.addEventListener('play', function() {
-      player.addEventListener('play', function() {
-        $rootScope.$broadcast(AUDIO.playing, scope.track);
-      });
+      // // scope.audio.addEventListener('play', function() {
+      // player.addEventListener('play', function() {
+      //   $rootScope.$broadcast(AUDIO.playing, scope.track);
+      // });
 
-      // scope.audio.addEventListener('pause', function() {
-      player.addEventListener('pause', function() {
-        $rootScope.$broadcast(AUDIO.paused, scope.track);
-      });
+      // // scope.audio.addEventListener('pause', function() {
+      // player.addEventListener('pause', function() {
+      //   $rootScope.$broadcast(AUDIO.paused, scope.track);
+      // });
 
-      // scope.audio.addEventListener('ended', function() {
-      player.addEventListener('ended', function() {
-        $rootScope.$broadcast(AUDIO.ended, scope.track);
-        scope.next();
-      });
+      // // scope.audio.addEventListener('ended', function() {
+      // player.addEventListener('ended', function() {
+      //   $rootScope.$broadcast(AUDIO.ended, scope.track);
+      //   scope.next();
+      // });
 
-      player.addEventListener('timeupdate', updateProgressBar);
-      trackDurationSlider.addEventListener('change', updateTrackCurrenTime);
-      trackDurationSlider.addEventListener('input', updateTrackCurrenTime);
+      // player.addEventListener('timeupdate', updateProgressBar);
+      // trackDurationSlider.addEventListener('change', updateTrackCurrenTime);
+      // trackDurationSlider.addEventListener('input', updateTrackCurrenTime);
 
-      playerVolumeSlider.addEventListener('change', updatePlayerVolume);
-      playerVolumeSlider.addEventListener('input', updatePlayerVolume);
+      // playerVolumeSlider.addEventListener('change', updatePlayerVolume);
+      // playerVolumeSlider.addEventListener('input', updatePlayerVolume);
 
-      function updateProgressBar() {
-        var progressWidth = '';
-        var trackCurrentTime = player.currentTime;
-        var tarckDuration = player.duration;
-        scope.currentTime = trackCurrentTime;
+      // function updateProgressBar() {
+      //   var progressWidth = '';
+      //   var trackCurrentTime = player.currentTime;
+      //   var tarckDuration = player.duration;
+      //   scope.currentTime = trackCurrentTime;
 
-        var currentTimePercentage =
-          Math.floor((100 * trackCurrentTime) / tarckDuration);
-        //document.querySelector('.duration-spin').style.width = currentTimePercentage + '%';
-        trackDurationSlider.value = currentTimePercentage;
-        scope.$apply();
-      }
+      //   var currentTimePercentage =
+      //     Math.floor((100 * trackCurrentTime) / tarckDuration);
+      //   //document.querySelector('.duration-spin').style.width = currentTimePercentage + '%';
+      //   trackDurationSlider.value = currentTimePercentage;
+      //   scope.$apply();
+      // }
 
-      function  updateTrackCurrenTime() {
-        player.currentTime = trackDurationSlider.value * player.duration / 100;
-        scope.$apply();
-      }
+      // function  updateTrackCurrenTime() {
+      //   player.currentTime = trackDurationSlider.value * player.duration / 100;
+      //   scope.$apply();
+      // }
 
-      function  updatePlayerVolume() {
-        player.volume = playerVolumeSlider.value / 100;
-        scope.$apply();
-        console.log(player.volume);
-      }
+      // function  updatePlayerVolume() {
+      //   player.volume = playerVolumeSlider.value / 100;
+      //   scope.$apply();
+      //   console.log(player.volume);
+      // }
 
       //scope.playing = !player.paused; //scope.audio.paused;
+      
       /* On reload fetch and set last played song. */
       scope.track =
         QueueSvc.getCurrentTrack() && QueueSvc.getCurrentTrack().track;
-      if (scope.track) {
-        player.src = scope.track.streamUrl;
-      }
+      // if (scope.track) {
+      //   player.src = scope.track.streamUrl;
+      // }
 
-      scope.$on(AUDIO.playPause, function() {
-        scope.playPause();
-      });
+      // scope.$on(AUDIO.playPause, function() {
+      //   scope.playPause();
+      // });
 
-      scope.$on(AUDIO.ended, function() {
-        scope.stop();
-      });
+      // scope.$on(AUDIO.ended, function() {
+      //   scope.stop();
+      // });
 
-      scope.$on(AUTH.logoutSuccess, function() {
-        scope.stop();
-        scope.track = {};
-      });
+      // scope.$on(AUTH.logoutSuccess, function() {
+      //   scope.stop();
+      //   scope.track = {};
+      // });
 
-      scope.$on(AUTH.notAuthenticated, function() {
-        scope.stop();
-      });
+      // scope.$on(AUTH.notAuthenticated, function() {
+      //   scope.stop();
+      // });
 
-      scope.$on(AUDIO.set, function(event, track) {
-        scope.track = track;
-        player.src  = track.streamUrl;
-        scope.duration = player.duration;
+      // scope.$on(AUDIO.set, function(event, track) {
+      //   scope.track = track;
+      //   player.src  = track.streamUrl;
+      //   scope.duration = player.duration;
 
-        if (!Auth.isAuthenticated()) {
-          $rootScope.$broadcast(AUTH.notAuthenticated);
-          MessageSvc.addMsg('danger', 'Log in first to play music!');
-        } else {
-          scope.playPause();
-        }
-        /*scope.audio.src = track.streamUrl;
-        scope.audio.play();*/
-      });
+      //   if (!Auth.isAuthenticated()) {
+      //     $rootScope.$broadcast(AUTH.notAuthenticated);
+      //     MessageSvc.addMsg('danger', 'Log in first to play music!');
+      //   } else {
+      //     scope.playPause();
+      //   }
+      //   /*scope.audio.src = track.streamUrl;
+      //   scope.audio.play();*/
+      // });
 
-      scope.next = function() {
-        //$rootScope.$broadcast(QUEUE.next);
-        QueueSvc.playNext();
-      };
+      // scope.next = function() {
+      //   //$rootScope.$broadcast(QUEUE.next);
+      //   QueueSvc.playNext();
+      // };
 
-      scope.prev = function() {
-        //$rootScope.$broadcast(QUEUE.prev);
-        QueueSvc.playPrev();
-      };
+      // scope.prev = function() {
+      //   //$rootScope.$broadcast(QUEUE.prev);
+      //   QueueSvc.playPrev();
+      // };
 
-      scope.playPause = function() {
-        // scope.audio.paused ? scope.audio.play() : scope.audio.pause();
-        player.paused ? player.play() : player.pause();
-        scope.playing = player.paused || player.ended ? false : true;
-      };
+      // scope.playPause = function() {
+      //   // scope.audio.paused ? scope.audio.play() : scope.audio.pause();
+      //   player.paused ? player.play() : player.pause();
+      //   scope.playing = player.paused || player.ended ? false : true;
+      // };
 
-      scope.stop = function() {
-        player.pause();
-        scope.playing = false;
-        player.currentTime = 0;
-      };
+      // scope.stop = function() {
+      //   player.pause();
+      //   scope.playing = false;
+      //   player.currentTime = 0;
+      // };
 
-      scope.mute = function() {
-        player.muted = !player.muted;
-      };
+      // scope.mute = function() {
+      //   player.muted = !player.muted;
+      // };
 
-      scope.muted = function() {
-        return player.muted;
-      };
+      // scope.muted = function() {
+      //   return player.muted;
+      // };
 
       // var stop = $interval(function() { scope.$apply(); }, 500);
     },

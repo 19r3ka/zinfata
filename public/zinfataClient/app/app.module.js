@@ -1,2 +1,8 @@
-var app      = angular.module('zinfataClient', ['dispatcher', 'ngRoute', 'ngResource', 'ngMessages', 'ngImgCrop']),
-    dispatch = angular.module('dispatcher', []);
+var app      = angular.module('zinfataClient', [
+  'ngRoute',
+  'ngResource',
+  'ngMessages',
+  'ngImgCrop',
+  'angularSoundManager'
+]);
+// var dispatch = angular.module('dispatcher', []);
