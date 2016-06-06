@@ -31,6 +31,16 @@ module.exports = function(wagner) {
         res.sendFile(process.cwd() + '/' + track.coverArt);
       });
     });
+
+    router.route('/tracks/:id/zik')
+    .get(function(req, res, next) {
+      Track.findActive({_id: req.params.id}, true,
+      function(err, track) {
+        if (err) {return next(err);}
+        if (!track) {return next(new ZError('not_found', 'Track not found'));}
+        res.sendFile(process.cwd() + '/' + track.streamUrl);
+      });
+    });
   });
 
   return router;
