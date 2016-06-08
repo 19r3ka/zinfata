@@ -722,12 +722,13 @@ $log, TracksSvc, Session, AUTH) {
   };
 
   self.play = function(track, index) {
-    if (!('title' in track.album || 'handle' in track.artist)) {
-      track = TracksSvc.inflate(track._id, null, function(inflatedTrack) {
-        return inflatedTrack;
-      }, function(err) {return;});
-    }
-    $log.debug(track.artist.handle + ' : ' + track.album.title);
+    // if (!('title' in track.album || 'handle' in track.artist)) {
+    //   track = TracksSvc.inflate(track._id, null, function(inflatedTrack) {
+    //     console.log('inflated track is:');
+    //     console.log(inflatedTrack);
+    //     return inflatedTrack;
+    //   }, function(err) {return;});
+    // }
     var nowPlaying = self.getCurrentTrack();
     nowPlaying.index = index;
     nowPlaying.track = track;
