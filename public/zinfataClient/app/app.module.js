@@ -2,7 +2,6 @@ var app      = angular.module('zinfataClient', [
   'ngRoute',
   'ngResource',
   'ngMessages',
-  'ngImgCrop',
-  'angularSoundManager'
+  'ngImgCrop'
 ]);
 // var dispatch = angular.module('dispatcher', []);

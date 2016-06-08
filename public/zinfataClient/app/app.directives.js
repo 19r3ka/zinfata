@@ -90,11 +90,91 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
   };
 }])
 .directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log',
-           'AuthenticationSvc', 'AUTH', 'MessageSvc',
-  function($rootScope, QueueSvc, QUEUE, AUDIO, $log, Auth, AUTH, MessageSvc) {
+           'AuthenticationSvc', 'AUTH', 'MessageSvc', '$window',
+  function($rootScope, QueueSvc, QUEUE, AUDIO, $log, Auth, AUTH, MessageSvc,
+    $window) {
   return {
     restrict: 'E',
-    link: function(scope, elm, attrs, ctrl) {
+    link: function(scope, elm) {
+      var sound;
+
+      function toSeconds(milliseconds) {
+        return milliseconds / 1000;
+      };
+
+      function playing() {
+        scope.isPlaying = true;
+      };
+
+      function playPause() {
+        if (!sound) {
+          sound = loadTrack(scope.track, true);
+        }
+        sound.paused ? sound.play() : sound.pause();
+      };
+
+      function next() {
+        QueueSvc.playNext();
+      };
+
+      function prev() {
+        QueueSvc.playPrev();
+      };
+
+      function stopped() {
+        scope.isPlaying = false;
+      };
+
+      function loadTrack(track, autoPlay) {
+        return soundManager.createSound({
+          id: 'sound_' + track._id,
+          url: track.url,
+          multiShot: false,
+          stream: true,
+          autoLoad: true,
+          onload: function(ok) {
+            scope.sound.duration = toSeconds(this.duration);
+            scope.$apply();
+
+            if (autoPlay) {
+              this.play();
+            }
+          },
+          whileplaying: function() {
+            scope.sound.position = toSeconds(this.position);
+            scope.$apply();
+          },
+          onplay: playing,
+          onresume: playing,
+          onpause: stopped,
+          onstop: stopped
+        });
+      };
+
+      scope.sound = {
+        position: 0,
+        duration: 0
+      };
+
+      scope.isPlaying = false;
+      scope.playPause = playPause;
+      scope.prev      = prev;
+      scope.next      = next;
+
+      /* Initialize the Sound Manager API */
+      soundManager.setup({
+        url: '/lib/sound-manager-2/swf/',
+        flashVersion: 9
+      });
+
+      soundManager.onready(function() {
+        /* Here is where SM2 does its magic */
+      });
+
+      soundManager.ontimeout(function() {
+        /* Things went terribly wrong */
+      });
+
       /*if (!Auth.isAuthenticated() || !scope.track || !scope.track.streamUrl) {
         elm.hide();
       }*/
@@ -189,7 +269,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
       // }
 
       //scope.playing = !player.paused; //scope.audio.paused;
-      
+
       /* On reload fetch and set last played song. */
       scope.track =
         QueueSvc.getCurrentTrack() && QueueSvc.getCurrentTrack().track;
@@ -197,9 +277,9 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
       //   player.src = scope.track.streamUrl;
       // }
 
-      // scope.$on(AUDIO.playPause, function() {
-      //   scope.playPause();
-      // });
+      scope.$on(AUDIO.playPause, function() {
+        scope.playPause();
+      });
 
       // scope.$on(AUDIO.ended, function() {
       //   scope.stop();
@@ -214,20 +294,21 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
       //   scope.stop();
       // });
 
-      // scope.$on(AUDIO.set, function(event, track) {
-      //   scope.track = track;
-      //   player.src  = track.streamUrl;
-      //   scope.duration = player.duration;
+      scope.$on(AUDIO.set, function(event, track) {
+        scope.track = track;
+        sound       = loadTrack(track, true); 
+        // player.src  = track.streamUrl;
+        // scope.duration = player.duration;
 
-      //   if (!Auth.isAuthenticated()) {
-      //     $rootScope.$broadcast(AUTH.notAuthenticated);
-      //     MessageSvc.addMsg('danger', 'Log in first to play music!');
-      //   } else {
-      //     scope.playPause();
-      //   }
-      //   /*scope.audio.src = track.streamUrl;
-      //   scope.audio.play();*/
-      // });
+        if (!Auth.isAuthenticated()) {
+          $rootScope.$broadcast(AUTH.notAuthenticated);
+          MessageSvc.addMsg('danger', 'Log in first to play music!');
+        } else {
+          scope.playPause();
+        }
+        /*scope.audio.src = track.streamUrl;
+        scope.audio.play();*/
+      });
 
       // scope.next = function() {
       //   //$rootScope.$broadcast(QUEUE.next);
