@@ -26,6 +26,7 @@ var TrackSchema = new mongoose.Schema({
   about:        {type: String, default: '', trim: true},
   lyrics:       {type: String, default: '', trim: true},
   deleted:      {type: Boolean, default: false},
+  createdAt:    {type: Date, default: Date.now},
   updatedAt:    {type: Date, default: Date.now}
 });
 
@@ -54,6 +55,8 @@ TrackSchema.statics.findActive = function(query, unique, callback) {
 TrackSchema.set('toJSON', {
   transform: function(doc, ret, options) {
     delete ret.titleLower;
+    delete ret.coverArt;
+    delete ret.streamUrl;
     delete ret.deleted;
     return ret;
   }
