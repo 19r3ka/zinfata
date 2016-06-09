@@ -138,7 +138,6 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
       }
       if (!!user.avatar) {
         userToUpdate.avatar = user.avatar;
-        delete userToUpdate.avatarUrl;
       }
       /* Eventually delete all these 4 following ifs.
          They are probably not necessary. */
@@ -169,6 +168,7 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
 
   self.get = function(id, success, failure) {
     Users.get({id: id}, function(user) {
+      user.img = '/assets/users/' + user._id + '/tof';
       success(user);
     }, function(err) {
       failure(err);
@@ -183,6 +183,7 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
 
   self.findByHandle = function(handle, success, failure) {
     return Users.find({handle: handle}, function(user) {
+      user.img = '/assets/users/' + user._id + '/tof';
       success(user);
     }, function(err) {
       failure(err);
@@ -233,6 +234,7 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
       data.artist = {id: data.artistId};
       delete data.artistId;
       data.releaseDate = new Date(data.releaseDate);  // AngularJs 1.3+ only accept valid Date format and not string equilavent
+      data.img = '/assets/albums/' + data._id + '/tof';
       success(data);
     }, function(err) {
       failure(err);
@@ -245,6 +247,7 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
       item.artist = {id: item.artistId};
       delete item.artistId;
       item.releaseDate = new Date(item.releaseDate);  // AngularJs 1.3+ only accept valid Date format and not string equilavent
+      item.img = '/assets/albums/' + item._id + '/tof';
       this.push(item);
     }, ret);
     return ret;
@@ -258,6 +261,7 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
         data.artist = {id: data.artistId};
         delete data.artistId;
         data.releaseDate = new Date(data.releaseDate);
+        data.img = '/assets/albums/' + data._id + '/tof';
       });
       success(albums);
     }, function(err) {
@@ -334,14 +338,16 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
       data.releaseDate = new Date(data.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
       delete data.artistId;
       delete data.albumId;
-      if (!!data.coverArt &&
-        (data.coverArt.search('track-coverart-placeholder') === -1)) {
-        data.coverArt = '../../' + data.coverArt.split('/').slice(1).join('/');
-      }
-      if (!!data.streamUrl) {
-        data.streamUrl = '../../' +
-          data.streamUrl.split('/').slice(1).join('/');
-      }
+      data.img = '/assets/tracks/' + data._id + '/tof';
+      data.url = '/assets/tracks/' + data._id + '/zik';
+      // if (!!data.coverArt &&
+      //   (data.coverArt.search('track-coverart-placeholder') === -1)) {
+      //   data.coverArt = '../../' + data.coverArt.split('/').slice(1).join('/');
+      // }
+      // if (!!data.streamUrl) {
+      //   data.streamUrl = '../../' +
+      //     data.streamUrl.split('/').slice(1).join('/');
+      // }
       success(data);
     }, function(err) {
       failure(err);
@@ -373,14 +379,16 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
         //
         // End of the inflate code
         // 
-        if ('coverArt' in item && !!item.coverArt &&
-          (item.coverArt.search('track-coverart-placeholder') === -1)) {
-          item.coverArt = '../../' + item.coverArt.split('/').slice(1).join('/');
-        }
-        if ('streamUrl' in item && !!item.streamUrl) {
-          item.streamUrl = '../../' +
-            item.streamUrl.split('/').slice(1).join('/');
-        }
+        item.img = '/assets/tracks/' + item._id + '/tof';
+        item.url = '/assets/tracks/' + item._id + '/zik';
+        // if ('coverArt' in item && !!item.coverArt &&
+        //   (item.coverArt.search('track-coverart-placeholder') === -1)) {
+        //   item.coverArt = '../../' + item.coverArt.split('/').slice(1).join('/');
+        // }
+        // if ('streamUrl' in item && !!item.streamUrl) {
+        //   item.streamUrl = '../../' +
+        //     item.streamUrl.split('/').slice(1).join('/');
+        // }
         this.push(item);
       }, ret);
       success(ret);
@@ -400,15 +408,18 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
           track.artist      = {id: track.artistId};
           track.album       = {id: track.albumId};
           track.releaseDate = new Date(track.releaseDate);
-          if (!!track.coverArt &&
-            (track.coverArt.search('track-coverart-placeholder') === -1)) {
-            track.coverArt   = '../../' +
-              track.coverArt.split('/').slice(1).join('/');
-          }
-          if (!!track.streamUrl) {
-            track.streamUrl = '../../' +
-              track.streamUrl.split('/').slice(1).join('/');
-          }
+          track.img = '/assets/tracks/' + track._id + '/tof';
+          track.url = '/assets/tracks/' + track._id + '/zik';
+          // if (!!track.coverArt &&
+          //   (track.coverArt.search('track-coverart-placeholder') === -1)) {
+          //   track.coverArt   = '../../' +
+          //     track.coverArt.split('/').slice(1).join('/');
+          // }
+          // if (!!track.streamUrl) {
+          //   track.streamUrl = '../../' +
+          //     track.streamUrl.split('/').slice(1).join('/');
+          // }
+
         });
         success(tracks);
       }, function(err) {
