@@ -87,6 +87,8 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
     TracksSvc.get($routeParams.trackId, function(data) {
       $scope.track            = data;
       $scope.track.img        = '/assets/tracks/' + $scope.track._id + '/tof';
+      $scope.track.album.img  = '/assets/albums/' + $scope.track.album.id +
+      '/tof';
       // $scope.track.streamUrl  = $sce.trustAsResourceUrl(data.streamUrl);
 
       if (!!$scope.track.artist.id &&
@@ -138,6 +140,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
     return $scope.track.album.id;
   }, function(newValue, oldValue) {
     if (newValue !== oldValue) {
+      track.album.img = '/assets/albums/' + newValue + '/tof';
       if ($scope.cover.useAlbum /*&& !!coverArts[newValue] */) {
         // $scope.track.coverArt = coverArts[newValue];
         $scope.track.img = '/assets/albums/' + newValue + '/tof';
