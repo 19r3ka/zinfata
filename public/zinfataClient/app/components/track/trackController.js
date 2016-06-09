@@ -140,7 +140,6 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
     return $scope.track.album.id;
   }, function(newValue, oldValue) {
     if (newValue !== oldValue) {
-      track.album.img = '/assets/albums/' + newValue + '/tof';
       if ($scope.cover.useAlbum /*&& !!coverArts[newValue] */) {
         // $scope.track.coverArt = coverArts[newValue];
         $scope.track.img = '/assets/albums/' + newValue + '/tof';
@@ -167,8 +166,8 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
 
   $scope.$watch(function() {
     return $scope.track.coverArt;
-  }, function(newValue) {
-    if (newValue.search('album-coverart-placeholder') !== -1) {
+  }, function(newValue, oldValue) {
+    if (newValue && newValue.search('album-coverart-placeholder') !== -1) {
       $scope.track.coverArt = newValue.replace('album', 'track');
     }
   });
