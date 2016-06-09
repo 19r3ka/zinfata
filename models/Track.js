@@ -35,6 +35,9 @@ TrackSchema.pre('save', function(next) {
   if (track.isModified('title')) {
     track.titleLower = track.title;
   }
+  
+  track.updatedAt = Date.now();
+  
   next();
 });
 

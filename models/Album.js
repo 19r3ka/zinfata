@@ -14,6 +14,7 @@ var AlbumSchema = new mongoose.Schema({
   releaseDate:  {type: Date, required: true},
   deleted:      {type: Boolean, default: false},
   about:        {type: String, default: '', trim: true},
+  createdAt:    {type: Date, default: Date.now},
   updatedAt:    {type: Date, default: Date.now}
 });
 
@@ -39,13 +40,19 @@ AlbumSchema.statics.validate = function(id, respond) {
 
 AlbumSchema.pre('save', function(next) {
   var album = this;
-  if (album.isModified('title')) {album.titleLower = album.title;}
+  if (album.isModified('title')) {
+    album.titleLower = album.title;
+  }
+
+  album.updatedAt = Date.now();
+
   next();
 });
 
 AlbumSchema.set('toJSON', {
   transform: function(doc, ret, options) {
     delete ret.titleLower;
+    delete ret.imageUrl;
     delete ret.deleted;
     return ret;
   }
