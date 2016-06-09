@@ -11,7 +11,7 @@ var emailRegex  = new RegExp(
   '[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))' +
   '(:[0-9]{1,5})?$','i');
 var handleRegex = new RegExp('^[a-zA-Z0-9_]{3,}$');
-var defaultUrl  = 'images/user-avatar-placeholder.png';
+var defaultUrl  = 'public/images/user-avatar-placeholder.png';
 
 var UserSchema = new mongoose.Schema({
   firstName:       {type: String, required: true, trim: true},

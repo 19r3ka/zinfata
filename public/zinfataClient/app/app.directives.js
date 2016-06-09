@@ -135,8 +135,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
           onload: function(ok) {
             scope.sound.duration = toSeconds(this.duration);
             scope.$apply();
-
-            if (autoPlay) {
+            if (autoPlay && !scope.isPlaying) {
               this.play();
             }
           },

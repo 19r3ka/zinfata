@@ -83,9 +83,11 @@ module.exports = function(wagner) {
 
     if (!!req.files.imageFile) {
       newTrack.coverArt = req.files.imageFile[0].path;
-    } else if ('coverArt' in req.body &&
-      req.body.coverArt.search('album-coverart-placeholder') === -1) {
-      newTrack.coverArt = req.body.coverArt.replace('../..', 'public');
+    } else {
+      Album.findById(req.body.albumId, function(err, album) {
+        var defaultUrl = 'public/images/track-coverart-placeholder.png';
+        newTrack.coverArt = err ? defaultUrl : album.imageUrl;
+      });
     }
 
     if (!!req.files.audioFile) {
@@ -159,9 +161,11 @@ module.exports = function(wagner) {
 
       if (!!req.files.imageFile) {
         trackToUpdate.coverArt = req.files.imageFile[0].path;
-      } else if ('coverArt' in req.body &&
-      req.body.coverArt.search('album-coverart-placeholder') === -1) {
-        trackToUpdate.coverArt = req.body.coverArt.replace('../..', 'public');
+      } else {
+        Album.findById(req.body.albumId, function(err, album) {
+          var defaultUrl = 'public/images/track-coverart-placeholder.png';
+          trackToUpdate.coverArt = err ? defaultUrl : album.imageUrl;
+        });
       }
 
       if (!!req.files.audioFile) {

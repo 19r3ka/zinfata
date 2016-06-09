@@ -16,8 +16,6 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
         $scope.track.album.title       = data[0].title;
         $scope.track.album.releaseDate = data[0].releaseDate;
         $scope.track.album.id          = data[0]._id;
-        $scope.track.coverArt          = data[0].imageUrl;
-        $scope.track.img               = '/assets/albums/' + data[0]._id + '/tof';
       }
 
       angular.forEach(data, function(album) {
@@ -26,12 +24,11 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
         if (album._id === $scope.track.album.id) {
           $scope.track.album.title       = album.title;
           $scope.track.album.releaseDate = album.releaseDate;
-          $scope.track.album.coverArt    = album.imageUrl;
-          $scope.track.album.img         = '/assets/albums/' + album._id + '/tof';
+          // $scope.track.album.coverArt    = album.imageUrl;
           // if ($scope.track.coverArt !== album.imageUrl) {
           //   $scope.cover.unique = true;
           //    Save the original unique cover art in case we need to revert back to it
-          //      when the user unchecks 'cover.unique' without uploading new cover afterwards 
+          //      when the user unchecks 'cover.unique' without uploading new cover afterwards
           //   userAddedFile       = $scope.track.coverArt;
           // }
         }
@@ -72,7 +69,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
   };
 
   $scope.cover = {
-    unique:    false
+    useAlbum: false
   };
 
   $scope.albums = [];
@@ -128,12 +125,12 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
   ** when available only when adding a new track.
   ** Otherwise use get the albums by track's artist id
   */
-  if ($scope.creating) {
-    getUserAlbums(Session.getCurrentUser()._id);
-    if ($scope.track.coverArt.search('track-coverart-placeholder') !== -1) {
-      $scope.cover.unique = true;
-    }
-  }
+  // if ($scope.creating) {
+  //   getUserAlbums(Session.getCurrentUser()._id);
+  //   if ($scope.track.coverArt.search('track-coverart-placeholder') !== -1) {
+  //     $scope.cover.unique = true;
+  //   }
+  // }
   /*
   ** Watch $scope.track.album.id to update the coverArt dynamically whenever the album selected changes
   */
@@ -141,7 +138,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
     return $scope.track.album.id;
   }, function(newValue, oldValue) {
     if (newValue !== oldValue) {
-      if (!$scope.cover.unique /*&& !!coverArts[newValue] */) {
+      if ($scope.cover.useAlbum /*&& !!coverArts[newValue] */) {
         // $scope.track.coverArt = coverArts[newValue];
         $scope.track.img = '/assets/albums/' + newValue + '/tof';
       }
