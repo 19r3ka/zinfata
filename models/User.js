@@ -33,6 +33,7 @@ var UserSchema = new mongoose.Schema({
   website:         {type: String, default: '', trim: true},
   activated:       {type: Boolean, default: false},
   deleted:         {type: Boolean, default: false, select: false},
+  createdAt:       {type: Date, default: Date.now},
   updatedAt:       {type: Date, default: Date.now}
 });
 
@@ -40,10 +41,6 @@ var UserSchema = new mongoose.Schema({
  * Required to support password grant type
  */
 UserSchema.statics.getUser = function(handle, password, callback) {
-  console.log('in getUser (handle: ' + handle +
-              ', password: ' + password + ')');
-
-  //userModel.findOne({handle: handle}, function(err, user) {
   userModel.findOne({handle: handle})
            .select('+password')
            .exec(function(err, user) {
@@ -111,6 +108,8 @@ UserSchema.pre('save', function(next) {
     user.handleLower    = user.handle;
   }
 
+  user.updatedAt = Date.now();
+
   // only hash the password if it has been modified (or is new)
   if (!user.isModified('password')) {return next();}
 
@@ -135,6 +134,7 @@ UserSchema.set('toJSON', {
     delete ret.lastNameLower;
     delete ret.handleLower;
     delete ret.password;
+    delete ret.avatarUrl;
     // delete ret.email;
     delete ret.activated;
     delete ret.deleted;

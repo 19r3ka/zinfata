@@ -5,7 +5,6 @@ module.exports = function(wagner) {
     .get(function(req, res, next) {
       User.findActive({_id: req.params.id}, true,
       function(err, user) {
-        console.log('we hit the endpoint.');
         if (err) {return next(err);}
         if (!user) {return next(new ZError('not_found', 'User not found'));}
         res.sendFile(process.cwd() + '/' + user.avatarUrl);

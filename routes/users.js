@@ -146,6 +146,7 @@ module.exports = function(wagner) {
       if (!!req.file) {
         user.avatarUrl = req.file.path;
       }
+
       user.save(function(err, updatedUser) {
         if (err) {return next(err);}
         res.json(updatedUser);
