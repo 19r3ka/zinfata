@@ -92,7 +92,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
 .directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log',
            'AuthenticationSvc', 'AUTH', 'MessageSvc', '$window',
   function($rootScope, QueueSvc, QUEUE, AUDIO, $log, Auth, AUTH, MessageSvc,
-    $window) {
+  $window) {
   return {
     restrict: 'E',
     link: function(scope, elm) {
@@ -100,55 +100,68 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
 
       function toSeconds(milliseconds) {
         return milliseconds / 1000;
-      };
+      }
 
       function playing() {
         scope.isPlaying = true;
-      };
+      }
 
       function playPause() {
         if (!sound) {
           sound = loadTrack(scope.track, true);
         }
-        sound.paused ? sound.play() : sound.pause();
-      };
+        sound.paused ? play(sound) : sound.pause();
+      }
 
-      function next() {
-        QueueSvc.playNext();
-      };
-
-      function prev() {
-        QueueSvc.playPrev();
-      };
-
-      function stopped() {
-        scope.isPlaying = false;
-      };
-
-      function loadTrack(track, autoPlay) {
-        return soundManager.createSound({
-          id: 'sound_' + track._id,
-          url: track.url,
-          multiShot: false,
-          stream: true,
-          autoLoad: true,
-          onload: function(ok) {
+      function play(sound) {
+        soundManager.play(sound.id, {
+          onplay: function() {
+            playing();
             scope.sound.duration = toSeconds(this.duration);
-            scope.$apply();
-            if (autoPlay && !scope.isPlaying) {
-              this.play();
-            }
           },
           whileplaying: function() {
             scope.sound.position = toSeconds(this.position);
             scope.$apply();
           },
-          onplay: playing,
+          onfinish: next,
           onresume: playing,
           onpause: stopped,
           onstop: stopped
         });
-      };
+      }
+
+      function next() {
+        QueueSvc.playNext();
+      }
+
+      function prev() {
+        QueueSvc.playPrev();
+      }
+
+      function stopped() {
+        scope.isPlaying = false;
+      }
+
+      function loadTrack(track, autoPlay) {
+        var id = 'sound_' + track._id;
+        var loadedTrack = soundManager.getSoundById(id);
+        if (loadedTrack) {
+          play(loadedTrack);
+        } else {
+          loadedTrack = soundManager.createSound({
+            id: id,
+            url: track.url,
+            multiShot: false,
+            stream: true,
+            autoLoad: true,
+            onload: function(ok) {
+              play(this);
+            }
+          });
+        }
+
+        return loadedTrack;
+      }
 
       scope.sound = {
         position: 0,
@@ -295,16 +308,18 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
 
       scope.$on(AUDIO.set, function(event, track) {
         scope.track = track;
-        sound       = loadTrack(track, true); 
+        soundManager.stopAll();
+        sound       = loadTrack(track, true);
+        // play(sound);
         // player.src  = track.streamUrl;
         // scope.duration = player.duration;
 
-        if (!Auth.isAuthenticated()) {
-          $rootScope.$broadcast(AUTH.notAuthenticated);
-          MessageSvc.addMsg('danger', 'Log in first to play music!');
-        } else {
-          scope.playPause();
-        }
+        // if (!Auth.isAuthenticated()) {
+        //   $rootScope.$broadcast(AUTH.notAuthenticated);
+        //   MessageSvc.addMsg('danger', 'Log in first to play music!');
+        // } else {
+        //   scope.playPause();
+        // }
         /*scope.audio.src = track.streamUrl;
         scope.audio.play();*/
       });
