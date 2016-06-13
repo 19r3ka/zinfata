@@ -130,6 +130,14 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
         });
       }
 
+      function mute() {
+        ((sound && sound.muted) ? sound.unmute : sound.mute)();
+      }
+
+      function isMuted() {
+        return sound && sound.muted;
+      }
+
       function next() {
         QueueSvc.playNext();
       }
@@ -168,14 +176,16 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
         duration: 0
       };
 
-      scope.isPlaying = false;
-      scope.playPause = playPause;
-      scope.prev      = prev;
-      scope.next      = next;
+      scope.isPlaying  = false;
+      scope.isMuted    = isMuted;
+      scope.playPause  = playPause;
+      scope.prev       = prev;
+      scope.next       = next;
+      scope.muteToggle = mute;
 
       /* Initialize the Sound Manager API */
       soundManager.setup({
-        url: '/lib/sound-manager-2/swf/',
+        url:          '/lib/sound-manager-2/swf/',
         flashVersion: 9
       });
 

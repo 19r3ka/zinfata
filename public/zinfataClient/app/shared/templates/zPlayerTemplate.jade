@@ -1,37 +1,60 @@
-.footer(id='z-player-bottom', ng-show="isLoggedIn()")
+#z-player-bottom
   .container
-    sound-manager
     .media
       .media-left
         a(href='#')
-          img.media-object(name='coverArt', width='75', ng-src='{{ track.img }}', alt='{{ track.title }}')
+          img(name='coverArt', width='40', ng-src='{{ track.img }}', alt='{{ track.title }}')
       .media-body
         .row
-          .col-md-3
+          .col-xs-12(class='col-sm-12 col-md-2')
             h5.media-heading(class='z-ellipsis'): a(href='track/{{ track._id }}') {{ track.title }}
               .small: a(href='album/{{ track.album.id }}') {{ track.album.title }}
             h6: a(href='user/{{ track.artist.id }}') by: {{ track.artist.handle }}
-          .col-md-9
-            .row(id='z-player-time')
+          .col-xs-12(class='col-sm-12 col-md-2')
+            #z-player-track-control
+              a.z-player-button(href='#', ng-click='prev()')
+                i.fa.fa-step-backward 
+              a.z-player-button(href='#', ng-click='playPause()')
+                i.fa.fa-play(ng-show='!isPlaying')
+                i.fa.fa-pause(ng-show='isPlaying')
+              a.z-player-button(href='#', ng-click='next()')
+                i.fa.fa-step-forward
+          .col-xs-12(class='col-sm-12 col-md-7')
+            #z-player-time-control
+              .row
+                .col-xs-1(class='col-sm-1 col-md-1')
+                  p#sound-position {{ sound.position | duration2time }}
+                .col-xs-10(class='col-sm-10 col-md-10')
+                  input#z-player-slider(type='range', name='z-player-slider', min=0, max='{{sound.duration}}', ng-model='sound.position',defaultValue='0', disabled)
+                .col-xs-1(class='col-sm-1 col-md-1')
+                  p#sound-duration {{ sound.duration | duration2time }}
+          .col-xs-12(class='col-sm-12 col-md-1')
+            #z-player-misc-control
+              a.z-player-button(href='#', ng-click='muteToggle()')
+                i.fa.fa-volume-up(ng-show='!isMuted()')
+                i.fa.fa-volume-off(ng-show='isMuted()')
+            //-.row(id='z-player-time')
               .col-md-1
                 p#sound-position {{ sound.position | duration2time }}
               .col-md-9
                 input#z-player-slider(type='range', name='z-player-slider', min=0, max='{{sound.duration}}', ng-model='sound.position',defaultValue='0', disabled) 
               .col-md-1 
                 p#sound-duration {{ sound.duration | duration2time }}
-            .row(id='z-player-control')
-              .col-md-4
+            //- .row(id='z-player-control')
+              .col-md-3
                 a(href='#', ng-click='prev()')
                   i.fa.fa-step-backward
-              .col-md-4      
+              .col-md-3      
                 a(href='#', ng-click='playPause()')
                   i.fa.fa-play(ng-show='!isPlaying')
                   i.fa.fa-pause(ng-show='isPlaying')
-              .col-md-4
+              .col-md-3
                 a(href='#', ng-click='next()')
                   i.fa.fa-step-forward
-  pre
-    {{isPlaying}}
+              .col-md-3
+                a(href='#', ng-click='muteToggle()')
+                  i.fa.fa-volume-up(ng-show='!isMuted()')
+                  i.fa.fa-volume-off(ng-show='isMuted()')
   //- .cent
   //- .z-player-container
   //-   .cent

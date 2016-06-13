@@ -205,11 +205,11 @@ gulp.task('less', function() {
   .pipe(autoprefixer())
   .pipe(csscomb())
   .pipe(gulp.dest(cssFolder))
-  .pipe(rename(CSSFile))
-  .pipe(gulp.dest(dest + 'css/'))
   .pipe(browserSync.reload({
     stream: true
-  }));
+  }))
+  .pipe(rename(CSSFile))
+  .pipe(gulp.dest(dest + 'css/'));
 });
 
 gulp.task('browserSync', function() {
