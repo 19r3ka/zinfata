@@ -26,6 +26,7 @@ big landscape tablets, laptops, and desktops.
 hi-res laptops and desktops
 @media (min-width:1281px)
 */
+/* Variables for styling the z-player slider */
 html,
 body
 {
@@ -164,10 +165,15 @@ z-player
     left: 0;
 
     width: 100%;
-    height: 50px;
+    height: auto;
     padding: 5px;
 
     background: rgba(0, 0, 0, .8);
+}
+z-player .media-body h5,
+z-player .media-body h6
+{
+    margin: 1px;
 }
 z-player #z-player-track-control,
 z-player #z-player-time-control,
@@ -187,7 +193,7 @@ z-player #z-player-misc-control a.z-player-button
 
     min-width: 25%;
     max-width: 34%;
-    height: 40px;
+    height: 100%;
 
     -webkit-transition: all .2s ease-in-out;
             transition: all .2s ease-in-out;
@@ -205,7 +211,175 @@ z-player #z-player-time-control a.z-player-button i.fa,
 z-player #z-player-misc-control a.z-player-button i.fa
 {
     font-size: 30px;
+    line-height: inherit;
+}
+z-player #z-player-track-control p#sound-position,
+z-player #z-player-time-control p#sound-position,
+z-player #z-player-misc-control p#sound-position,
+z-player #z-player-track-control p#sound-duration,
+z-player #z-player-time-control p#sound-duration,
+z-player #z-player-misc-control p#sound-duration
+{
+    font-size: .9em;
     line-height: 40px;
+
+    margin: 1px;
+
+    text-align: center;
+
+    color: #727272;
+}
+z-player #z-player-track-control input[type=range],
+z-player #z-player-time-control input[type=range],
+z-player #z-player-misc-control input[type=range]
+{
+    display: inline-block;
+
+    width: 100%;
+    height: 100%;
+    margin: 10px auto;
+
+    vertical-align: middle;
+
+    -webkit-appearance: none;
+}
+z-player #z-player-track-control input[type=range]:focus,
+z-player #z-player-time-control input[type=range]:focus,
+z-player #z-player-misc-control input[type=range]:focus
+{
+    outline: none;
+}
+z-player #z-player-track-control input[type=range]::-webkit-slider-runnable-track,
+z-player #z-player-time-control input[type=range]::-webkit-slider-runnable-track,
+z-player #z-player-misc-control input[type=range]::-webkit-slider-runnable-track
+{
+    width: 100%;
+    height: 5px;
+
+    cursor: pointer;
+
+    border: 1px solid #e64a19;
+    border-radius: 10px;
+    background: transparent;
+
+    animate: .2s;
+}
+z-player #z-player-track-control input[type=range]::-webkit-slider-thumb,
+z-player #z-player-time-control input[type=range]::-webkit-slider-thumb,
+z-player #z-player-misc-control input[type=range]::-webkit-slider-thumb
+{
+    width: 4px;
+    height: 5px;
+    margin-top: -1px;
+
+    cursor: pointer;
+
+    border: 1px solid #e64a19;
+    border-left: transparent;
+    border-radius: 12px;
+    background: #e64a19;
+
+    -webkit-appearance: none;
+}
+z-player #z-player-track-control input[type=range]:focus::-webkit-slider-runnable-track,
+z-player #z-player-time-control input[type=range]:focus::-webkit-slider-runnable-track,
+z-player #z-player-misc-control input[type=range]:focus::-webkit-slider-runnable-track
+{
+    background: #4f4f4f;
+}
+z-player #z-player-track-control input[type=range]::-moz-range-track,
+z-player #z-player-time-control input[type=range]::-moz-range-track,
+z-player #z-player-misc-control input[type=range]::-moz-range-track
+{
+    width: 100%;
+    height: 5px;
+
+    cursor: pointer;
+
+    border: 1px solid #e64a19;
+    border-radius: 10px;
+    background: #424242;
+
+    animate: .2s;
+}
+z-player #z-player-track-control input[type=range]::-moz-range-thumb,
+z-player #z-player-time-control input[type=range]::-moz-range-thumb,
+z-player #z-player-misc-control input[type=range]::-moz-range-thumb
+{
+    width: 4px;
+    height: 5px;
+
+    cursor: pointer;
+
+    border: 1px solid #e64a19;
+    border-left: transparent;
+    border-radius: 12px;
+    background: #e64a19;
+}
+z-player #z-player-track-control input[type=range]::-ms-track,
+z-player #z-player-time-control input[type=range]::-ms-track,
+z-player #z-player-misc-control input[type=range]::-ms-track
+{
+    width: 100%;
+    height: 5px;
+
+    cursor: pointer;
+
+    color: transparent;
+    border-width: 4px 0;
+    border-color: transparent;
+    background: transparent;
+
+    animate: .2s;
+}
+z-player #z-player-track-control input[type=range]::-moz-range-progress,
+z-player #z-player-time-control input[type=range]::-moz-range-progress,
+z-player #z-player-misc-control input[type=range]::-moz-range-progress
+{
+    border: 1px solid #e64a19;
+    background: #e64a19;
+}
+z-player #z-player-track-control input[type=range]::-ms-fill-lower,
+z-player #z-player-time-control input[type=range]::-ms-fill-lower,
+z-player #z-player-misc-control input[type=range]::-ms-fill-lower
+{
+    border: 1px solid #e64a19;
+    border-radius: 20px;
+    background: #e64a19;
+}
+z-player #z-player-track-control input[type=range]::-ms-fill-upper,
+z-player #z-player-time-control input[type=range]::-ms-fill-upper,
+z-player #z-player-misc-control input[type=range]::-ms-fill-upper
+{
+    border: 1px solid #e64a19;
+    border-radius: 20px;
+    background: #424242;
+}
+z-player #z-player-track-control input[type=range]::-ms-thumb,
+z-player #z-player-time-control input[type=range]::-ms-thumb,
+z-player #z-player-misc-control input[type=range]::-ms-thumb
+{
+    width: 4px;
+    height: 5px;
+
+    cursor: pointer;
+
+    border: 1px solid #e64a19;
+    border-left: transparent;
+    border-radius: 12px;
+    background: #e64a19;
+}
+z-player #z-player-track-control input[type=range]:focus::-ms-fill-lower,
+z-player #z-player-time-control input[type=range]:focus::-ms-fill-lower,
+z-player #z-player-misc-control input[type=range]:focus::-ms-fill-lower
+{
+    background: #424242;
+}
+z-player #z-player-track-control input[type=range]:focus::-ms-fill-upper,
+z-player #z-player-time-control input[type=range]:focus::-ms-fill-upper,
+z-player #z-player-misc-control input[type=range]:focus::-ms-fill-upper
+{
+    background: #4f4f4f;
 }
 .alert
 {
@@ -592,124 +766,6 @@ fieldset[disabled] .z-btn.active
     color: #e64a19;
 }
 /* code for styling input range that is part of the z-player */
-input[type=range]
-{
-    width: 100%;
-    margin: 15px 0;
-
-    -webkit-appearance: none;
-}
-input[type=range]:focus
-{
-    outline: none;
-}
-input[type=range]::-webkit-slider-runnable-track
-{
-    width: 100%;
-    height: 10px;
-
-    cursor: pointer;
-
-    border: 1px solid black;
-    border-radius: 5px;
-    background: #424242;
-    box-shadow: 2px 2px 2px #222, 0 0 2px #2f2f2f;
-
-    animate: .2s;
-}
-input[type=range]::-webkit-slider-thumb
-{
-    width: 30px;
-    height: 30px;
-    margin-top: -11px;
-
-    cursor: pointer;
-
-    border: 1px solid white;
-    border-radius: 8px;
-    background: #555bc8;
-    box-shadow: 1px 1px 1px #111, 0 0 1px #1e1e1e;
-
-    -webkit-appearance: none;
-}
-input[type=range]:focus::-webkit-slider-runnable-track
-{
-    background: #4f4f4f;
-}
-input[type=range]::-moz-range-track
-{
-    width: 100%;
-    height: 10px;
-
-    cursor: pointer;
-
-    border: 1px solid black;
-    border-radius: 5px;
-    background: #424242;
-    box-shadow: 2px 2px 2px #222, 0 0 2px #2f2f2f;
-
-    animate: .2s;
-}
-input[type=range]::-moz-range-thumb
-{
-    width: 30px;
-    height: 30px;
-
-    cursor: pointer;
-
-    border: 1px solid white;
-    border-radius: 8px;
-    background: #555bc8;
-    box-shadow: 1px 1px 1px #111, 0 0 1px #1e1e1e;
-}
-input[type=range]::-ms-track
-{
-    width: 100%;
-    height: 10px;
-
-    cursor: pointer;
-
-    color: transparent;
-    border-width: 30px 0;
-    border-color: transparent;
-    background: transparent;
-
-    animate: .2s;
-}
-input[type=range]::-ms-fill-lower
-{
-    border: 1px solid black;
-    border-radius: 10px;
-    background: #353535;
-    box-shadow: 2px 2px 2px #222, 0 0 2px #2f2f2f;
-}
-input[type=range]::-ms-fill-upper
-{
-    border: 1px solid black;
-    border-radius: 10px;
-    background: #424242;
-    box-shadow: 2px 2px 2px #222, 0 0 2px #2f2f2f;
-}
-input[type=range]::-ms-thumb
-{
-    width: 30px;
-    height: 30px;
-
-    cursor: pointer;
-
-    border: 1px solid white;
-    border-radius: 8px;
-    background: #555bc8;
-    box-shadow: 1px 1px 1px #111, 0 0 1px #1e1e1e;
-}
-input[type=range]:focus::-ms-fill-lower
-{
-    background: #424242;
-}
-input[type=range]:focus::-ms-fill-upper
-{
-    background: #4f4f4f;
-}
 /* Could be obsolete */
 /*#z-player-bottom {
 	//height: 70px;
