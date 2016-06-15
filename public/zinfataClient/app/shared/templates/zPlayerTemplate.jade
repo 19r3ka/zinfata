@@ -1,113 +1,44 @@
-#z-player-bottom
-  .container
-    .media
-      .media-left(class='hidden-xs')
-        a(href='#')
-          img(name='coverArt', width='40', ng-src='{{ track.img }}', alt='{{ track.title }}')
-      .media-body
-        .row
-          .col-xs-12(class='col-sm-12 col-md-7 col-md-push-4')
-            #z-player-time-control
-              .row
-                .col-xs-12(class='col-sm-12 col-md-8 col-md-push-2')
-                  input#z-player-slider(type='range', name='z-player-slider', min=0, max='{{sound.duration}}', ng-model='sound.position',defaultValue='0', disabled)
-                .col-xs-6(class='col-sm-2 col-md-2 col-md-pull-8')
-                  p#sound-position {{ sound.position | duration2time }}
-                .col-xs-6(class='col-sm-2 col-md-2')
-                  p#sound-duration {{ sound.duration | duration2time }}
-          .col-xs-12(class='col-sm-12 col-md-2 col-md-pull-7')
-            h6.visible-xs-inline-block(class='text-center')
-              a(href='track/{{ track._id }}'): strong {{ track.title }}
-              |  - 
-              a(href='album/{{ track.album.id }}') {{ track.artist.handle }}
-            h5.media-heading(class='z-ellipsis hidden-xs'): a(href='track/{{ track._id }}'): strong {{ track.title }} 
-              .small: a(href='album/{{ track.album.id }}', class='z-ellipsis hidden-xs') {{ track.album.title }}
-            h6.hidden-xs
-              a(href='user/{{ track.artist.id }}') 
-              |  {{ track.artist.handle }}
-          .col-xs-12(class='col-sm-12 col-md-2 col-md-pull-7')
-            #z-player-track-control
-              a.z-player-button(href='#', ng-click='prev()')
-                i.fa.fa-step-backward 
-              a.z-player-button(href='#', ng-click='playPause()')
-                i.fa.fa-play(ng-show='!isPlaying')
-                i.fa.fa-pause(ng-show='isPlaying')
-              a.z-player-button(href='#', ng-click='next()')
-                i.fa.fa-step-forward
-          .hidden-xs(class='col-sm-12 col-md-1')
-            #z-player-misc-control
-              a.z-player-button(href='#', ng-click='muteToggle()')
-                i.fa.fa-volume-up(ng-show='!isMuted()')
-                i.fa.fa-volume-off(ng-show='isMuted()')
-            //-.row(id='z-player-time')
-              .col-md-1
-                p#sound-position {{ sound.position | duration2time }}
-              .col-md-9
-                input#z-player-slider(type='range', name='z-player-slider', min=0, max='{{sound.duration}}', ng-model='sound.position',defaultValue='0', disabled) 
-              .col-md-1 
-                p#sound-duration {{ sound.duration | duration2time }}
-            //- .row(id='z-player-control')
-              .col-md-3
-                a(href='#', ng-click='prev()')
-                  i.fa.fa-step-backward
-              .col-md-3      
-                a(href='#', ng-click='playPause()')
-                  i.fa.fa-play(ng-show='!isPlaying')
-                  i.fa.fa-pause(ng-show='isPlaying')
-              .col-md-3
-                a(href='#', ng-click='next()')
-                  i.fa.fa-step-forward
-              .col-md-3
-                a(href='#', ng-click='muteToggle()')
-                  i.fa.fa-volume-up(ng-show='!isMuted()')
-                  i.fa.fa-volume-off(ng-show='isMuted()')
-  //- .cent
-  //- .z-player-container
-  //-   .cent
-  //-   img(ng-src='{{ track.coverArt }}' alt='cover art' class='track-thumbnail')
-  //-   .z-player-track-infos
-  //-     span.z-player-track-title
-  //-       a(href='/track/{{ track._id }}') {{ track.title | limitTo:40 }} 
-  //-         span(ng-if="track.title.length > 40") ...
-  //-     br/
-  //-     | by
-  //-     span.z-player-track-author
-  //-       a(href='/user/{{ track.artist.id }}') {{ track.artist.handle | limitTo:30  }}
-  //-         span(ng-if="track.artist.handle.length > 30") ...
-  //-     br/
-  //-     | From
-  //-     span.z-player-track-album
-  //-       a(href='/album/{{ track.album.id }}') {{ track.album.title | limitTo:25 }}
-  //-         span(ng-if="track.album.title.length > 25") ...
-  //-   .z-control-bt-container
-  //-     .cent
-  //-     .z-control-bt.z-control-bt-stop(ng-click='stop()')
-  //-       .cent
-  //-       i.fa.fa-stop
-  //-     .z-control-bt.z-control-bt-previous(ng-click='prev()')
-  //-       .cent
-  //-       i.fa.fa-step-backward
-  //-     .z-control-bt.z-control-bt-play(ng-click='playPause()')
-  //-       .cent
-  //-       i.fa.fa-play(ng-show='!playing')
-  //-       i.fa.fa-pause(ng-show='playing')
-  //-     .z-control-bt.z-control-bt-next(ng-click='next()')
-  //-       .cent
-  //-       i#z-control-bt-volume.fa.fa-step-forward
-  //-     .z-track-volume-container
-  //-       input(id="player-volume-slider" orient="vertical"  type="range" min="0" max="100" value="50")
-  //-       i.fa.fa-volume-up(ng-click="mute()" ng-show="!muted()") 
-  //-       i.fa.fa-volume-off(ng-click="mute()" ng-show="muted()") 
-  //-     .z-track-duration-container
-  //-       .cent
-  //-       input(id="track-duration-slider"  type="range" min="0" max="100" value="0")
-  //-       .duration-infos.
-  //-         {{ currentTime | duration2time  }}
-  //-         / 
-  //-         {{ track.duration | duration2time  }}
-  //-   #expand-player-controllers
-  //-     i.fa.fa-chevron-up
-  //-   #compress-player-controllers
-  //-     i.fa.fa-chevron-down
-     
 
+a.toggle-button(class='visible-xs-inline-block', href='#', ng-click='toggleVisibility()')
+  i.fa(class='fa-caret-down')
+.container
+  .media
+    .media-left(class='hidden-xs')
+      a(href='#')
+        img(name='coverArt', width='40', ng-src='{{ track.img }}', alt='{{ track.title }}')
+    .media-body
+      .row
+        .col-xs-12(class='col-sm-12 col-md-7 col-md-push-4')
+          #z-player-time-control
+            .row
+              .col-xs-12(class='col-sm-12 col-md-8 col-md-push-2')
+                input#z-player-slider(type='range', name='z-player-slider', min=0, max='{{sound.duration}}', ng-model='sound.position',defaultValue='0', disabled)
+              .col-xs-6(class='col-sm-2 col-md-2 col-md-pull-8')
+                p#sound-position {{ sound.position | duration2time }}
+              .col-xs-6(class='col-sm-2 col-md-2')
+                p#sound-duration {{ sound.duration | duration2time }}
+        .col-xs-12(class='col-sm-12 col-md-2 col-md-pull-7 z-collapsable')
+          h6.visible-xs-inline-block(class='text-center')
+            a(href='track/{{ track._id }}'): strong {{ track.title }}
+            |  - 
+            a(href='album/{{ track.album.id }}') {{ track.artist.handle }}
+          h5.media-heading(class='z-ellipsis hidden-xs'): a(href='track/{{ track._id }}'): strong {{ track.title }} 
+            .small: a(href='album/{{ track.album.id }}', class='z-ellipsis hidden-xs') {{ track.album.title }}
+          h6.hidden-xs
+            a(href='user/{{ track.artist.id }}') 
+            |  {{ track.artist.handle }}
+        .col-xs-12(class='col-sm-12 col-md-2 col-md-pull-7 z-collapsable')
+          #z-player-track-control
+            a.z-player-button(href='#', ng-click='prev()')
+              i.fa.fa-step-backward 
+            a.z-player-button(href='#', ng-click='playPause()')
+              i.fa.fa-play(ng-show='!isPlaying')
+              i.fa.fa-pause(ng-show='isPlaying')
+            a.z-player-button(href='#', ng-click='next()')
+              i.fa.fa-step-forward
+        .hidden-xs(class='col-sm-12 col-md-1')
+          #z-player-misc-control
+            a.z-player-button(href='#', ng-click='muteToggle()')
+              i.fa.fa-volume-up(ng-show='!isMuted()')
+              i.fa.fa-volume-off(ng-show='isMuted()')
+            

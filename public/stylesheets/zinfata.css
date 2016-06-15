@@ -171,6 +171,29 @@ z-player
 
     background: rgba(0, 0, 0, .8);
 }
+z-player .toggle-button
+{
+    position: absolute;
+    top: -1.2em;
+
+    color: #ff5722;
+    background: inherit;
+}
+z-player .toggle-button i.fa
+{
+    font-size: 1.5em;
+    line-height: auto;
+
+    padding: 0 5px;
+
+    -webkit-transition: all .2s;
+            transition: all .2s;
+}
+z-player .z-hiding > i.fa
+{
+    -webkit-transform: rotate(180deg);
+            transform: rotate(180deg);
+}
 z-player .media-body h5,
 z-player .media-body h6
 {

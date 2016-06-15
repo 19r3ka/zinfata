@@ -149,6 +149,23 @@ z-player {
 	padding: 5px;
 	background: rgba(0, 0, 0, 0.8);
 	z-index: 1000;
+	.toggle-button {
+		position: absolute;
+		top: -1.2em;
+		background: inherit;
+		color: @primary-color;
+		i.fa {
+			transition: all 0.2s;
+			padding: 0px 5px;
+			line-height: auto;
+			font-size: 1.5em;
+		}
+	}
+	.z-hiding {
+		& > i.fa {
+			transform: rotate(180deg);
+		}
+	} 
 	.media-body {
 		h5, h6 {
 			width: auto;
