@@ -161,6 +161,7 @@ h6
 z-player
 {
     position: fixed;
+    z-index: 1000;
     bottom: 0;
     left: 0;
 
@@ -173,7 +174,31 @@ z-player
 z-player .media-body h5,
 z-player .media-body h6
 {
-    margin: 1px;
+    line-height: auto;
+
+    display: inline-block;
+
+    width: auto;
+    height: auto;
+
+    vertical-align: middle;
+}
+@media (min-width: 768px)
+{
+    z-player .media-body h5,
+    z-player .media-body h6
+    {
+        display: block;
+
+        margin: 1px;
+    }
+}
+z-player .media-body h5.visible-xs-inline-block,
+z-player .media-body h6.visible-xs-inline-block
+{
+    width: 100%;
+
+    text-align: center;
 }
 z-player #z-player-track-control,
 z-player #z-player-time-control,
@@ -220,14 +245,57 @@ z-player #z-player-track-control p#sound-duration,
 z-player #z-player-time-control p#sound-duration,
 z-player #z-player-misc-control p#sound-duration
 {
-    font-size: .9em;
-    line-height: 40px;
+    font-size: .7em;
+    line-height: 100%;
 
-    margin: 1px;
-
-    text-align: center;
+    margin: 0;
 
     color: #727272;
+}
+@media (min-width: 768px)
+{
+    z-player #z-player-track-control p#sound-position,
+    z-player #z-player-time-control p#sound-position,
+    z-player #z-player-misc-control p#sound-position,
+    z-player #z-player-track-control p#sound-duration,
+    z-player #z-player-time-control p#sound-duration,
+    z-player #z-player-misc-control p#sound-duration
+    {
+        font-size: .9em;
+        line-height: 40px;
+
+        margin: 1px;
+    }
+}
+z-player #z-player-track-control p#sound-position,
+z-player #z-player-time-control p#sound-position,
+z-player #z-player-misc-control p#sound-position
+{
+    text-align: left;
+}
+@media (min-width: 768px)
+{
+    z-player #z-player-track-control p#sound-position,
+    z-player #z-player-time-control p#sound-position,
+    z-player #z-player-misc-control p#sound-position
+    {
+        text-align: right;
+    }
+}
+z-player #z-player-track-control p#sound-duration,
+z-player #z-player-time-control p#sound-duration,
+z-player #z-player-misc-control p#sound-duration
+{
+    text-align: right;
+}
+@media (min-width: 768px)
+{
+    z-player #z-player-track-control p#sound-duration,
+    z-player #z-player-time-control p#sound-duration,
+    z-player #z-player-misc-control p#sound-duration
+    {
+        text-align: left;
+    }
 }
 z-player #z-player-track-control input[type=range],
 z-player #z-player-time-control input[type=range],
@@ -237,11 +305,22 @@ z-player #z-player-misc-control input[type=range]
 
     width: 100%;
     height: 100%;
-    margin: 10px auto;
+    margin: 0;
 
-    vertical-align: middle;
+    vertical-align: top;
 
     -webkit-appearance: none;
+}
+@media (min-width: 768px)
+{
+    z-player #z-player-track-control input[type=range],
+    z-player #z-player-time-control input[type=range],
+    z-player #z-player-misc-control input[type=range]
+    {
+        margin: 10px auto;
+
+        vertical-align: middle;
+    }
 }
 z-player #z-player-track-control input[type=range]:focus,
 z-player #z-player-time-control input[type=range]:focus,

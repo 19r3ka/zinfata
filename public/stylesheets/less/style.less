@@ -148,9 +148,22 @@ z-player {
 	width: 100%;
 	padding: 5px;
 	background: rgba(0, 0, 0, 0.8);
+	z-index: 1000;
 	.media-body {
 		h5, h6 {
-			margin: 1px;
+			width: auto;
+			height: auto;
+			line-height: auto;
+			vertical-align: middle;
+			display: inline-block;
+			@media(min-width: @screen-tablet) {
+				display: block;
+				margin: 1px;
+			}
+			&.visible-xs-inline-block {
+				width: 100%;
+				text-align: center;
+			}
 		}
 	}
 	#z-player-track-control, #z-player-time-control, #z-player-misc-control {
@@ -176,12 +189,29 @@ z-player {
 		}
 		p#sound-position, p#sound-duration {
 			color: @secondary-text-color;
-			line-height: @z-player-height - 10;
-			font-size: 0.9em;
-			text-align: center;
-			margin: 1px;
+			margin: 0;
+			font-size: 0.7em;
+			line-height: 100%;
+			@media(min-width: @screen-tablet) {
+				line-height: @z-player-height - 10;
+				font-size: 0.9em;
+				margin: 1px;
+			}
 		}
 
+		p#sound-position {
+			text-align: left;
+			@media(min-width: @screen-tablet) {
+				text-align: right;
+			}
+		}
+
+		p#sound-duration {
+			text-align: right;
+			@media(min-width: @screen-tablet) {
+				text-align: left;
+			}
+		}
 		.track() {
 		  width: @track-width;
 		  height: @track-height;
@@ -200,13 +230,16 @@ z-player {
 		}
 
 		input[type=range] {
-			display: inline-block;
-			vertical-align: middle;
 		  -webkit-appearance: none;
-		  // margin: @thumb-height/2 0;
+			display: inline-block;
 		  width: @track-width;
-		  height: 100%;
-		  margin: 10px auto;
+		  margin: 0;
+	  	height: 100%;
+	  	vertical-align: top;
+			@media(min-width: @screen-tablet) {
+				vertical-align: middle;
+			  margin: 10px auto;
+			}
 		  &:focus {
 		    outline: none;
 		  }
