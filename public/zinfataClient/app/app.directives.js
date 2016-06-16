@@ -225,8 +225,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
       scope.isLoggedIn = Auth.isAuthenticated;
 
       /* On reload fetch and set last played song. */
-      scope.track = QueueSvc.getCurrentTrack() &&
-        QueueSvc.getCurrentTrack().track;
+      scope.track = QueueSvc.getCurrentTrack();
 
       scope.$on(AUDIO.playPause, function() {
         scope.playPause();

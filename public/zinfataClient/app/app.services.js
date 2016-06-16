@@ -613,139 +613,248 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log',
 'TracksSvc', 'SessionSvc', 'AUTH', function(queue, $rootScope, AUDIO, QUEUE,
 $log, TracksSvc, Session, AUTH) {
   var self  = this;
-  var owner = function() {
+  
+  /* Returns currently logged user */
+  function owner() {
     return Session.getCurrentUser() && Session.getCurrentUser()._id;
   }
 
-  self.playNext       = function() {
-    var tracks      = self.getTracks();
-    var nowPlaying  = self.getCurrentTrack();
-    var queueLength = tracks.length;
-    var index       = nowPlaying.index + 1;
+  /* Broadcasts the track to be played */
+  function play(track, index) {
+    var nowPlaying = track;
+    saveQueue(null, nowPlaying);
+    $rootScope.$broadcast(AUDIO.set, nowPlaying.track);
+  }
 
-    if (index >= queueLength) {
-      index = 0;
-    }
+  /* Takes a track in queue and sets it as nowPlaying */
+  function playNow(track, oldIndex) {
+    var tracks = getTracks();
+    tracks.unshift(track);
+    // deletes the old nowPlaying track before setting new one?
+    removeTrackAt(1);
+    play(track, 0);
+  }
 
-    self.getTrackAt(index, function(track) {
-      self.play(track, index);
+  /* Gets and plays the next track in queue */
+  function next() {
+    getTrackAt(1, function(track) {
+      playNow(track);
     });
-  };
+  }
 
-  self.playPrev       = function() {
-    var tracks       = self.getTracks();
-    var queueLength  = tracks.length;
-    var currentIndex = self.getCurrentTrack().index;
-    var index        = currentIndex - 1;
-    if (index < 0) {
-      index = queueLength - 1;
-    }
-
-    self.getTrackAt(index, function(track) {
-      self.play(track, index);
+  /* Get and plays the last track in queue */
+  function prev() {
+    getTrackAt(getTracks().length - 1, function(track) {
+      playNow(track);
     });
-  };
+  }
 
-  self.saveQueue       = function(tracks, nowPlaying) {
-    if (tracks && Array.isArray(tracks)) {
+  /* Saves the queue and the nowPlaying track */
+  function saveQueue(queue, nowPlaying) {
+    if (queue && Array.isArray(queue)) {
       queue.setData(owner() + '.queue.tracks', tracks);
     }
 
     if (!!nowPlaying) {
       queue.setData(owner() + '.queue.nowPlaying', nowPlaying);
     }
-  };
+  }
 
-  self.clearQueue     = function() {
-    self.saveQueue([]);
-  };
+  /* Resets the queue list */
+  function clearQueue() {
+    saveQueue([]);
+  }
 
-  self.getCurrentTrack = function() {
-    return queue.getData(owner() + '.queue.nowPlaying') || {};
-  };
+  /* Appends a track to queue */
+  function addTrack(track, playNext) {
+    var tracks = getTracks();
+    tracks.push(track._id);
+    saveQueue(tracks);
+  }
 
-  self.addTrack        = function(track, playNext) {
-    var tracks = self.getTracks();
-    playNext ? tracks.unshift(track._id) : tracks.push(track._id);
-    self.saveQueue(tracks);
-  };
-
-  self.getTracks       = function() {
+  /* Gets all tracks in queue */
+  function getTracks() {
     return queue.getData(owner() + '.queue.tracks') || [];
-  };
+  }
 
-  self.getTrackAt      = function(index, success, failure) {
-    var tracks = self.getTracks();
+  /* Gets the current playing track */
+  function getCurrentTrack() {
+    return queue.getData(owner() + '.queue.nowPlaying') || {};
+  }
+
+  /* Gets the track at a specific position */
+  function getTrackAt(index, cb) {
+    var tracks = getTracks();
     if (!!tracks.length) {
-      TracksSvc.inflate(tracks[index], null, function(track) {
-        success(track);
-      }, function(err) {
-        failure(err);
+      TracksSvc.get(tracks[index], cb);
+    } else {
+      cb('No tracks to fetch');
+    }
+  }
+
+  /* Removes the track at a specific position */
+  function removeTrackAt(index, cb) {
+    var tracks     = getTracks();
+
+    if (index === 0) { // when removing nowPlaying track
+      tracks.shift();
+      getTrackAt(index, function(track) {
+        playNow(track);
       });
     } else {
-      failure('No tracks to fetch');
-    }
-  };
-
-  self.removeTrackAt   = function(index, success, failure) {
-    var tracks     = self.getTracks();
-    var nowPlaying = self.getCurrentTrack();
-
-    if (!!tracks.splice(index, 1).length) {
-      if (nowPlaying.index > index) {
-        nowPlaying.index--;
-      } else if (nowPlaying.index === index) {
-        if (index >= tracks.length) {
-          index = 0;
-        }
-        self.getTrackAt(index, function(track) {
-          self.play(track, index);
-        }, function() {});
+      if (!!tracks.splice(index, 1).length) {
+        saveQueue(tracks);
+        cb(true);
+      } else {
+        cb(false);
       }
-      self.saveQueue(tracks, nowPlaying);
-      success(index);
-    } else {
-      failure('Track removal from queue failed at index: ' + index);
     }
-  };
-  /* User clicks on a track's playNow button */
-  self.playNow = function(track) {
-    var newIndex   = 0;
-    var queueCue   = 0;
-    var nowPlaying = self.getCurrentTrack();
-    var tracks     = self.getTracks();
+  }
 
-    if (nowPlaying) {
-      queueCue = nowPlaying.index;
-    }
+  self.playNow         = playNow;
+  self.playNext        = next;
+  self.playPrev        = prev;
+  self.getCurrentTrack = getCurrentTrack;
+  self.getTracks       = getTracks;
+  self.addTrack        = addTrack;
+  self.getTrackAt      = getTrackAt;
+  self.removeTrackAt   = removeTrackAt;
 
-    /* If there is a queue, stick the track in after
-       the current index position */
-    if (!!tracks.length && !!Object.keys(nowPlaying).length) {
-      tracks.splice(queueCue, 0, track._id);
-      newIndex = queueCue++;
-    } else if (!!tracks.length && !Object.keys(nowPlaying).length) { //there is no queue, add to end to create.
-      self.addTrack(track, true);
-    } else {
-      self.addTrack(track);
-    }
-    self.play(track, newIndex);
-  };
+  // self.playNext       = function() {
+  //   var tracks      = self.getTracks();
+  //   var nowPlaying  = self.getCurrentTrack();
+  //   var queueLength = tracks.length;
+  //   var index       = nowPlaying.index + 1;
 
-  self.play = function(track, index) {
-    // if (!('title' in track.album || 'handle' in track.artist)) {
-    //   track = TracksSvc.inflate(track._id, null, function(inflatedTrack) {
-    //     console.log('inflated track is:');
-    //     console.log(inflatedTrack);
-    //     return inflatedTrack;
-    //   }, function(err) {return;});
-    // }
-    var nowPlaying = self.getCurrentTrack();
-    nowPlaying.index = index;
-    nowPlaying.track = track;
-    self.saveQueue(null, nowPlaying);
-    $rootScope.$broadcast(AUDIO.set, nowPlaying.track);
-  };
+  //   if (index >= queueLength) {
+  //     index = 0;
+  //   }
+
+  //   self.getTrackAt(index, function(track) {
+  //     self.play(track, index);
+  //   });
+  // };
+
+  // self.playPrev       = function() {
+  //   var tracks       = self.getTracks();
+  //   var queueLength  = tracks.length;
+  //   var currentIndex = self.getCurrentTrack().index;
+  //   var index        = currentIndex - 1;
+  //   if (index < 0) {
+  //     index = queueLength - 1;
+  //   }
+
+  //   self.getTrackAt(index, function(track) {
+  //     self.play(track, index);
+  //   });
+  // };
+
+  // self.saveQueue       = function(tracks, nowPlaying) {
+  //   if (tracks && Array.isArray(tracks)) {
+  //     queue.setData(owner() + '.queue.tracks', tracks);
+  //   }
+
+  //   if (!!nowPlaying) {
+  //     queue.setData(owner() + '.queue.nowPlaying', nowPlaying);
+  //   }
+  // };
+
+  // self.clearQueue     = function() {
+  //   self.saveQueue([]);
+  // };
+
+  // self.getCurrentTrack = function() {
+  //   return queue.getData(owner() + '.queue.nowPlaying') || {};
+  // };
+
+  // self.addTrack        = function(track, playNext) {
+  //   var tracks = self.getTracks();
+  //   playNext ? tracks.unshift(track._id) : tracks.push(track._id);
+  //   self.saveQueue(tracks);
+  // };
+
+  // self.getTracks       = function() {
+  //   return queue.getData(owner() + '.queue.tracks') || [];
+  // };
+
+  // self.getTrackAt      = function(index, success, failure) {
+  //   var tracks = self.getTracks();
+  //   if (!!tracks.length) {
+  //     TracksSvc.inflate(tracks[index], null, function(track) {
+  //       success(track);
+  //     }, function(err) {
+  //       failure(err);
+  //     });
+  //   } else {
+  //     failure('No tracks to fetch');
+  //   }
+  // };
+
+  // self.removeTrackAt   = function(index, success, failure) {
+  //   var tracks     = self.getTracks();
+  //   var nowPlaying = self.getCurrentTrack();
+
+  //   if (!!tracks.splice(index, 1).length) {
+  //     if (nowPlaying.index > index) {
+  //       nowPlaying.index--;
+  //     } else if (nowPlaying.index === index) {
+  //       if (index >= tracks.length) {
+  //         index = 0;
+  //       }
+  //       self.getTrackAt(index, function(track) {
+  //         self.play(track, index);
+  //       }, function() {});
+  //     }
+  //     self.saveQueue(tracks, nowPlaying);
+  //     success(index);
+  //   } else {
+  //     failure('Track removal from queue failed at index: ' + index);
+  //   }
+  // };
+  // /* User clicks on a track's playNow button */
+  // self.playNow = function(track) {
+  //   var newIndex   = 0;
+  //   var queueCue   = 0;  // the index of the current NowPlaying track
+  //   var nowPlaying = self.getCurrentTrack();
+  //   var tracks     = self.getTracks();
+
+  //   $log.info('track is: ');
+  //   $log.info(track);
+  //   $log.info('tracks is: ');
+  //   $log.info(tracks);
+  //   if (nowPlaying) {
+  //     queueCue = nowPlaying.index;
+  //   }
+
+  //   /* If there is a queue, stick the track in after
+  //      the current index position */
+  //   if (!!tracks.length && !!Object.keys(nowPlaying).length) {
+  //     tracks.splice(queueCue, 0, track._id);
+  //     newIndex = queueCue++;
+  //     $log.info('tracks after insertion is: ');
+  //     $log.info(track);
+  //   } else if (!!tracks.length && !Object.keys(nowPlaying).length) { //there is no queue, add to end to create.
+  //     self.addTrack(track, true);
+  //   } else {
+  //     self.addTrack(track);
+  //   }
+  //   self.play(track, newIndex);
+  // };
+
+  // self.play = function(track, index) {
+  //   // if (!('title' in track.album || 'handle' in track.artist)) {
+  //   //   track = TracksSvc.inflate(track._id, null, function(inflatedTrack) {
+  //   //     console.log('inflated track is:');
+  //   //     console.log(inflatedTrack);
+  //   //     return inflatedTrack;
+  //   //   }, function(err) {return;});
+  //   // }
+  //   var nowPlaying = self.getCurrentTrack();
+  //   nowPlaying.index = index;
+  //   nowPlaying.track = track;
+  //   self.saveQueue(null, nowPlaying);
+  //   $rootScope.$broadcast(AUDIO.set, nowPlaying.track);
+  // };
 }]);
 app.service('MessageSvc', function() {
   this.message = null;
