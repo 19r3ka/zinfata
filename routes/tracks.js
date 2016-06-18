@@ -48,9 +48,10 @@ module.exports = function(wagner) {
   // GET all songs listing.
   .get(function(req, res, next) {
     Track.find({deleted: false})
-   .sort('-updatedAt')
-   .limit(100)
-   .exec(function(err, tracks) {
+    .populate('artist album')
+    .sort('-updatedAt')
+    .limit(100)
+    .exec(function(err, tracks) {
       if (err) {
         return next(err);
       }
@@ -66,8 +67,8 @@ module.exports = function(wagner) {
     var feat = [];
     var newTrack = new Track({
       title:        req.body.title,
-      artistId:     req.body.artistId,
-      albumId:      req.body.albumId,
+      artist:       req.body.artistId,
+      album:        req.body.albumId,
       releaseDate:  req.body.releaseDate,
       duration:     req.body.duration,
       about:        req.body.about,
@@ -85,8 +86,12 @@ module.exports = function(wagner) {
       newTrack.coverArt = req.files.imageFile[0].path;
     } else {
       Album.findById(req.body.albumId, function(err, album) {
+        if (err) {
+          return next(err);
+        }
+
         var defaultUrl = 'public/images/track-coverart-placeholder.png';
-        newTrack.coverArt = err ? defaultUrl : album.imageUrl;
+        newTrack.coverArt = !album ? defaultUrl : album.imageUrl;
       });
     }
 
@@ -95,11 +100,11 @@ module.exports = function(wagner) {
       newTrack.size      = req.files.audioFile[0].size;
     }
     /*
-     *Make sure artist exists and that the album is really his
-     *before attempting to save
+    * Make sure artist exists and that the album is really his
+    * before attempting to save
     */
-    if (newTrack.artistId && newTrack.albumId) {
-      Album.findActive({artistId: newTrack.artistId, _id: newTrack.albumId},
+    if (newTrack.artist && newTrack.album) {
+      Album.findActive({artistId: newTrack.artist, _id: newTrack.album},
         true, function(err, album) {
         if (err) {
           return next(err);
@@ -117,9 +122,9 @@ module.exports = function(wagner) {
         return next(err);
       }
       // user becomes artist as soon as he has uploaded at least one track
-      User.findActive({_id: track.artistId}, true, function(err, user) {
+      User.findActive({_id: track.artist}, true, function(err, user) {
         if (err) {
-          console.log(err);
+          return next(err);
         }
         if (user.role !== 'artist') {
           user.role = 'artist';
@@ -225,10 +230,10 @@ module.exports = function(wagner) {
 
     switch (req.params.resource) {
       case 'album':
-        key = 'albumId';
+        key = 'album';
         break;
       case 'user':
-        key = 'artistId';
+        key = 'artist';
         break;
       default:
         next(new ZErr('bad_param', 'invalid resource requested'));

@@ -105,14 +105,13 @@ app.use(zinfataErrorHandler());
 // catch-all error handler
 app.use(function(err, req, res, next) {
   var zinfataOAuthError = require('./lib/errors/ZinfataOAuthError');
-  var zinfataError = require('./lib/errors/ZinfataError');
-  console.error(err);
+  var zinfataError      = require('./lib/errors/ZinfataError');
+  // console.error(err);
   if (!(err instanceof zinfataOAuthError || err instanceof zinfataError)) { //Do not catch zinfata custom errors
-    res.status(err.status || 500);
     if (app.get('env') !== 'development') {
       delete err.stack;
     }
-    res.json(err);
+    res.status(err.status || 500).json(err);
   }
 });
 
