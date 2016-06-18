@@ -10,14 +10,14 @@ var albumValidator = [Album.validate,
 var TrackSchema = new mongoose.Schema({
   title:        {type: String, required: true},
   titleLower:   {type: String, lowercase: true, select: false},
-  artistId:     {type: mongoose.Schema.ObjectId, ref: 'User', required: true,
+  artist:     {type: mongoose.Schema.ObjectId, ref: 'User', required: true,
     validate: userValidator},
   feat:         {type: [{type: mongoose.Schema.ObjectId, ref: 'User'}]},      // for the IDs of all contributing artists
   size:         {type: Number, required: true},
   duration:     {type: Number, required: true},
   sharing:      {type: Boolean, default: false}, // should the track be available to others
   downloadable: {type: Boolean, default: false},
-  albumId:      {type: mongoose.Schema.ObjectId, ref: 'Album', required: true,
+  album:      {type: mongoose.Schema.ObjectId, ref: 'Album', required: true,
     validate: albumValidator},
   coverArt:     {type: String, default: defaultArt},
   streamUrl:    {type: String, required: true},
@@ -35,9 +35,8 @@ TrackSchema.pre('save', function(next) {
   if (track.isModified('title')) {
     track.titleLower = track.title;
   }
-  
+
   track.updatedAt = Date.now();
-  
   next();
 });
 
@@ -49,9 +48,9 @@ TrackSchema.statics.findActive = function(query, unique, callback) {
   query.deleted = false;
 
   if (unique) {
-    track.findOne(query, callback);
+    track.findOne(query).populate('artist album').exec(callback);
   } else {
-    track.find(query, callback);
+    track.find(query).populate('artist album').exec(callback);
   }
 };
 
