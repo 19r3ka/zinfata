@@ -175,6 +175,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
       }
 
       function loadTrack(track, autoPlay) {
+        console.log(track);
         var id = 'sound_' + track._id;
         var loadedTrack = soundManager.getSoundById(id);
         if (loadedTrack) {

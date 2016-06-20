@@ -561,46 +561,61 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log',
 'TracksSvc', 'SessionSvc', 'AUTH', function(queue, $rootScope, AUDIO, QUEUE,
 $log, TracksSvc, Session, AUTH) {
   var self  = this;
-  
+
   /* Returns currently logged user */
   function owner() {
     return Session.getCurrentUser() && Session.getCurrentUser()._id;
   }
 
   /* Broadcasts the track to be played */
-  function play(track, index) {
-    var nowPlaying = track;
-    saveQueue(null, nowPlaying);
-    $rootScope.$broadcast(AUDIO.set, nowPlaying.track);
+  function play(track) {
+    // var nowPlaying = track;
+    saveQueue(null, track);
+    $rootScope.$broadcast(AUDIO.set, track);
   }
 
   /* Takes a track in queue and sets it as nowPlaying */
   function playNow(track, oldIndex) {
-    var tracks = getTracks();
-    tracks.unshift(track);
-    // deletes the old nowPlaying track before setting new one?
-    removeTrackAt(1);
-    play(track, 0);
+    // remove the track in the queue at its current index
+    removeTrackAt(oldIndex, function(success) {
+      var tracks = getTracks();
+      // stick it back in the top of the queue
+      tracks.unshift(track._id);
+      saveQueue(tracks);
+      // deletes the old nowPlaying track before setting new one
+      removeTrackAt(1, function(success) {
+        play(track);
+      });
+    });
   }
 
   /* Gets and plays the next track in queue */
   function next() {
+    if (getTracks().length <= 1) {
+      $log.error('There isn\'t any next track to play!');
+      return;
+    }
     getTrackAt(1, function(track) {
-      playNow(track);
+      playNow(track, 1);
     });
   }
 
   /* Get and plays the last track in queue */
   function prev() {
-    getTrackAt(getTracks().length - 1, function(track) {
-      playNow(track);
+    if (getTracks().length <= 1) {
+      $log.error('There isn\'t any previous track to play!');
+      return;
+    }
+    var index = getTracks().length - 1;
+    getTrackAt(index, function(track) {
+      playNow(track, index);
     });
   }
 
   /* Saves the queue and the nowPlaying track */
-  function saveQueue(queue, nowPlaying) {
-    if (queue && Array.isArray(queue)) {
-      queue.setData(owner() + '.queue.tracks', tracks);
+  function saveQueue(trackList, nowPlaying) {
+    if (trackList && Array.isArray(trackList)) {
+      queue.setData(owner() + '.queue.tracks', trackList);
     }
 
     if (!!nowPlaying) {
@@ -642,15 +657,18 @@ $log, TracksSvc, Session, AUTH) {
 
   /* Removes the track at a specific position */
   function removeTrackAt(index, cb) {
-    var tracks     = getTracks();
+    var tracks = getTracks();
 
     if (index === 0) { // when removing nowPlaying track
       tracks.shift();
       getTrackAt(index, function(track) {
-        playNow(track);
+        saveQueue(null, track);
+        cb(true);
       });
     } else {
-      if (!!tracks.splice(index, 1).length) {
+      var removed = tracks.splice(index, 1);
+      console.debug(removed);
+      if (!!removed.length) {
         saveQueue(tracks);
         cb(true);
       } else {
@@ -792,8 +810,8 @@ $log, TracksSvc, Session, AUTH) {
   // self.play = function(track, index) {
   //   // if (!('title' in track.album || 'handle' in track.artist)) {
   //   //   track = TracksSvc.inflate(track._id, null, function(inflatedTrack) {
-  //   //     console.log('inflated track is:');
-  //   //     console.log(inflatedTrack);
+  //   //     console.debug('inflated track is:');
+  //   //     console.debug(inflatedTrack);
   //   //     return inflatedTrack;
   //   //   }, function(err) {return;});
   //   // }

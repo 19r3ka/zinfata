@@ -85,7 +85,6 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
 
   if ($routeParams.trackId) {
     TracksSvc.get($routeParams.trackId, function(data) {
-      console.log(data);
       $scope.track            = data;
       $scope.track.img        = '/assets/tracks/' + $scope.track._id + '/tof';
       $scope.track.album.img  = '/assets/albums/' + $scope.track.album._id +
@@ -236,8 +235,6 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
   };
 
   $scope.update = function(track) {
-    console.log(track.artist._id);
-    console.log(Session.getCurrentUser()._id);
     delete track.streamUrl;
     TracksSvc.update(track, function(updatedTrack) {
       $rootScope.$broadcast(TRACK_EVENTS.updateSuccess, updatedTrack);
