@@ -157,12 +157,16 @@ module.exports = function(wagner) {
         return next(new ZErr('not_found', 'Track not found'));
       }
 
-      // Since it's a blind attribution, only update keys that already exit.
+      // Since it's a blind attribution, only update keys that already exist.
       for (var key in trackToUpdate) {
         if (!!req.body[key]) {
           trackToUpdate[key] = req.body[key];
         }
       }
+
+      // manually assign artist and album field since they have no correspondance in model
+      trackToUpdate.album  = req.body.albumId;
+      trackToUpdate.artist = req.body.artistId;
 
       if (!!req.files.imageFile) {
         trackToUpdate.coverArt = req.files.imageFile[0].path;

@@ -1,13 +1,13 @@
 /**
-  This module intercepts http request of type  put(update) and delete
+  This module intercepts http request of type put(update) and delete
   checks if the ressource(album, track and playlist) to delete or delete is belong to the current logged-in user
   if the ressource doesn't belong to the logged-in user a http response with status code 403 (Forbidden) is return.
 **/
 module.exports = function(wagner) {
   function checkAccess(loggedUserId, ownerId, route, method, next) {
-    var route = route.substr(0, route.length - 1);  //stripped the "s" at the end of the root
+    route = route.substr(0, route.length - 1);  //stripped the "s" at the end of the route
     wagner.invoke(function(ZError) {
-      if (String(loggedUserId) == String(ownerId)) { //id match
+      if (String(loggedUserId) === String(ownerId)) { // id match
         console.log(route + ' ' + method + ' access granted ');
         return next();
       } else {
@@ -24,7 +24,7 @@ module.exports = function(wagner) {
     if (!method.match(/(put|delete)/i)) {
       return next();
     }
-    if (method == 'put') {
+    if (method === 'put') {
       method = 'update';
     }
     if (req.params.id && parseInt(req.params.id) !== 0) {
@@ -40,7 +40,7 @@ module.exports = function(wagner) {
                 return next(err);
               }
               if (!accessToken) {
-                return next(new ZError('bad_param','Invalid acesstoken'));
+                return next(new ZError('bad_param','Invalid acess token'));
               }
               var loggedUserId = accessToken.userId;
               User.findById(accessToken.userId, function(err, user) {
@@ -50,7 +50,7 @@ module.exports = function(wagner) {
                 if (!user) {
                   //error user
                   return next(new ZError('bad_param',
-                    'The current acesstoken owner was not found'));
+                    'The current acess token owner was not found'));
                 }
                 var ownerId;
                 switch (route) {
@@ -78,7 +78,7 @@ module.exports = function(wagner) {
                         return next(new ZError('not_found',
                           'The track to ' + method + ' was not found'));
                       }
-                      ownerId = track.artistId;
+                      ownerId = track.artist;
                       checkAccess(loggedUserId, ownerId, route, method, next);
                     });
                     break;
