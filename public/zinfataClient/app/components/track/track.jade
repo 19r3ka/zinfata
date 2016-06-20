@@ -8,8 +8,8 @@
                 .col-sm-12(class='col-md-9')
                     .z-vcentered
                         h1.text-capitalize {{ track.title }}
-                            .small: a(href='/album/{{ track.album.id }}') {{ track.album.title }}
-                        h3#username: a(href='/user/{{ track.artist.id }}') {{ track.artist.handle }}
+                            .small: a(href='/album/{{ track.album._id }}') {{ track.album.title }}
+                        h3#username: a(href='/user/{{ track.artist._id }}') {{ track.artist.handle }}
                         br
                         .metrics
                             ul.list-inline
@@ -66,7 +66,7 @@
                                     label(for='album') Album:
                                     .pull-right
                                         a(href='/album/new') + Quickly create album
-                                select.form-control(name='album', ng-model='track.album.id', ng-options='album._id as album.title for album in albums', required)
+                                select.form-control(name='album', ng-model='track.album._id', ng-options='album._id as album.title for album in albums', required)
                                     option(value='') -- Choose this track's album --
                                 .well(ng-show='!albums.length')
                                     p.text-center You don't have any albums yet. 

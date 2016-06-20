@@ -12,16 +12,16 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
       if (!data.length) {return;}
 
       /* When creating a new track. Default assign to first album */
-      if (!$scope.track.album.id) {
+      if (!$scope.track.album._id) {
         $scope.track.album.title       = data[0].title;
         $scope.track.album.releaseDate = data[0].releaseDate;
-        $scope.track.album.id          = data[0]._id;
+        $scope.track.album._id          = data[0]._id;
       }
 
       angular.forEach(data, function(album) {
         // coverArts[album._id]      = album.imageUrl;
-        releaseDates[album._id]   = album.releaseDate;
-        if (album._id === $scope.track.album.id) {
+        releaseDates[album._id] = album.releaseDate;
+        if (album._id === $scope.track.album._id) {
           $scope.track.album.title       = album.title;
           $scope.track.album.releaseDate = album.releaseDate;
           // $scope.track.album.coverArt    = album.imageUrl;
@@ -36,7 +36,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
       $scope.albums = data;
     }, function(err) {
       $log.error('Error fetching albums for artist: ' +
-        $scope.track.artist.id);
+        $scope.track.artist._id);
     });
   };
 
@@ -52,12 +52,12 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
     about:       '',
     lyrics:      '',
     album:  {
-      id:      null,
+      _id:      null,
       title:   '',
       coverArt: ''
     },
     artist: {
-      id:      null,
+      _id:      null,
       handle:  ''
     },
     streamUrl:   '',
@@ -85,14 +85,15 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
 
   if ($routeParams.trackId) {
     TracksSvc.get($routeParams.trackId, function(data) {
+      console.log(data);
       $scope.track            = data;
       $scope.track.img        = '/assets/tracks/' + $scope.track._id + '/tof';
-      $scope.track.album.img  = '/assets/albums/' + $scope.track.album.id +
+      $scope.track.album.img  = '/assets/albums/' + $scope.track.album._id +
       '/tof';
       // $scope.track.streamUrl  = $sce.trustAsResourceUrl(data.streamUrl);
 
-      if (!!$scope.track.artist.id &&
-        ($scope.track.artist.id === Session.getCurrentUser()._id)) {
+      if (!!$scope.track.artist._id &&
+        ($scope.track.artist._id === Session.getCurrentUser()._id)) {
         $scope.canEdit = true;
       }
 
@@ -109,13 +110,13 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
       ** Get the albums pertaining to the track's artist
       ** And update all information relative to current track's album
       */
-      getUserAlbums($scope.track.artist.id);
+      getUserAlbums($scope.track.artist._id);
 
-      UsersSvc.get($scope.track.artist.id, function(artist) {
+      UsersSvc.get($scope.track.artist._id, function(artist) {
         $scope.track.artist.handle    = artist.handle;
       }, function(err) {
         $log.error('could not fetch track artist: ' +
-          $scope.track.artist.id);
+          $scope.track.artist._id);
       });
     }, function(err) {
       $location.path('/');
@@ -127,17 +128,17 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
   ** when available only when adding a new track.
   ** Otherwise use get the albums by track's artist id
   */
-  // if ($scope.creating) {
-  //   getUserAlbums(Session.getCurrentUser()._id);
-  //   if ($scope.track.coverArt.search('track-coverart-placeholder') !== -1) {
-  //     $scope.cover.unique = true;
-  //   }
-  // }
+  if ($scope.creating) {
+    getUserAlbums(Session.getCurrentUser()._id);
+    // if ($scope.track.coverArt.search('track-coverart-placeholder') !== -1) {
+    //   $scope.cover.unique = true;
+    // }
+  }
   /*
-  ** Watch $scope.track.album.id to update the coverArt dynamically whenever the album selected changes
+  ** Watch $scope.track.album._id to update the coverArt dynamically whenever the album selected changes
   */
   $scope.$watch(function() {
-    return $scope.track.album.id;
+    return $scope.track.album._id;
   }, function(newValue, oldValue) {
     if (newValue !== oldValue) {
       if ($scope.cover.useAlbum /*&& !!coverArts[newValue] */) {
@@ -157,10 +158,10 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
     return $scope.track.streamUrl;
   }, function(newValue, oldValue) {
     // if (newValue !== oldValue) {
-      var audio = new Audio(newValue);
-      audio.onloadedmetadata = function() {
-        $scope.track.duration = audio.duration;
-      };
+    var audio = new Audio(newValue);
+    audio.onloadedmetadata = function() {
+      $scope.track.duration = audio.duration;
+    };
     // }
   });
 
@@ -174,9 +175,9 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
 
   $scope.$on(ALBUM.createSuccess, function(event, album) {
     $scope.albums.push(album);
-    if (!$scope.track.album.id) {
+    if (!$scope.track.album._id) {
       releaseDates[album._id]        = new Date(album.releaseDate);
-      $scope.track.album.id          = album._id;
+      $scope.track.album._id          = album._id;
       $scope.track.album.title       = album.title;
     }
   });
@@ -220,7 +221,7 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
   };
 
   $scope.create = function(track) {
-    track.artist.id = Session.getCurrentUser()._id;
+    track.artist._id = Session.getCurrentUser()._id;
     delete track.streamUrl;
     TracksSvc.create(track, function(createdTrack) {
       $rootScope.$broadcast(TRACK_EVENTS.createSuccess, createdTrack);
@@ -235,6 +236,8 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
   };
 
   $scope.update = function(track) {
+    console.log(track.artist._id);
+    console.log(Session.getCurrentUser()._id);
     delete track.streamUrl;
     TracksSvc.update(track, function(updatedTrack) {
       $rootScope.$broadcast(TRACK_EVENTS.updateSuccess, updatedTrack);
@@ -263,8 +266,8 @@ app.controller('trackCtrl', ['$scope', '$sce', '$rootScope', '$location',
 
   $scope.updateCoverArt = function(unique) {
     if (!unique) {
-      // $scope.track.coverArt = coverArts[$scope.track.album.id];
-      $scope.track.img = '/assets/albums/' + $scope.track.album.id + '/tof';
+      // $scope.track.coverArt = coverArts[$scope.track.album._id];
+      $scope.track.img = '/assets/albums/' + $scope.track.album._id + '/tof';
     } else {
       // $scope.track.coverArt = userAddedFile;
       $scope.track.img = userAddedFile;

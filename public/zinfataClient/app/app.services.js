@@ -284,8 +284,8 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
   self.create = function(track, success, failure) {
     var newTrack = new Tracks({
       about:        track.about,
-      albumId:      track.album.id,
-      artistId:     track.artist.id,
+      albumId:      track.album._id,
+      artistId:     track.artist._id,
       audioFile:    track.audioFile,
       coverArt:     track.coverArt,
       downloadable: track.downloadable,
@@ -313,7 +313,11 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
           trackToUpdate[key] = track[key];
         }
       }
-      trackToUpdate.albumId = track.album.id;
+
+      // manually fill albumId and artistId which are not in the trackModel... yet
+      // TODO: modify track service and route to assign 'album' and 'assign' field directly
+      trackToUpdate.albumId  = track.album._id;
+      trackToUpdate.artistId = track.artist._id;
 
       if ('imageFile' in track && track.imageFile) {
         trackToUpdate.imageFile = track.imageFile;
@@ -333,21 +337,9 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
 
   self.get = function(trackId, success, failure) {
     Tracks.get({id: trackId}, function(data) {
-      data.artist      = {id: data.artistId};
-      data.album       = {id: data.albumId};
       data.releaseDate = new Date(data.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
-      delete data.artistId;
-      delete data.albumId;
       data.img = '/assets/tracks/' + data._id + '/tof';
       data.url = '/assets/tracks/' + data._id + '/zik';
-      // if (!!data.coverArt &&
-      //   (data.coverArt.search('track-coverart-placeholder') === -1)) {
-      //   data.coverArt = '../../' + data.coverArt.split('/').slice(1).join('/');
-      // }
-      // if (!!data.streamUrl) {
-      //   data.streamUrl = '../../' +
-      //     data.streamUrl.split('/').slice(1).join('/');
-      // }
       success(data);
     }, function(err) {
       failure(err);
