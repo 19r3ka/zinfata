@@ -350,37 +350,9 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
     Tracks.query(function(collection) {
       var ret = [];
       angular.forEach(collection, function(item) {
-        item.artist      = {id: item.artistId};
-        item.album       = {id: item.albumId};
         item.releaseDate = new Date(item.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
-        delete item.artistId;
-        delete item.albumId;
-        //
-        // The following is taken from the inflate code
-        //
-        UsersSvc.get(item.artist.id, function(user) {
-          item.artist.handle = user.handle;
-        }, function(err) {
-          $log.error('Error inflating track artist info: ' + err);
-        });
-        AlbumsSvc.get(item.album.id, function(album) {
-          item.album.title  = album.title;
-        }, function(err) {
-          $log.error('Error inflating track album info: ' + err);
-        });
-        //
-        // End of the inflate code
-        // 
         item.img = '/assets/tracks/' + item._id + '/tof';
         item.url = '/assets/tracks/' + item._id + '/zik';
-        // if ('coverArt' in item && !!item.coverArt &&
-        //   (item.coverArt.search('track-coverart-placeholder') === -1)) {
-        //   item.coverArt = '../../' + item.coverArt.split('/').slice(1).join('/');
-        // }
-        // if ('streamUrl' in item && !!item.streamUrl) {
-        //   item.streamUrl = '../../' +
-        //     item.streamUrl.split('/').slice(1).join('/');
-        // }
         this.push(item);
       }, ret);
       success(ret);
@@ -397,21 +369,9 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
     if (!!search) {
       Tracks.find(search, function(tracks) {
         angular.forEach(tracks, function(track) {
-          track.artist      = {id: track.artistId};
-          track.album       = {id: track.albumId};
           track.releaseDate = new Date(track.releaseDate);
           track.img = '/assets/tracks/' + track._id + '/tof';
           track.url = '/assets/tracks/' + track._id + '/zik';
-          // if (!!track.coverArt &&
-          //   (track.coverArt.search('track-coverart-placeholder') === -1)) {
-          //   track.coverArt   = '../../' +
-          //     track.coverArt.split('/').slice(1).join('/');
-          // }
-          // if (!!track.streamUrl) {
-          //   track.streamUrl = '../../' +
-          //     track.streamUrl.split('/').slice(1).join('/');
-          // }
-
         });
         success(tracks);
       }, function(err) {
@@ -459,11 +419,7 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
 
   self.delete = function(track, success, failure) {
     Tracks.delete({id: track._id}, function(data) {
-      data.artist      = {id: data.artistId};
-      data.album       = {id: data.albumId};
       data.releaseDate = new Date(data.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
-      delete data.artistId;
-      delete data.albumId;
       success(data);
     }, function(err) {
       failure(err);
