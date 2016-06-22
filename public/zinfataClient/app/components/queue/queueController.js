@@ -1,6 +1,6 @@
 app.controller('queueCtrl', ['$scope', '$rootScope', '$log', 'QueueSvc',
-'TracksSvc', 'UsersSvc', 'AlbumsSvc', 'AUDIO', function($scope, $rootScope,
-$log, QueueSvc, TracksSvc, UsersSvc, AlbumsSvc, AUDIO) {
+'TracksSvc', 'AUDIO', function($scope, $rootScope,
+$log, QueueSvc, TracksSvc, AUDIO) {
   $scope.musicPlaying = musicPlaying;
   $scope.queue = {
     duration: 0,
@@ -8,14 +8,6 @@ $log, QueueSvc, TracksSvc, UsersSvc, AlbumsSvc, AUDIO) {
     playPause: playPause,
     removeTrack: removeTrackAt
   };
-
-  // $scope.$watch(function() {
-  //   return $scope.queue.tracks.length;
-  // }, function(newVal, oldVal) {
-  //   if (newVal !== oldVal) {
-  //     updateQueueDuration();
-  //   }
-  // });
 
   /* Sync viewModel with localStore queue list */
   $scope.$on(AUDIO.set, function(event, track) {
@@ -30,29 +22,13 @@ $log, QueueSvc, TracksSvc, UsersSvc, AlbumsSvc, AUDIO) {
     return $scope.queue.duration;
   }
 
-  function init() {
-    var trackIndexes = QueueSvc.getTracks();
-    // fetch each track by trackId in queue
-    if (!!trackIndexes.length) {
-      angular.forEach(trackIndexes, function(trackId, index) {
-        var tracks = this;
-        if (typeof trackId === 'string') {
-          TracksSvc.get(trackId, function(track) {
-            addToDuration(track.duration);
-            tracks[index] = track;
-          }, function(err) {});
-        }
-      }, $scope.queue.tracks);
-    }
-  }
-
   function musicPlaying($index, trackId) {
-    var sound = soundManager.getSoundById('sound_' + trackId);
-    if (!sound) {
-      return false;
-    }
     // TODO: check soundManager to see if music is in fact playing
-    if ($index === 0 && sound.playState) {
+    if ($index === 0) {
+      var sound = soundManager.getSoundById('sound_' + trackId);
+      if (!sound || (sound && !sound.playState)) {
+        return false;
+      }
       return true;
     }
     return false;
@@ -66,11 +42,10 @@ $log, QueueSvc, TracksSvc, UsersSvc, AlbumsSvc, AUDIO) {
   function playPause(event, index) {
     event.preventDefault();
 
-    if ($scope.nowLoaded === index) {
+    if (0 === index) {
       $rootScope.$broadcast(AUDIO.playPause);
     } else {
       QueueSvc.playNow($scope.queue.tracks[index], index);
-      $scope.nowLoaded = index;
     }
   }
 
@@ -81,12 +56,22 @@ $log, QueueSvc, TracksSvc, UsersSvc, AlbumsSvc, AUDIO) {
   // TODO: removed should be a flat array of all removed items
   function recursiveRemove(array, val, index) {
     var removed;
-    if (val === array[index]) {
+    var length = array.length;
+    $log.debug(array);
+    $log.debug('val is %s', val);
+    $log.debug('array value at index is %s', array[index]._id);
+    $log.debug('starting index is %s', index);
+
+    if (val === array[index]._id || index >= length) {
       return removed.length;
     }
 
     removed = array.splice(index, 1);
-    recursiveRemove(array, val, index++);
+    index = index++;
+    $log.debug('removed:');
+    $log.debug(removed);
+    $log.debug('ending index is %s', index);
+    recursiveRemove(array, val, index);
   }
 
   function removeTrackAt(index) {
@@ -105,14 +90,30 @@ $log, QueueSvc, TracksSvc, UsersSvc, AlbumsSvc, AUDIO) {
     });
   }
 
-  function sync() {
-    var trackIndexes = QueueSvc.getTracks();
-    var tracks       = $scope.queue.tracks;
+  function resetQueue() {
+    $scope.queue.tracks = [];
+    $scope.queue.duration = 0;
+  }
 
-    angular.forEach(trackIndexes, function(trackId, index) {
-      recursiveRemove(tracks, trackId, index);
-      updateQueueDuration();
-    });
+  /*
+   * Syncs scope's tracks with queue tracklist
+  */
+  function sync() {
+    resetQueue();
+    var trackIndexes = QueueSvc.getTracks();
+    $scope.queue.tracks = [];
+    // fetch each track by trackId in queue
+    if (!!trackIndexes.length) {
+      angular.forEach(trackIndexes, function(trackId, index) {
+        var tracks = this;
+        if (typeof trackId === 'string') {
+          TracksSvc.get(trackId, function(track) {
+            addToDuration(track.duration);
+            tracks[index] = track;
+          }, function(err) {});
+        }
+      }, $scope.queue.tracks);
+    }
   }
 
   function updateQueueDuration() {
@@ -122,21 +123,128 @@ $log, QueueSvc, TracksSvc, UsersSvc, AlbumsSvc, AUDIO) {
     });
   }
 
-  init();
+  sync();
 }]);
 
 // (function() {
 //   'use strict';
 
 //   angular
-//     .module('zClient')
-//     .controller('queueController', queueController);
+//     .module('zinfataClient')
+//     // .controller('queueController', queueController);
+//     .controller('queueCtrl', queueController);
 
 //   queueController.$inject = ['$scope', '$rootScope', '$log', 'QueueSvc',
-//   'TracksSvc', 'UsersSvc', 'AlbumsSvc', 'AUDIO'];
+//   'TracksSvc', 'AUDIO'];
 
 //   function queueController($scope, $rootScope,
-//   $log, QueueSvc, TracksSvc, UsersSvc, AlbumsSvc, AUDIO) {
-//     //content
+//   $log, QueueSvc, TracksSvc, AUDIO) {
+//     /* jshint validthis: true */
+//     var vm = this;
+
+//     vm.musicPlaying = musicPlaying;
+//     vm.queue = {
+//       duration: 0,
+//       tracks: [],
+//       playPause: playPause,
+//       removeTrack: removeTrackAt
+//     };
+
+//     /* Sync viewModel with localStore queue list */
+//     $scope.$on(AUDIO.set, function(event, track) {
+//       sync();
+//     });
+
+//     function addToDuration(duration) {
+//       vm.queue.duration += duration;
+//     }
+
+//     function getDuration(queue) {
+//       return vm.queue.duration;
+//     }
+
+//     function musicPlaying($index, trackId) {
+//       // TODO: check soundManager to see if music is in fact playing
+//       if ($index === 0) {
+//         var sound = soundManager.getSoundById('sound_' + trackId);
+//         if (!sound || (sound && !sound.playState)) {
+//           return false;
+//         }
+//         return true;
+//       }
+//       return false;
+//     }
+
+//     function parseDuration(duration) {
+//       duration = parseInt(duration);
+//       return angular.isNumber(duration) ? duration : 0;
+//     }
+
+//     function playPause(event, index) {
+//       event.preventDefault();
+
+//       if (0 === index) {
+//         $rootScope.$broadcast(AUDIO.playPause);
+//       } else {
+//         QueueSvc.playNow(vm.queue.tracks[index], index);
+//       }
+//     }
+
+//     function removeTrackAt(index) {
+//       QueueSvc.removeTrackAt(index, function(track) {
+//         if (!track) {
+//           $log.error(
+//             'QueueSvc: couldn\'t remove track at: %s',
+//             index
+//           );
+//           return;
+//         }
+
+//         var removed = vm.queue.tracks.splice(index, 1);
+//         if (!removed.length) {
+//           $log.error(
+//             'QueueController: couldn\'t splice out item at: %s',
+//             index
+//           );
+//           return;
+//         }
+//         updateQueueDuration();
+//       });
+//     }
+
+//     function resetQueue() {
+//       vm.queue.tracks = [];
+//       vm.queue.duration = 0;
+//     }
+
+//     /*
+//      * Syncs scope's tracks with queue tracklist
+//     */
+//     function sync() {
+//       resetQueue();
+//       var trackIndexes = QueueSvc.getTracks();
+//       vm.queue.tracks = [];
+//       // fetch each track by trackId in queue
+//       if (!!trackIndexes.length) {
+//         angular.forEach(trackIndexes, function(trackId, index) {
+//           var tracks = this;
+//           if (typeof trackId === 'string') {
+//             TracksSvc.get(trackId, function(track) {
+//               addToDuration(track.duration);
+//               tracks[index] = track;
+//             }, function(err) {});
+//           }
+//         }, vm.queue.tracks);
+//       }
+//     }
+
+//     function updateQueueDuration() {
+//       vm.queue.duration = 0;
+//       angular.forEach(vm.queue.tracks, function(track) {
+//         addToDuration(track.duration);
+//       });
+//     }
+
+//     sync();
 //   }
 // })();
