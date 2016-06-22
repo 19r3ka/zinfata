@@ -6,8 +6,8 @@
                     .panel-heading
                         h3.panel-title(class='text-capitalize') Music queue
                             .pull-right
-                                ng-pluralize(count='queueTracks.length', when="{'0': '0 track', '1': '1 track', 'other': '{} tracks'}")
-                                |, duration: {{ queueDuration | duration2time }}
+                                ng-pluralize(count='queue.tracks.length', when="{'0': '0 track', '1': '1 track', 'other': '{} tracks'}")
+                                |, duration: {{ queue.duration | duration2time }}
                     .panel-body
                         .table-responsive
                             table.table(class='table-striped table-hover table-condensed')
@@ -22,11 +22,11 @@
                                         //- options for interacting with the song
                                         th.col-md-1(class='col-sm-1 col-xs-1') 
                                 tbody
-                                    tr.row(ng-repeat='item in queueTracks track by $index')
+                                    tr.row(ng-repeat='item in queue.tracks track by $index')
                                         td.col-md-1(class='col-sm-1 col-xs-1')
-                                            a(href='#', ng-click='playPause($event, $index)')
-                                                span.glyphicon(ng-show='$index !== nowLoaded', class='glyphicon-play')
-                                                span.glyphicon(ng-show='$index === nowLoaded', class='glyphicon-volume-up')
+                                            a(href='#', ng-click='queue.playPause($event, $index)')
+                                                span.glyphicon(ng-hide='musicPlaying($index, item._id)', class='glyphicon-play')
+                                                span.glyphicon(ng-show='musicPlaying($index, item._id)', class='glyphicon-volume-up')
                                         td.col-md-4(class='col-sm-4 col-xs-4') 
                                             a(href='/track/{{item._id}}') {{ item.title }} 
                                         td.col-md-3(class='col-sm-3 col-xs-3')
@@ -36,5 +36,5 @@
                                         td.text-center(class='small') 
                                             {{ item.duration | duration2time }}
                                         td.col-md-1(class='col-sm-1 col-xs-1')
-                                            a(type="button", class='close', aria-label='Close', ng-click='removeTrack($index)')
+                                            a(type="button", class='close', aria-label='Close', ng-click='queue.removeTrack($index)')
                                                 span(aria-hidden="true") &times;  

@@ -658,19 +658,19 @@ $log, TracksSvc, Session, AUTH) {
   /* Removes the track at a specific position */
   function removeTrackAt(index, cb) {
     var tracks = getTracks();
+    var removed;
 
     if (index === 0) { // when removing nowPlaying track
-      tracks.shift();
+      removed = tracks.shift();
       getTrackAt(index, function(track) {
         saveQueue(null, track);
-        cb(true);
+        cb(removed);
       });
     } else {
-      var removed = tracks.splice(index, 1);
-      console.debug(removed);
+      removed = tracks.splice(index, 1);
       if (!!removed.length) {
         saveQueue(tracks);
-        cb(true);
+        cb(removed[0]);
       } else {
         cb(false);
       }
