@@ -96,17 +96,50 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
   return {
     restrict: 'E',
     link: function(scope, elm) {
+      scope.sound = {
+        position: 0,
+        duration: 0
+      };
+
+      scope.isPlaying =        false;
+      scope.isMuted =          isMuted;
+      scope.playPause =        playPause;
+      scope.prev =             prev;
+      scope.next =             next;
+      scope.muteToggle =       mute;
+      scope.toggleVisibility = toggleVisibility;
+      scope.isLoggedIn =       Auth.isAuthenticated;
+
+      /* On reload fetch and set last played song. */
+      scope.track = QueueSvc.getCurrentTrack();
+
+      scope.$on(AUDIO.playPause, function() {
+        scope.playPause();
+      });
+
+      scope.$on(AUDIO.set, function(event, track) {
+        soundManager.stopAll();
+        scope.track = track;
+        sound       = loadTrack(track, true);
+        showPlayer(); // Make sure the player is visible
+      });
+
+      scope.$on(AUTH.loginSuccess, function(event) {
+        showPlayer(); // Make sure the player is visible
+      });
+
+      scope.$on(AUTH.logoutSuccess, function(event) {
+        soundManager.stopAll();
+        showPlayer();
+      });
+
+      // By default, the player is hidden
+      // Show player if track loaded and user authenticated
+      showPlayer();
+
+      // Show
+
       var sound;
-
-      function toSeconds(milliseconds) {
-        return milliseconds / 1000;
-      }
-
-      function show(e) {
-        angular.forEach(e, function(el) {
-          el.show();
-        });
-      }
 
       function hide(e) {
         angular.forEach(e, function(el) {
@@ -114,64 +147,8 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
         });
       }
 
-      function toggleVisibility() {
-        var elements = angular.element(
-          elm[0].getElementsByClassName('z-collapsable')
-        );
-        var button   = angular.element(
-          elm[0].getElementsByClassName('toggle-button')[0]
-        );
-
-        button.hasClass('z-hiding') ? elements.show() : elements.hide();
-        button.toggleClass('z-hiding');
-      }
-
-      function playing() {
-        scope.isPlaying = true;
-      }
-
-      function playPause() {
-        if (!sound) {
-          sound = loadTrack(scope.track, true);
-        }
-        sound.paused ? play(sound) : sound.pause();
-      }
-
-      function play(sound) {
-        soundManager.play(sound.id, {
-          onplay: function() {
-            playing();
-            scope.sound.duration = toSeconds(this.duration);
-          },
-          whileplaying: function() {
-            scope.sound.position = toSeconds(this.position);
-            scope.$apply();
-          },
-          onfinish: next,
-          onresume: playing,
-          onpause: stopped,
-          onstop: stopped
-        });
-      }
-
-      function mute() {
-        ((sound && sound.muted) ? sound.unmute : sound.mute)();
-      }
-
       function isMuted() {
         return sound && sound.muted;
-      }
-
-      function next() {
-        QueueSvc.playNext();
-      }
-
-      function prev() {
-        QueueSvc.playPrev();
-      }
-
-      function stopped() {
-        scope.isPlaying = false;
       }
 
       function loadTrack(track, autoPlay) {
@@ -196,18 +173,84 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
         return loadedTrack;
       }
 
-      scope.sound = {
-        position: 0,
-        duration: 0
-      };
+      function mute() {
+        ((sound && sound.muted) ? sound.unmute : sound.mute)();
+      }
 
-      scope.isPlaying =        false;
-      scope.isMuted =          isMuted;
-      scope.playPause =        playPause;
-      scope.prev =             prev;
-      scope.next =             next;
-      scope.muteToggle =       mute;
-      scope.toggleVisibility = toggleVisibility;
+      function next() {
+        QueueSvc.playNext();
+      }
+
+      function play(sound) {
+        soundManager.play(sound.id, {
+          onplay: function() {
+            playing();
+            scope.sound.duration = toSeconds(this.duration);
+          },
+          whileplaying: function() {
+            scope.sound.position = toSeconds(this.position);
+            scope.$apply();
+          },
+          onfinish: next,
+          onresume: playing,
+          onpause: stopped,
+          onstop: stopped
+        });
+      }
+
+      function playing() {
+        scope.isPlaying = true;
+      }
+
+      function playPause() {
+        if (!sound) {
+          sound = loadTrack(scope.track, true);
+        }
+        sound.paused ? play(sound) : sound.pause();
+      }
+
+      function prev() {
+        QueueSvc.playPrev();
+      }
+
+      function show(e) {
+        angular.forEach(e, function(el) {
+          el.show();
+        });
+      }
+
+      function showPlayer() {
+        console.log(trackLoaded());
+        if (scope.isLoggedIn() && trackLoaded()) {
+          elm.show();
+        } else {
+          elm.hide();
+        }
+      }
+
+      function stopped() {
+        scope.isPlaying = false;
+      }
+
+      function toggleVisibility() {
+        var elements = angular.element(
+          elm[0].getElementsByClassName('z-collapsable')
+        );
+        var button   = angular.element(
+          elm[0].getElementsByClassName('toggle-button')[0]
+        );
+
+        button.hasClass('z-hiding') ? elements.show() : elements.hide();
+        button.toggleClass('z-hiding');
+      }
+
+      function toSeconds(milliseconds) {
+        return milliseconds / 1000;
+      }
+
+      function trackLoaded() {
+        return !angular.equals({}, scope.track);
+      }
 
       /* Initialize the Sound Manager API */
       soundManager.setup({
@@ -223,20 +266,6 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
         /* Things went terribly wrong */
       });
 
-      scope.isLoggedIn = Auth.isAuthenticated;
-
-      /* On reload fetch and set last played song. */
-      scope.track = QueueSvc.getCurrentTrack();
-
-      scope.$on(AUDIO.playPause, function() {
-        scope.playPause();
-      });
-
-      scope.$on(AUDIO.set, function(event, track) {
-        scope.track = track;
-        soundManager.stopAll();
-        sound       = loadTrack(track, true);
-      });
     },
     templateUrl: '/templates/zPlayer'
   };
