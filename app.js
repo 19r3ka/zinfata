@@ -6,15 +6,16 @@ var express        = require('express');
 var compression    = require('compression');
 var chalk          = require('chalk');
 // var serveStatic    = require('serve-static');
+// var cookieParser   = require('cookie-parser');
+// var passport       = require('passport');
+// var expressSession = require('express-session');
 var path           = require('path');
 var favicon        = require('serve-favicon');
 var logger         = require('morgan');
-// var cookieParser   = require('cookie-parser');
 var bodyParser     = require('body-parser');
 var mongoose       = require('mongoose');
-// var passport       = require('passport');
-// var expressSession = require('express-session');
 var oauthserver    = require('oauth2-server');
+var helmet         = require('helmet');
 
 var updateinterceptor        = require('./routes/updateinterceptor')(wagner);
 var userstatuschecker        = require('./routes/userstatuschecker')(wagner);
@@ -56,6 +57,7 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(helmet()); // Autoconfigures http headers for max security.
 // app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 // app.use(serveStatic(path.join(__dirname, 'public')));
