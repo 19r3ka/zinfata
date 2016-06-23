@@ -9,14 +9,15 @@ a.toggle-button(class='visible-xs-inline-block', href='#', ng-click='toggleVisib
     .media-body
       .row
         .col-xs-12(class='col-sm-12 col-md-7 col-md-push-4')
-          #z-player-time-control
-            .row
-              .col-xs-12(class='col-sm-12 col-md-8 col-md-push-2')
-                input#z-player-slider(type='range', name='z-player-slider', min=0, max='{{sound.duration}}', ng-model='sound.position',defaultValue='0', disabled)
-              .col-xs-6(class='col-sm-2 col-md-2 col-md-pull-8')
-                p#sound-position {{ sound.position | duration2time }}
-              .col-xs-6(class='col-sm-2 col-md-2')
-                p#sound-duration {{ sound.duration | duration2time }}
+          .row(id='z-player-time-control')
+            .col-xs-12(class='col-sm-12 col-md-8 col-md-push-2')
+              .z-time-slider
+                .z-progress(style="width: {{sound.progress}}%")
+                input#z-time-range(type='range', name='z-player-slider', min=0, max='{{sound.duration}}', ng-model='sound.position',defaultValue='0', disabled)
+            .col-xs-6(class='col-sm-2 col-md-2 col-md-pull-8')
+              p#sound-position {{ sound.position | duration2time }}
+            .col-xs-6(class='col-sm-2 col-md-2')
+              p#sound-duration {{ sound.duration | duration2time }}
         .col-xs-12(class='col-sm-12 col-md-2 col-md-pull-7 z-collapsable')
           h6.visible-xs-inline-block(class='text-center')
             a(href='track/{{ track._id }}'): strong {{ track.title }}

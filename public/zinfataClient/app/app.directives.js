@@ -97,8 +97,9 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
     restrict: 'E',
     link: function(scope, elm) {
       scope.sound = {
+        duration: 0,
         position: 0,
-        duration: 0
+        progress: 0
       };
 
       scope.isPlaying =        false;
@@ -151,8 +152,11 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
         return sound && sound.muted;
       }
 
+      function getProgress(position, duration) {
+        return position / duration * 100;
+      }
+
       function loadTrack(track, autoPlay) {
-        console.log(track);
         var id = 'sound_' + track._id;
         var loadedTrack = soundManager.getSoundById(id);
         if (loadedTrack) {
@@ -189,6 +193,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
           },
           whileplaying: function() {
             scope.sound.position = toSeconds(this.position);
+            scope.sound.progress = getProgress(this.position, this.duration);
             scope.$apply();
           },
           onfinish: next,
