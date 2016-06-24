@@ -150,7 +150,8 @@ z-player {
 	z-index: 1000;
 	.toggle-button {
 		position: absolute;
-		top: -1.2em;
+		top: -1.3em;
+		height: 1.3em;
 		background: inherit;
 		color: @primary-color;
 		i.fa {
@@ -197,12 +198,13 @@ z-player {
 			&:hover {
 				transform: scale(1.1);
 			}
-			i.fa {
-				line-height: inherit;
-				font-size: @z-player-height - 20;
-			}
 		}
 
+		i.fa {
+			color: @primary-color;
+			line-height: inherit;
+			font-size: @z-player-height - 20;
+		}
 		p#sound-position, p#sound-duration {
 			color: @secondary-text-color;
 			margin: 0 5px;

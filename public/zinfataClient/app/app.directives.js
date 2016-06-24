@@ -98,6 +98,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
     link: function(scope, elm) {
       scope.sound = {
         duration: 0,
+        loading:  false,
         position: 0,
         progress: 0
       };
@@ -112,7 +113,10 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
       scope.isLoggedIn =       Auth.isAuthenticated;
 
       /* On reload fetch and set last played song. */
-      scope.track = QueueSvc.getCurrentTrack();
+      // sound = loadTrack(QueueSvc.getCurrentTrack(), true);
+      scope.track          = QueueSvc.getCurrentTrack();
+      // hack to prevent duration viewfield to be empty on page load.
+      scope.sound.duration = scope.track.duration;
 
       scope.$on(AUDIO.playPause, function() {
         scope.playPause();
@@ -120,8 +124,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
 
       scope.$on(AUDIO.set, function(event, track) {
         soundManager.stopAll();
-        scope.track = track;
-        sound       = loadTrack(track, true);
+        sound = loadTrack(track, true);
         showPlayer(); // Make sure the player is visible
       });
 
@@ -158,20 +161,27 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
 
       function loadTrack(track, autoPlay) {
         var id = 'sound_' + track._id;
+        scope.track = track;
         var loadedTrack = soundManager.getSoundById(id);
         if (loadedTrack) {
-          play(loadedTrack);
+          if (autoPlay) {
+            play(this);
+          }
         } else {
           loadedTrack = soundManager.createSound({
             id: id,
             url: track.url,
             multiShot: false,
             stream: true,
-            autoLoad: true,
             onload: function(ok) {
-              play(this);
+              scope.sound.loading = false;
+              scope.sound.duration = toSeconds(this.duration);
+              if (autoPlay) {
+                play(this);
+              }
             }
-          });
+          }).load();
+          scope.sound.loading = true;
         }
 
         return loadedTrack;
@@ -189,7 +199,6 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
         soundManager.play(sound.id, {
           onplay: function() {
             playing();
-            scope.sound.duration = toSeconds(this.duration);
           },
           whileplaying: function() {
             scope.sound.position = toSeconds(this.position);
@@ -210,7 +219,9 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
       function playPause() {
         if (!sound) {
           sound = loadTrack(scope.track, true);
+          return;
         }
+        // soundManager.togglePause(sound.id);
         sound.paused ? play(sound) : sound.pause();
       }
 
@@ -225,7 +236,6 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
       }
 
       function showPlayer() {
-        console.log(trackLoaded());
         if (scope.isLoggedIn() && trackLoaded()) {
           elm.show();
         } else {

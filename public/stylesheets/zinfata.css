@@ -174,7 +174,9 @@ z-player
 z-player .toggle-button
 {
     position: absolute;
-    top: -1.2em;
+    top: -1.3em;
+
+    height: 1.3em;
 
     color: #ff5722;
     background: inherit;
@@ -254,12 +256,14 @@ z-player #z-player-misc-control a.z-player-button:hover
     -webkit-transform: scale(1.1);
             transform: scale(1.1);
 }
-z-player #z-player-track-control a.z-player-button i.fa,
-z-player #z-player-time-control a.z-player-button i.fa,
-z-player #z-player-misc-control a.z-player-button i.fa
+z-player #z-player-track-control i.fa,
+z-player #z-player-time-control i.fa,
+z-player #z-player-misc-control i.fa
 {
     font-size: 30px;
     line-height: inherit;
+
+    color: #ff5722;
 }
 z-player #z-player-track-control p#sound-position,
 z-player #z-player-time-control p#sound-position,

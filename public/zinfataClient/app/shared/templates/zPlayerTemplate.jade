@@ -32,9 +32,10 @@ a.toggle-button(class='visible-xs-inline-block', href='#', ng-click='toggleVisib
           #z-player-track-control
             a.z-player-button(href='#', ng-click='prev()')
               i.fa.fa-step-backward 
-            a.z-player-button(href='#', ng-click='playPause()')
+            a.z-player-button(href='#', ng-click='playPause()', ng-hide='sound.loading')
               i.fa.fa-play(ng-show='!isPlaying')
               i.fa.fa-pause(ng-show='isPlaying')
+            i.fa.fa-spinner.fa-pulse.fa.fa-3x.fa-fw(ng-show='sound.loading')
             a.z-player-button(href='#', ng-click='next()')
               i.fa.fa-step-forward
         .hidden-xs(class='col-sm-12 col-md-1')
