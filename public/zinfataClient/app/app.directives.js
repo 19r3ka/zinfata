@@ -113,10 +113,8 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
       scope.isLoggedIn =       Auth.isAuthenticated;
 
       /* On reload fetch and set last played song. */
-      // sound = loadTrack(QueueSvc.getCurrentTrack(), true);
-      scope.track          = QueueSvc.getCurrentTrack();
-      // hack to prevent duration viewfield to be empty on page load.
-      scope.sound.duration = scope.track.duration;
+      sound = loadTrack(QueueSvc.getCurrentTrack(), false);
+      // scope.track          = QueueSvc.getCurrentTrack();
 
       scope.$on(AUDIO.playPause, function() {
         scope.playPause();
@@ -160,12 +158,15 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
       }
 
       function loadTrack(track, autoPlay) {
+        resetView();
         var id = 'sound_' + track._id;
         scope.track = track;
         var loadedTrack = soundManager.getSoundById(id);
         if (loadedTrack) {
+          scope.sound.loading = false;
+          loadTrack.stop();
           if (autoPlay) {
-            play(this);
+            this.play();
           }
         } else {
           loadedTrack = soundManager.createSound({
@@ -173,43 +174,46 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
             url: track.url,
             multiShot: false,
             stream: true,
-            onload: function(ok) {
+            onload: function() {
+              this.stop(); //hack to make the player play sound.
               scope.sound.loading = false;
               scope.sound.duration = toSeconds(this.duration);
               if (autoPlay) {
-                play(this);
+                this.play();
               }
-            }
+              scope.$apply();
+            },
+            whileplaying: function() {
+              scope.sound.position = toSeconds(this.position);
+              scope.sound.progress = getProgress(this.position, this.duration);
+              scope.$apply();
+            },
+            whileloading: function() {
+              scope.sound.duration = toSeconds(this.durationEstimate);
+              scope.$apply();
+            },
+            onplay: function() {
+              playing();
+            },
+            onfinish: next,
+            onresume: playing,
+            onpause: stopped,
+            onstop: stopped
           }).load();
-          scope.sound.loading = true;
         }
 
         return loadedTrack;
       }
 
       function mute() {
-        ((sound && sound.muted) ? sound.unmute : sound.mute)();
+        if (!sound) {
+          return;
+        }
+        sound.toggleMute();
       }
 
       function next() {
         QueueSvc.playNext();
-      }
-
-      function play(sound) {
-        soundManager.play(sound.id, {
-          onplay: function() {
-            playing();
-          },
-          whileplaying: function() {
-            scope.sound.position = toSeconds(this.position);
-            scope.sound.progress = getProgress(this.position, this.duration);
-            scope.$apply();
-          },
-          onfinish: next,
-          onresume: playing,
-          onpause: stopped,
-          onstop: stopped
-        });
       }
 
       function playing() {
@@ -218,15 +222,19 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
 
       function playPause() {
         if (!sound) {
-          sound = loadTrack(scope.track, true);
           return;
         }
-        // soundManager.togglePause(sound.id);
-        sound.paused ? play(sound) : sound.pause();
+        sound.togglePause();
       }
 
       function prev() {
         QueueSvc.playPrev();
+      }
+
+      function resetView() {
+        var i = scope.sound;
+        i.duration = i.position = i.progress = 0;
+        scope.sound.loading = true;
       }
 
       function show(e) {
