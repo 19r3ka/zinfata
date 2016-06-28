@@ -382,29 +382,29 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
     }
   };
 
-  self.inflate = function(index, container, success, failure) {
-    if (!index) {
-      return $log.debug('there is no index sent to Tracks.inflate.');
-    }
-    self.get(index, function(track) {
-      UsersSvc.get(track.artist.id, function(user) {
-        track.artist.handle = user.handle;
-      }, function(err) {
-        $log.error('Error inflating track artist info: ' + err);
-      });
-      AlbumsSvc.get(track.album.id, function(album) {
-        track.album.title  = album.title;
-      }, function(err) {
-        $log.error('Error inflating track album info: ' + err);
-      });
-      if (!!container) {
-        container.push(track);
-      }
-      success(track);
-    }, function(err) {
-      failure(err);
-    });
-  };
+  // self.inflate = function(index, container, success, failure) {
+  //   if (!index) {
+  //     return $log.debug('there is no index sent to Tracks.inflate.');
+  //   }
+  //   self.get(index, function(track) {
+  //     UsersSvc.get(track.artist.id, function(user) {
+  //       track.artist.handle = user.handle;
+  //     }, function(err) {
+  //       $log.error('Error inflating track artist info: ' + err);
+  //     });
+  //     AlbumsSvc.get(track.album.id, function(album) {
+  //       track.album.title  = album.title;
+  //     }, function(err) {
+  //       $log.error('Error inflating track album info: ' + err);
+  //     });
+  //     if (!!container) {
+  //       container.push(track);
+  //     }
+  //     success(track);
+  //   }, function(err) {
+  //     failure(err);
+  //   });
+  // };
 
   self.downloadLink = function(track, success, failure) {
     var accessKeys  = store.getData('accessKeys');
