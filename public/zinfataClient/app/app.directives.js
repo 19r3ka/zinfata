@@ -103,14 +103,14 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
         progress: 0
       };
 
-      scope.isPlaying =        false;
+      scope.isLoggedIn =       Auth.isAuthenticated;
       scope.isMuted =          isMuted;
+      scope.isPlaying =        false;
+      scope.muteToggle =       mute;
+      scope.next =             next;
       scope.playPause =        playPause;
       scope.prev =             prev;
-      scope.next =             next;
-      scope.muteToggle =       mute;
       scope.toggleVisibility = toggleVisibility;
-      scope.isLoggedIn =       Auth.isAuthenticated;
 
       /* On reload fetch and set last played song. */
       sound = loadTrack(QueueSvc.getCurrentTrack(), false);
@@ -118,6 +118,10 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
 
       scope.$on(AUDIO.playPause, function() {
         playPause();
+      });
+
+      scope.$on(AUTH.notAuthenticated, function() {
+        elem.hide();
       });
 
       scope.$on(AUDIO.playNow, function(event, track) {
@@ -149,6 +153,10 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
 
       var sound;
 
+      function getProgress(position, duration) {
+        return position / duration * 100;
+      }
+
       function hide(e) {
         angular.forEach(e, function(el) {
           el.hide();
@@ -157,10 +165,6 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
 
       function isMuted() {
         return sound && sound.muted;
-      }
-
-      function getProgress(position, duration) {
-        return position / duration * 100;
       }
 
       function loadTrack(track, autoPlay) {
