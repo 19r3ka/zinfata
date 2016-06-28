@@ -71,6 +71,12 @@ $log, QueueSvc, TracksSvc, AUDIO) {
   }
 
   function removeTrackAt(index) {
+    // Don't remove the nowPlaying track if there none other to load
+    if (QueueSvc.getTracks().length <= 1 && index === 0) {
+      $log.error('This track is the currently loaded');
+      return;
+    }
+
     QueueSvc.removeTrackAt(index, function(track) {
       var removed;
       var tracks;

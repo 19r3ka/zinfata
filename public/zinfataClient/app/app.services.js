@@ -675,7 +675,6 @@ $log, TracksSvc, Session, AUTH) {
     if (!removed.length) {
       cb(false);
     }
-    $log.debug('tracks before save is:');
     saveQueue(tracks);
     cb(removed[0]);
   }
