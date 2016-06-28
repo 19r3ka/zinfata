@@ -117,12 +117,18 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
       // scope.track          = QueueSvc.getCurrentTrack();
 
       scope.$on(AUDIO.playPause, function() {
-        scope.playPause();
+        playPause();
       });
 
-      scope.$on(AUDIO.set, function(event, track) {
+      scope.$on(AUDIO.playNow, function(event, track) {
         soundManager.stopAll();
         sound = loadTrack(track, true);
+        showPlayer(); // Make sure the player is visible
+      });
+
+      scope.$on(AUDIO.load, function(event, track) {
+        soundManager.stopAll();
+        sound = loadTrack(track, false);
         showPlayer(); // Make sure the player is visible
       });
 

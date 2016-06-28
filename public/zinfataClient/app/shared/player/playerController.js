@@ -1,7 +1,7 @@
-app.controller('playerCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
-    $scope.track = {};
+app.controller('playerCtrl', ['$scope', '$rootScope',
+function($scope, $rootScope) {
+  $scope.track = {};
 
-    $scope.$on('AUDIO.set', function(track) {
-        
-    });
+  $scope.$on('AUDIO.playNow', function(track) {
+  });
 }]);

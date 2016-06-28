@@ -10,7 +10,11 @@ $log, QueueSvc, TracksSvc, AUDIO) {
   };
 
   /* Sync viewModel with localStore queue list */
-  $scope.$on(AUDIO.set, function(event, track) {
+  $scope.$on(AUDIO.playNow, function(event, track) {
+    sync();
+  });
+
+  $scope.$on(AUDIO.load, function(event, track) {
     sync();
   });
 
@@ -57,35 +61,35 @@ $log, QueueSvc, TracksSvc, AUDIO) {
   function recursiveRemove(array, val, index) {
     var removed;
     var length = array.length;
-    $log.debug(array);
-    $log.debug('val is %s', val);
-    $log.debug('array value at index is %s', array[index]._id);
-    $log.debug('starting index is %s', index);
-
     if (val === array[index]._id || index >= length) {
       return removed.length;
     }
 
     removed = array.splice(index, 1);
     index = index++;
-    $log.debug('removed:');
-    $log.debug(removed);
-    $log.debug('ending index is %s', index);
     recursiveRemove(array, val, index);
   }
 
   function removeTrackAt(index) {
     QueueSvc.removeTrackAt(index, function(track) {
+      var removed;
+      var tracks;
       if (!track) {
         $log.error('QueueSvc: couldn\'t remove track at: %s', index);
         return;
       }
 
-      var removed = $scope.queue.tracks.splice(index, 1);
+      removed = $scope.queue.tracks.splice(index, 1);
       if (!removed.length) {
         $log.error('QueueController: couldn\'t splice out item at: %s', index);
         return;
       }
+
+      // if we are deleting currently playing track, load next in line.
+      if (index === 0) {
+        tracks = QueueSvc.load(0);
+      }
+
       updateQueueDuration();
     });
   }
@@ -151,7 +155,7 @@ $log, QueueSvc, TracksSvc, AUDIO) {
 //     };
 
 //     /* Sync viewModel with localStore queue list */
-//     $scope.$on(AUDIO.set, function(event, track) {
+//     $scope.$on(AUDIO.playNow, function(event, track) {
 //       sync();
 //     });
 
