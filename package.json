@@ -1,6 +1,6 @@
 {
   "name": "zinfata",
-  "version": "0.1.7",
+  "version": "0.5.2",
   "private": true,
   "description": "The first digital platform dedicated to Togo music distribution.",
   "keywords": [
@@ -30,6 +30,7 @@
     "express": "~4.13.1",
     "express-session": "^1.11.3",
     "glob": "7.0.3",
+    "helmet": "2.1.1",
     "jade": "~1.11.0",
     "mongoose": "^4.4.8",
     "morgan": "~1.6.1",

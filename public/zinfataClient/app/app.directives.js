@@ -90,177 +90,211 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
   };
 }])
 .directive('zPlayer', ['$rootScope', 'QueueSvc', 'QUEUE', 'AUDIO', '$log',
-           'AuthenticationSvc', 'AUTH', 'MessageSvc',
-  function($rootScope, QueueSvc, QUEUE, AUDIO, $log, Auth, AUTH, MessageSvc) {
+           'AuthenticationSvc', 'AUTH', 'MessageSvc', '$window',
+  function($rootScope, QueueSvc, QUEUE, AUDIO, $log, Auth, AUTH, MessageSvc,
+  $window) {
   return {
     restrict: 'E',
-    link: function(scope, elm, attrs, ctrl) {
-      if (!Auth.isAuthenticated() || !scope.track || !scope.track.streamUrl) {
-        elm.hide();
+    link: function(scope, elm) {
+      scope.sound = {
+        duration: 0,
+        loading:  false,
+        position: 0,
+        progress: 0
+      };
+
+      scope.isPlaying =        false;
+      scope.isMuted =          isMuted;
+      scope.playPause =        playPause;
+      scope.prev =             prev;
+      scope.next =             next;
+      scope.muteToggle =       mute;
+      scope.toggleVisibility = toggleVisibility;
+      scope.isLoggedIn =       Auth.isAuthenticated;
+
+      /* On reload fetch and set last played song. */
+      sound = loadTrack(QueueSvc.getCurrentTrack(), false);
+      // scope.track          = QueueSvc.getCurrentTrack();
+
+      scope.$on(AUDIO.playPause, function() {
+        playPause();
+      });
+
+      scope.$on(AUDIO.playNow, function(event, track) {
+        soundManager.stopAll();
+        sound = loadTrack(track, true);
+        showPlayer(); // Make sure the player is visible
+      });
+
+      scope.$on(AUDIO.load, function(event, track) {
+        soundManager.stopAll();
+        sound = loadTrack(track, false);
+        showPlayer(); // Make sure the player is visible
+      });
+
+      scope.$on(AUTH.loginSuccess, function(event) {
+        showPlayer(); // Make sure the player is visible
+      });
+
+      scope.$on(AUTH.logoutSuccess, function(event) {
+        soundManager.stopAll();
+        showPlayer();
+      });
+
+      // By default, the player is hidden
+      // Show player if track loaded and user authenticated
+      showPlayer();
+
+      // Show
+
+      var sound;
+
+      function hide(e) {
+        angular.forEach(e, function(el) {
+          el.hide();
+        });
       }
-      scope.$watch(function() {
-        return Auth.isAuthenticated() && (scope.track && !!scope.track.streamUrl);
-      }, function(newVal, oldVal) {
-        if (!!newVal) {
+
+      function isMuted() {
+        return sound && sound.muted;
+      }
+
+      function getProgress(position, duration) {
+        return position / duration * 100;
+      }
+
+      function loadTrack(track, autoPlay) {
+        resetView();
+        var id = 'sound_' + track._id;
+        scope.track = track;
+        var loadedTrack = soundManager.getSoundById(id);
+        if (loadedTrack) {
+          scope.sound.loading = false;
+          loadTrack.stop();
+          if (autoPlay) {
+            this.play();
+          }
+        } else {
+          loadedTrack = soundManager.createSound({
+            id: id,
+            url: track.url,
+            multiShot: false,
+            stream: true,
+            onload: function() {
+              this.stop(); //hack to make the player play sound.
+              scope.sound.loading = false;
+              scope.sound.duration = toSeconds(this.duration);
+              if (autoPlay) {
+                this.play();
+              }
+              scope.$apply();
+            },
+            whileplaying: function() {
+              scope.sound.position = toSeconds(this.position);
+              scope.sound.progress = getProgress(this.position, this.duration);
+              scope.$apply();
+            },
+            whileloading: function() {
+              scope.sound.duration = toSeconds(this.durationEstimate);
+              scope.$apply();
+            },
+            onplay: function() {
+              playing();
+            },
+            onfinish: next,
+            onresume: playing,
+            onpause: stopped,
+            onstop: stopped
+          }).load();
+        }
+
+        return loadedTrack;
+      }
+
+      function mute() {
+        if (!sound) {
+          return;
+        }
+        sound.toggleMute();
+      }
+
+      function next() {
+        QueueSvc.playNext();
+      }
+
+      function playing() {
+        scope.isPlaying = true;
+      }
+
+      function playPause() {
+        if (!sound) {
+          return;
+        }
+        sound.togglePause();
+      }
+
+      function prev() {
+        QueueSvc.playPrev();
+      }
+
+      function resetView() {
+        var i = scope.sound;
+        i.duration = i.position = i.progress = 0;
+        scope.sound.loading = true;
+      }
+
+      function show(e) {
+        angular.forEach(e, function(el) {
+          el.show();
+        });
+      }
+
+      function showPlayer() {
+        if (scope.isLoggedIn() && trackLoaded()) {
           elm.show();
         } else {
           elm.hide();
         }
-      });
-
-      // scope.audio = new Audio();
-      //var player = elm.find('audio')[0];
-      scope.playing = false;
-      scope.currentTime = 0;
-      scope.isLoggedIn = Auth.isAuthenticated;
-      var expander = document.getElementById('expand-player-controllers');
-      var compresser = document.getElementById('compress-player-controllers');
-      var zplayerBottom = document.getElementById('z-player-bottom');
-
-      window.addEventListener('resize', function() {
-        if (document.documentElement.clientWidth >= 598 && zplayerBottom.className.match(/\s*expand-mobile/g)) {
-          zplayerBottom.className =  zplayerBottom.className.replace(/expand-mobile/g, '');
-        }
-      });
-
-      expander.addEventListener('click', function() {
-        if (!zplayerBottom.className.match(/\s+expand-mobile/)) {
-          zplayerBottom.className += 'expand-mobile';
-        }
-      });
-
-      compresser.addEventListener('click', function() {
-        console.log(zplayerBottom.className);
-        if (zplayerBottom.className.match(/\s*expand-mobile/)) {
-          zplayerBottom.className = zplayerBottom.className.replace(/expand-mobile/g, '');
-        }
-      });
-
-      var player = document.createElement('audio');
-      player.volume = 0.5;
-      var trackDurationSlider =
-        document.getElementById('track-duration-slider');
-      var playerVolumeSlider  =
-        document.getElementById('player-volume-slider');
-
-      // scope.audio.addEventListener('play', function() {
-      player.addEventListener('play', function() {
-        $rootScope.$broadcast(AUDIO.playing, scope.track);
-      });
-
-      // scope.audio.addEventListener('pause', function() {
-      player.addEventListener('pause', function() {
-        $rootScope.$broadcast(AUDIO.paused, scope.track);
-      });
-
-      // scope.audio.addEventListener('ended', function() {
-      player.addEventListener('ended', function() {
-        $rootScope.$broadcast(AUDIO.ended, scope.track);
-        scope.next();
-      });
-
-      player.addEventListener('timeupdate', updateProgressBar);
-      trackDurationSlider.addEventListener('change', updateTrackCurrenTime);
-      trackDurationSlider.addEventListener('input', updateTrackCurrenTime);
-
-      playerVolumeSlider.addEventListener('change', updatePlayerVolume);
-      playerVolumeSlider.addEventListener('input', updatePlayerVolume);
-
-      function updateProgressBar() {
-        var progressWidth = '';
-        var trackCurrentTime = player.currentTime;
-        var tarckDuration = player.duration;
-        scope.currentTime = trackCurrentTime;
-
-        var currentTimePercentage =
-          Math.floor((100 * trackCurrentTime) / tarckDuration);
-        //document.querySelector('.duration-spin').style.width = currentTimePercentage + '%';
-        trackDurationSlider.value = currentTimePercentage;
-        scope.$apply();
       }
 
-      function  updateTrackCurrenTime() {
-        player.currentTime = trackDurationSlider.value * player.duration / 100;
-        scope.$apply();
+      function stopped() {
+        scope.isPlaying = false;
       }
 
-      function  updatePlayerVolume() {
-        player.volume = playerVolumeSlider.value / 100;
-        scope.$apply();
-        console.log(player.volume);
+      function toggleVisibility() {
+        var elements = angular.element(
+          elm[0].getElementsByClassName('z-collapsable')
+        );
+        var button   = angular.element(
+          elm[0].getElementsByClassName('toggle-button')[0]
+        );
+
+        button.hasClass('z-hiding') ? elements.show() : elements.hide();
+        button.toggleClass('z-hiding');
       }
 
-      //scope.playing = !player.paused; //scope.audio.paused;
-      /* On reload fetch and set last played song. */
-      scope.track =
-        QueueSvc.getCurrentTrack() && QueueSvc.getCurrentTrack().track;
-      if (scope.track) {
-        player.src = scope.track.streamUrl;
+      function toSeconds(milliseconds) {
+        return milliseconds / 1000;
       }
 
-      scope.$on(AUDIO.playPause, function() {
-        scope.playPause();
+      function trackLoaded() {
+        return !angular.equals({}, scope.track);
+      }
+
+      /* Initialize the Sound Manager API */
+      soundManager.setup({
+        url:          '/lib/sound-manager-2/swf/',
+        flashVersion: 9
       });
 
-      scope.$on(AUDIO.ended, function() {
-        scope.stop();
+      soundManager.onready(function() {
+        /* Here is where SM2 does its magic */
       });
 
-      scope.$on(AUTH.logoutSuccess, function() {
-        scope.stop();
-        scope.track = {};
+      soundManager.ontimeout(function() {
+        /* Things went terribly wrong */
       });
 
-      scope.$on(AUTH.notAuthenticated, function() {
-        scope.stop();
-      });
-
-      scope.$on(AUDIO.set, function(event, track) {
-        scope.track = track;
-        player.src  = track.streamUrl;
-        scope.duration = player.duration;
-
-        if (!Auth.isAuthenticated()) {
-          $rootScope.$broadcast(AUTH.notAuthenticated);
-          MessageSvc.addMsg('danger', 'Log in first to play music!');
-        } else {
-          scope.playPause();
-        }
-        /*scope.audio.src = track.streamUrl;
-        scope.audio.play();*/
-      });
-
-      scope.next = function() {
-        //$rootScope.$broadcast(QUEUE.next);
-        QueueSvc.playNext();
-      };
-
-      scope.prev = function() {
-        //$rootScope.$broadcast(QUEUE.prev);
-        QueueSvc.playPrev();
-      };
-
-      scope.playPause = function() {
-        // scope.audio.paused ? scope.audio.play() : scope.audio.pause();
-        player.paused ? player.play() : player.pause();
-        scope.playing = player.paused || player.ended ? false : true;
-      };
-
-      scope.stop = function() {
-        player.pause();
-        scope.playing = false;
-        player.currentTime = 0;
-      };
-
-      scope.mute = function() {
-        player.muted = !player.muted;
-      };
-
-      scope.muted = function() {
-        return player.muted;
-      };
-
-      // var stop = $interval(function() { scope.$apply(); }, 500);
     },
     templateUrl: '/templates/zPlayer'
   };
@@ -283,6 +317,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
         if (val !== undefined) {
           Albums.getByUser({_id: val}, function(albums) {
             angular.forEach(albums, function(album) {
+              album.img = '/assets/albums/' + album._id + '/tof';
               album.duration    = 0;
               album.trackLength = 0;
               Tracks.find({a_id: album._id} , function(tracks) {
@@ -296,6 +331,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
             }, scope.albums);
             // scope.albums = albums;
           }, function(err) {});
+
           if (!!session.getCurrentUser() &&
             (val === session.getCurrentUser()._id)) {
             scope.isOwner = true;
@@ -328,9 +364,11 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
           // populate search query with a_id || p_id as key and resource_id as value
           param[key] = resource._id;
 
-          Tracks.find(param , function(tracks) {
+          Tracks.find(param, function(tracks) {
             angular.forEach(tracks, function(track) {
-              Tracks.inflate(track._id, this, function() {}, function() {});
+              Tracks.inflate(track._id, this, function(track) {
+                track.img = '/assets/tracks/' + track._id + '/tof';
+              }, function() {});
             }, scope.tracks);
           }, function(err) {});
 
@@ -372,32 +410,73 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
     templateUrl: '/templates/zDetailedTrackListing'
   };
 }])
-.directive('zSearchBox', ['PlaylistsSvc', 'TracksSvc', 'AlbumsSvc', 'UsersSvc',
-                         function(Playlists, Tracks, Albums, Users) {
+.directive('zSearchBox', ['$http', function($http) {
   return {
     restrict: 'E',
-    link: function(scope, elm, attrs) {
-      scope.playlists  = scope.tracks = scope.albums = scope.users = [];
-      if (angular.isUndefined(scope.searchTerm)) {
-        scope.searchTerm = '';
-      }
-      scope.playlists = Playlists.all;
-      scope.tracks    = Tracks.all;
-      scope.albums    = Albums.all;
-      scope.users     = Users.all;
+    // require: 'ngModel',
+    link: function(scope, elm, attrs, ctrl) {
+      scope.search = {searchTerm: ''};
+      var endpoint = 'api/search';
+      var searches = [];
+      var config   = {
+        params: {
+          q: scope.search.searchTerm,
+        },
+        cache: true
+      };
 
-      /*Playlists.query(function(playlists) {
-        scope.playlists = playlists;
-      });
-      Tracks.query(function(tracks) {
-        scope.tracks = tracks;
-      });
-      Albums.query(function(albums) {
-        scope.albums = albums;
-      });
-      Users.query(function(users) {
-        scope.users = users;
-      });*/
+      function isNewSearchTerm(query) {
+        if (searches.length) {
+          for (var i = 0; i < searches.length; i++) {
+            if (searches[i] === query || query.search(searches[i]) === 0) {
+              return false;
+            }
+
+            if (searches[i].search(query) === 0) {
+              searches[i] = query;
+              return true;
+            }
+          }
+        }
+        // if it's truly a new search...
+        searches.push(query);
+        return true;
+      }
+
+      scope.goFetch = function goFetch(query) {
+        if (query && isNewSearchTerm(query)) {
+          config.params.q = query;
+          $http.get(endpoint, config).then(function(response) {
+            scope.search = response.data;
+            if (scope.search.users.length) {
+              var users = [];
+              angular.forEach(scope.search.users, function(user) {
+                user.img = '/assets/users/' + user._id + '/tof';
+                this.push(user);
+              }, users);
+              scope.search.users = users;
+            }
+
+            if (scope.search.albums.length) {
+              var albums = [];
+              angular.forEach(scope.search.albums, function(album) {
+                album.img = '/assets/albums/' + album._id + '/tof';
+                this.push(album);
+              }, albums);
+              scope.search.albums = albums;
+            }
+
+            if (scope.search.tracks.length) {
+              var tracks = [];
+              angular.forEach(scope.search.tracks, function(track) {
+                track.img = '/assets/tracks/' + track._id + '/tof';
+                this.push(track);
+              }, tracks);
+              scope.search.tracks = tracks;
+            }
+          });
+        }
+      };
     },
     templateUrl: '/templates/zSearchBox'
   };

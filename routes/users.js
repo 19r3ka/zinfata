@@ -146,6 +146,7 @@ module.exports = function(wagner) {
       if (!!req.file) {
         user.avatarUrl = req.file.path;
       }
+
       user.save(function(err, updatedUser) {
         if (err) {return next(err);}
         res.json(updatedUser);
@@ -166,6 +167,7 @@ module.exports = function(wagner) {
       });
     });
   });
+
   router.route('/handle/:handle')
   .get(function(req, res, next) {
     if ('handle' in req.params && !!req.params.handle) {

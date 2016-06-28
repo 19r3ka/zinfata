@@ -1,11 +1,11 @@
-.jumbotron(ng-hide='editing', class='z-id-card', style='background-image:url({{ user.avatarUrl }})')
+.jumbotron(ng-hide='editing', class='z-id-card', style='background-image:url({{ user.img }})')
     .z-blur
     .container
         .row
             .col-md-10(class='col-md-offset-1')
                 .col-sm-12(class='col-md-3')
                     img.img-circle(class='img-responsive center-block', id='avatar', name= 'avatar', 
-                        alt='{{ user.handle }}', ng-src='{{ user.avatarUrl }}')
+                        alt='{{ user.handle }}', ng-src='{{ user.img }}')
                 .col-sm-12(class='col-md-9')
                     .z.vcentered
                         h1.text-capitalize {{ user.handle }}
@@ -20,7 +20,7 @@
                                 .small Introduce yourself to the Zinfata Community.
                         form(name='userProfile', role='form', novalidate, ng-if='canEdit && editing')
                             .form-group
-                                img.img-circle(class='img-responsive center-block', name= 'avatar', width='200', alt='{{ user.handle }}', ng-src='{{ user.avatarUrl }}')
+                                img.img-circle(class='img-responsive center-block', name= 'avatar', width='200', alt='{{ user.handle }}', ng-src='{{ user.img }}')
                             .form-group(ng-hide='!editing')
                                 label(for='avatarInput') Choose your avatar:
                                 z-img-crop(on-img-ready='updateAvatar(imgFile)')

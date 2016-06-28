@@ -1,11 +1,11 @@
-.jumbotron(ng-hide='creating || editing', class='z-id-card', style='background-image:url({{ album.artist.avatarUrl }}')
+.jumbotron(ng-hide='creating || editing', class='z-id-card', style='background-image:url({{ album.artist.img }}')
     .z-blur
     .container
         .row
             .col-md-10(class='col-md-offset-1')
                 .col-sm-12(class='col-md-3')
                     img.img-circle(class='img-responsive center-block', id='avatar', name= 'coverArt', 
-                        alt='{{ album.title }}', ng-src='{{ album.imageUrl }}')
+                        alt='{{ album.title }}', ng-src='{{ album.img }}')
                 .col-sm-12(class='col-md-9')
                     .z-vcentered
                         h1.text-capitalize {{ album.title }}
@@ -26,7 +26,7 @@
                                 .small {{ pageDescription }}
                         form(name='albumForm', enctype= 'multipart/form-data', ng-if='editing || creating', role='form', novalidate)
                             .form-group
-                                img.img-circle(class='img-responsive center-block', name= 'coverArt', width='200', alt='{{ album.title }}', ng-src='{{ album.imageUrl }}')
+                                img.img-circle(class='img-responsive center-block', name= 'coverArt', width='200', alt='{{ album.title }}', ng-src='{{ album.img }}')
                             .form-group
                                 input.form-control(type='text', name='title', id='title', placeholder='Title', ng-model='album.title', ng-disabled='!editing && !creating', required)
                             .form-group

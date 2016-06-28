@@ -88,7 +88,7 @@ app.factory('Users', ['$resource', function($resource) {
     }
   });
 }])
-.factory('AccessToken', function($resource){
+.factory('AccessToken', ['$resource', function($resource){
   return $resource('/zinfataclient/:resource', {resource: '@resource'}, {
     'getUser': {
       method: 'GET',
@@ -106,9 +106,9 @@ app.factory('Users', ['$resource', function($resource) {
       params: {resource: 'refresh'}
     }   
   });
-})
+}])
 .factory('localStore', ['$window', '$rootScope', '$log', 
-                        function($window, $rootScope, $log){
+  function($window, $rootScope, $log){
   /* Implements access to the local store to enable saving
      queued tracks from one page to the other */
 
@@ -162,12 +162,11 @@ app.factory('Users', ['$resource', function($resource) {
     request: function(config) {
       var accessKeys  = store.getData('accessKeys'),
           accessToken = accessKeys ? accessKeys.access_token : null; 
-    
-      if(accessToken) {
+      if (accessToken) {
         config.headers.authorization = 'Bearer ' + accessToken;
       }
 
-      if(config.url.search('zinfataclient') !== -1) {
+      if (config.url.search('zinfataclient') !== -1) {
         config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
         config.data = serialize(config.data);
       }

@@ -14,6 +14,8 @@ USER_EVENTS, $routeParams, $log, $location, Session) {
 
   UsersSvc.get(userId, function(user) {
     $scope.user = user;
+    $scope.user.img = '/assets/users/' + userId + '/tof';
+
     if (Session.getCurrentUser()._id === $scope.user._id) {
       $scope.canEdit = true;
     }
@@ -61,6 +63,6 @@ USER_EVENTS, $routeParams, $log, $location, Session) {
 
   $scope.updateAvatar = function(image) {
     $scope.user.avatar    = image.file;
-    $scope.user.avatarUrl = image.url;
+    $scope.user.img       = image.url;
   };
 }]);

@@ -138,9 +138,8 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
       }
       if (!!user.avatar) {
         userToUpdate.avatar = user.avatar;
-        delete userToUpdate.avatarUrl;
       }
-      /* Eventually delete all these 4 following ifs. 
+      /* Eventually delete all these 4 following ifs.
          They are probably not necessary. */
       if (user.facebook) {
         userToUpdate.facebook = user.facebook;
@@ -169,11 +168,7 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
 
   self.get = function(id, success, failure) {
     Users.get({id: id}, function(user) {
-      if (!!user.avatarUrl &&
-        (user.avatarUrl.search('user-avatar-placeholder') === -1)) {
-        user.avatarUrl = '../../' +
-          user.avatarUrl.split('/').slice(1).join('/');
-      }
+      user.img = '/assets/users/' + user._id + '/tof';
       success(user);
     }, function(err) {
       failure(err);
@@ -181,22 +176,14 @@ app.service('UsersSvc', ['Users', 'MessageSvc', '$log', '$location',
   };
 
   self.all = Users.query(function(collection) {
-    var ret = [];
-    angular.forEach(collection, function(item) {
-      if (!!item.avatarUrl &&
-        (item.avatarUrl.search('user-avatar-placeholder') === -1)) {
-        item.avatarUrl = '../../' +
-          item.avatarUrl.split('/').slice(1).join('/');
-      }
-      this.push(item);
-    }, ret);
-    return ret;
+    return collection;
   }, function(err) {
     $log.debug('Unable to get all the users!');
   });
 
   self.findByHandle = function(handle, success, failure) {
     return Users.find({handle: handle}, function(user) {
+      user.img = '/assets/users/' + user._id + '/tof';
       success(user);
     }, function(err) {
       failure(err);
@@ -247,10 +234,7 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
       data.artist = {id: data.artistId};
       delete data.artistId;
       data.releaseDate = new Date(data.releaseDate);  // AngularJs 1.3+ only accept valid Date format and not string equilavent
-      if (!!data.imageUrl &&
-        (data.imageUrl.search('album-coverart-placeholder') === -1)) {
-        data.imageUrl = '../../' + data.imageUrl.split('/').slice(1).join('/');
-      }
+      data.img = '/assets/albums/' + data._id + '/tof';
       success(data);
     }, function(err) {
       failure(err);
@@ -263,10 +247,7 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
       item.artist = {id: item.artistId};
       delete item.artistId;
       item.releaseDate = new Date(item.releaseDate);  // AngularJs 1.3+ only accept valid Date format and not string equilavent
-      if (!!item.imageUrl &&
-        (item.imageUrl.search('album-coverart-placeholder') === -1)) {
-        item.imageUrl = '../../' + item.imageUrl.split('/').slice(1).join('/');
-      }
+      item.img = '/assets/albums/' + item._id + '/tof';
       this.push(item);
     }, ret);
     return ret;
@@ -280,11 +261,7 @@ app.service('AlbumsSvc', ['Albums', '$log', function(Albums, $log) {
         data.artist = {id: data.artistId};
         delete data.artistId;
         data.releaseDate = new Date(data.releaseDate);
-        if (!!data.imageUrl &&
-          (data.imageUrl.search('album-coverart-placeholder') === -1)) {
-          data.imageUrl = '../../' +
-            data.imageUrl.split('/').slice(1).join('/');
-        }
+        data.img = '/assets/albums/' + data._id + '/tof';
       });
       success(albums);
     }, function(err) {
@@ -307,8 +284,8 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
   self.create = function(track, success, failure) {
     var newTrack = new Tracks({
       about:        track.about,
-      albumId:      track.album.id,
-      artistId:     track.artist.id,
+      albumId:      track.album._id,
+      artistId:     track.artist._id,
       audioFile:    track.audioFile,
       coverArt:     track.coverArt,
       downloadable: track.downloadable,
@@ -336,7 +313,11 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
           trackToUpdate[key] = track[key];
         }
       }
-      trackToUpdate.albumId = track.album.id;
+
+      // manually fill albumId and artistId which are not in the trackModel... yet
+      // TODO: modify track service and route to assign 'album' and 'assign' field directly
+      trackToUpdate.albumId  = track.album._id;
+      trackToUpdate.artistId = track.artist._id;
 
       if ('imageFile' in track && track.imageFile) {
         trackToUpdate.imageFile = track.imageFile;
@@ -356,19 +337,9 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
 
   self.get = function(trackId, success, failure) {
     Tracks.get({id: trackId}, function(data) {
-      data.artist      = {id: data.artistId};
-      data.album       = {id: data.albumId};
       data.releaseDate = new Date(data.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
-      delete data.artistId;
-      delete data.albumId;
-      if (!!data.coverArt &&
-        (data.coverArt.search('track-coverart-placeholder') === -1)) {
-        data.coverArt = '../../' + data.coverArt.split('/').slice(1).join('/');
-      }
-      if (!!data.streamUrl) {
-        data.streamUrl = '../../' +
-          data.streamUrl.split('/').slice(1).join('/');
-      }
+      data.img = '/assets/tracks/' + data._id + '/tof';
+      data.url = '/assets/tracks/' + data._id + '/zik';
       success(data);
     }, function(err) {
       failure(err);
@@ -379,35 +350,9 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
     Tracks.query(function(collection) {
       var ret = [];
       angular.forEach(collection, function(item) {
-        item.artist      = {id: item.artistId};
-        item.album       = {id: item.albumId};
         item.releaseDate = new Date(item.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
-        delete item.artistId;
-        delete item.albumId;
-        //
-        // The following is taken from the inflate code
-        //
-        UsersSvc.get(item.artist.id, function(user) {
-          item.artist.handle = user.handle;
-        }, function(err) {
-          $log.error('Error inflating track artist info: ' + err);
-        });
-        AlbumsSvc.get(item.album.id, function(album) {
-          item.album.title  = album.title;
-        }, function(err) {
-          $log.error('Error inflating track album info: ' + err);
-        });
-        //
-        // End of the inflate code
-        // 
-        if ('coverArt' in item && !!item.coverArt &&
-          (item.coverArt.search('track-coverart-placeholder') === -1)) {
-          item.coverArt = '../../' + item.coverArt.split('/').slice(1).join('/');
-        }
-        if ('streamUrl' in item && !!item.streamUrl) {
-          item.streamUrl = '../../' +
-            item.streamUrl.split('/').slice(1).join('/');
-        }
+        item.img = '/assets/tracks/' + item._id + '/tof';
+        item.url = '/assets/tracks/' + item._id + '/zik';
         this.push(item);
       }, ret);
       success(ret);
@@ -424,18 +369,9 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
     if (!!search) {
       Tracks.find(search, function(tracks) {
         angular.forEach(tracks, function(track) {
-          track.artist      = {id: track.artistId};
-          track.album       = {id: track.albumId};
           track.releaseDate = new Date(track.releaseDate);
-          if (!!track.coverArt &&
-            (track.coverArt.search('track-coverart-placeholder') === -1)) {
-            track.coverArt   = '../../' +
-              track.coverArt.split('/').slice(1).join('/');
-          }
-          if (!!track.streamUrl) {
-            track.streamUrl = '../../' +
-              track.streamUrl.split('/').slice(1).join('/');
-          }
+          track.img = '/assets/tracks/' + track._id + '/tof';
+          track.url = '/assets/tracks/' + track._id + '/zik';
         });
         success(tracks);
       }, function(err) {
@@ -483,11 +419,7 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
 
   self.delete = function(track, success, failure) {
     Tracks.delete({id: track._id}, function(data) {
-      data.artist      = {id: data.artistId};
-      data.album       = {id: data.albumId};
       data.releaseDate = new Date(data.releaseDate); // AngularJs 1.3+ only accept valid Date format and not string equilavent
-      delete data.artistId;
-      delete data.albumId;
       success(data);
     }, function(err) {
       failure(err);
@@ -629,138 +561,280 @@ app.service('QueueSvc', ['localStore', '$rootScope', 'AUDIO', 'QUEUE', '$log',
 'TracksSvc', 'SessionSvc', 'AUTH', function(queue, $rootScope, AUDIO, QUEUE,
 $log, TracksSvc, Session, AUTH) {
   var self  = this;
-  var owner = function() {
+
+  /* Appends a track to queue */
+  function addTrack(track, playNext) {
+    var tracks = getTracks();
+    tracks.push(track._id);
+    saveQueue(tracks);
+  }
+
+  /* Resets the queue list */
+  function clearQueue() {
+    saveQueue([]);
+  }
+
+  /* Gets the current playing track */
+  function getCurrentTrack() {
+    return queue.getData(owner() + '.queue.nowPlaying') || {};
+  }
+
+  /* Gets the track at a specific position */
+  function getTrackAt(index, cb) {
+    var tracks = getTracks();
+    if (!!tracks.length) {
+      TracksSvc.get(tracks[index], cb);
+    } else {
+      cb('No tracks to fetch');
+    }
+  }
+
+  /* Gets all tracks in queue */
+  function getTracks() {
+    return queue.getData(owner() + '.queue.tracks') || [];
+  }
+
+  /* Gets and loads the next track in queue */
+  function load(index) {
+    if (getTracks().length <= 1) {
+      $log.error('There isn\'t any next track to load!');
+      return;
+    }
+    getTrackAt(index, function(track) {
+      saveQueue(null, track);
+      $rootScope.$broadcast(AUDIO.load, track);
+    });
+  }
+
+  /* Gets and plays the next track in queue */
+  function next() {
+    if (getTracks().length <= 1) {
+      $log.error('There isn\'t any next track to play!');
+      return;
+    }
+    getTrackAt(1, function(track) {
+      playNow(track, 1);
+    });
+  }
+
+  /* Returns currently logged user */
+  function owner() {
     return Session.getCurrentUser() && Session.getCurrentUser()._id;
   }
 
-  self.playNext       = function() {
-    var tracks      = self.getTracks();
-    var nowPlaying  = self.getCurrentTrack();
-    var queueLength = tracks.length;
-    var index       = nowPlaying.index + 1;
+  /* Broadcasts the track to be played */
+  function play(track) {
+    saveQueue(null, track);
+    $rootScope.$broadcast(AUDIO.playNow, track);
+  }
 
-    if (index >= queueLength) {
-      index = 0;
+  /* Takes a track in queue and sets it as nowPlaying */
+  function playNow(track, oldIndex) {
+    var tracks;
+    // if there is an index, remove track from the queue...
+    if (oldIndex) {
+      removeTrackAt(oldIndex, function(success) {
+        if (!success) {
+          $log.error('Failed to remove track at %s', oldIndex);
+          return false;
+        }
+      });
     }
-
-    self.getTrackAt(index, function(track) {
-      self.play(track, index);
+    // ... before adding it to the top.
+    tracks = getTracks();
+    tracks.unshift(track._id);
+    saveQueue(tracks);
+    // remove the old nowPlaying track
+    removeTrackAt(1, function(success) {
+      if (!success) {
+        $log.error('Failed to remove next track inline');
+        return false;
+      }
+      play(track);
     });
-  };
+  }
 
-  self.playPrev       = function() {
-    var tracks       = self.getTracks();
-    var queueLength  = tracks.length;
-    var currentIndex = self.getCurrentTrack().index;
-    var index        = currentIndex - 1;
-    if (index < 0) {
-      index = queueLength - 1;
+  /* Get and plays the last track in queue */
+  function prev() {
+    if (getTracks().length <= 1) {
+      $log.error('There isn\'t any previous track to play!');
+      return;
     }
-
-    self.getTrackAt(index, function(track) {
-      self.play(track, index);
+    var index = getTracks().length - 1;
+    getTrackAt(index, function(track) {
+      playNow(track, index);
     });
-  };
+  }
 
-  self.saveQueue       = function(tracks, nowPlaying) {
-    if (tracks && Array.isArray(tracks)) {
-      queue.setData(owner() + '.queue.tracks', tracks);
+  /* Removes the track at a specific position */
+  function removeTrackAt(index, cb) {
+    var removed;
+    var tracks = getTracks();
+
+    removed = tracks.splice(index, 1);
+    if (!removed.length) {
+      cb(false);
+    }
+    saveQueue(tracks);
+    cb(removed[0]);
+  }
+
+  /* Saves the queue and the nowPlaying track */
+  function saveQueue(trackList, nowPlaying) {
+    if (trackList && Array.isArray(trackList)) {
+      queue.setData(owner() + '.queue.tracks', trackList);
     }
 
     if (!!nowPlaying) {
       queue.setData(owner() + '.queue.nowPlaying', nowPlaying);
     }
-  };
+  }
 
-  self.clearQueue     = function() {
-    self.saveQueue([]);
-  };
+  self.addTrack        = addTrack;
+  self.getCurrentTrack = getCurrentTrack;
+  self.getTrackAt      = getTrackAt;
+  self.getTracks       = getTracks;
+  self.load            = load;
+  self.playNext        = next;
+  self.playNow         = playNow;
+  self.playPrev        = prev;
+  self.removeTrackAt   = removeTrackAt;
 
-  self.getCurrentTrack = function() {
-    return queue.getData(owner() + '.queue.nowPlaying') || {};
-  };
+  // self.playNext       = function() {
+  //   var tracks      = self.getTracks();
+  //   var nowPlaying  = self.getCurrentTrack();
+  //   var queueLength = tracks.length;
+  //   var index       = nowPlaying.index + 1;
 
-  self.addTrack        = function(track, playNext) {
-    var tracks = self.getTracks();
-    playNext ? tracks.unshift(track._id) : tracks.push(track._id);
-    self.saveQueue(tracks);
-  };
+  //   if (index >= queueLength) {
+  //     index = 0;
+  //   }
 
-  self.getTracks       = function() {
-    return queue.getData(owner() + '.queue.tracks') || [];
-  };
+  //   self.getTrackAt(index, function(track) {
+  //     self.play(track, index);
+  //   });
+  // };
 
-  self.getTrackAt      = function(index, success, failure) {
-    var tracks = self.getTracks();
-    if (!!tracks.length) {
-      TracksSvc.inflate(tracks[index], null, function(track) {
-        success(track);
-      }, function(err) {
-        failure(err);
-      });
-    } else {
-      failure('No tracks to fetch');
-    }
-  };
+  // self.playPrev       = function() {
+  //   var tracks       = self.getTracks();
+  //   var queueLength  = tracks.length;
+  //   var currentIndex = self.getCurrentTrack().index;
+  //   var index        = currentIndex - 1;
+  //   if (index < 0) {
+  //     index = queueLength - 1;
+  //   }
 
-  self.removeTrackAt   = function(index, success, failure) {
-    var tracks     = self.getTracks();
-    var nowPlaying = self.getCurrentTrack();
+  //   self.getTrackAt(index, function(track) {
+  //     self.play(track, index);
+  //   });
+  // };
 
-    if (!!tracks.splice(index, 1).length) {
-      if (nowPlaying.index > index) {
-        nowPlaying.index--;
-      } else if (nowPlaying.index === index) {
-        if (index >= tracks.length) {
-          index = 0;
-        }
-        self.getTrackAt(index, function(track) {
-          self.play(track, index);
-        }, function() {});
-      }
-      self.saveQueue(tracks, nowPlaying);
-      success(index);
-    } else {
-      failure('Track removal from queue failed at index: ' + index);
-    }
-  };
-  /* User clicks on a track's playNow button */
-  self.playNow = function(track) {
-    var newIndex   = 0;
-    var queueCue   = 0;
-    var nowPlaying = self.getCurrentTrack();
-    var tracks     = self.getTracks();
+  // self.saveQueue       = function(tracks, nowPlaying) {
+  //   if (tracks && Array.isArray(tracks)) {
+  //     queue.setData(owner() + '.queue.tracks', tracks);
+  //   }
 
-    if (nowPlaying) {
-      queueCue = nowPlaying.index;
-    }
+  //   if (!!nowPlaying) {
+  //     queue.setData(owner() + '.queue.nowPlaying', nowPlaying);
+  //   }
+  // };
 
-    /* If there is a queue, stick the track in after
-       the current index position */
-    if (!!tracks.length && !!Object.keys(nowPlaying).length) {
-      tracks.splice(queueCue, 0, track._id);
-      newIndex = queueCue++;
-    } else if (!!tracks.length && !Object.keys(nowPlaying).length) { //there is no queue, add to end to create.
-      self.addTrack(track, true);
-    } else {
-      self.addTrack(track);
-    }
-    self.play(track, newIndex);
-  };
+  // self.clearQueue     = function() {
+  //   self.saveQueue([]);
+  // };
 
-  self.play = function(track, index) {
-    if (!('title' in track.album || 'handle' in track.artist)) {
-      track = TracksSvc.inflate(track._id, null, function(inflatedTrack) {
-        return inflatedTrack;
-      }, function(err) {return;});
-    }
-    $log.debug(track.artist.handle + ' : ' + track.album.title);
-    var nowPlaying = self.getCurrentTrack();
-    nowPlaying.index = index;
-    nowPlaying.track = track;
-    self.saveQueue(null, nowPlaying);
-    $rootScope.$broadcast(AUDIO.set, nowPlaying.track);
-  };
+  // self.getCurrentTrack = function() {
+  //   return queue.getData(owner() + '.queue.nowPlaying') || {};
+  // };
+
+  // self.addTrack        = function(track, playNext) {
+  //   var tracks = self.getTracks();
+  //   playNext ? tracks.unshift(track._id) : tracks.push(track._id);
+  //   self.saveQueue(tracks);
+  // };
+
+  // self.getTracks       = function() {
+  //   return queue.getData(owner() + '.queue.tracks') || [];
+  // };
+
+  // self.getTrackAt      = function(index, success, failure) {
+  //   var tracks = self.getTracks();
+  //   if (!!tracks.length) {
+  //     TracksSvc.inflate(tracks[index], null, function(track) {
+  //       success(track);
+  //     }, function(err) {
+  //       failure(err);
+  //     });
+  //   } else {
+  //     failure('No tracks to fetch');
+  //   }
+  // };
+
+  // self.removeTrackAt   = function(index, success, failure) {
+  //   var tracks     = self.getTracks();
+  //   var nowPlaying = self.getCurrentTrack();
+
+  //   if (!!tracks.splice(index, 1).length) {
+  //     if (nowPlaying.index > index) {
+  //       nowPlaying.index--;
+  //     } else if (nowPlaying.index === index) {
+  //       if (index >= tracks.length) {
+  //         index = 0;
+  //       }
+  //       self.getTrackAt(index, function(track) {
+  //         self.play(track, index);
+  //       }, function() {});
+  //     }
+  //     self.saveQueue(tracks, nowPlaying);
+  //     success(index);
+  //   } else {
+  //     failure('Track removal from queue failed at index: ' + index);
+  //   }
+  // };
+  // /* User clicks on a track's playNow button */
+  // self.playNow = function(track) {
+  //   var newIndex   = 0;
+  //   var queueCue   = 0;  // the index of the current NowPlaying track
+  //   var nowPlaying = self.getCurrentTrack();
+  //   var tracks     = self.getTracks();
+
+  //   $log.info('track is: ');
+  //   $log.info(track);
+  //   $log.info('tracks is: ');
+  //   $log.info(tracks);
+  //   if (nowPlaying) {
+  //     queueCue = nowPlaying.index;
+  //   }
+
+  //   /* If there is a queue, stick the track in after
+  //      the current index position */
+  //   if (!!tracks.length && !!Object.keys(nowPlaying).length) {
+  //     tracks.splice(queueCue, 0, track._id);
+  //     newIndex = queueCue++;
+  //     $log.info('tracks after insertion is: ');
+  //     $log.info(track);
+  //   } else if (!!tracks.length && !Object.keys(nowPlaying).length) { //there is no queue, add to end to create.
+  //     self.addTrack(track, true);
+  //   } else {
+  //     self.addTrack(track);
+  //   }
+  //   self.play(track, newIndex);
+  // };
+
+  // self.play = function(track, index) {
+  //   // if (!('title' in track.album || 'handle' in track.artist)) {
+  //   //   track = TracksSvc.inflate(track._id, null, function(inflatedTrack) {
+  //   //     console.debug('inflated track is:');
+  //   //     console.debug(inflatedTrack);
+  //   //     return inflatedTrack;
+  //   //   }, function(err) {return;});
+  //   // }
+  //   var nowPlaying = self.getCurrentTrack();
+  //   nowPlaying.index = index;
+  //   nowPlaying.track = track;
+  //   self.saveQueue(null, nowPlaying);
+  //   $rootScope.$broadcast(AUDIO.playNow, nowPlaying.track);
+  // };
 }]);
 app.service('MessageSvc', function() {
   this.message = null;
