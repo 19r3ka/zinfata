@@ -37,7 +37,7 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider',
       controller:  'userProfileCtrl',
       access: {
         loginRequired: true
-      } 
+      }
     }).
     when('/album/new', {
       templateUrl: '/partials/album',
@@ -127,26 +127,30 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider',
     on protected route requests. */
   var loginRedirectUrl;
 
-  /*Listen to route changes 
-    to intercept and inject behaviors. */  
+  /*Listen to route changes
+    to intercept and inject behaviors. */
   $rootScope.$on('$routeChangeStart', function(event, next) {
     var authorized;
-        
-    if(next.originalPath === '/register') {
+
+    if (next.originalPath === '/register') {
       loginRedirectUrl = null;
-    } else if(!!loginRedirectUrl && next.originalPath !== '/login') {
+    } else if (!!loginRedirectUrl && next.originalPath !== '/login') {
       $location.path(loginRedirectUrl).replace();
       loginRedirectUrl = null;
     }
 
-    if(!!next.access) {
+    if (!!next.access) {
       authorized = AuthenticationSvc.authorize(next.access.loginRequired);
-      
-      if(authorized === AUTH.mustLogIn) {
+
+      if (authorized === AUTH.mustLogIn) {
         loginRedirectUrl = $location.url();
-        MessageSvc.addMsg('warning', 'You must log-in first to access that resource.');
-        $location.path('login'); 
-      } else if(authorized === AUTH.notAuthorized) {
+        MessageSvc.addMsg(
+          'warning',
+          'You must log-in first to access that resource.'
+        );
+        $rootScope.$broadcast(AUTH.notAuthenticated);
+        $location.path('login');
+      } else if (authorized === AUTH.notAuthorized) {
         // $location.path(403page);
       }
     }
