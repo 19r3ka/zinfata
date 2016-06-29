@@ -5,22 +5,10 @@ var _     = require('underscore');
 var glob  = require('glob');
 var path  = require('path');
 
-var validateEnvVariables = function() {
-  var files = glob.sync('./config/env/' + process.env.NODE_ENV + '.js');
-  console.log();
-  if (!files.length) {
-    if (process.env.NODE_ENV) {
-      console.error(chalk.yellow('Error: no configuration files found for ' +
-        process.env.NODE_ENV + '. Defaulting to dev environment.'));
-    } else {
-      console.error(chalk.yellow('Error: Node environment not defined. ' +
-        'Defaulting to dev environment.'));
-    }
-    process.env.NODE_ENV = 'development';
-  }
-
-  console.log(chalk.white('')); // reset console colors
-};
+/*
+  TODO: Make sure uploads folders exist or create them;
+  TODO: Database must have zinfataClient credentials;
+*/
 
 var initGlobalConfig = function() {
   // ensure NODE_ENV is set
@@ -51,5 +39,23 @@ var initGlobalConfig = function() {
 
   return config;
 };
+
+var validateEnvVariables = function() {
+  var files = glob.sync('./config/env/' + process.env.NODE_ENV + '.js');
+  console.log();
+  if (!files.length) {
+    if (process.env.NODE_ENV) {
+      console.error(chalk.yellow('Error: no configuration files found for ' +
+        process.env.NODE_ENV + '. Defaulting to dev environment.'));
+    } else {
+      console.error(chalk.yellow('Error: Node environment not defined. ' +
+        'Defaulting to dev environment.'));
+    }
+    process.env.NODE_ENV = 'development';
+  }
+
+  console.log(chalk.white('')); // reset console colors
+};
+
 
 module.exports = initGlobalConfig();

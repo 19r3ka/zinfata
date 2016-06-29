@@ -31,8 +31,8 @@ module.exports = function(wagner) {
         username: req.body.username,
         password: req.body.password ,
         grant_type:'password',
-        client_id: 'zinfata',
-        client_secret: "'pass'"
+        client_id: config.oauth2.clientId,
+        client_secret: config.oauth2.clientSecret
       }
     },
     function(err, httpResp, body) {
@@ -64,8 +64,8 @@ module.exports = function(wagner) {
       form: {
         refresh_token: req.body.refresh_token,
         grant_type:'refresh_token',
-        client_id: 'zinfata',
-        client_secret: "'pass'"
+        client_id: config.oauth2.clientId,
+        client_secret: config.oauth2.clientSecret
       }
     },
     function(err, httpResp, body) {
@@ -115,8 +115,8 @@ module.exports = function(wagner) {
       form: {
         token_type_hint: token_type_hint,
         token: token,
-        client_id: 'zinfata',
-        client_secret: "'pass'"
+        client_id: config.oauth2.clientId,
+        client_secret: config.oauth2.clientSecret
       }
     },
     function(err, httpResp, body) {
@@ -141,8 +141,8 @@ module.exports = function(wagner) {
     request.get({
       url: zUrl + '/oauth2/me',
       qs: {
-        client_id: 'zinfata',
-        client_secret: "'pass'",
+        client_id: config.oauth2.clientId,
+        client_secret: config.oauth2.clientSecret,
         token: data.token
       }
     },
