@@ -1,20 +1,20 @@
 
 var _           = require('underscore');
 var config      = require('./config/config');
-var ZOAuthError = require('./lib/errors/ZinfataOAuthError');
-var ZError      = require('./lib/errors/ZinfataError');
 var MailService = require('./lib/services/ZinfataMailerService');
+var ZError      = require('./lib/errors/ZinfataError');
+var ZOAuthError = require('./lib/errors/ZinfataOAuthError');
 
 //Models
 var models = {
-  PasswordToken: require('./models/PasswordToken'),
-  Album: require('./models/Album'),
-  OAuthClient: require('./models/OAuthClient'),
-  OAuthAccessToken: require('./models/OAuthAccessToken'),
-  User: require('./models/User'),
-  Playlist: require('./models/Playlist'),
+  Album:             require('./models/Album'),
+  OAuthAccessToken:  require('./models/OAuthAccessToken'),
+  OAuthClient:       require('./models/OAuthClient'),
   OAuthRefreshToken: require('./models/OAuthRefreshToken'),
-  Track: require('./models/Track')
+  PasswordToken:     require('./models/PasswordToken'),
+  Playlist:          require('./models/Playlist'),
+  Track:             require('./models/Track'),
+  User:              require('./models/User')
 };
 
 module.exports = function(wagner) {

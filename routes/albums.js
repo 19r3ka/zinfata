@@ -1,7 +1,7 @@
 module.exports = function(wagner) {
 
   var express  = require('express');
-  var config   = require('../config/config2');
+  var config   = require('../config/config');
   var router   = express.Router();
 
   var multer   = require('multer');

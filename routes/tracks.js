@@ -1,12 +1,12 @@
 module.exports = function(wagner) {
 
-  var express  = require('express');
-  var path     = require('path');
-  var fs       = require('fs');
-  var router   = express.Router();
-  var UserModel;
   var AlbumModel;
+  var express  = require('express');
+  var fs       = require('fs');
+  var path     = require('path');
+  var router   = express.Router();
   var TrackModel;
+  var UserModel;
   var ZErr;
 
   wagner.invoke(function(User, Album, Track, ZError) {
@@ -19,7 +19,7 @@ module.exports = function(wagner) {
   var Album    = AlbumModel;
   var Track    = TrackModel;
   var multer   = require('multer');
-  var config   = require('../config/config2');
+  var config   = require('../config/config');
 
   /*
   ** Used to customize the destination directory of

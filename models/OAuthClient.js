@@ -29,8 +29,8 @@ var OAuthClientSchema = new mongoose.Schema({
 
 OAuthClientSchema.statics.getClient =
   function(clientId, clientSecret, callback) {
-  console.log('in getClient (clientId: ' + clientId +
-    ', clientSecret: ' + clientSecret + ')');
+  // console.log('in getClient (clientId: ' + clientId +
+  // ', clientSecret: ' + clientSecret + ')');
   if (clientSecret === null) {
     return OAuthClientModel.findOne({clientId: clientId}, callback);
   }

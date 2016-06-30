@@ -1,41 +1,40 @@
 var _            = require('underscore');
-var del          = require('del');
-var runSequence  = require('run-sequence');
 var browserSync  = require('browser-sync').create();
-var path         = require('path');
+var del          = require('del');
 var fs           = require('fs');
 var md5          = require('MD5');
+var path         = require('path');
+var runSequence  = require('run-sequence');
 
-var gulp         = require('gulp');
-var gutil        = require('gulp-util');
-var gulpIf       = require('gulp-if');
-var concat       = require('gulp-concat');
-var inject       = require('gulp-inject');
-var imagemin     = require('gulp-imagemin');
-var less         = require('gulp-less');
-var csscomb      = require('gulp-csscomb');
 var autoprefixer = require('gulp-autoprefixer');
-var ngAnnotate   = require('gulp-ng-annotate');
-var uglify       = require('gulp-uglify');
-var minify       = require('gulp-cssmin');
 var cache        = require('gulp-cached');
+var concat       = require('gulp-concat');
+var csscomb      = require('gulp-csscomb');
+var gulp         = require('gulp');
+var gulpIf       = require('gulp-if');
+var gutil        = require('gulp-util');
+var imagemin     = require('gulp-imagemin');
+var inject       = require('gulp-inject');
+var less         = require('gulp-less');
+var minify       = require('gulp-cssmin');
+var ngAnnotate   = require('gulp-ng-annotate');
 var nodemon      = require('gulp-nodemon');
 var rename       = require('gulp-rename');
 var replace      = require('gulp-replace');
+var uglify       = require('gulp-uglify');
 
 var defAssets    = require('./config/assets/default');
 var prodAssets   = require('./config/assets/production');
-var version      = require('./config/config2').zinfata.version;
-
-var dest         = 'public/dist/';
-var cssFolder    = 'public/stylesheets/';
+var version      = require('./config/config').zinfata.version;
 
 var zClient      = 'public/zinfataClient/';
+var cssFolder    = 'public/stylesheets/';
+var CSSFile      = 'zinfata-' + version + '.css';
+var dest         = 'public/dist/';
 var html         = zClient + 'app/*.jade';
 var images       = 'public/images/';
-var lessFiles    = cssFolder + 'less/*.less';
 var JSFile       = 'zinfata-' + version + '.js';
-var CSSFile      = 'zinfata-' + version + '.css';
+var lessFiles    = cssFolder + 'less/*.less';
 
 // For cache-busting purposes, append md5 hash to filename
 // hash will change with file content updates
@@ -222,7 +221,7 @@ gulp.task('browserSync', function() {
 
 gulp.task('nodemon', function() {
   return nodemon({
-    script: 'app.js',
+    script: './bin/www',
     nodeArgs: ['--debug', '--optimize_for_size', '--max_old_space_size=460',
       '--gc_interval=100'],
     ext: 'js, html',

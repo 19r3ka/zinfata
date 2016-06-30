@@ -1,13 +1,9 @@
 module.exports = function(wagner) {
+  var path     = require('path');
+  var config   = require(path.join(process.cwd(), 'config/config'));
   var express  = require('express');
   var router   = express.Router();
-  var config   = require('../config/config2');
-
   var mongoose = require('mongoose');
-  //var User     = require('../models/User.js');
-  //var PwdToken = require('../models/PasswordToken.js');
-  // var passport = require('../config/passport.js');
-  //var ZError = require('../lib/errors/ZinfataError');
 
   var multer   = require('multer');
   var upload   = multer({
@@ -17,15 +13,13 @@ module.exports = function(wagner) {
   var userModel;
   var PwdToken;
   var Zerror;
-  var config;
-  wagner.invoke(function(User, ZError, PasswordToken, Config) {
+  var User    = userModel;
+  var zUrl    = config.host + ':' + config.port;
+  wagner.invoke(function(User, ZError, PasswordToken) {
     Zerror    = ZError;
     userModel = User;
     PwdToken  = PasswordToken;
-    config    = Config[express().get('env')];
   });
-  var User    = userModel;
-  var zUrl    = config.host + ':' + config.port;
 
   /*function lowerCase(doc, field) {
     doc[field + '_lower'] = doc[field].toLowerCase();
@@ -80,9 +74,6 @@ module.exports = function(wagner) {
         });
         pwdToken.save(function(err, token) {
           if (err) {return next(err);}
-          // TODO: here is where we send out the email
-          // or Whatsapp message
-          // with the generated token.
           console.log('the activation link will be : ' +
                       zUrl + '/register/activate/?token=' +
                       token.token);
@@ -92,6 +83,7 @@ module.exports = function(wagner) {
             mailService.sendWelcomeMail(newUser.email, newUser.firstName,
               activationLink, function(err, infos) {
               if (err) {
+                console.error(err);
                 //if the confirmation email is not send the user can not activate its account so delete the user
                 User.remove({email: newUser.email},
                     function(error, deletedUser) {

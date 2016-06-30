@@ -1,5 +1,5 @@
 module.exports = function(wagner) {
-  var config   = require('./../config/config2.js');
+  var config   = require('./../config/config');
   var error;
   var express  = require('express');
   var request  = require('request');

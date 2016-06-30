@@ -18,6 +18,13 @@ module.exports = {
     clientId:             process.env.Z_CLIENT_ID || 'zinfata',
     clientSecret:         process.env.Z_CLIENT_SECRET || "'pass'"
   },
+  mail:  {
+    auth: {
+      user: process.env.MAILER_EMAIL_ID,
+      pass: process.env.MAILER_EMAIL_PASSWORD
+    },
+    service: process.env.MAILER_HOST
+  },
   uploads: {
     images: {
       dest: 'uploads/images',
