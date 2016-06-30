@@ -53,7 +53,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
     }
   };
 }])
-.directive('zMatch', function($log) {
+.directive('zMatch', function() {
   return {
     require: 'ngModel',
     scope: {
@@ -69,6 +69,27 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
     }
   };
 })
+.directive('zCapitalized', ['$parse', function($parse) {
+  return {
+    require: 'ngModel',
+    link: function(scope, element, attrs, modelCtrl) {
+      function capitalize(inputValue) {
+        if (inputValue === undefined) {
+          inputValue = '';
+        }
+        var capitalized = inputValue.charAt(0).toUpperCase() +
+                          inputValue.substring(1);
+        if (capitalized !== inputValue) {
+          modelCtrl.$setViewValue(capitalized);
+          modelCtrl.$render();
+        }
+        return capitalized;
+      }
+      modelCtrl.$parsers.push(capitalize);
+      capitalize($parse(attrs.ngModel)(scope)); // capitalize initial value
+    }
+  };
+}])
 .directive('zDropdown', ['$document', '$window', function(doc, win) {
   return {
     restrict: 'A',
