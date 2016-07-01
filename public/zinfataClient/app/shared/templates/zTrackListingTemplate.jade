@@ -19,8 +19,8 @@
                       .row
                         .col-sm-7(class='col-md-6 col-xs-7')
                             h5.media-heading(class='z-ellipsis'): a(href='track/{{ track._id }}') {{ track.title }}
-                                .small: a(href='album/{{ track.album.id }}') {{ track.album.title }}
-                            h6: a(href='user/{{ track.artist.id }}') {{ track.artist.handle }}
+                                .small: a(href='album/{{ track.album._id }}') {{ track.album.title }}
+                            h6: a(href='user/{{ track.artist._id }}') {{ track.artist.handle }}
                         .col-sm-5(class='col-md-6 col-xs-5')
                             .pull-right
                                 ul.list-inline(class='z-vcentered z-secondary-text hidden-xs hidden-sm')

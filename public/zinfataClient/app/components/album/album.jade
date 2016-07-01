@@ -28,7 +28,7 @@
                             .form-group
                                 img.img-circle(class='img-responsive center-block', name= 'coverArt', width='200', alt='{{ album.title }}', ng-src='{{ album.img }}')
                             .form-group
-                                input.form-control(type='text', name='title', id='title', placeholder='Title', ng-model='album.title', ng-disabled='!editing && !creating', required)
+                                input.form-control(type='text', name='title', id='title', placeholder='Title', ng-model='album.title', ng-disabled='!editing && !creating', required, z-capitalized)
                             .form-group
                                 label(for='coverArt') Cover Art:
                                 z-img-crop(name='coverArt', on-img-ready='updateCoverImage(imgFile)')

@@ -382,18 +382,17 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
       scope.$watch(function() { return scope.for._id; }, function(val) {
         if (val !== undefined) {
           var resource = scope.for; //either an album or a playlist
-          var key      = attrs.type = 'album' ? 'a_id' : 'p_id';
+          var key      = (attrs.type === 'album') ? 'a_id' : 'p_id';
           var owner    =
-            attrs.type = 'album' ? resource.artist.id : resource.owner.id;
+            (attrs.type === 'album') ? resource.artist.id : resource.owner.id;
           var param    = {};
           // populate search query with a_id || p_id as key and resource_id as value
           param[key] = resource._id;
 
           Tracks.find(param, function(tracks) {
             angular.forEach(tracks, function(track) {
-              Tracks.inflate(track._id, this, function(track) {
-                track.img = '/assets/tracks/' + track._id + '/tof';
-              }, function() {});
+              track.img = '/assets/tracks/' + track._id + '/tof';
+              this.push(track);
             }, scope.tracks);
           }, function(err) {});
 

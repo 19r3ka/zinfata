@@ -13,13 +13,13 @@ module.exports = function(wagner) {
   var userModel;
   var PwdToken;
   var Zerror;
-  var User    = userModel;
   var zUrl    = config.host + ':' + config.port;
   wagner.invoke(function(User, ZError, PasswordToken) {
     Zerror    = ZError;
     userModel = User;
     PwdToken  = PasswordToken;
   });
+  var User    = userModel;
 
   /*function lowerCase(doc, field) {
     doc[field + '_lower'] = doc[field].toLowerCase();

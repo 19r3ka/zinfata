@@ -6,16 +6,16 @@ app.controller('dashboardCtrl', ['$scope', 'TracksSvc', 'SessionSvc', '$log',
   };
   Tracks.latest(function(tracks) {
     var latest = [];
-    var id     = 0; 
+    var id     = 0;
     angular.forEach(tracks, function(track) {
       track.id = id++;
       track.img = '/assets/tracks/' + track._id + '/tof';
       track.url = '/assets/tracks/' + track._id + '/zik';
       latest.push(track);
-    })
+    });
     $scope.tracks = latest;
   }, function(err) {
-    $log.debug(err);
+    $log.error(err);
   });
 
   $scope.play = function(track) {

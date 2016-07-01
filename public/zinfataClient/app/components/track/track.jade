@@ -55,7 +55,7 @@
                                                     z-img-crop(name='coverArt', on-img-ready='updateCoverImage(imgFile)')
                                                     
                             .form-group
-                                input.form-control(type='text', name='title', ng-min-length='1', placeholder='Title', ng-model='track.title', ng-disabled='!editing && !creating' required)                
+                                input.form-control(type='text', name='title', ng-min-length='1', placeholder='Title', ng-model='track.title', ng-disabled='!editing && !creating' required, z-capitalized)                
                             .form-group
                                 label(for='music') Track:
                                 input.form-control(type='file', name='music', accept='audio/*', onchange='angular.element(this).scope().readFile(this)', ng-required='!track.streamUrl')
@@ -82,6 +82,8 @@
                                 input.form-control(type='date', name='releaseDate', ng-model='track.releaseDate', max="{{track.album.releaseDate}}", ng-disabled='!editing && !creating', datepicker, required)
                                 .help-block(ng-messages='trackInfo.releaseDate.$error', ng-show='trackInfo.releaseDate.$touched', ng-hide='trackInfo.releaseDate.$submitted')
                                     div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
+                                pre
+                                    {{track.album.releaseDate}}
                             .form-group
                                 label(for='about') About: 
                                 textarea.form-control(name='about', id='about', placeholder='Tell Us More About This Track', ng-model='track.about', ng-disabled='!editing && !creating', rows='5', maxlength='1000')
