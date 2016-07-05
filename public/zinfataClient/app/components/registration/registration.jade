@@ -10,8 +10,8 @@
                 | Promise to do good and be good. Also only upload sounds that you own the copyrights to.
 
 .row
-    .col-s-12(class='col-md-10 col-md-offset-1')
-        .col-md-8(class='col-md-offset-2')
+    .col-xs-12(class='col-sm-12 col-md-10 col-md-offset-1')
+        .z-form-box
             .z-content-area
                 .page-header
                     h2 Join Zinfata
@@ -20,11 +20,12 @@
                     a(href='login')   Log in instead!
                 form(name='registerForm', role='form', novalidate)     
                     .form-group(ng-class="{ 'has-error': registerForm.fName.$touched && registerForm.fName.$invalid }")
-                        input.form-control(type='text', name='fName', placeholder='First Name', ng-model='user.firstName', required, autofocus)
+                        input.form-control(type='text', name='fName', placeholder='First Name', ng-model='user.firstName', required, autofocus, z-capitalized)
                         .help-block(ng-messages='registerForm.fName.$error', ng-show='registerForm.fName.$touched', ng-hide='registerForm.$submitted')
                             div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
                     .form-group(ng-class="{ 'has-error': registerForm.lName.$touched && registerForm.lName.$invalid }")
-                        input.form-control(type='text', name='lName', placeholder='Last Name', ng-model='user.lastName', required)
+                        input.form-control(type='text', name='lName', placeholder='Last Name', ng-model='user.lastName', required,
+                        z-capitalized)
                         .help-block(ng-messages='registerForm.lName.$error', ng-show='registerForm.lName.$touched')
                             div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
                     .form-group(ng-class="{ 'has-error': registerForm.handle.$touched && registerForm.handle.$invalid }")
@@ -39,11 +40,11 @@
                         input.form-control(type='password', name='password', ng-minlength='8', placeholder='Password', ng-model='user.password', required)
                         .help-block(ng-messages='registerForm.password.$error', ng-show='registerForm.password.$touched')
                             div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
-                    .checkbox
-                        label
-                            input(type='checkbox', name='agreement', ng-model='user.agreement', required)
+                    .form-group
+                        p.small
                             |  I have read and agree to the 
-                            a(data-toggle='modal', data-target='#agreement-modal') terms of use.
+                            a(data-toggle='modal', data-target='#agreement-modal')
+                                strong  terms of use.
                         .help-block(ng-messages='registerForm.agreement.$error', ng-show='registerForm.agreement.$touched',
                         ng-class="{ 'has-error': registerForm.agreement.$touched && registerForm.agreement.$invalid }")
                             div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')

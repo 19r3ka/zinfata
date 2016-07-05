@@ -13,12 +13,15 @@ ALBUM_EVENTS, $log) {
     about:       '',
     releaseDate: ''
   };
+  $scope.album.img = $scope.album.imageUrl;
   $scope.editing  = false;
   $scope.creating = false;
   $scope.canEdit  = false;
 
   $scope.pageTitle = 'Add New Album';
   $scope.pageDescription = 'Quickly upload a new album to Zinfata.';
+
+  var albumCover = '/assets/albums/' + $routeParams.albumId + '/tof';
 
   if ($location.path() === '/album/new') {
     $scope.creating = true;
@@ -29,6 +32,7 @@ ALBUM_EVENTS, $log) {
       $scope.album             = data;
       $scope.album.duration    = 0;
       $scope.album.trackLength = 0;
+      $scope.album.img         = albumCover;
       var duration             = 0;
 
       if (!!$scope.album.artist.id &&
@@ -46,6 +50,7 @@ ALBUM_EVENTS, $log) {
       Users.get($scope.album.artist.id, function(user) {
         $scope.album.artist.handle    = user.handle;
         $scope.album.artist.avatarUrl = user.avatarUrl;
+        $scope.album.artist.img        = '/assets/users/' + user._id + '/tof';
       }, function(err) {
         $scope.album.artist = 'Unknown';
       });
@@ -134,6 +139,6 @@ ALBUM_EVENTS, $log) {
 
   $scope.updateCoverImage = function(image) {
     $scope.album.coverArt = image.file;
-    $scope.album.imageUrl = image.url;
+    $scope.album.img      = image.url;
   };
 }]);

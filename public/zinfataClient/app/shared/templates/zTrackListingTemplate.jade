@@ -3,7 +3,7 @@
         h4.panel-title Tracks
             .pull-right
                 a(href='/track/new') + Add track
-    .panel-body
+    .panel-body 
         div(ng-show='!tracks.length && isOwner')
             p.text-center You don't have any tracks in this album yet?
                 a(href='track/new')  Add one now!
@@ -14,13 +14,13 @@
                 .media
                     .media-left
                         a(href='#')
-                            img.media-object(name='coverArt', width='75', ng-src='{{ track.coverArt }}', alt='{{ track.title }}')
+                            img.media-object(name='coverArt', width='75', ng-src='{{ track.img }}', alt='{{ track.title }}')
                     .media-body
                       .row
                         .col-sm-7(class='col-md-6 col-xs-7')
-                            h4.media-heading(class='z-ellipsis'): a(href='track/{{ track._id }}') {{ track.title }}
-                                .small: a(href='album/{{ track.album.id }}') {{ track.album.title }}
-                            h6: a(href='user/{{ track.artist.id }}') {{ track.artist.handle }}
+                            h5.media-heading(class='z-ellipsis'): a(href='track/{{ track._id }}') {{ track.title }}
+                                .small: a(href='album/{{ track.album._id }}') {{ track.album.title }}
+                            h6: a(href='user/{{ track.artist._id }}') {{ track.artist.handle }}
                         .col-sm-5(class='col-md-6 col-xs-5')
                             .pull-right
                                 ul.list-inline(class='z-vcentered z-secondary-text hidden-xs hidden-sm')

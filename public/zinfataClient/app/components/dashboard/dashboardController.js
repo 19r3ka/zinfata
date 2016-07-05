@@ -5,9 +5,17 @@ app.controller('dashboardCtrl', ['$scope', 'TracksSvc', 'SessionSvc', '$log',
     return !!Session.getCurrentUser();
   };
   Tracks.latest(function(tracks) {
-    $scope.tracks = tracks;
+    var latest = [];
+    var id     = 0;
+    angular.forEach(tracks, function(track) {
+      track.id = id++;
+      track.img = '/assets/tracks/' + track._id + '/tof';
+      track.url = '/assets/tracks/' + track._id + '/zik';
+      latest.push(track);
+    });
+    $scope.tracks = latest;
   }, function(err) {
-    $log.debug(err);
+    $log.error(err);
   });
 
   $scope.play = function(track) {

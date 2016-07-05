@@ -14,25 +14,25 @@
 .container
     .row
         .col-sm-12(class='col-xs-12 col-md-10 col-md-offset-1')
-            .z-content-area
-                div(ng-if='creating || (canEdit && editing)')
-                    .row
-                        .col-md-8(class='col-md-offset-2')
-                            .page-header(ng-if='editing || creating')
-                                h3 {{ pageTitle }}
-                                    .small {{ pageDescription }}
-                            form(name='PlaylistForm', role='form', ng-if='editing || creating')
-                                //- .form-group
-                                    img(name='coverArt', ng-src='{{playlist.imageUrl}}')
-                                    div(ng-show='editing || creating')
-                                        label(for='coverArt') Cover Art:
-                                            input.form-control(type='file', name='coverArt', accept='image/*', ng-model='playlist.coverArt', onchange='angular.element(this).scope().readFile(this)')
-                                .form-group
-                                    input.form-control(type='text', name='title', placeholder='Enter playlist name', ng-model='playlist.title', ng-disabled='!editing && !creating', autofocus, required)             
-                                .form-group
-                                    button.z-btn(type='submit', ng-click='create(playlist)', ng-show='creating', class=['form-control'], ng-disabled='playlistForm.$invalid') Create Playlist!
-                                    button.z-btn(type='submit', ng-click='update(playlist)', ng-show='editing', class=['form-control'], ng-disabled='playlistForm.$invalid') Save Changes!
-                div(ng-hide='creating || editing')
+            div(ng-if='creating || (canEdit && editing)')
+                .z-form-box
+                    .z-content-area
+                        .page-header(ng-if='editing || creating')
+                            h3 {{ pageTitle }}
+                                .small {{ pageDescription }}
+                        form(name='PlaylistForm', role='form', ng-if='editing || creating')
+                            //- .form-group
+                                img(name='coverArt', ng-src='{{playlist.imageUrl}}')
+                                div(ng-show='editing || creating')
+                                    label(for='coverArt') Cover Art:
+                                        input.form-control(type='file', name='coverArt', accept='image/*', ng-model='playlist.coverArt', onchange='angular.element(this).scope().readFile(this)')
+                            .form-group
+                                input.form-control(type='text', name='title', placeholder='Enter playlist name', ng-model='playlist.title', ng-disabled='!editing && !creating', autofocus, required)             
+                            .form-group
+                                button.z-btn(type='submit', ng-click='create(playlist)', ng-show='creating', class=['form-control'], ng-disabled='playlistForm.$invalid') Create Playlist!
+                                button.z-btn(type='submit', ng-click='update(playlist)', ng-show='editing', class=['form-control'], ng-disabled='playlistForm.$invalid') Save Changes!
+            div(ng-hide='creating || editing')
+                .z-content-area
                     .row
                         .col-sm-12(class='col-md-3')
                             section(ng-if='canEdit && !editing')
@@ -97,4 +97,4 @@
                                                                 li(ng-click='removeTrack($index)'): a(href='#')
                                                                     span.glyphicon(class='glyphicon-remove')
                                                                     span.text-danger  Remove
-                                                
+                                                    

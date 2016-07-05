@@ -1,0 +1,6 @@
+MAILER_EMAIL_ID=bogus_id
+MAILER_EMAIL_PASSWORD=bogus_password
+MAILER_HOST=random_host
+MONGODB_URI=path_to_mongodb
+Z_CLIENT_ID=zinfata_client_id
+Z_CLIENT_SECRET=zinfata_client_secret

@@ -1,15 +1,15 @@
 module.exports = function(wagner) {
+  var config   = require('./../config/config');
+  var error;
   var express  = require('express');
   var request  = require('request');
   var router   = express.Router();
   var ZError;
-  var config;
-  var error;
   wagner.invoke(function(ZOAuthError, Config) {
     ZError = ZOAuthError;
-    config = Config[express().get('env')];
   });
-  var zUrl    = config.host + ':' + config.port;
+  var zUrl    = (process.env.NODE_ENV === 'secure' ? 'https://' : 'http://') +
+    config.host + ':' + config.port;
 
   router.post('/', function(req, res, next) {
     //utils.checkIsValidPost(req, next);
@@ -24,15 +24,15 @@ module.exports = function(wagner) {
         'Missing parameters. \'username\' and \'password\' are required');
       return next(error);
     }
-    //proxy.web(req, res, {target: 'http://localhost:3000/oauth2/token'})
+    //proxy.web(req, res, {target: zUrl + '/oauth2/token'})
     request.post({
-      url: 'http://localhost:3000/oauth2/token',
+      url: zUrl + '/oauth2/token',
       form: {
         username: req.body.username,
         password: req.body.password ,
         grant_type:'password',
-        client_id: 'zinfata',
-        client_secret: "'pass'"
+        client_id: config.oauth2.clientId,
+        client_secret: config.oauth2.clientSecret
       }
     },
     function(err, httpResp, body) {
@@ -60,12 +60,12 @@ module.exports = function(wagner) {
     }
 
     request.post({
-      url: 'http://localhost:3000/oauth2/token',
+      url: zUrl + '/oauth2/token',
       form: {
         refresh_token: req.body.refresh_token,
         grant_type:'refresh_token',
-        client_id: 'zinfata',
-        client_secret: "'pass'"
+        client_id: config.oauth2.clientId,
+        client_secret: config.oauth2.clientSecret
       }
     },
     function(err, httpResp, body) {
@@ -111,12 +111,12 @@ module.exports = function(wagner) {
     var token = req.body.token;
 
     request.post({
-      url: 'http://localhost:3000/oauth2/revoke',
+      url: zUrl + '/oauth2/revoke',
       form: {
         token_type_hint: token_type_hint,
         token: token,
-        client_id: 'zinfata',
-        client_secret: "'pass'"
+        client_id: config.oauth2.clientId,
+        client_secret: config.oauth2.clientSecret
       }
     },
     function(err, httpResp, body) {
@@ -139,10 +139,10 @@ module.exports = function(wagner) {
     }
 
     request.get({
-      url: 'http://localhost:3000/oauth2/me',
+      url: zUrl + '/oauth2/me',
       qs: {
-        client_id: 'zinfata',
-        client_secret: "'pass'",
+        client_id: config.oauth2.clientId,
+        client_secret: config.oauth2.clientSecret,
         token: data.token
       }
     },
@@ -157,7 +157,7 @@ module.exports = function(wagner) {
   });
 
   router.get('/tracks/:id/download', function(req, res, next) {
-    var url     = 'http://localhost:3000/api/tracks/:id/download';
+    var url     = zUrl + '/api/tracks/:id/download';
     var options = {
         headers: {Authorization: 'Bearer ' + req.query.token}
       };

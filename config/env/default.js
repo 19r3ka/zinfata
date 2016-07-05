@@ -1,9 +1,9 @@
 module.exports = {
   app: {
-    title: 'Zinfata',
-    description: 'la premiere application web entierement' +
+    title:        'Zinfata',
+    description:  'la premiere application web entierement' +
       'dediee a la musique togolaise',
-    keywords: 'togo music, musique togolaise',
+    keywords:     'togo music, musique togolaise',
     GATrackingID: process.env.GA_TRACKING_ID
   },
   port: process.env.PORT || 3000,
@@ -11,10 +11,19 @@ module.exports = {
   logo: '',
   favicon: '',
   oauth2:  {
-    model:                require('../../models/OAuth'),
-    grants:               ['password', 'refresh_token'],
     accessTokenLifetime:  900, // 15 minutes
-    refreshTokenLifetime: 604800 // 1 week
+    grants:               ['password', 'refresh_token'],
+    model:                require('../../models/OAuth'),
+    refreshTokenLifetime: 604800, // 1 week
+    clientId:             process.env.Z_CLIENT_ID || 'zinfata',
+    clientSecret:         process.env.Z_CLIENT_SECRET || "'pass'"
+  },
+  mail:  {
+    auth: {
+      user: process.env.MAILER_EMAIL_ID,
+      pass: process.env.MAILER_EMAIL_PASSWORD
+    },
+    service: process.env.MAILER_HOST
   },
   uploads: {
     images: {

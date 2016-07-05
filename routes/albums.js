@@ -1,10 +1,9 @@
 module.exports = function(wagner) {
 
   var express  = require('express');
-  var config   = require('../config/config2');
+  var config   = require('../config/config');
   var router   = express.Router();
 
-  // var passport = require('../config/passport.js');
   var multer   = require('multer');
   var upload   = multer(
       {dest: config.uploads.images.dest}
@@ -112,7 +111,6 @@ module.exports = function(wagner) {
       });
     });
   });
-
   //module.exports = router;
   return router;
 };
