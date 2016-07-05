@@ -142,7 +142,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
       });
 
       scope.$on(AUTH.notAuthenticated, function() {
-        elem.hide();
+        elm.hide();
       });
 
       scope.$on(AUDIO.playNow, function(event, track) {
