@@ -121,16 +121,27 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider',
   $locationProvider.html5Mode(true);
   $httpProvider.interceptors.push('APIInterceptor');
 }])
-.run(function($rootScope, $location, $log, AuthenticationSvc, AUTH, MessageSvc, UsersSvc) {
+.run(function($rootScope, $location, $log, AuthenticationSvc,
+AUTH, MessageSvc, UsersSvc) {
   /*variable to capture user's final destination
     in case of redirection to the /login page
     on protected route requests. */
   var loginRedirectUrl;
 
+  // Reinforces SSL
+  function forceSSL() {
+    if ($location.protocol() !== 'https' && $location.host() !== 'localhost') {
+      $location.url = $location.absUrl().replace('http', 'https');
+    }
+  }
+
   /*Listen to route changes
     to intercept and inject behaviors. */
   $rootScope.$on('$routeChangeStart', function(event, next) {
     var authorized;
+
+    // make sure the next route is secured.
+    forceSSL();
 
     if (next.originalPath === '/register') {
       loginRedirectUrl = null;
