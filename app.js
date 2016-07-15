@@ -16,6 +16,7 @@ var bodyParser     = require('body-parser');
 var mongoose       = require('mongoose');
 var oauthserver    = require('oauth2-server');
 var helmet         = require('helmet');
+var h5bp           = require('h5bp');
 
 var updateinterceptor        = require('./routes/updateinterceptor')(wagner);
 var userstatuschecker        = require('./routes/userstatuschecker')(wagner);
@@ -37,6 +38,7 @@ var config     = wagner.invoke(function(Config) {return Config;});
 var authConfig = config.oauth2;
 var app        = express();
 
+app.use(helmet());      // Autoconfigures http headers for max security.
 //init auth server
 app.oauth = oauthserver(authConfig);
 
@@ -49,8 +51,11 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(helmet()); // Autoconfigures http headers for max security.
 // app.use(cookieParser());
+app.use(h5bp({
+  root: __dirname + '/public'
+}));
+app.use(compression()); //  Compress all outgoing responses
 app.use(express.static(path.join(__dirname, 'public')));
 // app.use(serveStatic(path.join(__dirname, 'public')));
 // app.use(expressSession({
@@ -58,8 +63,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 //   resave: true,
 //   saveUninitialized: true
 // }));
-/* Compress all outgoing responses */
-app.use(compression());
 // app.use(passport.initialize());
 // app.use(passport.session());
 

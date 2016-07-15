@@ -31,6 +31,7 @@
     "express": "~4.13.1",
     "express-session": "^1.11.3",
     "glob": "7.0.3",
+    "h5bp": "0.1.4",
     "helmet": "2.1.1",
     "jade": "~1.11.0",
     "mongoose": "^4.4.8",
@@ -72,7 +73,9 @@
     "karma-chrome-launcher": "^0.2.2",
     "karma-mocha": "^0.2.1",
     "karma-mocha-reporter": "^1.1.5",
+    "localtunnel": "1.8.1",
     "mocha": "^2.4.5",
+    "psi": "2.0.4",
     "run-sequence": "^1.1.5",
     "supertest": "^1.1.0"
   }

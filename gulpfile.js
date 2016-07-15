@@ -12,6 +12,7 @@ var gutil        = require('gulp-util');
 var imagemin     = require('gulp-imagemin');
 var inject       = require('gulp-inject');
 var less         = require('gulp-less');
+var localtunnel  = require('localtunnel');
 var md5          = require('MD5');
 var minify       = require('gulp-cssmin');
 var ngAnnotate   = require('gulp-ng-annotate');
@@ -20,6 +21,7 @@ var path         = require('path');
 var rename       = require('gulp-rename');
 var replace      = require('gulp-replace');
 var runSequence  = require('run-sequence');
+var pageSpeed    = require('psi');
 var uglify       = require('gulp-uglify');
 
 var defAssets    = require('./config/assets/default');
@@ -34,6 +36,8 @@ var html         = zClient + 'app/*.jade';
 var images       = 'public/images/';
 var JSFile       = 'zinfata-' + version + '.js';
 var lessFiles    = cssFolder + 'less/*.less';
+var psiKey       = ''; // change this value with Page Speed Insight's API key
+var site         = ''; // using heroku local in prod env
 
 // For cache-busting purposes, append md5 hash to filename
 // hash will change with file content updates
@@ -50,7 +54,7 @@ var tagify = function(filePath, file, index, length, targetFile) {
   var newPath = /^\/public\//.test(filePath) ? filePath.replace('public/', '') :
     filePath;
   var tag = (path.extname(newPath) === '.js') ?
-    'script(src="' + newPath + '")' :
+    'script(async src="' + newPath + '")' :
     'link(rel="stylesheet", href="' + newPath + '")';
   return tag;
 };
@@ -236,6 +240,40 @@ gulp.task('watch', ['nodemon', 'browserSync', 'less', 'js'], function() {
 
 gulp.task('default', function(cb) {
   runSequence(['less', 'nodemon', 'browserSync', 'watch'], cb);
+});
+
+/* Runs Google's Page Speed Insight against the mobile version of app */
+gulp.task('psi-mobile', ['ssl'], function() {
+  return pageSpeed(site, {
+    // key: key,
+    nokey: true,
+    strategy: 'mobile'
+  }).then(function(data) {
+    console.log('Speed score: ' + data.ruleGroups.SPEED.score);
+    console.log('Usability score: ' + data.ruleGroups.USABILITY.score);
+  });
+});
+
+/* Runs Google's Page Speed Insight against the desktop version of app */
+gulp.task('psi-desktop', ['ssl'], function() {
+  return pageSpeed(site, {
+    // key: key,
+    nokey: true,
+    strategy: 'desktop'
+  }).then(function(data) {
+    console.log('Speed score: ' + data.ruleGroups.SPEED.score);
+  });
+});
+
+gulp.task('ssl', function() {
+  site = localtunnel(8765, function(err, tunnel) {
+    if (err) {
+      console.error('could not open the tunnel.');
+    }
+    console.log('localhost accessible at: ' + tunnel.url);
+    return tunnel.url;
+  });
+  return site;
 });
 
 gulp.task('build', function(cb) {
