@@ -11,6 +11,15 @@ append head
     //- inject:css
     link(rel="stylesheet", href="/stylesheets/zinfata.css")
     //- endinject
+
+    script.
+        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};
+        ga.l = +new Date;
+        ga('create', 'UA-80702504-1', 'auto');
+        ga('require', 'autotrack');
+        ga('send', 'pageview');
+    script(async src="https://www.google-analytics.com/analytics.js")
+    script(async src="https://cdnjs.cloudflare.com/ajax/libs/autotrack/0.6.5/autotrack.js")
 block content
     div(ng-view)
         //- .jumbotron
