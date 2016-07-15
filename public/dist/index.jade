@@ -16,7 +16,7 @@ append head
     
     
     
-    link(rel="stylesheet", href="/lib/jquery-ui-1.11.4/jquery-ui.css")
+    link(rel="stylesheet", href="/lib/jquery-ui-1.11.4/jquery-ui.min.css")
     
     
     
@@ -30,9 +30,18 @@ append head
 
     //- inject:css
     
-    link(rel="stylesheet", href="/dist/css/zinfata-0.5.3.bf2762b4158e733598892bc3b6479058.min.css")
+    link(rel="stylesheet", href="/dist/css/zinfata-0.5.5.bf2762b4158e733598892bc3b6479058.min.css")
     
     //- endinject
+
+    script.
+        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};
+        ga.l = +new Date;
+        ga('create', 'UA-80702504-1', 'auto');
+        ga('require', 'autotrack');
+        ga('send', 'pageview');
+    
+    
 block content
     div(ng-view)
         //- .jumbotron
@@ -54,7 +63,7 @@ append scripts
     
     
     
-    script(src="/lib/jquery/jquery-2.1.4.min.js")
+    script(async src="/lib/jquery/jquery-2.1.4.min.js")
     
     
     
@@ -65,7 +74,7 @@ append scripts
     
     
     
-    script(src="/lib/jquery-ui-1.11.4/jquery-ui.min.js")
+    script(async src="/lib/jquery-ui-1.11.4/jquery-ui.min.js")
     
     
     
@@ -76,7 +85,7 @@ append scripts
     
     
     
-    script(src="/lib/bootstrap-3.3.5/js/bootstrap.min.js")
+    script(async src="/lib/bootstrap-3.3.5/js/bootstrap.min.js")
     
     
     
@@ -87,7 +96,7 @@ append scripts
     
     
     
-    script(src="/lib/angular-1.4.5/angular.min.js")
+    script(async src="/lib/angular-1.4.5/angular.min.js")
     
     
     
@@ -98,7 +107,7 @@ append scripts
     
     
     
-    script(src="/lib/angular-1.4.5/angular-resource.min.js")
+    script(async src="/lib/angular-1.4.5/angular-resource.min.js")
     
     
     
@@ -109,7 +118,7 @@ append scripts
     
     
     
-    script(src="/lib/angular-1.4.5/angular-route.min.js")
+    script(async src="/lib/angular-1.4.5/angular-route.min.js")
     
     
     
@@ -120,7 +129,7 @@ append scripts
     
     
     
-    script(src="/lib/angular-1.4.5/angular-messages.min.js")
+    script(async src="/lib/angular-1.4.5/angular-messages.min.js")
     
     
     
@@ -131,7 +140,7 @@ append scripts
     
     
     
-    script(src="/lib/sound-manager-2/script/soundmanager2-nodebug-jsmin.js")
+    script(async src="/lib/sound-manager-2/script/soundmanager2-nodebug-jsmin.js")
     
     
     
@@ -142,7 +151,7 @@ append scripts
     
     
     
-    script(src="/lib/ngImgCrop/ng-img-crop.js")
+    script(async src="/lib/ngImgCrop/ng-img-crop.js")
     
     
     
@@ -156,6 +165,6 @@ append scripts
     //- endinject
 
     //- inject:js
-    script(src="/dist/js/zinfata-0.5.3.1c569e8a5f4eac8a6d773fe8540aeece.min.js")
+    script(async src="/dist/js/zinfata-0.5.5.88399e43ec047bdf357bbb7d52735c80.min.js")
     //- endinject
     

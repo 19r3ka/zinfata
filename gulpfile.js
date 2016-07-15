@@ -54,7 +54,7 @@ var tagify = function(filePath, file, index, length, targetFile) {
   var newPath = /^\/public\//.test(filePath) ? filePath.replace('public/', '') :
     filePath;
   var tag = (path.extname(newPath) === '.js') ?
-    'script(async src="' + newPath + '")' :
+    'script(src="' + newPath + '")' :
     'link(rel="stylesheet", href="' + newPath + '")';
   return tag;
 };
