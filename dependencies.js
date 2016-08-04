@@ -14,7 +14,8 @@ var models = {
   PasswordToken:     require('./models/PasswordToken'),
   Playlist:          require('./models/Playlist'),
   Track:             require('./models/Track'),
-  User:              require('./models/User')
+  User:              require('./models/User'),
+  Invitation:       require('./models/Invitation')
 };
 
 module.exports = function(wagner) {

@@ -16,7 +16,6 @@ var bodyParser     = require('body-parser');
 var mongoose       = require('mongoose');
 var oauthserver    = require('oauth2-server');
 var helmet         = require('helmet');
-var h5bp           = require('h5bp');
 
 var updateinterceptor        = require('./routes/updateinterceptor')(wagner);
 var userstatuschecker        = require('./routes/userstatuschecker')(wagner);
@@ -29,6 +28,7 @@ var assets                   = require('./routes/assets')(wagner);
 var oauthclients             = require('./routes/oauthclients')(wagner);
 var zinfataClientProxy       = require('./routes/zinfataclientproxy')(wagner);
 var revoketokens             = require('./routes/revoketokens')(wagner);
+var invitations              = require('./routes/invitations')(wagner);
 var search                   = require('./routes/search')(wagner);
 var oauthinfo                = require('./routes/oauthinfo')(wagner);
 var zinfataOAuthErrorHandler = require('./lib/errors/ZinfataOAuthErrorHandler');
@@ -52,9 +52,6 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 // app.use(cookieParser());
-app.use(h5bp({
-  root: __dirname + '/public'
-}));
 app.use(compression()); //  Compress all outgoing responses
 app.use(express.static(path.join(__dirname, 'public')));
 // app.use(serveStatic(path.join(__dirname, 'public')));
@@ -76,6 +73,7 @@ app.use('/assets', assets); //temporary fix to bypass oauth
 //zfclient proxy route
 app.use('/zinfataclient', zinfataClientProxy);
 // Define the routes to use in the app
+app.use('/api/invites', invitations);
 app.use('/api/users', users);
 app.use('/api/search', search);
 app.all(/\/api\/*/, app.oauth.authorise());

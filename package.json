@@ -31,7 +31,6 @@
     "express": "~4.13.1",
     "express-session": "^1.11.3",
     "glob": "7.0.3",
-    "h5bp": "0.1.4",
     "helmet": "2.1.1",
     "jade": "~1.11.0",
     "mongoose": "^4.4.8",
