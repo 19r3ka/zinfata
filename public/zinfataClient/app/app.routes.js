@@ -116,6 +116,10 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider',
         loginRequired: true
       }
     }).
+    when('/invites', {
+      templateUrl: '/partials/invitation',
+      controller:  'invitationCtrl' // must be root to see this
+    }).
     otherwise({redirectTo: '/'});
 
   $locationProvider.html5Mode(true);

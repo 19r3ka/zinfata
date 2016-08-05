@@ -75,7 +75,7 @@ app.factory('Users', ['$resource', function($resource) {
         enctype:        'multipart/form-data'
       }
     },
-    'find': { 
+    'find': {
       method: 'GET',
       isArray: true,
       url: '/api/tracks/:resource/:resource_id',
@@ -84,7 +84,7 @@ app.factory('Users', ['$resource', function($resource) {
     'download': {
       method: 'GET',
       url: '/api/tracks/:id/download',
-      params : {id: '@_id'}  
+      params : {id: '@_id'}
     }
   });
 }])
@@ -104,16 +104,28 @@ app.factory('Users', ['$resource', function($resource) {
     'refresh': {
       method: 'POST',
       params: {resource: 'refresh'}
-    }   
+    }
   });
 }])
-.factory('localStore', ['$window', '$rootScope', '$log', 
+.factory('Invitations', ['$resource', function($resource){
+  return $resource('/api/invites/:id', {id: '@_id'}, {
+    'update': {
+      method: 'PUT'
+    },
+    'send': {
+      method: 'GET',
+      url: '/api/invites/:id/send',
+      params: {id: '@_id'}
+    }
+  });
+}])
+.factory('localStore', ['$window', '$rootScope', '$log',
   function($window, $rootScope, $log){
   /* Implements access to the local store to enable saving
      queued tracks from one page to the other */
 
-  /* automatically alerts any element relying on the value of 
-     local stored items */   
+  /* automatically alerts any element relying on the value of
+     local stored items */
   angular.element($window).on('storage', function(event) {
     $rootScope.$apply();
   });
@@ -131,13 +143,13 @@ app.factory('Users', ['$resource', function($resource) {
     }
   };
 }])
-.factory('sessionStore', ['$window', '$rootScope', '$log', 
+.factory('sessionStore', ['$window', '$rootScope', '$log',
                         function($window, $rootScope, $log){
   /* Implements access to the session store to enable saving
      logged user and access token */
 
-  /* automatically alerts any element relying on the value of 
-     local stored items */   
+  /* automatically alerts any element relying on the value of
+     local stored items */
   /*angular.element($window).on('storage', function(event) {
     $rootScope.$apply();
   });*/
@@ -161,7 +173,7 @@ app.factory('Users', ['$resource', function($resource) {
   return {
     request: function(config) {
       var accessKeys  = store.getData('accessKeys'),
-          accessToken = accessKeys ? accessKeys.access_token : null; 
+          accessToken = accessKeys ? accessKeys.access_token : null;
       if (accessToken) {
         config.headers.authorization = 'Bearer ' + accessToken;
       }
@@ -182,7 +194,7 @@ app.factory('Users', ['$resource', function($resource) {
             req           = {
               method: 'POST',
               url:    '/zinfataclient/refresh',
-              data:   {refresh_token: refreshToken}  
+              data:   {refresh_token: refreshToken}
             };
 
         http(req).then(function(new_keys) {

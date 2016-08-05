@@ -382,30 +382,6 @@ app.service('TracksSvc', ['Tracks', '$log', 'UsersSvc', 'AlbumsSvc', '$window',
     }
   };
 
-  // self.inflate = function(index, container, success, failure) {
-  //   if (!index) {
-  //     return $log.debug('there is no index sent to Tracks.inflate.');
-  //   }
-  //   self.get(index, function(track) {
-  //     UsersSvc.get(track.artist.id, function(user) {
-  //       track.artist.handle = user.handle;
-  //     }, function(err) {
-  //       $log.error('Error inflating track artist info: ' + err);
-  //     });
-  //     AlbumsSvc.get(track.album.id, function(album) {
-  //       track.album.title  = album.title;
-  //     }, function(err) {
-  //       $log.error('Error inflating track album info: ' + err);
-  //     });
-  //     if (!!container) {
-  //       container.push(track);
-  //     }
-  //     success(track);
-  //   }, function(err) {
-  //     failure(err);
-  //   });
-  // };
-
   self.downloadLink = function(track, success, failure) {
     var accessKeys  = store.getData('accessKeys');
     var accessToken = accessKeys ? accessKeys.access_token : null;
@@ -699,142 +675,6 @@ $log, TracksSvc, Session, AUTH) {
   self.playNow         = playNow;
   self.playPrev        = prev;
   self.removeTrackAt   = removeTrackAt;
-
-  // self.playNext       = function() {
-  //   var tracks      = self.getTracks();
-  //   var nowPlaying  = self.getCurrentTrack();
-  //   var queueLength = tracks.length;
-  //   var index       = nowPlaying.index + 1;
-
-  //   if (index >= queueLength) {
-  //     index = 0;
-  //   }
-
-  //   self.getTrackAt(index, function(track) {
-  //     self.play(track, index);
-  //   });
-  // };
-
-  // self.playPrev       = function() {
-  //   var tracks       = self.getTracks();
-  //   var queueLength  = tracks.length;
-  //   var currentIndex = self.getCurrentTrack().index;
-  //   var index        = currentIndex - 1;
-  //   if (index < 0) {
-  //     index = queueLength - 1;
-  //   }
-
-  //   self.getTrackAt(index, function(track) {
-  //     self.play(track, index);
-  //   });
-  // };
-
-  // self.saveQueue       = function(tracks, nowPlaying) {
-  //   if (tracks && Array.isArray(tracks)) {
-  //     queue.setData(owner() + '.queue.tracks', tracks);
-  //   }
-
-  //   if (!!nowPlaying) {
-  //     queue.setData(owner() + '.queue.nowPlaying', nowPlaying);
-  //   }
-  // };
-
-  // self.clearQueue     = function() {
-  //   self.saveQueue([]);
-  // };
-
-  // self.getCurrentTrack = function() {
-  //   return queue.getData(owner() + '.queue.nowPlaying') || {};
-  // };
-
-  // self.addTrack        = function(track, playNext) {
-  //   var tracks = self.getTracks();
-  //   playNext ? tracks.unshift(track._id) : tracks.push(track._id);
-  //   self.saveQueue(tracks);
-  // };
-
-  // self.getTracks       = function() {
-  //   return queue.getData(owner() + '.queue.tracks') || [];
-  // };
-
-  // self.getTrackAt      = function(index, success, failure) {
-  //   var tracks = self.getTracks();
-  //   if (!!tracks.length) {
-  //     TracksSvc.inflate(tracks[index], null, function(track) {
-  //       success(track);
-  //     }, function(err) {
-  //       failure(err);
-  //     });
-  //   } else {
-  //     failure('No tracks to fetch');
-  //   }
-  // };
-
-  // self.removeTrackAt   = function(index, success, failure) {
-  //   var tracks     = self.getTracks();
-  //   var nowPlaying = self.getCurrentTrack();
-
-  //   if (!!tracks.splice(index, 1).length) {
-  //     if (nowPlaying.index > index) {
-  //       nowPlaying.index--;
-  //     } else if (nowPlaying.index === index) {
-  //       if (index >= tracks.length) {
-  //         index = 0;
-  //       }
-  //       self.getTrackAt(index, function(track) {
-  //         self.play(track, index);
-  //       }, function() {});
-  //     }
-  //     self.saveQueue(tracks, nowPlaying);
-  //     success(index);
-  //   } else {
-  //     failure('Track removal from queue failed at index: ' + index);
-  //   }
-  // };
-  // /* User clicks on a track's playNow button */
-  // self.playNow = function(track) {
-  //   var newIndex   = 0;
-  //   var queueCue   = 0;  // the index of the current NowPlaying track
-  //   var nowPlaying = self.getCurrentTrack();
-  //   var tracks     = self.getTracks();
-
-  //   $log.info('track is: ');
-  //   $log.info(track);
-  //   $log.info('tracks is: ');
-  //   $log.info(tracks);
-  //   if (nowPlaying) {
-  //     queueCue = nowPlaying.index;
-  //   }
-
-  //   /* If there is a queue, stick the track in after
-  //      the current index position */
-  //   if (!!tracks.length && !!Object.keys(nowPlaying).length) {
-  //     tracks.splice(queueCue, 0, track._id);
-  //     newIndex = queueCue++;
-  //     $log.info('tracks after insertion is: ');
-  //     $log.info(track);
-  //   } else if (!!tracks.length && !Object.keys(nowPlaying).length) { //there is no queue, add to end to create.
-  //     self.addTrack(track, true);
-  //   } else {
-  //     self.addTrack(track);
-  //   }
-  //   self.play(track, newIndex);
-  // };
-
-  // self.play = function(track, index) {
-  //   // if (!('title' in track.album || 'handle' in track.artist)) {
-  //   //   track = TracksSvc.inflate(track._id, null, function(inflatedTrack) {
-  //   //     console.debug('inflated track is:');
-  //   //     console.debug(inflatedTrack);
-  //   //     return inflatedTrack;
-  //   //   }, function(err) {return;});
-  //   // }
-  //   var nowPlaying = self.getCurrentTrack();
-  //   nowPlaying.index = index;
-  //   nowPlaying.track = track;
-  //   self.saveQueue(null, nowPlaying);
-  //   $rootScope.$broadcast(AUDIO.playNow, nowPlaying.track);
-  // };
 }]);
 app.service('MessageSvc', function() {
   this.message = null;
@@ -854,3 +694,49 @@ app.service('MessageSvc', function() {
     this.message = null;
   };
 });
+app.service('invitationsSvc', ['Invitations', function(Invitations) {
+  var self = this;
+
+  function create(invitation, success, failure) {
+    var newInvite = new Invitations({
+      contact:  invitation.contact,
+      medium:     invitation.type
+    });
+
+    return newInvite.$save(success(savedInvite), failure(err));
+  }
+
+  function iDelete(inviteId, success, failure) { //prefixed with i to avoid conflict with JS delete()
+    return Invitations.delete({id: inviteId}, success(invitation), failure(err));
+  }
+
+  function get(inviteId, success, failure) {
+    return Invitations.get({id: inviteId}, success(invitation), failure(err));
+  }
+
+  function getAll(success, failure) {
+    Invitations.query(function successCb(invitations) {
+      return success(invitations);
+    }, function failureCb(err) {
+      return failure(err);
+    });
+  }
+
+  function update(invite, success, failure) {
+    Invitations.get({id: inviteId}, function(inviteToUpdate) {
+      for (var key in inviteToUpdate) {
+        if (!!invite[key] && inviteToUpdate[key] !== invite[key]) {
+          inviteToUpdate[key] = invite[key];
+        }
+      }
+
+      return inviteToUpdate.$update(success(updatedInvite), failure(err));
+    });
+  }
+
+  self.create = create;
+  self.delete = iDelete;
+  self.get =    get;
+  self.getAll = getAll;
+  self.update = update;
+}]);

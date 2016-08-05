@@ -700,6 +700,15 @@ function($rootScope, MessageSvc, $timeout) {
     }
   };
 }])
+.directive('zInvitation'['',function() {
+  return {
+    restrict: 'E',
+    link: function(scope, elm) {
+
+    },
+    templateUrl: '/templates/zInvitation'
+  }
+}])
 .directive('zAlbumCreator', ['$rootScope', '$document', 'AlbumsSvc',
   'SessionSvc', 'ALBUM_EVENTS',
   function($rootScope, doc, Albums, Session, ALBUM) {
