@@ -371,32 +371,73 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
   function(Invitations, $log) {
   return {
     link: function(scope, elm) {
-      function notify(outcome) {
+
+      function clear() {
+         scope.invitation = {
+          contact: '',
+          medium: ''
+         }
+      }
+
+      function create(invitation) {
+        Invitations.create(invitation, function(newInvitation) {
+          // Re-populate invitation on this scope to match it with servers
+          scope.invitation = newInvitation;
+          // scope.creating =   false;
+          clear();
+          notify('success', 'New invitation created!');
+
+          // TODO: Notify container with new created invitation so it is added to list of invitations
+          scope.addMe({invitation: newInvitation});
+        }, function(err) {
+          notify('error', 'Failed to create new invitation.');
+        });
+      }
+
+      function notify(outcome, message) {
         var msg;
         var type;
         if (outcome === 'success') {
-          msg =   'Invitation sent!';
+          msg =   message;
           type =  'success';
           $log.info(msg);
         } else {
-          msg =   'Invitation sending failed';
+          msg =   message;
           type =  'error';
           $log.error(msg);
         }
       }
 
+      function save(invitation) {
+        if (scope.creating) {
+          create(invitation);
+        } else {
+          update(invitation);
+        }
+      }
+
       function send(invitation) {
         Invitations.send(invitation, function(sentInvite) {
-          notify(success);
+          notify('success', 'Invitation sent to ' + sentInvite.contact);
         }, function(err) {
-          notify(error);
+          notify('error', 'Invitation failure to ' + sentInvite.contact);
         });
       }
 
+      function update(invitation) {
+        //
+      }
+
+      if (!scope.invitation) {
+        scope.creating = true;
+      }
+
       scope.send = send;
+      scope.save = save;
     },
     templateUrl: '/templates/zInvitationForm',
     scope: {
+      addMe:  '&onCreate',
       invitation: '=for'
     },
     restrict: 'E'
@@ -407,7 +448,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
   return {
     restrict: 'E',
     scope: {
-      for:  '='
+      for:    '='
     },
     link: function(scope, elm, attrs) {
       scope.isOwner   = false;

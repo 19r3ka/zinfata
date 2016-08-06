@@ -700,14 +700,18 @@ app.service('InvitationsSvc', ['Invitations', function(Invitations) {
   function create(invitation, success, failure) {
     var newInvite = new Invitations({
       contact:  invitation.contact,
-      medium:     invitation.type
+      medium:   invitation.medium
     });
 
-    return newInvite.$save(success(savedInvite), failure(err));
+    return newInvite.$save(function(savedInvite) {
+      success(savedInvite)
+    }, function(err) {
+      failure(err)
+    });
   }
 
-  function iDelete(inviteId, success, failure) { //prefixed with i to avoid conflict with JS delete()
-    return Invitations.delete({id: inviteId}, success(invitation), failure(err));
+  function iDelete(invite, success, failure) { //prefixed with i to avoid conflict with JS delete()
+    return Invitations.delete({id: invite._id}, success(invitation), failure(err));
   }
 
   function get(inviteId, success, failure) {
@@ -723,7 +727,7 @@ app.service('InvitationsSvc', ['Invitations', function(Invitations) {
   }
 
   function update(invite, success, failure) {
-    Invitations.get({id: inviteId}, function(inviteToUpdate) {
+    Invitations.get({id: invite._id}, function(inviteToUpdate) {
       for (var key in inviteToUpdate) {
         if (!!invite[key] && inviteToUpdate[key] !== invite[key]) {
           inviteToUpdate[key] = invite[key];

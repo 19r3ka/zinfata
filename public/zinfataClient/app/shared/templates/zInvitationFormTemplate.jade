@@ -6,15 +6,15 @@ form.form-inline(name='invitationForm')
       option(value='whatsapp') Whatsapp
   .form-group
     button.z-btn(type='submit', ng-click='send(invitation)',
-    ng-hide='new || editing || invitation.codeSent') Send
+    ng-hide='creating || editing || invitation.codeSent') Send
     //- Only show save when editing or new invitation.
     //- Hide all other field if its new invitation
     button.z-btn(type='submit', ng-click='save(invitation)',
-    ng-show='new || editing') Save
+    ng-show='creating || editing') Save
     button.z-btn(type='submit', ng-click='edit(invitation)',
-    ng-show='!new && !editing') Edit
+    ng-show='!creating && !editing') Edit
     button.z-btn(type='submit', ng-click='delete($index, invitation)',
-    ng-show='!new && !editing') Delete
+    ng-show='!creating && !editing') Delete
   .form-group
     p
       span Sent? {{ invitation.codeSent }}
