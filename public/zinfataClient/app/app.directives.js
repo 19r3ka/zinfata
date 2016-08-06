@@ -367,11 +367,34 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
     templateUrl: '/templates/zAlbumListing'
   };
 }])
-.directive('zInvitationForm', ['$log', function($log) {
+.directive('zInvitationForm', ['InvitationsSvc', '$log',
+  function(Invitations, $log) {
   return {
-    // link: function(scope, elm) {
+    link: function(scope, elm) {
+      function notify(outcome) {
+        var msg;
+        var type;
+        if (outcome === 'success') {
+          msg =   'Invitation sent!';
+          type =  'success';
+          $log.info(msg);
+        } else {
+          msg =   'Invitation sending failed';
+          type =  'error';
+          $log.error(msg);
+        }
+      }
 
-    // },
+      function send(invitation) {
+        Invitations.send(invitation, function(sentInvite) {
+          notify(success);
+        }, function(err) {
+          notify(error);
+        });
+      }
+
+      scope.send = send;
+    },
     templateUrl: '/templates/zInvitationForm',
     scope: {
       invitation: '=for'

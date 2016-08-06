@@ -694,7 +694,7 @@ app.service('MessageSvc', function() {
     this.message = null;
   };
 });
-app.service('invitationsSvc', ['Invitations', function(Invitations) {
+app.service('InvitationsSvc', ['Invitations', function(Invitations) {
   var self = this;
 
   function create(invitation, success, failure) {
@@ -734,9 +734,18 @@ app.service('invitationsSvc', ['Invitations', function(Invitations) {
     });
   }
 
+  function send(invitation, success, failure) {
+    Invitations.send({id: invitation._id}, function(sentInvite) {
+      return success(sentInvite);
+    }, function(err) {
+      return failure(err);
+    });
+  }
+
   self.create = create;
   self.delete = iDelete;
   self.get =    get;
   self.getAll = getAll;
   self.update = update;
+  self.send =   send;
 }]);
