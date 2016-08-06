@@ -367,6 +367,18 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
     templateUrl: '/templates/zAlbumListing'
   };
 }])
+.directive('zInvitationForm', ['$log', function($log) {
+  return {
+    // link: function(scope, elm) {
+
+    // },
+    templateUrl: '/templates/zInvitationForm',
+    scope: {
+      invitation: '=for'
+    },
+    restrict: 'E'
+  };
+}])
 .directive('zTrackListing', ['TracksSvc', 'SessionSvc', 'QueueSvc', '$log',
   function(Tracks, session, Queue, $log) {
   return {
@@ -699,15 +711,6 @@ function($rootScope, MessageSvc, $timeout) {
       });
     }
   };
-}])
-.directive('zInvitation'['',function() {
-  return {
-    restrict: 'E',
-    link: function(scope, elm) {
-
-    },
-    templateUrl: '/templates/zInvitation'
-  }
 }])
 .directive('zAlbumCreator', ['$rootScope', '$document', 'AlbumsSvc',
   'SessionSvc', 'ALBUM_EVENTS',

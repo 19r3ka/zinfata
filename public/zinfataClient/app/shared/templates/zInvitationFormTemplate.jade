@@ -1,0 +1,13 @@
+form.form-inline(name='invitationForm')
+  .form-group
+    input.form-control.input-sm(type='text', name="contact", ng-model='invitation.contact', placeholder='Email or #')
+    select(name='medium', ng-model='invitation.medium')
+      option(value='email') Email
+      option(value='whatsapp') Whatsapp
+  .form-group
+    button.z-btn(type='submit', ng-click='send(invitation)') Send
+    //- Only show save when editing or new invitation.
+    //- Hide all other field if its new invitation
+    button.z-btn(type='submit', ng-click='save(invitation)') Save
+    button.z-btn(type='submit', ng-click='edit(invitation)') Edit
+    button.z-btn(type='submit', ng-click='delete($index, invitation)') Delete
