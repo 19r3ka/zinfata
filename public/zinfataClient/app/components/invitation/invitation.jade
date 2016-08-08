@@ -1,6 +1,13 @@
-h1 Manage Invitations
-ul
-  li
-    z-invitation-form(on-create='addInvitation(invitation)')
-  li(ng-repeat='invitation in invitations track by $index')
-    z-invitation-form(for='invitation', on-delete='removeInvitation($index)')
+.container
+  .row
+    .col-sm-12.col-md-10.col-md-offset-1
+      .z-content-area
+        .panel
+          .panel-heading
+            h1.panel-title(class='text-capitalize') Manage Invitations
+          .panel-body
+            ul.list-group
+              li.list-group-item
+                z-invitation-form(on-create='addInvitation(invitation)')
+              li.list-group-item(ng-repeat='invitation in invitations track by $index')
+                z-invitation-form(for='invitation', on-delete='removeInvitation($index)')

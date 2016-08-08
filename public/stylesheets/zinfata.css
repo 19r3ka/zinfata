@@ -456,6 +456,10 @@ z-player #z-player-misc-control input[type=range]:focus::-ms-fill-upper
 {
     background: #7f7f7f;
 }
+#z-invitation-form input
+{
+    width: 100%;
+}
 .alert
 {
     position: fixed;
@@ -755,7 +759,7 @@ z-player #z-player-misc-control input[type=range]:focus::-ms-fill-upper
   	&:hover, &:focus, &:active, &.active {
 	  	background-color: #ff4408;
 	  	border-color: #ee3900;
-	  }	
+	  }
 	 	[disabled] {
 			background-color: #ff4408;
 	  	border-color: #ee3900;
@@ -874,7 +878,7 @@ fieldset[disabled] .z-btn.active
 		.z-player-track-title,span.z-player-track-author,.z-player-track-album{
 
 			&,& a{
-				display: inline-block;	
+				display: inline-block;
 				color: #FFFFFF;
 			}
 			& a{color: #FFFFFF;}
@@ -893,7 +897,7 @@ fieldset[disabled] .z-btn.active
 	.z-control-bt-container{
 		padding-left: 15px;
 		//border: solid red;
-	
+
 		.z-track-volume-container{
 			display: inline-block;
 			margin-left: 10px;
@@ -906,7 +910,7 @@ fieldset[disabled] .z-btn.active
 				-webkit-appearance: slider-vertical;
 			    width: 2px;
 			    height: 30px;
-			    display: inline-block;				
+			    display: inline-block;
 				display: block;
 			}
 			i{
@@ -924,7 +928,7 @@ fieldset[disabled] .z-btn.active
 		    border: 1px solid #727273;
 		    border-radius: 50%;
 		    text-align: center;
-		    
+
 		    width: 40px;
 		    height: 40px;
 		    margin-right: 7px;
@@ -947,7 +951,7 @@ fieldset[disabled] .z-btn.active
 			background-color: #616161;
 			//width: 70px;
 			width: 3px;
-			margin-left: 7px; 
+			margin-left: 7px;
 			display: inline-block;
 			position: relative;
 		   .volume-spin{
@@ -980,7 +984,7 @@ fieldset[disabled] .z-btn.active
 		#track-duration-slider,.duration-infos{
 			display: inline-block;
 			vertical-align: middle;
-		}		
+		}
 
 		#track-duration-slider{
 			width: 250px;
@@ -1033,7 +1037,6 @@ fieldset[disabled] .z-btn.active
 			display: none;
 		}
 	}
-	
 }
 #compress-player-controllers {
 	display: none;

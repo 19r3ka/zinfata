@@ -48,13 +48,13 @@ body {
 		@media(max-width: (@screen-tablet - 1)) {
 			padding: 0px;
 			margin: 0px;
-		} 
+		}
 	}
 	.container > .row > .col-sm-12 {
 		@media(max-width: (@screen-tablet - 1)) {
 			padding: 0px;
 			margin: 0px;
-		} 
+		}
 	}
 }
 
@@ -82,7 +82,7 @@ nav.navbar {
 	color: @text-icon-color;
 	border: none;
 	@media(min-width: @screen-tablet) {
-		font-size: @font-size-base * .75;	
+		font-size: @font-size-base * .75;
 	}
 	.boxShadow();
 	a {
@@ -127,12 +127,12 @@ nav.navbar {
 a {
 	color: @secondary-text-color;
   &:link, &:visited {
-  	color: @primary-color; 	
+  	color: @primary-color;
   }
 	&:hover, &:active {
 		text-decoration: none;
 		color: @dark-primary-color;
-	}	
+	}
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -165,7 +165,7 @@ z-player {
 		& > i.fa {
 			transform: rotate(180deg);
 		}
-	} 
+	}
 	.media-body {
 		h5, h6 {
 			width: auto;
@@ -295,7 +295,7 @@ z-player {
 		  //   border-radius: @track-radius;
 		  //   border: @track-border-width solid @track-border-color;
 		  // }
-		  
+
 		  &::-webkit-slider-thumb {
 		    .thumb();
 		    -webkit-appearance: none;
@@ -318,7 +318,7 @@ z-player {
 		  }
 
 		  // &::-ms-track {
-		  //   .track(); 
+		  //   .track();
 		  //   background: transparent;
 		  //   border-color: transparent;
 		  //   border-width: @thumb-width 0;
@@ -353,6 +353,12 @@ z-player {
 	}
 }
 
+#z-invitation-form {
+	input {
+		width: 100%;
+	}
+}
+
 .alert {
 	position: fixed;
 	width: 100%;
@@ -383,9 +389,9 @@ z-player {
 	}
 	position: relative;
 	min-height: @jumbotron-min-height;
-	max-height: @jumbotron-max-height; 
+	max-height: @jumbotron-max-height;
 	margin-top: 50px;
-	margin-bottom: 0px; 
+	margin-bottom: 0px;
 	color: @primary-color;
 	background: linear-gradient(
       rgba(0, 0, 0, 0.2),
@@ -464,7 +470,7 @@ z-player {
 	height: 100%;
 	margin: 1px 1px;
 	padding: 1px 5px;
-	padding-top: 5px; 
+	padding-top: 5px;
 	@media(min-width: @screen-tablet) {
 		padding: 25px 30px 15px;
 		margin: 20px;
@@ -555,7 +561,6 @@ z-player {
 .z-dropdown {
 	.z-dropdown-menu {
 		display: none;
-			
 	}
 }
 .z-show {
@@ -579,7 +584,7 @@ z-player {
   	&:hover, &:focus, &:active, &.active {
 	  	background-color: #ff4408;
 	  	border-color: #ee3900;
-	  }	
+	  }
 	 	[disabled] {
 			background-color: #ff4408;
 	  	border-color: #ee3900;
@@ -640,7 +645,7 @@ fieldset[disabled] .z-btn.active {
 		vertical-align: middle;
 		a {
 			&:link, &:visited {
-				color: @secondary-text-color;		
+				color: @secondary-text-color;
 			}
 			span.glyphicon {
 				color: @primary-color;
@@ -772,7 +777,7 @@ fieldset[disabled] .z-btn.active {
 // 						background-color: @track-actions-bt-add-to-playlist-color;
 // 						&:hover{background-color: @track-actions-bt-add-to-playlist-color-hover;}
 // 					}
-					
+
 // 					&:not(:first-child){
 // 						margin-left: 5px;
 // 					}
@@ -823,7 +828,7 @@ fieldset[disabled] .z-btn.active {
 		.z-player-track-title,span.z-player-track-author,.z-player-track-album{
 
 			&,& a{
-				display: inline-block;	
+				display: inline-block;
 				color: #FFFFFF;
 			}
 			& a{color: #FFFFFF;}
@@ -842,7 +847,7 @@ fieldset[disabled] .z-btn.active {
 	.z-control-bt-container{
 		padding-left: 15px;
 		//border: solid red;
-	
+
 		.z-track-volume-container{
 			display: inline-block;
 			margin-left: 10px;
@@ -855,7 +860,7 @@ fieldset[disabled] .z-btn.active {
 				-webkit-appearance: slider-vertical;
 			    width: 2px;
 			    height: 30px;
-			    display: inline-block;				
+			    display: inline-block;
 				display: block;
 			}
 			i{
@@ -873,7 +878,7 @@ fieldset[disabled] .z-btn.active {
 		    border: 1px solid #727273;
 		    border-radius: 50%;
 		    text-align: center;
-		    
+
 		    width: 40px;
 		    height: 40px;
 		    margin-right: 7px;
@@ -896,7 +901,7 @@ fieldset[disabled] .z-btn.active {
 			background-color: #616161;
 			//width: 70px;
 			width: 3px;
-			margin-left: 7px; 
+			margin-left: 7px;
 			display: inline-block;
 			position: relative;
 		   .volume-spin{
@@ -929,7 +934,7 @@ fieldset[disabled] .z-btn.active {
 		#track-duration-slider,.duration-infos{
 			display: inline-block;
 			vertical-align: middle;
-		}		
+		}
 
 		#track-duration-slider{
 			width: 250px;
@@ -983,7 +988,6 @@ fieldset[disabled] .z-btn.active {
 			display: none;
 		}
 	}
-	
 }
 #compress-player-controllers {
 	display: none;

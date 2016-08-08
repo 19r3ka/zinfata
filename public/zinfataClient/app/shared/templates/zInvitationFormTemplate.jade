@@ -1,22 +1,31 @@
-form.form-inline(name='invitationForm')
-  .form-group
-    input.form-control.input-sm(type='text', name="contact",
-    ng-disabled='!editing && !creating', ng-model='invitation.contact', placeholder='Email or #')
-    select(name='medium', ng-disabled='!editing && !creating', ng-model='invitation.medium')
-      option(value='email') Email
-      option(value='whatsapp') Whatsapp
-  .form-group
-    button.z-btn(type='submit', ng-click='send(invitation)',
-    ng-hide='creating || editing || invitation.codeSent') Send
-    //- Only show save when editing or new invitation.
-    //- Hide all other field if its new invitation
-    button.z-btn(type='submit', ng-click='save(invitation)',
-    ng-show='creating || editing') Save
-    button.z-btn(type='submit', ng-click='edit()',
-    ng-show='!creating && !editing') Edit
-    button.z-btn(type='submit', ng-click='delete(invitation, $index)',
-    ng-show='!creating && !editing') Delete
-  .form-group
-    p(ng-hide='creating')
-      span(ng-show='invitation.codeSent && !invitation.accepted') Pending
-      span(ng-show='invitation.accepted') Accepted
+form#z-invitation-form.form-inline(name='invitationForm')
+  .row
+    .form-group.col-xs-1.col-sm-1.col-md-1
+      p(ng-hide='creating')
+        span(ng-show='invitation.codeSent && !invitation.accepted')
+          i.fa.fa-hourglass
+        span(ng-show='invitation.accepted')
+          i.fa.fa-check
+    .form-group.col-xs-1.col-sm-6.col-md-6
+      input.form-control(type='text', name="contact", required,
+      ng-disabled='!editing && !creating', ng-model='invitation.contact', placeholder='Email or #')
+    .form-group.col-xs-1.col-sm-2.col-md-2
+      select.form-control(name='medium', ng-disabled='!editing && !creating', required,
+      ng-model='invitation.medium')
+        option(value='email') Email
+        option(value='whatsapp') Whatsapp
+    .form-group.col-xs-1.col-sm-3.col-md-3
+      button.form-control(type='submit', ng-click='send(invitation)',
+      ng-hide='creating || editing || invitation.codeSent')
+        i.fa.fa-paper-plane
+      //- Only show save when editing or new invitation.
+      //- Hide all other field if its new invitation
+      button.form-control(type='submit', ng-click='save(invitation)',
+      ng-show='creating || editing')
+        i.fa.fa-floppy-o
+      button.form-control(type='submit', ng-click='edit()',
+      ng-show='!creating && !editing')
+        i.fa.fa-pencil
+      button.form-control(type='submit', ng-click='delete(invitation, $index)',
+      ng-show='!creating && !editing')
+        i.fa.fa-trash
