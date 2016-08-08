@@ -734,7 +734,11 @@ app.service('InvitationsSvc', ['Invitations', function(Invitations) {
         }
       }
 
-      return inviteToUpdate.$update(success(updatedInvite), failure(err));
+      inviteToUpdate.$update(function(updatedInvite) {
+        return success(updatedInvite);
+      }, function(err) {
+        failure(err)
+      });
     });
   }
 

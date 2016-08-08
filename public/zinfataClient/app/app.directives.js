@@ -373,10 +373,10 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
     link: function(scope, elm) {
 
       function clear() {
-         scope.invitation = {
+        scope.invitation = {
           contact: '',
           medium: ''
-         }
+        };
       }
 
       function create(invitation) {
@@ -392,6 +392,10 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
         }, function(err) {
           notify('error', 'Failed to create new invitation.');
         });
+      }
+
+      function edit() {
+        scope.editing = true;
       }
 
       function notify(outcome, message) {
@@ -425,7 +429,12 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
       }
 
       function update(invitation) {
-        //
+        Invitations.update(invitation, function(updatedInvite) {
+          notify('success', 'Invitation successfully updated.');
+          scope.editing = false;
+        }, function(err) {
+          notify('error', 'Invitation update failed.');
+        });
       }
 
       if (!scope.invitation) {
@@ -434,6 +443,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
 
       scope.send = send;
       scope.save = save;
+      scope.edit = edit;
     },
     templateUrl: '/templates/zInvitationForm',
     scope: {
