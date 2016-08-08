@@ -3,4 +3,4 @@ ul
   li
     z-invitation-form(on-create='addInvitation(invitation)')
   li(ng-repeat='invitation in invitations track by $index')
-    z-invitation-form(for='invitation')
+    z-invitation-form(for='invitation', on-delete='removeInvitation($index)')

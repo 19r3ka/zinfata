@@ -394,6 +394,15 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
         });
       }
 
+      function iDelete (invitation) {
+        Invitations.delete(invitation, function (deletedInvite) {
+          notify('success', 'Invitation deleted');
+          scope.removeMe();
+        }, function (err) {
+          notify('error', 'Failed to delete invitation');
+        });
+      }
+
       function edit() {
         scope.editing = true;
       }
@@ -441,14 +450,16 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
         scope.creating = true;
       }
 
-      scope.send = send;
-      scope.save = save;
-      scope.edit = edit;
+      scope.delete =  iDelete;
+      scope.edit =    edit;
+      scope.save =    save;
+      scope.send =    send;
     },
     templateUrl: '/templates/zInvitationForm',
     scope: {
-      addMe:  '&onCreate',
-      invitation: '=for'
+      addMe:      '&onCreate',
+      invitation: '=for',
+      removeMe:   '&onDelete'
     },
     restrict: 'E'
   };

@@ -711,11 +711,19 @@ app.service('InvitationsSvc', ['Invitations', function(Invitations) {
   }
 
   function iDelete(invite, success, failure) { //prefixed with i to avoid conflict with JS delete()
-    return Invitations.delete({id: invite._id}, success(invitation), failure(err));
+    Invitations.delete({id: invite._id}, function successCb(deletedInvite) {
+      return success(deletedInvite);
+    }, function failureCb (err) {
+      return failure(err);
+    });
   }
 
   function get(inviteId, success, failure) {
-    return Invitations.get({id: inviteId}, success(invitation), failure(err));
+    Invitations.get({id: inviteId}, function successCb(invitation) {
+      return success(invitation);
+    }, function failureCb(err) {
+      return failure(err);
+    });
   }
 
   function getAll(success, failure) {

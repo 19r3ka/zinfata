@@ -14,7 +14,7 @@ form.form-inline(name='invitationForm')
     ng-show='creating || editing') Save
     button.z-btn(type='submit', ng-click='edit()',
     ng-show='!creating && !editing') Edit
-    button.z-btn(type='submit', ng-click='delete($index, invitation)',
+    button.z-btn(type='submit', ng-click='delete(invitation, $index)',
     ng-show='!creating && !editing') Delete
   .form-group
     p(ng-hide='creating')
