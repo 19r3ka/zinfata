@@ -109,13 +109,17 @@ app.factory('Users', ['$resource', function($resource) {
 }])
 .factory('Invitations', ['$resource', function($resource){
   return $resource('/api/invites/:id', {id: '@_id'}, {
-    'update': {
-      method: 'PUT'
-    },
     'send': {
       method: 'GET',
       url: '/api/invites/:id/send',
       params: {id: '@_id'}
+    },
+    'update': {
+      method: 'PUT'
+    },
+    'validate': {
+      method: 'GET',
+      url: '/api/invites/validate'
     }
   });
 }])

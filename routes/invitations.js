@@ -28,9 +28,15 @@ module.exports = function(wagner) {
     router
       .route('/validate')
         .get(function(req, res, next) {
-          var code =  req.query.t;
+          var query = {};
 
-          Invitation.findOne({code: code}, function(err, invitation) {
+          if (!!req.query.vc) { // it's a verification cookie
+            query.cookie =  req.query.vc;
+          } else if (!!req.query.ic) { // there's an invitation code instead
+            query.code =    req.query.ic;
+          }
+
+          Invitation.findOne(query, function(err, invitation) {
             if (err) {
               return next(err);
             }
@@ -39,6 +45,13 @@ module.exports = function(wagner) {
               return next(new ZError('not_found', 'Not a valid invitation code.'));
             }
 
+            if (query.cookie) {
+              // Since we are just verifying a verification cookie
+              // Return after sending back the corresponding invitation
+              return res.json(invitation)
+            }
+
+            // Otherwise, go ahead and send an invitation object with a verification cookie
             PasswordToken.generateToken(function(cookie) {
               invitation.cookie = cookie;
               invitation.accepted = true;

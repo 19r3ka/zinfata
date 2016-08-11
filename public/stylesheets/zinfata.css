@@ -886,7 +886,10 @@ fieldset[disabled] .z-btn.active
 }
 #coming-soon #got-code
 {
-    font-size: .7em;
+    font-size: .8em;
+
+    padding-top: 10px;
+    padding-bottom: 10px;
 
     color: #ffccbc;
 }
@@ -897,7 +900,7 @@ fieldset[disabled] .z-btn.active
     position: relative;
 
     width: 100%;
-    padding-top: 15px;
+    padding-top: 10px;
 }
 #coming-soon #get-social span
 {

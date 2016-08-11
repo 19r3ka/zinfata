@@ -694,7 +694,7 @@ app.service('MessageSvc', function() {
     this.message = null;
   };
 });
-app.service('InvitationsSvc', ['Invitations', function(Invitations) {
+app.service('InvitationsSvc', ['Invitations', '$log', function(Invitations, $log) {
   var self = this;
 
   function create(invitation, success, failure) {
@@ -734,6 +734,14 @@ app.service('InvitationsSvc', ['Invitations', function(Invitations) {
     });
   }
 
+  function send(invitation, success, failure) {
+    Invitations.send({id: invitation._id}, function(sentInvite) {
+      return success(sentInvite);
+    }, function(err) {
+      return failure(err);
+    });
+  }
+
   function update(invite, success, failure) {
     Invitations.get({id: invite._id}, function(inviteToUpdate) {
       for (var key in inviteToUpdate) {
@@ -750,18 +758,47 @@ app.service('InvitationsSvc', ['Invitations', function(Invitations) {
     });
   }
 
-  function send(invitation, success, failure) {
-    Invitations.send({id: invitation._id}, function(sentInvite) {
-      return success(sentInvite);
+  /* Validate invitation code or verification cookie */
+  function validate(query, success, failure) {
+    Invitations.validate(query, function(validatedInvite) {
+      return success(validatedInvite);
     }, function(err) {
       return failure(err);
     });
   }
 
-  self.create = create;
-  self.delete = iDelete;
-  self.get =    get;
-  self.getAll = getAll;
-  self.update = update;
-  self.send =   send;
+  /* Validates invitation code */
+  function validateCode(code, success, failure) {
+    var query = {
+      ic: code
+    };
+
+    validate(query, function(invitation) {
+      return success(invitation);
+    }, function(err) {
+      return failure(err);
+    });
+  }
+
+  /* Verify cookie to see if code has been exist and has been validated */
+  function verifyCookie(cookie, success, failure) {
+    var query = {
+      vc: cookie
+    };
+
+    validate(query, function(invitation) {
+      return success(invitation);
+    }, function(err) {
+      return failure(err);
+    });
+  }
+
+  self.create =   create;
+  self.delete =   iDelete;
+  self.get =      get;
+  self.getAll =   getAll;
+  self.send =     send;
+  self.update =   update;
+  self.validate = validateCode;
+  self.verify = verifyCookie;
 }]);

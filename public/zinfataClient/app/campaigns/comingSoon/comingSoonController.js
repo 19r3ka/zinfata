@@ -1,13 +1,14 @@
 app.controller('comingSoonCtrl', ['$scope', 'InvitationsSvc', '$log', '$timeout',
-function(scope, Invitations, log, $timeout) {
-
+'$window', function(scope, Invitations, log, $timeout, $window) {
+  /* Manages message div */
   function notify(outcome, message, response) {
     var text = message;
     var icon = 'fa-exclamation';
+    var type = outcome;
 
     if (outcome === 'error') {
       icon = 'fa-error';
-      text = 'Oups. Une erreur est survenu. réessayez plus tard!';
+      type = 'danger';
       log.error(text + ' : ' + response);
     } else {
       log.info(text);
@@ -15,7 +16,7 @@ function(scope, Invitations, log, $timeout) {
 
     scope.message = {
       icon: icon,
-      type: outcome,
+      type: type,
       text: text
     };
     // $timeout
@@ -33,17 +34,27 @@ function(scope, Invitations, log, $timeout) {
     Invitations.create(invitation, function(newInvite) {
       notify('success', 'Demande reçu. Ton code d\'invitation suivra bientôt.');
     }, function(err) {
-      notify('error', err);
+      notify('error', 'Un problème est survenu. Réessayez un peu plus tard.', err);
     });
   }
 
   /* Takes a validation code and validates it */
   function validate(code) {
-    Invitations.isValid(code, function(validity) {
-      return validity;
+    Invitations.validate(code, function(invitation) {
+      notify('success', 'Code accepté. Bienvenue sur Zinfata');
+      $window.location.href = '/register';
+    }, function(err) {
+      var message;
+      if (err.status === 404) {
+        message = 'Hmmm, ce code d\'invitation ne semble pas être valide.';
+      } else {
+        message = 'Un problème est survenu. Réessayez un peu plus tard.';
+      }
+      notify('error', message, err);
     });
   }
 
-  scope.gotCode = gotCode;
-  scope.request = request;
+  scope.gotCode =   gotCode;
+  scope.request =   request;
+  scope.validate =  validate;
 }]);

@@ -67,7 +67,7 @@ html.no-js
             #code(ng-show='hasCode')
               form(name='codeValidationForm', role='form', novalidate)
                 .input-group(ng-class="{ 'has-error': codeValidationForm.contact.$touched && codeValidationForm.contact.$invalid }")
-                  input.form-control(type='text', name='invitation_code', min-length=6, title='Code d\'invitation', ng-model='invitation.code', placeholder='Valide ton code d\'invitation')
+                  input.form-control(type='text', name='invitation_code', title='Code d\'invitation', ng-model='invitation.code', placeholder='Valide ton code d\'invitation')
                   span.input-group-btn
                     button.btn.btn-default(type='submit', ng-click='validate(invitation.code)', title='Valide ton code', ng-disabled='!invitation.code || codeValidationForm.$invalid')
                       i.fa.fa-unlock-alt
