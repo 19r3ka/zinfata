@@ -83,6 +83,9 @@ app.all('/api/:route/:id', updateinterceptor);
 app.use('/api/albums', albums);
 app.use('/api/tracks', tracks);
 app.use('/api/playlists', playlists);
+app.get('/coming_soon', function(req, res) {
+  res.render('zinfataClient/app/campaigns/comingSoon/comingSoon', {title: 'Zinfata is Coming!'});
+});
 app.use('/', routes);
 
 // catch 404 and forward to error handler

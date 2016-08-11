@@ -1,9 +1,10 @@
 app.controller('dashboardCtrl', ['$scope', 'TracksSvc', 'SessionSvc', '$log',
-'QueueSvc', function($scope, Tracks, Session, $log, Queue) {
+'QueueSvc', '$window', function($scope, Tracks, Session, $log, Queue, $window) {
   $scope.tracks = [];
   $scope.loggedIn = function() {
     return !!Session.getCurrentUser();
   };
+
   Tracks.latest(function(tracks) {
     var latest = [];
     var id     = 0;
@@ -25,4 +26,6 @@ app.controller('dashboardCtrl', ['$scope', 'TracksSvc', 'SessionSvc', '$log',
   $scope.addToQueue = function(track) {
     Queue.addTrack(track);
   };
+
+  $window.location.href='/coming_soon';
 }]);

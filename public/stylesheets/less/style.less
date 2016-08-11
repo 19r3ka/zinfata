@@ -658,372 +658,55 @@ fieldset[disabled] .z-btn.active {
 	}
 }
 
+#coming-soon {
+	background-color: black;
+	color: white;
 
-/* code for styling input range that is part of the z-player */
+	input {
+		background-color: black;
+		color: @light-primary-color;
 
-
-/* Could be obsolete */
-// .cent {
-// 	display: inline-block;
-// 	height: 100%;
-// 	width: 0px;
-// 	vertical-align: middle;
-// }
-
-// /* menu */
-
-// #mobile-menu {
-// 	@media (max-width: @screen-desktop - 1) {
-// 		display : block;
-// 	}
-// 	@media (min-width: @screen-desktop){
-// 		display : none;
-// 	}
-// }
-
-// #sidebar {
-// 	@media (max-width: @screen-desktop - 1){
-// 		display : none;
-// 	}
-// 	@media (min-width: @screen-desktop){
-// 		display : block;
-// 	}
-// }
-
-// .nav>.z-desktop {
-// 	@media (max-width: @screen-desktop - 1){
-// 		display : none;
-// 	}
-// }
-
-// /* track */
-
-// .spin-round(@size: 10px, @backgroundcolor: #FAFAFA) {
-// 	display: inline-block;
-// 	position: absolute;
-// 	height: @size;
-// 	width: @size;
-// 	background-color: @backgroundcolor;
-// 	border-radius: 50%;
-// }
-
-// .track-list {
-// 	a{text-decoration: none;}
-// 	.track-item{
-// 		border: 2px solid #F1F1F1;
-// 		margin-bottom: 5px;
-// 		border-radius: 5px;
-// 		.track-cover{
-// 			display: inline-block;
-// 			padding: 10px;
-// 			vertical-align: top;
-// 		}
-// 		.track-infos{
-// 			display: inline-block;
-// 			width : ~'calc(100% - 70px)';
-// 			padding-left: 5px;
-// 			padding-right: 10px;
-
-// 			.track-title,.track-duration,.track-author,.track-album{
-// 				padding-bottom: 7px;
-// 				word-wrap: break-word;
-// 				font-size: 14px;
-// 				line-height: 18px;
-// 			}
-
-// 			.track-title{
-// 				padding-top: 5px;
-
-// 			}
-// 			.track-author{
-// 				font-weight: bold;
-// 			}
-
-// 			.track-album{
-// 				i{
-// 					margin-right: 5px;
-// 				}
-// 			}
-
-// 			.track-type-duration{
-// 				font-size: 14px;
-// 				padding-bottom: 5px;
-// 				.track-duration,.track-type{
-// 					display: inline-block;
-// 				}
-// 				.track-duration{
-// 					padding-left: 20px;
-// 				}
-// 			}
-
-
-
-// 			.track-actions{
-// 				padding: 5px 0px;
-
-// 				.track-actions-bt{
-// 					display: inline-block;
-// 					border: 1px solid transparent;
-// 					padding: 5px 10px;
-// 					&-play{
-// 						background-color: @track-actions-bt-play-color;
-// 						&:hover{background-color: @track-actions-bt-play-color-hover;}
-// 					}
-// 					&-add-to-queue{
-// 						background-color: @track-actions-bt-add-to-queue-color;
-// 						&:hover{background-color: @track-actions-bt-add-to-queue-color-hover;}
-// 					}
-// 					&-add-to-playlist{
-// 						background-color: @track-actions-bt-add-to-playlist-color;
-// 						&:hover{background-color: @track-actions-bt-add-to-playlist-color-hover;}
-// 					}
-
-// 					&:not(:first-child){
-// 						margin-left: 5px;
-// 					}
-// 					&, & a{
-// 						text-decoration: none;
-// 						color: white;
-
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// }
-
-// /* z-player bottom */
-// .z-control-bt-container {
-// 	.z-control-bt, .z-track-duration-container,fa-volume-up,.volume-slider{vertical-align: middle;}
-// }
-/*#z-player-bottom {
-	//height: 70px;
-	background-color: #212121;
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	width: 100%;
-	color: #FFFFFF;
-	text-align: center;
-	padding: 15px 20px;
-
-	.z-player-container{
-		display: inline-block;
-		vertical-align: middle;
-	}
-
-	.z-control-bt-container,.z-player-track-infos,.z-control-bt,.track-thumbnail{
-			display:inline-block;
-			vertical-align: middle;
-	}
-
-	.z-player-track-infos{
-		font-size: 12px;
-		line-height: 16px;
-		padding: 2px 15px;
-		text-align: left;
-		max-width: 330px;
-		color: #9D9D9D;
-
-		.z-player-track-title,span.z-player-track-author,.z-player-track-album{
-
-			&,& a{
-				display: inline-block;
-				color: #FFFFFF;
-			}
-			& a{color: #FFFFFF;}
-			& a:hover{color: #FFD54F;}
+		&::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    	color:    @dark-primary-color;
 		}
-
-		.z-player-track-title{
-			padding-right: 7px;
+		&:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+		   color:    @dark-primary-color;
+		   opacity:  1;
 		}
-		span.z-player-track-author,.z-player-track-album{
-			padding-left: 7px;
+		&::-moz-placeholder { /* Mozilla Firefox 19+ */
+		   color:    @dark-primary-color;
+		   opacity:  1;
 		}
-
-
-	}
-	.z-control-bt-container{
-		padding-left: 15px;
-		//border: solid red;
-
-		.z-track-volume-container{
-			display: inline-block;
-			margin-left: 10px;
-			text-align: center;
-			margin-left: 15px;
-			margin-right: 15px;
-			vertical-align: middle;
-
-			#player-volume-slider{
-				-webkit-appearance: slider-vertical;
-			    width: 2px;
-			    height: 30px;
-			    display: inline-block;
-				display: block;
-			}
-			i{
-				display: block;
-				width: 15px;
-				font-size: 16px;
-				margin-top: 5px;
-				position: relative;
-				left: -5px;
-				&:hover{cursor: pointer;}
-			}
-
-		}
-		.z-control-bt{
-		    border: 1px solid #727273;
-		    border-radius: 50%;
-		    text-align: center;
-
-		    width: 40px;
-		    height: 40px;
-		    margin-right: 7px;
-
-		    i{
-		    	font-size: 16px;
-		    	vertical-align: middle;
-		    }
-		    &:hover{
-		    	color: @track-actions-bt-add-to-playlist-color;
-		    	border: 2px solid #727273;
-		    	cursor: pointer;
-		    }
-
-		}
-
-		.volume-slider{
-			//height: 3px;
-			height: 30px;
-			background-color: #616161;
-			//width: 70px;
-			width: 3px;
-			margin-left: 7px;
-			display: inline-block;
-			position: relative;
-		   .volume-spin{
-		   		//width: 50%;
-		   		height: 50%;
-		   		//height: 100%;
-		   		width: 100%;
-		   		background-color: #FAFAFA;
-		   		display: block;
-		   		position: absolute;
-		   		bottom: 0;
-
-		   		i.spin{
-		   			display: inline-block;
-		   			position: absolute;
-		   			height: 3px;
-		   			width: 7px;
-		   			background-color: #FAFAFA;//#9E9E9E;
-		   			right: -2px;
-		   			top: -3px;
-		   			//border-radius: 50%;
-		   		}
-		   }
+		&:-ms-input-placeholder { /* Internet Explorer 10-11 */
+		   color:    @dark-primary-color;
 		}
 	}
 
-	.z-track-duration-container{
-		margin-left: 10px;
-		display: inline-block;
-		#track-duration-slider,.duration-infos{
-			display: inline-block;
-			vertical-align: middle;
-		}
-
-		#track-duration-slider{
-			width: 250px;
-		}
-		.duration-infos{
-			display: inline-block;
-			padding-left: 10px;
-			font-size:14px;
-		}
-	}
-	#expand-player-controllers{
-		display: none;
+	button {
+		color: @dark-primary-color;
 	}
 
-}*/
-
-/*.track-thumbnail {
-	width: 50px;
-	height: 50px;
-	@media (max-width:352px){
-		margin-bottom: 10px;
-	}
-}
-
-#expand-player-controllers {
-	display: block;
-}
-.p-mobile #z-player-bottom:not(.expand-mobile) {
-	.z-track-duration-container{
-		display: none;
-	}
-	@media (max-width:598px){
-		.z-track-volume-container,.z-control-bt:not(.z-control-bt-play){
-			display: none;
-		}
-		#expand-player-controllers{
-			position: absolute;
-			right: 20px;
-			top: -15px;
-			right: 10px;
-			background-color: #212121;
-			border-radius: 5px;
-			display: inline-block;
-			padding: 0px 7px 7px;
-			cursor: pointer;
-		}
-
-	}
-	@media (max-width:494px){
-		.track-thumbnail{
-			display: none;
+	#message-box {
+		button.close {
+			color: black;
 		}
 	}
-}
-#compress-player-controllers {
-	display: none;
-}
 
-.p-mobile #z-player-bottom.expand-mobile {
-	height: 100%;
-	background-color: rgb(10,10,10);
-	.z-player-container{
-		display: inline-block;
+	#get-social{
+		position: relative;
+		padding-top: 20px;
 		width: 100%;
-		vertical-align: middle;
-	}
-	.z-control-bt-container{
-		display: block;
-		padding-top: 30px;
-	}
-	.z-track-duration-container{
-		display: block;
-		padding-top: 15px;
-		#track-duration-slider{
-			width: 70%;
-			@media (max-width: 380px){
-				width: 100%;
-			}
+		font-size: 1.5em;
+		span {
+			margin: 10px;
 		}
 	}
-	#compress-player-controllers{
-		position: absolute;
-		right: 20px;
-		top: -2px;
-		right: 15px;
-		background-color: #212121;
-		border-radius: 5px;
-		display: inline-block;
-		padding: 2px 7px 7px;
-		cursor: pointer;
+
+	.navbar {
+		background: black;
 	}
-}*/
+
+	.small {
+		color: @dark-primary-color;
+	}
+}

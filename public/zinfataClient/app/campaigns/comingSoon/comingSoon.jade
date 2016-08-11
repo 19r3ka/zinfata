@@ -1,0 +1,122 @@
+doctype
+html.no-js
+  head
+    base(href='/')
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    title= title
+    meta(name='description', content='La plateforme de la musique togolaise.')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    block head
+      link(rel="stylesheet", href="/lib/bootstrap-3.3.5/css/bootstrap.css")
+      link(rel="stylesheet", href="/lib/jquery-ui-1.11.4/jquery-ui.css")
+      link(rel="stylesheet", href="/lib/font-awesome-4.5.0/css/font-awesome.css")
+      link(rel="stylesheet", href="/lib/ngImgCrop/ng-img-crop.css")
+      link(rel="stylesheet", href="/stylesheets/zinfata.css")
+  body#coming-soon(ng-app='zinfataClient')
+    <!--[if lt IE 8]>
+    p.browsehappy
+      | You are using an <strong>outdated</strong> browser.
+      | Please <a href="http://browsehappy.com/">upgrade your browser</a>
+      | to improve your experience.
+    <![endif]-->
+    block header
+      nav.navbar.navbar-fixed-top.navbar-inverse
+        .container-fluid
+          .navbar-right
+            p.navbar-text
+              a(href='#', ng-click='goto(\'/login\')')   Connexion
+
+    block content
+      .container-fluid(ng-controller='comingSoonCtrl')
+        .row
+          .col-sm-12.col-md-12
+            .alert#message-box(class=['alert-{{ message.type }}', 'alert-dismissable'], role='alert', ng-show='!!message.text')
+              button.close(type='button', data-dismiss='alert', aria-hidden='true') &times;
+              i.fa(class='{{ message.icon }}', aria-hidden='true')
+              |   {{ message.text }}
+        .row
+          .col-sm-12.col-md-8.col-md-offset-2
+            #logo
+              img.center-block(src='images/zlogoBlack.png', alt='Zinfata Logo', width='160')
+            #teaser
+              h3.text-uppercase.text-center La Révolution Musicale a Commencé!
+                .small Es-tu Prêt?
+            #teaser-explanation
+              p.text-justify.
+                Afin de permettre aux acteurs de la <b>musique togolaise</b> de vivre de leur art, nous
+                mettons sur point une suite d'application destinée a faciliter la distribution et la
+                promotion d’œuvres originales.
+              p.text-justify.
+                Rejoins des maintenant la communauté des tout premiers privilégiés qui testent en exclusivité
+                Zinfata et participent à façonner le futur de la musique au Togo.
+            br
+            #invitation
+              form(name='invitationRequestForm', role='form', novalidate)
+                .input-group(ng-class="{ 'has-error': invitationRequestForm.contact.$touched && invitationRequestForm.contact.$invalid }")
+                  input.form-control(type='email', name='contact', title='Demande d\'invitation', ng-model='invitation.contact', placeholder='Rejoins-nous par email')
+                  span.input-group-btn
+                    button.btn.btn-default(type='submit', ng-click='request(invitation)', title='Envoie ta demande', ng-disabled='!invitation.contact || invitationRequestForm.$invalid')
+                      i.fa.fa-envelope
+                .help-block(ng-messages='invitationRequestForm.contact.$error', ng-show='invitationRequestForm.contact.$touched', ng-hide='invitationRequestForm.$submitted')
+                  div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
+            //- p.text-center OU
+            //- form(name='codeValidationForm')
+            //- #code-test
+              .input-group
+                input.form-control(type='text', name='invitation_code', title='Code d\'invitation', ng-model='invitation.code', placeholder='Valide ton code d\'invitation')
+                span.input-group-btn
+                  button.btn.btn-default(ng-click='validate(invitation.code)', ng-disabled='!invitation.code')
+                    i.fa.fa-unlock-alt
+            br
+            #get-social
+              p.text-center
+                span#facebook: a(href='#')
+                  i.fa.fa-facebook
+                span#twitter: a(href='#')
+                  i.fa.fa-twitter
+
+
+    block scripts
+      //- vendors:js
+      script(src="/lib/jquery/jquery-2.1.4.min.js")
+      script(src="/lib/jquery-ui-1.11.4/jquery-ui.js")
+      script(src="/lib/bootstrap-3.3.5/js/bootstrap.js")
+      script(src="/lib/angular-1.4.5/angular.js")
+      script(src="/lib/angular-1.4.5/angular-resource.js")
+      script(src="/lib/angular-1.4.5/angular-route.js")
+      script(src="/lib/angular-1.4.5/angular-messages.js")
+      script(src="/lib/sound-manager-2/script/soundmanager2.js")
+      script(src="/lib/ngImgCrop/ng-img-crop.js")
+      script(src="/lib/modernizr/modernizr.js")
+      //- endinject
+
+      //- inject:js
+      //- script(src="/javascripts/feature-detects.js")
+      script(src="/zinfataClient/app/app.module.js")
+      script(src="/zinfataClient/app/app.constants.js")
+      script(src="/zinfataClient/app/app.directives.js")
+      script(src="/zinfataClient/app/app.factories.js")
+      script(src="/zinfataClient/app/app.filters.js")
+      script(src="/zinfataClient/app/app.routes.js")
+      script(src="/zinfataClient/app/app.services.js")
+      script(src="/zinfataClient/app/campaigns/comingSoon/comingSoonController.js")
+      //- script(src="/zinfataClient/app/components/album/albumController.js")
+      //- script(src="/zinfataClient/app/components/dashboard/dashboardController.js")
+      //- script(src="/zinfataClient/app/components/forgot/forgotController.js")
+      //- script(src="/zinfataClient/app/components/invitation/invitationController.js")
+      //- script(src="/zinfataClient/app/components/login/loginController.js")
+      //- script(src="/zinfataClient/app/components/logout/logoutController.js")
+      //- script(src="/zinfataClient/app/components/passwordReset/passwordResetController.js")
+      //- script(src="/zinfataClient/app/components/playlist/playlistController.js")
+      //- script(src="/zinfataClient/app/components/queue/queueController.js")
+      //- script(src="/zinfataClient/app/components/registration/registerController.js")
+      //- script(src="/zinfataClient/app/components/search/searchController.js")
+      //- script(src="/zinfataClient/app/components/tokenValidator/tokenController.js")
+      //- script(src="/zinfataClient/app/components/track/trackController.js")
+      //- script(src="/zinfataClient/app/components/userProfile/userProfileController.js")
+      //- script(src="/zinfataClient/app/shared/header/headerController.js")
+      //- script(src="/zinfataClient/app/shared/messages/messageController.js")
+      //- script(src="/zinfataClient/app/shared/player/playerController.js")
+      //- script(src="/zinfataClient/app/shared/sidebar/sidebarController.js")
+      //- //- endinject

@@ -433,7 +433,7 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
         Invitations.send(invitation, function(sentInvite) {
           notify('success', 'Invitation sent to ' + sentInvite.contact);
         }, function(err) {
-          notify('error', 'Invitation failure to ' + sentInvite.contact);
+          notify('error', err);
         });
       }
 
