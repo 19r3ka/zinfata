@@ -17,7 +17,19 @@ function generateCode() {
 }
 
 InvitationSchema.pre('validate', function(next) {
-  this.code =   generateCode();
+  if (!this.code) {
+    this.code =   generateCode();
+  }
+
+  next();
+});
+
+InvitationSchema.pre('save', function(next) {
+  /* When saving or updating a document's contact, reset accepted and codeSent attributes */
+  if (this.isModified('contact')) {
+    this.accepted = this.codeSent = false;
+  }
+
   next();
 });
 

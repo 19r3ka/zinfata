@@ -34,6 +34,9 @@ module.exports = function(wagner) {
             query.cookie =  req.query.vc;
           } else if (!!req.query.ic) { // there's an invitation code instead
             query.code =    req.query.ic;
+          } else {
+            // There is no invitation code or verification cookie
+            return next(new ZError('bad_param', 'There is no invitation code or cookie to validate.'));
           }
 
           Invitation.findOne(query, function(err, invitation) {
@@ -41,13 +44,14 @@ module.exports = function(wagner) {
               return next(err);
             }
 
-            if (!invitation) {
+            /* How can you validate an invitation code that has never been sent?  */
+            if (!invitation || (invitation && !invitation.codeSent)) {
               return next(new ZError('not_found', 'Not a valid invitation code.'));
             }
 
+            /*Since we are just verifying a verification cookie
+            Return after sending back the corresponding invitation*/
             if (query.cookie) {
-              // Since we are just verifying a verification cookie
-              // Return after sending back the corresponding invitation
               return res.json(invitation)
             }
 
@@ -122,15 +126,15 @@ module.exports = function(wagner) {
             var mailOptions = {
               from: mailService.mailConfig.auth.user,
               to:   invit.contact,
-              subject:  'We want you to join Zinfata Now!',
+              subject:  'Rejoins La Révolution Musicale du Togo!',
             };
-            var zInvitationUrl = req.get('host') + '?t=' + invit.code;
+            var zInvitationUrl = req.get('host') + '/coming_soon?ic=' + invit.code;
             var content = '<p> Salut, <p>' +
-            '<p> Voici un code d\'invitation speciale a joindre la revolution ' +
-            'musicale au Togo: <b>' + invit.code + '</b>.</p>' +
-            '<p>Comment l\'utiliser? Entre le au moment de t\'enregistrer sur Zinfata (Register).' +
-            ' ou simplement, clique sur le lien ci-dessous: </p>' +
-            '<p>' + zInvitationUrl + '</p>';
+            '<p> La révolution musicale togolaise a déjà commencé. On n\'attend plus que toi! ' +
+            'Voici ton code personnel pour rejoindre Zinfata: <b>' + invit.code + '</b>.</p>' +
+            '<p>Clique sur le lien ci-dessous pour activer ton invitation. ' +
+            'Ou alors entre-le sur la page d\'invitation.</p>' +
+            '<p><a href=\'' + zInvitationUrl + '\'>' + zInvitationUrl + '</a></p>';
             mailService.styliner.processHTML(content).then(function(processedSource) {
               mailOptions.html = processedSource;
               mailService.sendMail(mailOptions, function(err, info) {
