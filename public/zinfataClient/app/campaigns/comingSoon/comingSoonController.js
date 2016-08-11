@@ -1,7 +1,7 @@
 app.controller('comingSoonCtrl', ['$scope', 'InvitationsSvc', '$log', '$timeout',
 function(scope, Invitations, log, $timeout) {
 
-  function notify (outcome, message, response) {
+  function notify(outcome, message, response) {
     var text = message;
     var icon = 'fa-exclamation';
 
@@ -17,16 +17,21 @@ function(scope, Invitations, log, $timeout) {
       icon: icon,
       type: outcome,
       text: text
-    }
-
+    };
     // $timeout
+  }
+
+  /* Switch for invitation demand and code validation forms */
+  function gotCode(boolean, event) {
+    event.preventDefault(); //link won't navigate
+    scope.hasCode = boolean;
   }
 
   /* Sends the invitation request to server */
   function request(invitation) {
     invitation.medium = 'email';
     Invitations.create(invitation, function(newInvite) {
-      notify('success', 'Demande reçu. Ton code d\'invitation suivra bientôt.')
+      notify('success', 'Demande reçu. Ton code d\'invitation suivra bientôt.');
     }, function(err) {
       notify('error', err);
     });
@@ -39,5 +44,6 @@ function(scope, Invitations, log, $timeout) {
     });
   }
 
+  scope.gotCode = gotCode;
   scope.request = request;
 }]);

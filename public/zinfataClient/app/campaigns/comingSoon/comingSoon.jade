@@ -51,7 +51,7 @@ html.no-js
                 Rejoins des maintenant la communauté des tout premiers privilégiés qui testent en exclusivité
                 Zinfata et participent à façonner le futur de la musique au Togo.
             br
-            #invitation
+            #invitation(ng-hide='hasCode')
               form(name='invitationRequestForm', role='form', novalidate)
                 .input-group(ng-class="{ 'has-error': invitationRequestForm.contact.$touched && invitationRequestForm.contact.$invalid }")
                   input.form-control(type='email', name='contact', title='Demande d\'invitation', ng-model='invitation.contact', placeholder='Rejoins-nous par email')
@@ -60,14 +60,19 @@ html.no-js
                       i.fa.fa-envelope
                 .help-block(ng-messages='invitationRequestForm.contact.$error', ng-show='invitationRequestForm.contact.$touched', ng-hide='invitationRequestForm.$submitted')
                   div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
-            //- p.text-center OU
-            //- form(name='codeValidationForm')
-            //- #code-test
-              .input-group
-                input.form-control(type='text', name='invitation_code', title='Code d\'invitation', ng-model='invitation.code', placeholder='Valide ton code d\'invitation')
-                span.input-group-btn
-                  button.btn.btn-default(ng-click='validate(invitation.code)', ng-disabled='!invitation.code')
-                    i.fa.fa-unlock-alt
+            #got-code
+              p.text-center
+                a(href='#', ng-click='gotCode(true, $event)', ng-hide='hasCode') J'ai déjà un code
+                a(href='#', ng-click='gotCode(false, $event)', ng-show='hasCode') J'ai besoin d'une invitation
+            #code(ng-show='hasCode')
+              form(name='codeValidationForm', role='form', novalidate)
+                .input-group(ng-class="{ 'has-error': codeValidationForm.contact.$touched && codeValidationForm.contact.$invalid }")
+                  input.form-control(type='text', name='invitation_code', min-length=6, title='Code d\'invitation', ng-model='invitation.code', placeholder='Valide ton code d\'invitation')
+                  span.input-group-btn
+                    button.btn.btn-default(type='submit', ng-click='validate(invitation.code)', title='Valide ton code', ng-disabled='!invitation.code || codeValidationForm.$invalid')
+                      i.fa.fa-unlock-alt
+                .help-block(ng-messages='codeValidationForm.contact.$error', ng-show='codeValidationForm.contact.$touched', ng-hide='codeValidationForm.$submitted')
+                  div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
             br
             #get-social
               p.text-center
