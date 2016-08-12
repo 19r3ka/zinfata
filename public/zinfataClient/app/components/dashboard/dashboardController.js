@@ -1,7 +1,9 @@
 app.controller('dashboardCtrl', ['$scope', 'TracksSvc', 'SessionSvc', '$log',
-'QueueSvc', '$window', function($scope, Tracks, Session, $log, Queue, $window) {
+'QueueSvc', '$window', 'InvitationsSvc',
+function($scope, Tracks, Session, $log, Queue, $window, Invitations) {
+
   $scope.tracks = [];
-  $scope.loggedIn = function() {
+  $scope.loggedIn = function loggedIn() {
     return !!Session.getCurrentUser();
   };
 
@@ -19,13 +21,20 @@ app.controller('dashboardCtrl', ['$scope', 'TracksSvc', 'SessionSvc', '$log',
     $log.error(err);
   });
 
-  $scope.play = function(track) {
+  $scope.play = function play(track) {
     Queue.playNow(track);
   };
 
-  $scope.addToQueue = function(track) {
+  $scope.addToQueue = function addToQueue(track) {
     Queue.addTrack(track);
   };
 
-  $window.location.href='/coming_soon';
+  /* Ultimately move this out to the .run function
+     to capture verify on route change start instead */
+  Invitations.verifyCookie(function(invitation) {
+    // Do nothing when the cookie checks out
+  }, function(err) {
+    // Regardless of code status,
+    $window.location.href = '/coming_soon';
+  });
 }]);

@@ -745,8 +745,9 @@ function(Invitations, $log, Cookies) {
 
   /* Sets a validation cookie to verify before displaying the registration page */
   function setCookie(cookie) {
-    /* Set expiration date to a year from now */
-    var expirationDate = new Date(now.getFullYear()+1, now.getMonth(), now.getDate());
+    /* Set expiration date to Jan 1 2017 */
+    var expirationDate = new Date('2017');
+
     Cookies.put('vc', cookie, { expires: expirationDate });
   }
 
@@ -796,6 +797,14 @@ function(Invitations, $log, Cookies) {
   /* Verify cookie to see if code has been exist and has been validated */
   function verifyCookie(success, failure) {
     var cookie = Cookies.get('vc');
+
+    if (!cookie) {
+      return failure({
+        status:   401,
+        message:  'There is no cookie.'
+      });
+    }
+
     var query = {
       vc: cookie
     };
@@ -807,13 +816,13 @@ function(Invitations, $log, Cookies) {
     });
   }
 
-  self.create =     create;
-  self.delete =     iDelete;
-  self.get =        get;
-  self.getAll =     getAll;
-  self.send =       send;
-  self.setCookie =  setCookie;
-  self.update =     update;
-  self.validate =   validateCode;
-  self.verify =     verifyCookie;
+  self.create =       create;
+  self.delete =       iDelete;
+  self.get =          get;
+  self.getAll =       getAll;
+  self.send =         send;
+  self.setCookie =    setCookie;
+  self.update =       update;
+  self.validate =     validateCode;
+  self.verifyCookie = verifyCookie;
 }]);
