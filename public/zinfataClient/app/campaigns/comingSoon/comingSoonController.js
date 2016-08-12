@@ -19,7 +19,11 @@ app.controller('comingSoonCtrl', ['$scope', 'InvitationsSvc', '$log', '$timeout'
       type: type,
       text: text
     };
-    // $timeout
+
+    /* Empties message after 5s thus hiding the message box alert */
+    $timeout(function() {
+      scope.message = {};
+    }, 5000);
   }
 
   /* Switch for invitation demand and code validation forms */
@@ -42,6 +46,8 @@ app.controller('comingSoonCtrl', ['$scope', 'InvitationsSvc', '$log', '$timeout'
   function validate(code) {
     Invitations.validate(code, function(invitation) {
       notify('success', 'Code accepté. Bienvenue sur Zinfata');
+      // TODO: Set validation cookie before redirecting to /register page...
+      Invitations.setCookie(invitation.cookie);
       $window.location.href = '/register';
     }, function(err) {
       var message;
