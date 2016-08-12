@@ -745,8 +745,8 @@ function(Invitations, $log, Cookies) {
 
   /* Sets a validation cookie to verify before displaying the registration page */
   function setCookie(cookie) {
-    /* Set expiration date to Jan 1 2017 */
-    var expirationDate = new Date('2017');
+    /* Set expiration date to a year from now */
+    var expirationDate = new Date(Date.now() + (365 * 24 * 60 * 60 * 1000));
 
     Cookies.put('vc', cookie, { expires: expirationDate });
   }

@@ -1,5 +1,6 @@
 app.controller('registerCtrl', ['$scope', 'UsersSvc', 'MessageSvc',
-'$location', function($scope, UsersSvc, MessageSvc, $location) {
+'$location', '$window', 'InvitationsSvc',
+function($scope, UsersSvc, MessageSvc, $location, $window, Invitations) {
   $scope.user     = {
     firstName: '',
     lastName:  '',
@@ -8,7 +9,7 @@ app.controller('registerCtrl', ['$scope', 'UsersSvc', 'MessageSvc',
     password:  ''
   };
 
-  $scope.register = function() {
+  $scope.register = function register() {
     UsersSvc.create($scope.user, function(savedUser) {
       MessageSvc.addMsg('success', 'Welcome to Zinfata, ' +
         savedUser.firstName +
@@ -19,4 +20,13 @@ app.controller('registerCtrl', ['$scope', 'UsersSvc', 'MessageSvc',
       MessageSvc.addMsg('danger', 'Oops, we were unable to register you!');
     });
   };
+
+  /* Ultimately move this out to the .run function
+    to capture verify on route change start instead */
+  Invitations.verifyCookie(function(invitation) {
+    // Do nothing when the cookie checks out
+  }, function(err) {
+    // Regardless of code status,
+    $window.location.href = '/coming_soon';
+  });
 }]);
