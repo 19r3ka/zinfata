@@ -694,7 +694,8 @@ app.service('MessageSvc', function() {
     this.message = null;
   };
 });
-app.service('InvitationsSvc', ['Invitations', '$log', function(Invitations, $log) {
+app.service('InvitationsSvc', ['Invitations', '$log', '$cookies',
+function(Invitations, $log, Cookies) {
   var self = this;
 
   function create(invitation, success, failure) {
@@ -742,6 +743,18 @@ app.service('InvitationsSvc', ['Invitations', '$log', function(Invitations, $log
     });
   }
 
+  /* Sets a validation cookie to verify before displaying the registration page */
+  function setCookie(cookie) {
+    /* Set expiration date to a year from now */
+    var expirationDate = new Date(now.getFullYear()+1, now.getMonth(), now.getDate());
+    Cookies.put('vc', cookie, { expires: expirationDate });
+  }
+
+  /* Unsets the validation cookie */
+  function unsetCookie(cookie) {
+    Cookies.remove('vc');
+  }
+
   function update(invite, success, failure) {
     Invitations.get({id: invite._id}, function(inviteToUpdate) {
       for (var key in inviteToUpdate) {
@@ -781,7 +794,8 @@ app.service('InvitationsSvc', ['Invitations', '$log', function(Invitations, $log
   }
 
   /* Verify cookie to see if code has been exist and has been validated */
-  function verifyCookie(cookie, success, failure) {
+  function verifyCookie(success, failure) {
+    var cookie = Cookies.get('vc');
     var query = {
       vc: cookie
     };
@@ -793,12 +807,13 @@ app.service('InvitationsSvc', ['Invitations', '$log', function(Invitations, $log
     });
   }
 
-  self.create =   create;
-  self.delete =   iDelete;
-  self.get =      get;
-  self.getAll =   getAll;
-  self.send =     send;
-  self.update =   update;
-  self.validate = validateCode;
-  self.verify = verifyCookie;
+  self.create =     create;
+  self.delete =     iDelete;
+  self.get =        get;
+  self.getAll =     getAll;
+  self.send =       send;
+  self.setCookie =  setCookie;
+  self.update =     update;
+  self.validate =   validateCode;
+  self.verify =     verifyCookie;
 }]);

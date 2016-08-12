@@ -13,6 +13,7 @@ module.exports = {
         'public/lib/angular-1.4.5/angular-resource.js',
         'public/lib/angular-1.4.5/angular-route.js',
         'public/lib/angular-1.4.5/angular-messages.js',
+        'public/lib/angular-1.4.5/angular-cookies.js',
         'public/lib/ngImgCrop/ng-img-crop.js'
       ]
     },
