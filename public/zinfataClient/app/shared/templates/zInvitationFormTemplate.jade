@@ -17,12 +17,14 @@ form#z-invitation-form.form-inline(name='invitationForm')
     .form-group.col-xs-1.col-sm-3.col-md-3
       button.form-control(type='submit', ng-click='send(invitation)',
       ng-hide='creating || editing || invitation.codeSent')
-        i.fa.fa-paper-plane
+        i.fa.fa-paper-plane(ng-hide='waiting')
+        i.fa.fa-spinner.fa-pulse.fa-fw(ng-show='waiting')
       //- Only show save when editing or new invitation.
       //- Hide all other field if its new invitation
       button.form-control(type='submit', ng-click='save(invitation)',
       ng-show='creating || editing')
-        i.fa.fa-floppy-o
+        i.fa.fa-floppy-o(ng-hide='waiting')
+        i.fa.fa-spinner.fa-pulse.fa-fw(ng-show='waiting')
       button.form-control(type='submit', ng-click='edit()',
       ng-show='!creating && !editing')
         i.fa.fa-pencil

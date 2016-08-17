@@ -41,7 +41,7 @@ body
     box-sizing: content-box;
     margin-top: 50px;
     margin-bottom: 50px;
-    padding: 0 0 90px 0;
+    padding: 0 0 0 0;
 
     color: #212121;
     background-color: #f7f7f7;
@@ -847,7 +847,9 @@ fieldset[disabled] .z-btn.active
 #coming-soon
 {
     color: white;
-    background-color: black;
+    background: -webkit-linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .9)), url('../../images/coming_soon_bg.jpg') no-repeat center center;
+    background:         linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .9)), url('../../images/coming_soon_bg.jpg') no-repeat center center;
+    background-size: cover;
 }
 #coming-soon input
 {

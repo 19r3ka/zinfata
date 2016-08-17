@@ -38,18 +38,21 @@ html, body {
 
 body {
 	font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-	padding: 0px 0px 90px 0px;
+	// padding: 0px 0px 90px 0px;
+	padding: 0px 0px 0px 0px;
 	margin-top: 50px;
 	margin-bottom: @z-player-height;
 	box-sizing: content-box;
 	background-color: @background-color;
 	color: @primary-text-color;
+
 	.container > .row > .col-xs-12 {
 		@media(max-width: (@screen-tablet - 1)) {
 			padding: 0px;
 			margin: 0px;
 		}
 	}
+
 	.container > .row > .col-sm-12 {
 		@media(max-width: (@screen-tablet - 1)) {
 			padding: 0px;
@@ -659,7 +662,12 @@ fieldset[disabled] .z-btn.active {
 }
 
 #coming-soon {
-	background-color: black;
+	background: linear-gradient(
+      rgba(0, 0, 0, 0.7),
+      rgba(0, 0, 0, 0.9)
+    ), url('../../images/coming_soon_bg.jpg') no-repeat center center;
+	background-size: cover;
+	// background-color: black;
 	color: white;
 
 	input {

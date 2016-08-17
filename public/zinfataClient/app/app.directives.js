@@ -380,10 +380,11 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
       }
 
       function create(invitation) {
+        scope.waiting = true;
         Invitations.create(invitation, function(newInvitation) {
           // Re-populate invitation on this scope to match it with servers
           scope.invitation = newInvitation;
-          // scope.creating =   false;
+          scope.waiting =    false;
           clear();
           notify('success', 'New invitation created!');
 
@@ -391,15 +392,19 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
           scope.addMe({invitation: newInvitation});
         }, function(err) {
           notify('error', 'Failed to create new invitation.');
+          scope.waiting = false;
         });
       }
 
       function iDelete (invitation) {
+        scope.waiting = true;
         Invitations.delete(invitation, function (deletedInvite) {
           notify('success', 'Invitation deleted');
           scope.removeMe();
+          scope.waiting = false;
         }, function (err) {
           notify('error', 'Failed to delete invitation');
+          scope.waiting = false;
         });
       }
 
@@ -413,11 +418,11 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
         if (outcome === 'success') {
           msg =   message;
           type =  'success';
-          $log.info(msg);
+          // $log.info(msg);
         } else {
           msg =   message;
           type =  'error';
-          $log.error(msg);
+          // $log.error(msg);
         }
       }
 
@@ -430,19 +435,27 @@ app.directive('uniqueHandle', ['Users', '$q', '$log', '$filter',
       }
 
       function send(invitation) {
+        scope.waiting = true;
         Invitations.send(invitation, function(sentInvite) {
           notify('success', 'Invitation sent to ' + sentInvite.contact);
+          scope.invitation = sentInvite;
+          scope.waiting = false;
         }, function(err) {
           notify('error', err);
+          scope.waiting = false;
         });
       }
 
       function update(invitation) {
+        scope.waiting = true;
         Invitations.update(invitation, function(updatedInvite) {
           notify('success', 'Invitation successfully updated.');
+          scope.invitation = updatedInvite; // Update the invitation in the view too
           scope.editing = false;
+          scope.waiting = false;
         }, function(err) {
           notify('error', 'Invitation update failed.');
+          scope.waiting = false;
         });
       }
 
