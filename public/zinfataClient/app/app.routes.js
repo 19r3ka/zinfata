@@ -118,7 +118,11 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider',
     }).
     when('/invites', {
       templateUrl: '/partials/invitation',
-      controller:  'invitationCtrl' // must be root to see this
+      controller:  'invitationCtrl', // must be root to see this
+      access: {
+        // loginRequired: true,
+        // mustBeRoot: true
+      }
     }).
     otherwise({redirectTo: '/'});
 
@@ -144,13 +148,14 @@ AUTH, MessageSvc, UsersSvc, InvitationsSvc) {
   $rootScope.$on('$routeChangeStart', function(event, next) {
     var authorized;
     var splashPage = '/coming_soon';
+    var inviteManager = '/invites';
 
     // Make sure the next route is secured.
     forceSSL();
 
     // You see the comingSoon page if you have not been invited
     // TAKE THIS OUT ONCE TEST PERIOD IS PAST
-    if (next.originalPath !== splashPage) {
+    if (next.originalPath !== splashPage && next.originalPath !== inviteManager) {
       InvitationsSvc.verifyCookie(function () {}, function () {
         // Could not find or validate the cookie
         // Use window.location instead of $location to force full-page redirect
@@ -168,7 +173,7 @@ AUTH, MessageSvc, UsersSvc, InvitationsSvc) {
     }
 
     if (!!next.access) {
-      authorized = AuthenticationSvc.authorize(next.access.loginRequired);
+      authorized = AuthenticationSvc.authorize(next.access);
 
       if (authorized === AUTH.mustLogIn) {
         loginRedirectUrl = $location.url();
