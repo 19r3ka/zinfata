@@ -125,8 +125,8 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider',
   $locationProvider.html5Mode(true);
   $httpProvider.interceptors.push('APIInterceptor');
 }])
-.run(function($rootScope, $location, $log, AuthenticationSvc,
-AUTH, MessageSvc, UsersSvc) {
+.run(function($rootScope, $location, $window, $log, AuthenticationSvc,
+AUTH, MessageSvc, UsersSvc, InvitationsSvc) {
   /*variable to capture user's final destination
     in case of redirection to the /login page
     on protected route requests. */
@@ -143,10 +143,23 @@ AUTH, MessageSvc, UsersSvc) {
     to intercept and inject behaviors. */
   $rootScope.$on('$routeChangeStart', function(event, next) {
     var authorized;
+    var splashPage = '/coming_soon';
 
-    // make sure the next route is secured.
+    // Make sure the next route is secured.
     forceSSL();
 
+    // You see the comingSoon page if you have not been invited
+    // TAKE THIS OUT ONCE TEST PERIOD IS PAST
+    if (next.originalPath !== splashPage) {
+      InvitationsSvc.verifyCookie(function () {}, function () {
+        // Could not find or validate the cookie
+        // Use window.location instead of $location to force full-page redirect
+        $window.location.href = splashPage;
+      })
+    }
+
+    // You shall not pass, unknown visitor!
+    // log in or register
     if (next.originalPath === '/register') {
       loginRedirectUrl = null;
     } else if (!!loginRedirectUrl && next.originalPath !== '/login') {

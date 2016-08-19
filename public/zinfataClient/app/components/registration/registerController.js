@@ -27,6 +27,6 @@ function($scope, UsersSvc, MessageSvc, $location, $window, Invitations) {
     // Do nothing when the cookie checks out
   }, function(err) {
     // Regardless of code status,
-    $window.location.href = '/coming_soon';
+    // $window.location.href = '/coming_soon';
   });
 }]);

@@ -772,7 +772,7 @@ function(Invitations, $log, Cookies) {
     });
   }
 
-  /* Validate invitation code or verification cookie */
+  /* PRIVATE: Validate invitation code or verification cookie */
   function validate(query, success, failure) {
     Invitations.validate(query, function(validatedInvite) {
       return success(validatedInvite);
