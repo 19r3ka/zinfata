@@ -90,13 +90,20 @@ app.service('AuthenticationSvc', ['$rootScope', 'AUTH', 'ROUTES', 'SessionSvc',
     return false;
   };
 
-  self.authorize = function(loginRequired) {
+  self.authorize = function(routeAccess) {
     var result = AUTH.authorized;
     var logged = self.isAuthenticated();
 
-    if (!!loginRequired && !!!logged) {
+    if (('loginRequired' in routeAccess) && !!!logged) {
       result = AUTH.mustLogIn;
     }
+
+    if ('mustBeRoot' in routeAccess) {
+      if (Session.getCurrentUser() && (Session.getCurrentUser().role !== 'root')) {
+        result = AUTH.notAuthorized;
+      }
+    }
+
     return result;
   };
 }]);

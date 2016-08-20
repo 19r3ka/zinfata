@@ -35,21 +35,26 @@ app.controller('comingSoonCtrl', ['$scope', 'InvitationsSvc', '$log', '$timeout'
   /* Sends the invitation request to server */
   function request(invitation) {
     invitation.medium = 'email';
+    scope.loading = true;
     Invitations.create(invitation, function(newInvite) {
       notify('success', 'Demande reçu. Ton code d\'invitation suivra bientôt.');
+      scope.loading = false;
     }, function(err) {
       notify('error', 'Un problème est survenu. Réessayez un peu plus tard.', err);
+      scope.loading = false;
     });
   }
 
   /* Takes a validation code and validates it */
   function validate(code) {
+    scope.loading = true;
     Invitations.validate(code, function(invitation) {
       notify('success', 'Code accepté. Bienvenue sur Zinfata');
-      // TODO: Set validation cookie before redirecting to /register page...
+      scope.loading = false;
       Invitations.setCookie(invitation.cookie);
       $window.location.href = '/register';
     }, function(err) {
+      scope.loading = false;
       var message;
       if (err.status === 404) {
         message = 'Hmmm, ce code d\'invitation ne semble pas être valide.';

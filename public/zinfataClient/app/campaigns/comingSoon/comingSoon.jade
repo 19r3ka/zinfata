@@ -70,7 +70,8 @@ html.no-js
                   input.form-control(type='text', name='invitation_code', title='Code d\'invitation', ng-model='invitation.code', placeholder='Valide ton code d\'invitation', onClick="ga('send', 'event', { eventCategory: 'Invitations', eventAction: 'submit', eventLabel: 'Invitations Request Form - Submit', eventValue: 1});")
                   span.input-group-btn
                     button.btn.btn-default(type='submit', ng-click='validate(invitation.code)', title='Valide ton code', ng-disabled='!invitation.code || codeValidationForm.$invalid')
-                      i.fa.fa-unlock-alt
+                      i.fa.fa-unlock-alt(ng-hide='loading')
+                      i.fa.fa-spinner.fa-pulse.fa-fw(ng-show='loading')
                 .help-block(ng-messages='codeValidationForm.contact.$error', ng-show='codeValidationForm.contact.$touched', ng-hide='codeValidationForm.$submitted')
                   div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
             br

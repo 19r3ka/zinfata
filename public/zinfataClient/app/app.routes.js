@@ -120,8 +120,8 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider',
       templateUrl: '/partials/invitation',
       controller:  'invitationCtrl', // must be root to see this
       access: {
-        // loginRequired: true,
-        // mustBeRoot: true
+        loginRequired: true,
+        mustBeRoot: true
       }
     }).
     otherwise({redirectTo: '/'});
@@ -184,7 +184,12 @@ AUTH, MessageSvc, UsersSvc, InvitationsSvc) {
         $rootScope.$broadcast(AUTH.notAuthenticated);
         $location.path('login');
       } else if (authorized === AUTH.notAuthorized) {
-        // $location.path(403page);
+        MessageSvc.addMsg(
+          'danger',
+          'Permission denied to that resource.'
+        );
+        $rootScope.$broadcast(AUTH.notAuthorized);
+        $location.path('/');
       }
     }
   });
