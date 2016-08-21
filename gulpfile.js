@@ -70,7 +70,10 @@ gulp.task('inject-prod', ['compress', 'clean:index'], function() {
     ]), {read: false}
   );
 
-  return gulp.src([dest + 'index.jade'])
+  return gulp.src([
+    dest + 'index.jade',
+    dest + 'comingSoon.jade'
+  ])
   .pipe(inject(vendorStream, {starttag: '//- vendors:{{ext}}',
     transform: tagify}))
   .pipe(inject(zStream, {transform: tagify}))
@@ -120,7 +123,11 @@ gulp.task('replace-html', function() {
     replace(/script\(src='zinfataClient\/app\/*\)'/g, '');
   };
 
-  return gulp.src([zClient + 'layout.jade', zClient + 'index.jade'])
+  return gulp.src([
+    zClient + 'layout.jade',
+    zClient + 'index.jade',
+    zClient + 'app/campaigns/comingSoon/comingSoon.jade'
+  ])
   .pipe(replaceSrc())
   .pipe(removeClientCode())
   .pipe(gulp.dest(dest));
@@ -162,7 +169,10 @@ gulp.task('clean:cache', function(cb) {
 
 // Strip index.jade of all link and script tags
 gulp.task('clean:index', function() {
-  return gulp.src(zClient + 'index.jade')
+  return gulp.src([
+    zClient + 'index.jade',
+    zClient + 'app/campaigns/comingSoon/comingSoon.jade'
+  ])
   .pipe(replace(/script\(.*\)/g, ''))
   .pipe(replace(/link\(.*\)/g, ''))
   .pipe(gulp.dest(dest));

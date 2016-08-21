@@ -1,47 +1,20 @@
 extends ../zinfataClient/layout
-
 append head
     //- vendors:css
-    
-    
-    
-    
-    link(rel="stylesheet", href="/lib/bootstrap-3.3.5/css/bootstrap.min.css")
-    
-    
-    
-    
-    link(rel="stylesheet", href="/lib/font-awesome-4.5.0/css/font-awesome.min.css")
-    
-    
-    
-    
-    link(rel="stylesheet", href="/lib/jquery-ui-1.11.4/jquery-ui.min.css")
-    
-    
-    
-    
-    link(rel="stylesheet", href="/lib/ngImgCrop/ng-img-crop.css")
-    
-    
-    
-    
+    link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/ng-img-crop/0.3.2/ng-img-crop.css")
     //- endinject
-
     //- inject:css
-    
     link(rel="stylesheet", href="/dist/css/zinfata-0.5.5.11ddc0a57fcfae493a2da6e6d57a13a1.min.css")
-    
     //- endinject
-
     script.
         window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};
         ga.l = +new Date;
         ga('create', 'UA-80702504-1', 'auto');
         ga('require', 'autotrack');
         ga('send', 'pageview');
-    
-    
 block content
     div(ng-view)
         //- .jumbotron
@@ -50,143 +23,19 @@ block content
         //-     block z-content-area
         //-     .z-s-content-area(class='col-md-8 col-md-offset-2')
         //-         block z-s-content-area
-
 append scripts
     //- vendors:js
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    script(src="/lib/jquery/jquery-2.1.4.min.js")
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    script(src="/lib/jquery-ui-1.11.4/jquery-ui.min.js")
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    script(src="/lib/bootstrap-3.3.5/js/bootstrap.min.js")
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    script(src="/lib/angular-1.4.5/angular.min.js")
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    script(src="/lib/angular-1.4.5/angular-resource.min.js")
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    script(src="/lib/angular-1.4.5/angular-route.min.js")
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    script(src="/lib/angular-1.4.5/angular-messages.min.js")
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    script(src="/lib/angular-1.4.5/angular-cookies.min.js")
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    script(src="/lib/sound-manager-2/script/soundmanager2-nodebug-jsmin.js")
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    script(src="/lib/ngImgCrop/ng-img-crop.js")
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    script(src="https://code.jquery.com/jquery-2.1.4.min.js")
+    script(src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js")
+    script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-resource.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-route.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-messages.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-cookies.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/soundmanager2/2.97a.20150601/script/soundmanager2-nodebug-jsmin.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/ng-img-crop/0.3.2/ng-img-crop.js")
     //- endinject
-
     //- inject:js
-    script(src="/dist/js/zinfata-0.5.5.9958c11cddd8bd55a8d6d629441b2aad.min.js")
+    script(src="/dist/js/zinfata-0.5.5.484c40025c515120d4019101534b04ac.min.js")
     //- endinject
-

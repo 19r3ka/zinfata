@@ -7,7 +7,8 @@
                         h2 Log Into Zinfata
                             .small All of Togo music at the tip of your fingers.
                     p.text-center Not yet a member of Zinfata?
-                        a(href='register')  Register first!
+                        //- a(href='register')  Register first!
+                        a(href='coming_soon', target='_self')  Join our community now!
                     form(name='loginForm', role='form', novalidate)
                         .form-group(ng-class="{ 'has-error': loginForm.handle.$touched && loginForm.handle.$invalid }")
                             input.form-control(type='text', name='handle', placeholder='Handle', ng-model='credentials.handle', required, autofocus)

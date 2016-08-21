@@ -1,8 +1,9 @@
 module.exports = function(wagner) {
-  var express  = require('express');
-  var router   = express.Router();
-  var ZError   = wagner.invoke(function(ZOAuthError) {return ZOAuthError;});
-  var index    = 'zinfataClient/index';
+  var comingSoon  = 'zinfataClient/app/campaigns/comingSoon/comingSoon';
+  var express     = require('express');
+  var index       = 'zinfataClient/index';
+  var router      = express.Router();
+  var ZError      = wagner.invoke(function(ZOAuthError) {return ZOAuthError;});
   /*var passport = require('../config/passport');
 
   function isLoggedIn(req, res, next) {
@@ -11,8 +12,13 @@ module.exports = function(wagner) {
   }*/
 
   if (express().get('env') !== 'development') {
-    index = 'dist/index';
+    index       = 'dist/index';
+    comingSoon  = 'dist/comingSoon';
   }
+
+  router.get('/coming_soon', function(req, res) {
+    res.render(comingSoon, {title: 'Zinfata is Coming!'});
+  });
 
   router.get('/partials/:name', function(req, res) {
     var name = req.params.name;

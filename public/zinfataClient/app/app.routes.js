@@ -155,7 +155,7 @@ AUTH, MessageSvc, UsersSvc, InvitationsSvc) {
 
     // You see the comingSoon page if you have not been invited
     // TAKE THIS OUT ONCE TEST PERIOD IS PAST
-    if (next.originalPath !== splashPage && next.originalPath !== inviteManager) {
+    if (next.originalPath !== splashPage && next.originalPath !== inviteManager && next.originalPath != '/login') {
       InvitationsSvc.verifyCookie(function () {}, function () {
         // Could not find or validate the cookie
         // Use window.location instead of $location to force full-page redirect

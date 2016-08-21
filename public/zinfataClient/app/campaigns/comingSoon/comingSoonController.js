@@ -1,5 +1,12 @@
 app.controller('comingSoonCtrl', ['$scope', 'InvitationsSvc', '$log', '$timeout',
 '$window', function(scope, Invitations, log, $timeout, $window) {
+
+  /* Switch for invitation demand and code validation forms */
+  function gotCode(boolean, event) {
+    event.preventDefault(); //link won't navigate
+    scope.hasCode = boolean;
+  }
+
   /* Manages message div */
   function notify(outcome, message, response) {
     var text = message;
@@ -26,11 +33,6 @@ app.controller('comingSoonCtrl', ['$scope', 'InvitationsSvc', '$log', '$timeout'
     }, 5000);
   }
 
-  /* Switch for invitation demand and code validation forms */
-  function gotCode(boolean, event) {
-    event.preventDefault(); //link won't navigate
-    scope.hasCode = boolean;
-  }
 
   /* Sends the invitation request to server */
   function request(invitation) {
@@ -51,7 +53,8 @@ app.controller('comingSoonCtrl', ['$scope', 'InvitationsSvc', '$log', '$timeout'
     Invitations.validate(code, function(invitation) {
       notify('success', 'Code accepté. Bienvenue sur Zinfata');
       scope.loading = false;
-      Invitations.setCookie(invitation.cookie);
+      Invitations.setCookie(invitation.cookie);Connexion
+
       $window.location.href = '/register';
     }, function(err) {
       scope.loading = false;
