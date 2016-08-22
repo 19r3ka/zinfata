@@ -18,6 +18,14 @@ module.exports = {
     clientId:             process.env.Z_CLIENT_ID || 'zinfata',
     clientSecret:         process.env.Z_CLIENT_SECRET || "'pass'"
   },
+  admin: {
+    firstName: process.env.Z_ADMIN_NAME,
+    lastName:  process.env.Z_ADMIN_SURNAME,
+    handle:    process.env.Z_ADMIN_HANDLE,
+    email:     process.env.Z_ADMIN_EMAIL,
+    password:  process.env.Z_ADMIN_PWD,
+    role:      process.env.Z_ADMIN_ROLE
+  },
   mail:  {
     auth: {
       user: process.env.MAILER_EMAIL_ID,

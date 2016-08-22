@@ -1,19 +1,17 @@
 /* inspired by meanjs's config.js file */
 
 var _      = require('underscore');
-var path   = require('path');
 var chalk  = require('chalk');
-var Client = require(path.join(process.cwd(), 'models/OAuthClient'));
 var env    = require('dotenv');
 var fs     = require('fs');
 var glob   = require('glob');
 var path   = require('path');
+var Client = require(path.join(process.cwd(), 'models/OAuthClient'));
+var User   = require(path.join(process.cwd(), 'models/User'));
 
-/*
-  TODO: Database must have zinfataClient credentials;
-*/
-
-var initEnvVariables = function() {
+/* Loads development environment global variables */
+/* In production / staging, Heroku takes care of it for now. */
+var initEnvVariables = function initEnvVariables() {
   if (process.env.NODE_ENV === 'production') {
     return;
   }
@@ -21,7 +19,8 @@ var initEnvVariables = function() {
   env.load();
 };
 
-var initGlobalConfig = function() {
+/* Configures the server and exports basic configuration variables */
+var initGlobalConfig = function initGlobalConfig() {
   // ensure NODE_ENV is set
   validateEnvVariables();
 
@@ -55,10 +54,65 @@ var initGlobalConfig = function() {
   config.zinfata = require(path.resolve('./package.json'));
 
   registerClient(config.oauth2.clientId, config.oauth2.clientSecret);
+  registerAdmin(config.admin);
 
   return config;
 };
 
+/* If not Obama, someone has to be in charge of this Administration */
+var registerAdmin = function registerAdmin (credentials) {
+  var admin = {
+    handle: credentials.handle,
+    email: credentials.email
+  };
+
+  User.findOne(admin, function(err, client) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+
+    if (client) {
+      // if admin is root, all is well
+      if (client.role === 'root') {
+        console.info(chalk.green(
+          client.firstName + ' ' + client.lastName +
+          ' is in charge here!'
+        ));
+        return;
+      } else {
+        client.activated  = true;
+        client.role = 'root';
+      }
+    } else {
+      // no admin? create one asap
+      console.error(chalk.yellow('Nobody is in charge here.'));
+      console.info(chalk.white('Ending this anarchy...'));
+
+      admin = new User({
+        activated: true,
+        email:     credentials.email,
+        firstName: credentials.firstName,
+        handle:    credentials.handle,
+        lastName:  credentials.lastName,
+        password:  credentials.password,
+        role:      credentials.role
+      });
+    }
+
+    // There is a dirty admin to save now
+    admin.save(function (err, poz) {
+      if (err) {
+        console.error(chalk.yellow('Error swearing in the President of Zinfata!'));
+        console.error(err);
+      }
+
+      console.info(chalk.green('All hail President ' + poz.firstName));
+    });
+  });
+};
+
+/* Register Zinfata's client app */
 var registerClient = function registerClient(id, secret, hostname) {
   var redirectUri = (process.env.NODE_ENV === 'secure' ? 'https://' :
     'http://') + 'zinfata.com' + '/callback';
@@ -85,12 +139,13 @@ var registerClient = function registerClient(id, secret, hostname) {
         return;
       }
 
-      console.info(chalk.green('DONE'));
+      console.info(chalk.green('zinfataClient is now registered!'));
     });
   });
 };
 
-var validateEnvVariables = function() {
+/* Makes sure there is a NODE ENVIRONMENT defined to run with */
+var validateEnvVariables = function validateEnvVariables() {
   var files = glob.sync('./config/env/' + process.env.NODE_ENV + '.js');
   console.log();
   if (!files.length) {
@@ -107,7 +162,8 @@ var validateEnvVariables = function() {
   console.log(chalk.white('')); // reset console colors
 };
 
-var validateFilesAndFolders = function() {
+/* Essential files and folders must be there, else create them */
+var validateFilesAndFolders = function validateFilesAndFolders() {
   var audioFolder  = path.join(process.cwd(), 'uploads/audio');
   var envFile      = path.join(process.cwd(), '.env');
   var imageFolder  = path.join(process.cwd(), 'uploads/images');
