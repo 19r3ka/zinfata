@@ -8,7 +8,7 @@ module.exports = function(wagner) {
   wagner.invoke(function(ZOAuthError, Config) {
     ZError = ZOAuthError;
   });
-  var zUrl    = (process.env.NODE_ENV === 'secure' ? 'https://' : 'http://') +
+  var zUrl    = (process.env.NODE_ENV !== 'development' ? 'https://' : 'http://') +
     config.host + ':' + config.port;
 
   router.post('/', function(req, res, next) {
@@ -96,7 +96,7 @@ module.exports = function(wagner) {
     //if (!req.body.token_type_hint.match('refresh_token|acces_token')) {
     if (req.body.token_type_hint != 'refresh_token' &&
       req.body.token_type_hint != 'access_token') {
-      error = new ZError('invalid_request', 
+      error = new ZError('invalid_request',
         '\'token_type_hint\' parameter value must be ' +
         'either \'refresh_token\' or \'access_token\'');
       return next(error);

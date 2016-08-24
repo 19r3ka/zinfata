@@ -16,6 +16,27 @@ function generateCode() {
   return Math.floor(100000 + Math.random() * 899999);
 }
 
+function findOrCreate(invitation, callback) {
+  var Invitation = this;
+  Invitation.findOne({contact: invitation.contact}, function(err, invite) {
+    if (err) {
+      return callback(err, null);
+    }
+
+    if (!invite) {
+      var invite = new Invitation({
+        contact:  invitation.contact,
+        medium:   invitation.medium
+      });
+
+      return invite.save(callback);
+    }
+
+    // If found or created invitation
+    return callback(null, invite);
+  });
+}
+
 InvitationSchema.pre('validate', function(next) {
   if (!this.code) {
     this.code =   generateCode();
@@ -32,6 +53,10 @@ InvitationSchema.pre('save', function(next) {
 
   next();
 });
+
+InvitationSchema.statics.findOrCreate = findOrCreate;
+
+
 
 var invitationModel = mongoose.model('Invitation', InvitationSchema);
 module.exports = invitationModel;

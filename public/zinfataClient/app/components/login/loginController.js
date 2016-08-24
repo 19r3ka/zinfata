@@ -1,6 +1,7 @@
 app.controller('loginCtrl', ['$scope', '$rootScope', 'AUTH',
-'AuthenticationSvc', 'MessageSvc', '$location', '$log', function($scope,
-$rootScope, AUTH, AuthSvc, MessageSvc, $location, $log) {
+'AuthenticationSvc', 'MessageSvc', '$location', '$log', 'InvitationsSvc',
+function($scope, $rootScope, AUTH, AuthSvc, MessageSvc, $location, $log,
+  Invitations) {
   $scope.credentials = {
     handle:   '',
     password: ''
@@ -10,10 +11,17 @@ $rootScope, AUTH, AuthSvc, MessageSvc, $location, $log) {
     /*Authenticate the user with the server.
       returns access token. */
     AuthSvc.login(credentials, function(user) {
-      MessageSvc.addMsg('success', 'You are now logged in as ' + user.handle);
-      $scope.credentials = {};
-      $scope.loginForm.$setPristine();
-      $location.path('dashboard');
+      Invitations
+      // verifying email validates it thus creates cookie.
+      .verifyEmail(user.email, function(Invite) {
+        Invitations.setCookie(Invite.cookie);
+        MessageSvc.addMsg('success', 'You are now logged in as ' + user.handle);
+        $scope.credentials = {};
+        $scope.loginForm.$setPristine();
+        $location.path('dashboard');
+      }, function (err) {
+         $log.error('Danger, uninvited guest!', err);
+      })
     }, function(err) {
       var message;
       if (err === 'mustActivateAccount') {

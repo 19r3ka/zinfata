@@ -742,6 +742,7 @@ function(Invitations, $log, Cookies) {
     });
   }
 
+
   function send(invitation, success, failure) {
     Invitations.send({id: invitation._id}, function(sentInvite) {
       return success(sentInvite);
@@ -755,7 +756,7 @@ function(Invitations, $log, Cookies) {
     /* Set expiration date to a year from now */
     var expirationDate = new Date(Date.now() + (365 * 24 * 60 * 60 * 1000));
 
-    Cookies.put('vc', cookie, { expires: expirationDate });
+    Cookies.put('vc', cookie /*, { expires: expirationDate }*/);
   }
 
   /* Unsets the validation cookie */
@@ -823,6 +824,18 @@ function(Invitations, $log, Cookies) {
     });
   }
 
+  function verifyEmail(email, success, failure) {
+    var query = {
+      ec: email
+    };
+
+    validate(query, function(invitation) {
+      return success(invitation);
+    }, function(err) {
+      return failure(err);
+    });
+  }
+
   self.create =       create;
   self.delete =       iDelete;
   self.get =          get;
@@ -832,4 +845,5 @@ function(Invitations, $log, Cookies) {
   self.update =       update;
   self.validate =     validateCode;
   self.verifyCookie = verifyCookie;
+  self.verifyEmail =  verifyEmail;
 }]);

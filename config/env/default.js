@@ -28,10 +28,11 @@ module.exports = {
   },
   mail:  {
     auth: {
-      user: process.env.MAILER_EMAIL_ID,
-      pass: process.env.MAILER_EMAIL_PASSWORD
+      user: process.env.MAILER_EMAIL_ID || 'MAILER_EMAIL_ID',
+      pass: process.env.MAILER_EMAIL_PASSWORD || 'MAILER_EMAIL_PASSWORD',
     },
-    service: process.env.MAILER_HOST
+    from: process.env.MAILER_FROM || 'Zinfata',
+    service: process.env.MAILER_HOST || 'MAILER_SERVICE_PROVIDER'
   },
   uploads: {
     images: {

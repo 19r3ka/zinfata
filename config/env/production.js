@@ -4,8 +4,8 @@ module.exports = {
     privateKey: './config/sslcerts/key.pem',
     certificate: './config/sslcerts/cert.pem'
   },
-  port: process.env.PORT || 'PROD_PORT',
-  host: process.env.HOST || 'PROD_HOST',
+  port: process.env.PORT || 5000,
+  host: process.env.HOST || '0.0.0.0',
   db: {
     uri: process.env.MONGODB_URI || 'mongodb://' + (process.env.DB_HOST ||
       'localhost') + 'zProduction',
@@ -16,16 +16,6 @@ module.exports = {
   },
   app: {
     title: 'Zinfata App'
-  },
-  mailer: {
-    from: process.env.MAILER_FROM || 'Zinfata',
-    options: {
-      service: process.env.MAILER_SERVICE_PROVIDER || 'MAILER_SERVICE_PROVIDER',
-      auth: {
-        user: process.env.MAILER_EMAIL_ID || 'MAILER_EMAIL_ID',
-        pass: process.env.MAILER_PASSWORD || 'MAILER_PASSWORD'
-      }
-    }
   },
   facebook: {
     clientID: process.env.FACEBOOK_ID || 'APP_ID',

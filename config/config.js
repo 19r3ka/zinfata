@@ -1,13 +1,15 @@
 /* inspired by meanjs's config.js file */
 
-var _      = require('underscore');
-var chalk  = require('chalk');
-var env    = require('dotenv');
-var fs     = require('fs');
-var glob   = require('glob');
-var path   = require('path');
-var Client = require(path.join(process.cwd(), 'models/OAuthClient'));
-var User   = require(path.join(process.cwd(), 'models/User'));
+var _      =  require('underscore');
+var chalk  =  require('chalk');
+var env    =  require('dotenv');
+var fs     =  require('fs');
+var glob   =  require('glob');
+var path   =  require('path');
+var request = require('request');
+var Client =  require(path.join(process.cwd(), 'models/OAuthClient'));
+var Invite =  require(path.join(process.cwd(), 'models/Invitation'));
+var User   =  require(path.join(process.cwd(), 'models/User'));
 
 /* Loads development environment global variables */
 /* In production / staging, Heroku takes care of it for now. */
@@ -54,42 +56,73 @@ var initGlobalConfig = function initGlobalConfig() {
   config.zinfata = require(path.resolve('./package.json'));
 
   registerClient(config.oauth2.clientId, config.oauth2.clientSecret);
-  registerAdmin(config.admin);
+  registerAdmin(config);
 
   return config;
 };
 
+// Find or creates invitation for admins
+var inviteAdmin = function inviteAdmin(email, config) {
+  // Make sure even admin has an invitation right from the start
+  var invitation = {
+    contact:  email,
+    medium:   'email'
+  };
+
+  Invite.findOrCreate(invitation, function(err, invite) {
+    if (err) {
+      console.error(chalk.yellow('Couldn\'t find or create invitation for ' + invitation.email));
+      throw err;
+    }
+
+    if (!invite.codeSent) {
+      var zUrl    = (process.env.NODE_ENV !== 'development' ? 'https://' : 'http://') +
+        config.host + ':' + config.port + '/api/invites/' + invite._id + '/send';
+      request
+        .get({
+          url: zUrl
+        });
+    }
+
+    console.info(chalk.green(invite.contact + ' has been invited to Zinfata!'));
+    return invite;
+  });
+}
+
 /* If not Obama, someone has to be in charge of this Administration */
-var registerAdmin = function registerAdmin (credentials) {
-  var admin = {
+var registerAdmin = function registerAdmin (config) {
+  var credentials = config.admin;
+  var query = {
     handle: credentials.handle,
     email: credentials.email
   };
 
-  User.findOne(admin, function(err, client) {
+  var changed = false;
+
+  User.findOne(query, function(err, admin) {
     if (err) {
       console.log(err);
-      return;
+      return false;
     }
 
-    if (client) {
+    if (admin) {
       // if admin is root, all is well
-      if (client.role === 'root') {
+      if (admin.role === 'root') {
         console.info(chalk.green(
-          client.firstName + ' ' + client.lastName +
+          admin.firstName + ' ' + admin.lastName +
           ' is in charge here!'
         ));
-        return;
       } else {
-        client.activated  = true;
-        client.role = 'root';
+        admin.activated = true;
+        admin.role =      'root';
+        changed =         true;
       }
     } else {
       // no admin? create one asap
       console.error(chalk.yellow('Nobody is in charge here.'));
       console.info(chalk.white('Ending this anarchy...'));
 
-      admin = new User({
+      var admin = new User({
         activated: true,
         email:     credentials.email,
         firstName: credentials.firstName,
@@ -98,17 +131,25 @@ var registerAdmin = function registerAdmin (credentials) {
         password:  credentials.password,
         role:      credentials.role
       });
+
+      changed = true;
     }
 
     // There is a dirty admin to save now
-    admin.save(function (err, poz) {
-      if (err) {
-        console.error(chalk.yellow('Error swearing in the President of Zinfata!'));
-        console.error(err);
-      }
+    if (changed) {
+      admin.save(function (err, poz) {
+        if (err) {
+          console.error(chalk.yellow('Error swearing in the President of Zinfata!'));
+          console.error(err);
+          return false;
+        }
 
-      console.info(chalk.green('All hail President ' + poz.firstName));
-    });
+        /* Signal that all went well */
+        console.info(chalk.green('All hail President ' + poz.firstName));
+      });
+    }
+
+    inviteAdmin(admin.email, config);
   });
 };
 
@@ -126,8 +167,10 @@ var registerClient = function registerClient(id, secret, hostname) {
       console.info(chalk.green('zinfataClient is registered!'));
       return;
     }
+
     console.error(chalk.yellow('ZinfataClient is not registered!'));
     console.info(chalk.white('Registering ZinfataClient...'));
+
     Client.create({
       clientId:     id,
       clientSecret: secret,
@@ -135,8 +178,7 @@ var registerClient = function registerClient(id, secret, hostname) {
     }, function(err, zClient) {
       if (err) {
         console.error(chalk.yellow('Error registering zinfataClient!'));
-        console.error(err);
-        return;
+        throw err;
       }
 
       console.info(chalk.green('zinfataClient is now registered!'));

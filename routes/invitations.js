@@ -34,6 +34,8 @@ module.exports = function(wagner) {
             query.cookie =  req.query.vc;
           } else if (!!req.query.ic) { // there's an invitation code instead
             query.code =    req.query.ic;
+          } else if (!!req.query.ec) { // there is an email contact to check
+            query.contact = req.query.ec;
           } else {
             // There is no invitation code or verification cookie
             return next(new ZError('bad_param', 'There is no invitation code or cookie to validate.'));
