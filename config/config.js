@@ -76,7 +76,8 @@ var inviteAdmin = function inviteAdmin(email, config) {
     }
 
     if (!invite.codeSent) {
-      var zUrl    = (process.env.NODE_ENV !== 'development' ? 'https://' : 'http://') +
+      var zUrl    = ((process.env.NODE_ENV !== 'development' &&
+        config.devHosts.indexOf(config.host) === -1) ? 'https://' : 'http://') +
         config.host + ':' + config.port + '/api/invites/' + invite._id + '/send';
       request
         .get({

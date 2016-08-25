@@ -122,7 +122,8 @@ db.once('open', function() {
 });
 
 /*app.listen(config.port, config.host, function() {*/
-var server = (process.env.NODE_ENV !== 'development' ? 'https://' : 'http://') +
+var server = ((process.env.NODE_ENV !== 'development' &&
+  config.devHosts.indexOf(config.host) === -1) ? 'https://' : 'http://') +
   config.host + ':' + config.port;
 
 console.log('----');

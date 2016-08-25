@@ -51,20 +51,20 @@ module.exports = function(wagner) {
               return next(new ZError('not_found', 'Not a valid invitation code.'));
             }
 
-            /*Since we are just verifying a verification cookie
-            Return after sending back the corresponding invitation*/
-            if (query.cookie) {
-              return res.json(invitation)
+            // If validating for the first time, mark as accepted with a verification cookie
+            if (!invitation.accepted) {
+              PasswordToken.generateToken(function(cookie) {
+                invitation.cookie = cookie;
+                invitation.accepted = true;
+
+                invitation.save(function(err, newInvitation) {
+                  return res.json(newInvitation);
+                });
+              });
             }
 
-            // Otherwise, go ahead and send an invitation object with a verification cookie
-            PasswordToken.generateToken(function(cookie) {
-              invitation.cookie = cookie;
-              invitation.accepted = true;
-              invitation.save(function(err, newInvitation) {
-                res.json(newInvitation);
-              });
-            });
+            // If just checking an email or a cookie then...
+            return res.json(invitation)
           });
         });
     router

@@ -8,7 +8,8 @@ module.exports = function(wagner) {
   wagner.invoke(function(ZOAuthError, Config) {
     ZError = ZOAuthError;
   });
-  var zUrl    = (process.env.NODE_ENV !== 'development' ? 'https://' : 'http://') +
+  var zUrl    = ((process.env.NODE_ENV !== 'development' &&
+    config.devHosts.indexOf(config.host) === -1) ? 'https://' : 'http://') +
     config.host + ':' + config.port;
 
   router.post('/', function(req, res, next) {
@@ -25,6 +26,7 @@ module.exports = function(wagner) {
       return next(error);
     }
     //proxy.web(req, res, {target: zUrl + '/oauth2/token'})
+
     request.post({
       url: zUrl + '/oauth2/token',
       form: {

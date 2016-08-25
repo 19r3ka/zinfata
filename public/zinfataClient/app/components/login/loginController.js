@@ -12,7 +12,6 @@ function($scope, $rootScope, AUTH, AuthSvc, MessageSvc, $location, $log,
       returns access token. */
     AuthSvc.login(credentials, function(user) {
       Invitations
-      // verifying email validates it thus creates cookie.
       .verifyEmail(user.email, function(Invite) {
         Invitations.setCookie(Invite.cookie);
         MessageSvc.addMsg('success', 'You are now logged in as ' + user.handle);

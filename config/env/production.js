@@ -5,7 +5,7 @@ module.exports = {
     certificate: './config/sslcerts/cert.pem'
   },
   port: process.env.PORT || 5000,
-  host: process.env.HOST || '0.0.0.0',
+  host: process.env.HOST || 'localhost',
   db: {
     uri: process.env.MONGODB_URI || 'mongodb://' + (process.env.DB_HOST ||
       'localhost') + 'zProduction',

@@ -136,9 +136,10 @@ AUTH, MessageSvc, UsersSvc, InvitationsSvc) {
     on protected route requests. */
   var loginRedirectUrl;
 
-  // Reinforces SSL
+  // Reinforces SSL on all non-dev addresses
   function forceSSL() {
-    if ($location.protocol() !== 'https' && $location.host() !== 'localhost') {
+    if ($location.protocol() !== 'https' &&
+      ['localhost', '0.0.0.0', '127.0.0.1'].indexof($location.host()) === -1) {
       $location.url = $location.absUrl().replace('http', 'https');
     }
   }
@@ -156,11 +157,11 @@ AUTH, MessageSvc, UsersSvc, InvitationsSvc) {
     // You see the comingSoon page if you have not been invited
     // TAKE THIS OUT ONCE TEST PERIOD IS PAST
     if (next.originalPath !== splashPage && next.originalPath !== inviteManager && next.originalPath != '/login') {
-      InvitationsSvc.verifyCookie(function () {}, function () {
+      InvitationsSvc.verifyCookie(function() {}, function() {
         // Could not find or validate the cookie
         // Use window.location instead of $location to force full-page redirect
         $window.location.href = splashPage;
-      })
+      });
     }
 
     // You shall not pass, unknown visitor!
