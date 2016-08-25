@@ -139,7 +139,7 @@ AUTH, MessageSvc, UsersSvc, InvitationsSvc) {
   // Reinforces SSL on all non-dev addresses
   function forceSSL() {
     if ($location.protocol() !== 'https' &&
-      ['localhost', '0.0.0.0', '127.0.0.1'].indexof($location.host()) === -1) {
+      ['localhost', '0.0.0.0', '127.0.0.1'].indexOf($location.host()) === -1) {
       $location.url = $location.absUrl().replace('http', 'https');
     }
   }
