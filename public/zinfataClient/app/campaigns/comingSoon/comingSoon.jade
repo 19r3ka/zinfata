@@ -67,7 +67,7 @@ html.no-js
                 .input-group(ng-class="{ 'has-error': invitationRequestForm.contact.$touched && invitationRequestForm.contact.$invalid }")
                   input.form-control(type='email', name='contact', title='Demande d\'invitation', ng-model='invitation.contact', placeholder='Rejoins-nous par email')
                   span.input-group-btn
-                    button.btn.btn-default(type='submit', ng-click='request(invitation)', title='Envoie ta demande', ng-disabled='!invitation.contact || invitationRequestForm.$invalid', , onClick="ga('send', 'event', { eventCategory: 'Invitations', eventAction: 'submit', eventLabel: 'Invitations Request Form - Submit', eventValue: 1});")
+                    button.btn.btn-default(type='submit', ng-click='request(invitation)', title='Envoie ta demande', ng-disabled='!invitation.contact || invitationRequestForm.$invalid', onClick="ga('send', 'event', { eventCategory: 'Invitations', eventAction: 'submit', eventLabel: 'Invitations Request Form - Submit', eventValue: 1});")
                       i.fa.fa-envelope
                 .help-block(ng-messages='invitationRequestForm.contact.$error', ng-show='invitationRequestForm.contact.$touched', ng-hide='invitationRequestForm.$submitted')
                   div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
