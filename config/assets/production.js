@@ -8,6 +8,10 @@ module.exports = {
           'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css',
           'https://cdnjs.cloudflare.com/ajax/libs/ng-img-crop/0.3.2/ng-img-crop.css'
         ],
+        ga: [
+          'https://www.google-analytics.com/analytics.js',
+          'https://cdnjs.cloudflare.com/ajax/libs/autotrack/0.6.5/autotrack.js'
+        ],
         js: [
           'https://code.jquery.com/jquery-2.1.4.min.js',
           'https://code.jquery.com/ui/1.11.4/jquery-ui.min.js',

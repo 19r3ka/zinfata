@@ -6,6 +6,10 @@ module.exports = {
         'public/lib/font-awesome-4.5.0/css/font-awesome.css',
         'public/lib/ngImgCrop/ng-img-crop.css'
       ],
+      ga: [
+        'https://www.google-analytics.com/analytics.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/autotrack/0.6.5/autotrack.js'
+      ],
       js: [
         'public/lib/jquery/jquery-2.1.4.min.js',
         'public/lib/bootstrap-3.3.5/js/bootstrap.js',

@@ -18,8 +18,10 @@ append head
         ga('create', 'UA-80702504-1', 'auto');
         ga('require', 'autotrack');
         ga('send', 'pageview');
+    //- ga:js
     script(async src="https://www.google-analytics.com/analytics.js")
     script(async src="https://cdnjs.cloudflare.com/ajax/libs/autotrack/0.6.5/autotrack.js")
+    //- endinject
 block content
     div(ng-view)
         //- .jumbotron

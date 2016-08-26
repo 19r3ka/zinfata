@@ -69,11 +69,14 @@ gulp.task('inject-prod', ['compress', 'clean:index'], function() {
       prodAssets.client.lib.js,
     ]), {read: false}
   );
+  // var gaStream = gulp.src(prodAssets.client.lib.ga, {read: false});
 
   return gulp.src([
     dest + 'index.jade',
     dest + 'comingSoon.jade'
   ])
+  // .pipe(inject(gaStream, {starttag: '//- ga:js',
+    // transform: tagify}))
   .pipe(inject(vendorStream, {starttag: '//- vendors:{{ext}}',
     transform: tagify}))
   .pipe(inject(zStream, {transform: tagify}))
@@ -104,7 +107,8 @@ gulp.task('inject-dev', function() {
   .pipe(gulp.dest(zClient));
 });
 
-// Removes dev script and link tags from jade templates
+// Removes Zinfata dev script and link tags from jade templates
+// Replaces Vendor CSS and JS with minified versions
 // optimizing for production
 gulp.task('replace-html', function() {
   var oldVal;
