@@ -17,7 +17,14 @@ html.no-js
       //- inject:css
       link(rel="stylesheet", href="/stylesheets/zinfata.css")
       //- endinject
-
+      script.
+        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};
+        ga.l = +new Date;
+        ga('create', 'UA-80702504-1', 'auto');
+        ga('require', 'autotrack');
+        ga('send', 'pageview');
+      script(async src="https://www.google-analytics.com/analytics.js")
+      script(async src="https://cdnjs.cloudflare.com/ajax/libs/autotrack/0.6.5/autotrack.js")
   body#coming-soon(ng-app='zinfataClient')
     <!--[if lt IE 8]>
     p.browsehappy
@@ -58,7 +65,7 @@ html.no-js
                 .input-group(ng-class="{ 'has-error': invitationRequestForm.contact.$touched && invitationRequestForm.contact.$invalid }")
                   input.form-control(type='email', name='contact', title='Demande d\'invitation', ng-model='invitation.contact', placeholder='Rejoins-nous par email')
                   span.input-group-btn
-                    button.btn.btn-default(type='submit', ng-click='request(invitation)', title='Envoie ta demande', ng-disabled='!invitation.contact || invitationRequestForm.$invalid')
+                    button.btn.btn-default(type='submit', ng-click='request(invitation)', title='Envoie ta demande', ng-disabled='!invitation.contact || invitationRequestForm.$invalid', , onClick="ga('send', 'event', { eventCategory: 'Invitations', eventAction: 'submit', eventLabel: 'Invitations Request Form - Submit', eventValue: 1});")
                       i.fa.fa-envelope
                 .help-block(ng-messages='invitationRequestForm.contact.$error', ng-show='invitationRequestForm.contact.$touched', ng-hide='invitationRequestForm.$submitted')
                   div(ng-messages-include='/zinfataClient/app/shared/messages/formMessages.html')
@@ -69,9 +76,9 @@ html.no-js
             #code(ng-show='hasCode')
               form(name='codeValidationForm', role='form', novalidate)
                 .input-group(ng-class="{ 'has-error': codeValidationForm.contact.$touched && codeValidationForm.contact.$invalid }")
-                  input.form-control(type='text', name='invitation_code', title='Code d\'invitation', ng-model='invitation.code', placeholder='Valide ton code d\'invitation', onClick="ga('send', 'event', { eventCategory: 'Invitations', eventAction: 'submit', eventLabel: 'Invitations Request Form - Submit', eventValue: 1});")
+                  input.form-control(type='text', name='invitation_code', title='Code d\'invitation', ng-model='invitation.code', placeholder='Valide ton code d\'invitation')
                   span.input-group-btn
-                    button.btn.btn-default(type='submit', ng-click='validate(invitation.code)', title='Valide ton code', ng-disabled='!invitation.code || codeValidationForm.$invalid')
+                    button.btn.btn-default(type='submit', ng-click='validate(invitation.code)', title='Valide ton code', ng-disabled='!invitation.code || codeValidationForm.$invalid', onClick="ga('send', 'event', { eventCategory: 'Invitations', eventAction: 'submit', eventLabel: 'Invitations Code Validation Form - Submit', eventValue: 1});")
                       i.fa.fa-unlock-alt(ng-hide='loading')
                       i.fa.fa-spinner.fa-pulse.fa-fw(ng-show='loading')
                 .help-block(ng-messages='codeValidationForm.contact.$error', ng-show='codeValidationForm.contact.$touched', ng-hide='codeValidationForm.$submitted')
