@@ -20,6 +20,11 @@ module.exports = function(wagner) {
     res.render(comingSoon, {title: 'Zinfata is Coming!'});
   });
 
+  // Special route for Google Search Console verification html file
+  /*router.get(/^google/), function (req, res, next) {
+    res.render('google28e97ac10741eeb.html');
+  }*/
+
   router.get('/partials/:name', function(req, res) {
     var name = req.params.name;
     res.render('zinfataClient/app/components/' + name + '/' + name);
