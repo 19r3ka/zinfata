@@ -11,8 +11,14 @@
   "authors": "Yem Ahiatsi <yemahiatsi@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node ./bin/www",
-    "test": "./node_modules/.bin/mocha --reporter spec"
+    "postinstall": "typings install",
+    "start": "gulp",
+    "start:ts": "tsc && concurrently \"npm run tsc:w\" \"node ./bin/www\" ",
+    "test": "./node_modules/.bin/mocha --reporter spec",
+    "tsc": "tsc",
+    "tsc:w": "tsc -w",
+    "typings": "typings",
+    "update": "npm update && npm prune"
   },
   "engines": {
     "node": "4.4.4",
@@ -77,6 +83,7 @@
     "mocha": "^2.4.5",
     "psi": "2.0.4",
     "run-sequence": "^1.1.5",
-    "supertest": "^1.1.0"
+    "supertest": "^1.1.0",
+    "typings": "^1.3.3"
   }
 }
