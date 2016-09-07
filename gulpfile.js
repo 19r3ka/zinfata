@@ -14,14 +14,16 @@ var inject       = require('gulp-inject');
 var less         = require('gulp-less');
 var localtunnel  = require('localtunnel');
 var md5          = require('MD5');
+var merge        = require('merge2');
 var minify       = require('gulp-cssmin');
 var ngAnnotate   = require('gulp-ng-annotate');
 var nodemon      = require('gulp-nodemon');
 var path         = require('path');
+var pageSpeed    = require('psi');
 var rename       = require('gulp-rename');
 var replace      = require('gulp-replace');
 var runSequence  = require('run-sequence');
-var pageSpeed    = require('psi');
+var ts           = require('gulp-typescript');
 var uglify       = require('gulp-uglify');
 
 var defAssets    = require('./config/assets/default');
@@ -36,6 +38,8 @@ var html         = zClient + 'app/*.jade';
 var images       = 'public/images/';
 var JSFile       = 'zinfata-' + version + '.js';
 var lessFiles    = cssFolder + 'less/*.less';
+var tsProject    = ts.createProject("tsconfig.json");
+var tsBuilt      = "built";
 var psiKey       = ''; // change this value with Page Speed Insight's API key
 var site         = ''; // using heroku local in prod env
 
@@ -171,6 +175,20 @@ gulp.task('clean:cache', function(cb) {
   return cache.clearAll(cb);
 });
 
+gulp.task('tsc', function() {
+  var tsResult = tsProject.src()
+    .pipe(ts(tsProject))
+
+  return merge([ // Run two gulp.dist concurrently (gate condition)
+    tsResult.dts.pipe(gulp.dest('src/tds')),
+    tsResult.js.pipe(gulp.dest('src'))
+  ])
+});
+
+gulp.task('tsc:watch', ['tsc', 'nodemon'], function() {
+  gulp.watch('src/*.ts', ['tsc']);
+});
+
 // Strip index.jade of all link and script tags
 gulp.task('clean:index', function() {
   return gulp.src([
@@ -243,17 +261,18 @@ gulp.task('nodemon', function() {
       '--gc_interval=100'],
     ext: 'js, html',
     watch: _.union(defAssets.server.models, defAssets.server.routes,
-      defAssets.server.config, defAssets.server.gulpConfig)
+      defAssets.server.config, defAssets.server.gulpConfig, 'src/*.js')
   });
 });
 
-gulp.task('watch', ['nodemon', 'browserSync', 'less', 'js'], function() {
+gulp.task('watch', ['tsc', 'nodemon', 'browserSync', 'less', 'js'], function() {
   gulp.watch(defAssets.client.less, ['less']);
   gulp.watch(defAssets.client.js, ['js']);
+  gulp.watch('src/*.ts', ['tsc']);
 });
 
 gulp.task('default', function(cb) {
-  runSequence(['less', 'nodemon', 'browserSync', 'watch'], cb);
+  runSequence(['tsc', 'less', 'nodemon', 'browserSync', 'watch'], cb);
 });
 
 /* Runs Google's Page Speed Insight against the mobile version of app */

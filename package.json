@@ -13,6 +13,7 @@
   "scripts": {
     "postinstall": "typings install",
     "start": "gulp",
+    "start:server": "gulp nodemon",
     "start:ts": "tsc && concurrently \"npm run tsc:w\" \"node ./bin/www\" ",
     "test": "./node_modules/.bin/mocha --reporter spec",
     "tsc": "tsc",
@@ -80,6 +81,7 @@
     "karma-mocha": "^0.2.1",
     "karma-mocha-reporter": "^1.1.5",
     "localtunnel": "1.8.1",
+    "merge2": "^1.0.2",
     "mocha": "^2.4.5",
     "psi": "2.0.4",
     "run-sequence": "^1.1.5",
