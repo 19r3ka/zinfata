@@ -3,7 +3,9 @@
     "declaration": true,
     "module": "commonjs",
     "noImplicitAny": true,
+    "outDir": "built/",
     "removeComments": false,
+    "rootDir": "src/",
     "sourceMap": true,
     "target": "es5"
   },

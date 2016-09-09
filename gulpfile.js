@@ -180,8 +180,8 @@ gulp.task('tsc', function() {
     .pipe(ts(tsProject))
 
   return merge([ // Run two gulp.dist concurrently (gate condition)
-    tsResult.dts.pipe(gulp.dest('src/tds')),
-    tsResult.js.pipe(gulp.dest('src'))
+    tsResult.dts.pipe(gulp.dest('built/tds')),
+    tsResult.js.pipe(gulp.dest('built'))
   ])
 });
 
