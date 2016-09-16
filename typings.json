@@ -1,20 +1,31 @@
 {
   "name": "zinfata",
   "dependencies": {
-    "chalk": "registry:npm/chalk#1.1.1+20160812215109"
+    "chai-as-promised": "registry:npm/chai-as-promised#5.1.0+20160310030142",
+    "chalk": "registry:npm/chalk#1.1.1+20160812215109",
+    "es6-promise": "registry:npm/es6-promise#3.0.0+20160723033700",
+    "lodash": "registry:npm/lodash#4.0.0+20160723033700"
   },
   "globalDependencies": {
+    "body-parser": "registry:dt/body-parser#0.0.0+20160619023215",
     "chai": "registry:dt/chai#3.4.0+20160601211834",
+    "chai-as-promised": "registry:dt/chai-as-promised#0.0.0+20160423070304",
+    "compression": "registry:dt/compression#0.0.0+20160501162003",
+    "cookie-parser": "registry:dt/cookie-parser#1.3.4+20160316155526",
     "dotenv": "registry:dt/dotenv#2.0.0+20160327131627",
     "express": "registry:dt/express#4.0.0+20160708185218",
     "express-serve-static-core": "registry:dt/express-serve-static-core#4.0.0+20160829034835",
+    "express-session": "registry:dt/express-session#0.0.0+20160819134112",
     "form-data": "registry:dt/form-data#0.0.0+20160724024111",
     "glob": "registry:dt/glob#5.0.10+20160317120654",
+    "helmet": "registry:dt/helmet#0.0.0+20160512043842",
     "mime": "registry:dt/mime#0.0.0+20160316155526",
     "minimatch": "registry:dt/minimatch#2.0.8+20160317120654",
     "mocha": "registry:dt/mocha#2.2.5+20160720003353",
     "node": "registry:dt/node#6.0.0+20160907103612",
+    "promises-a-plus": "registry:dt/promises-a-plus#0.0.0+20160317120654",
     "request": "registry:dt/request#0.0.0+20160726020908",
+    "serve-favicon": "registry:dt/serve-favicon#0.0.0+20160316155526",
     "serve-static": "registry:dt/serve-static#0.0.0+20160606155157",
     "underscore": "registry:dt/underscore#1.7.0+20160906141057"
   }

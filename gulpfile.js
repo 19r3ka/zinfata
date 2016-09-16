@@ -185,8 +185,8 @@ gulp.task('tsc', function() {
   ])
 });
 
-gulp.task('tsc:watch', ['tsc', 'nodemon'], function() {
-  gulp.watch('src/*.ts', ['tsc']);
+gulp.task('tsc:watch', ['tsc'], function() {
+  gulp.watch('./src/*/*.ts', ['tsc']);
 });
 
 // Strip index.jade of all link and script tags
@@ -268,7 +268,7 @@ gulp.task('nodemon', function() {
 gulp.task('watch', ['tsc', 'nodemon', 'browserSync', 'less', 'js'], function() {
   gulp.watch(defAssets.client.less, ['less']);
   gulp.watch(defAssets.client.js, ['js']);
-  gulp.watch('src/*.ts', ['tsc']);
+  gulp.watch('./src/*/*.ts', ['tsc']);
 });
 
 gulp.task('default', function(cb) {

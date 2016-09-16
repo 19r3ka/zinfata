@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = {
+export = {
   app: {
     title:        "Zinfata",
     description:  "la première application web entièrement" +
@@ -8,19 +8,14 @@ module.exports = {
     keywords:     "Togo music, musique togolaise",
     GATrackingID: process.env.GA_TRACKING_ID
   },
-  devHosts: [
-    "localhost",
-    "0.0.0.0",
-    "127.0.0.1"
-  ],
+  domain: process.env.DOMAIN,
   port: process.env.PORT || 3000,
   host: process.env.HOST || "localhost",
   logo: "",
   favicon: "",
   oauth2:  {
-    accessTokenLifetime:  900, // 15 minutes
+    accessTokenLifetime:  1800, // 30 minutes
     grants:               ["password", "refresh_token"],
-    model:                require("../../models/OAuth"),
     refreshTokenLifetime: 604800, // 1 week
     clientId:             process.env.Z_CLIENT_ID || "zinfata",
     clientSecret:         process.env.Z_CLIENT_SECRET || "\"pass\""
@@ -41,6 +36,15 @@ module.exports = {
     from: process.env.MAILER_FROM || "Zinfata",
     service: process.env.MAILER_HOST || "MAILER_SERVICE_PROVIDER"
   },
+  sessionCookie: {
+    maxAge: 24 * (60 * 60 * 1000), // TTL 24h
+    httpOnly: true, // protection from JS/Browser access
+    secure: false // Set to true to only set cookie in https mode
+  },
+  sessionSecret: process.env.SESSION_SECRET || "ZINFATA", // Never use the default in prod
+  // sessionKey is the cookie session name
+  sessionKey: "sessionId",
+  sessionCollection: "sessions",
   uploads: {
     images: {
       dest: "uploads/images",
