@@ -1,5 +1,3 @@
-// <reference path="../../typings/index.d.ts" />
-
 /*
  * Ensures the existence of NODE_ENV, global variables and
  * app's essential working folders and files.
