@@ -26,11 +26,11 @@ const configKeys: string[] = [
   "domain",
   "port",
   "host",
+  "log",
   "logo",
   "favicon",
   "oauth2",
   "admin",
-  "mail",
   "uploads",
   "db",
   "mailer",
@@ -40,6 +40,7 @@ const configKeys: string[] = [
   "linkedin",
   "github",
   "paypal",
+  "seedDB",
   "sessionCollection",
   "sessionCookie",
   "sessionKey",
@@ -114,8 +115,8 @@ describe("Config", () => {
 
     it("Initializes Env Variables when not in production.", () => {
       return config.initEnvVariables()
-        .should.eventually.be.fulfilled
-        .and.contain.all.keys(envKeys);
+        .should.be.fulfilled
+        .and.eventually.contain.all.keys(envKeys);
     });
 
     it("Does not initialize Env Variables when in production.", () => {
@@ -144,6 +145,7 @@ describe("Config", () => {
     });
 
     it("Returns object with environment-specific assets", () => {
+
       process.env.NODE_ENV = "development";
 
       return config.loadAssets(process.env.NODE_ENV)
@@ -153,6 +155,7 @@ describe("Config", () => {
   });
 
   describe("#loadEnvVariables()", () => {
+
     it("Rejects call without environment specified", () => {
       return config.loadEnvVariables()
         .should.be.rejectedWith("No environment specified!");
@@ -367,14 +370,15 @@ describe("Config", () => {
     });
   });
 
-  describe.only("#init()", () => {
+  describe("#init()", () => {
     // Add "utils" as one more key to check after initialization
-    configKeys.push("utils");
+    // configKeys.push("utils");
 
     it("Returns object with global variables present.", () => {
       return config.init()
         .should.be.fulfilled
-        .and.eventually.contain.all.keys(configKeys);
+        .and.eventually.contain.all.keys(configKeys)
+        .and.eventually.have.property("utils");
     });
   });
 });

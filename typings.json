@@ -1,11 +1,10 @@
 {
   "name": "zinfata",
   "dependencies": {
-    "chai-as-promised": "registry:npm/chai-as-promised#5.1.0+20160310030142",
     "chalk": "registry:npm/chalk#1.1.1+20160812215109",
+    "debug": "registry:npm/debug#2.0.0+20160723033700",
     "es6-promise": "registry:npm/es6-promise#3.0.0+20160723033700",
-    "lodash": "registry:npm/lodash#4.0.0+20160723033700",
-    "mongodb": "registry:npm/mongodb#2.1.0+20160721204323"
+    "lodash": "registry:npm/lodash#4.0.0+20160723033700"
   },
   "globalDependencies": {
     "body-parser": "registry:dt/body-parser#0.0.0+20160619023215",
@@ -27,7 +26,9 @@
     "mocha": "registry:dt/mocha#2.2.5+20160720003353",
     "mongodb": "registry:dt/mongodb#2.1.0+20160602142941",
     "mongoose": "registry:dt/mongoose#4.5.9+20160826204928",
+    "morgan": "registry:dt/morgan#1.7.0+20160524142355",
     "node": "registry:dt/node#6.0.0+20160907103612",
+    "promise": "registry:dt/promise#7.1.1+20160602154553",
     "promises-a-plus": "registry:dt/promises-a-plus#0.0.0+20160317120654",
     "request": "registry:dt/request#0.0.0+20160726020908",
     "serve-favicon": "registry:dt/serve-favicon#0.0.0+20160316155526",

@@ -4,7 +4,9 @@
 
 "use strict";
 
-import config = require("../config");
+import cfgPromise = require("../config");
+import logPromise = require("./logger");
+import server     = require("./server");
 
 import * as _              from "lodash";
 import * as bodyParser     from "body-parser";
@@ -17,6 +19,7 @@ import * as favicon        from "serve-favicon";
 import * as helmet         from "helmet";
 import * as http           from "http";
 import * as methodOverride from "method-override";
+import * as morgan         from "morgan";
 import * as session        from "express-session";
 import * as path           from "path";
 import {Promise}           from "es6-promise";
@@ -53,12 +56,11 @@ export = {
 
 /**
  *  Creates and configures the Express Application
+ *  Returns http server
  */
-function init(db: any): Promise<express.Express> {
+function init(db: any): Promise<http.Server> {
   // Define express app
   const app: express.Express = express();
-
-
 
   // Initialize local variables
   return initLocalVariables(app)
@@ -97,7 +99,8 @@ function init(db: any): Promise<express.Express> {
     .then((app) => {
       // Define error handling route and logic
       return initErrorRoutes(app);
-    });
+    })
+    .then(server());
 }
 
 /**
@@ -105,22 +108,25 @@ function init(db: any): Promise<express.Express> {
  */
 function initErrorRoutes(app: express.Express): Promise<express.Express> {
 
-  let errorHandler: express.ErrorRequestHandler = (err, req, res, next) => {
-    // If there is no error to handle, pass the request along
-    if (!err) {
-      return next();
-    }
+  return logPromise
+    .then((logger) => {
+      let errorHandler: express.ErrorRequestHandler = (err, req, res, next) => {
+        // If there is no error to handle, pass the request along
+        if (!err) {
+          return next();
+        }
 
-    // Otherwise, log it
-    console.error(err.stack);
+        // Otherwise, log it
+        logger.error(err.stack);
 
-    // Redirect to error page
-    res.redirect("/server-error");
-  };
+        // Redirect to error page
+        res.redirect("/server-error");
+      };
 
-  app.use(errorHandler);
+      app.use(errorHandler);
 
-  return Promise.resolve(app);
+      return Promise.resolve(app);
+    });
 };
 
 /*
@@ -150,32 +156,35 @@ function initHelmetHeaders(app: express.Express): Promise<express.Express> {
  * Initializes app locals from config variables
  */
 function initLocalVariables(app: express.Express): Promise<express.Express> {
-  // Setting application local variables
-  app.locals.audioFolder =    config.uploads.sounds.dest;
-  app.locals.cssFiles =       config.files.client.css;
-  app.locals.description =    config.app.description;
-  app.locals.domain =         config.domain;
-  app.locals.env =            process.env.NODE_ENV;
-  // app.locals.facebookAppId =  config.facebook.clientID;
-  app.locals.favicon =        config.favicon;
-  app.locals.GATrackingID =   config.app.GATrackingID;
-  app.locals.imageFolder =    config.uploads.images.dest;
-  app.locals.keywords =       config.app.keywords;
-  app.locals.logo =           config.logo;
-  app.locals.jsFiles =        config.files.client.js;
-  if (config.secure && config.secure.ssl === true) {
-    app.locals.secure = config.secure.ssl;
-  }
-  app.locals.title =          config.app.title;
+  return cfgPromise
+    .then((config: any) => {
+      // Setting application local variables
+      app.locals.audioFolder =    config.uploads.sounds.dest;
+      app.locals.cssFiles =       config.files.client.css;
+      app.locals.description =    config.app.description;
+      app.locals.domain =         config.domain;
+      app.locals.env =            process.env.NODE_ENV;
+      // app.locals.facebookAppId =  config.facebook.clientID;
+      app.locals.favicon =        config.favicon;
+      app.locals.GATrackingID =   config.app.GATrackingID;
+      app.locals.imageFolder =    config.uploads.images.dest;
+      app.locals.keywords =       config.app.keywords;
+      app.locals.logo =           config.logo;
+      app.locals.jsFiles =        config.files.client.js;
+      if (config.secure && config.secure.ssl === true) {
+        app.locals.secure = config.secure.ssl;
+      }
+      app.locals.title =          config.app.title;
 
-  // Captures the app's hostname and request url into environment locals
-  app.use((req: express.Request, res: express.Response, next: express.NextFunction): void => {
-    res.locals.host = req.protocol + `://${req.hostname}`;
-    res.locals.url = req.protocol + `://${req.headers.host}${req.originalUrl}`;
-    next();
-  });
+      // Captures the app's hostname and request url into environment locals
+      app.use((req: express.Request, res: express.Response, next: express.NextFunction): void => {
+        res.locals.host = req.protocol + `://${req.hostname}`;
+        res.locals.url = req.protocol + `://${req.headers.host}${req.originalUrl}`;
+        next();
+      });
 
-  return Promise.resolve(app);
+      return Promise.resolve(app);
+    });
 }
 
 /* Initialize application middleware */
@@ -191,31 +200,34 @@ function initMiddleware(app: express.Express): Promise<express.Express> {
   // Initialize favicon middleware
   app.use(favicon(app.locals.favicon));
 
-  // Enable logger (morgan) if enabled in the configuration file
-  // if (_.has(config, 'log.format')) {
-  //   app.use(morgan(logger.getLogFormat(), logger.getMorganOptions()));
-  // }
+  return Promise.all([cfgPromise, logPromise])
+    .then(([config, logger]) => {
+      // Use Morgan if enabled in the configuration file
+      if (_.has(config, "log.format")) {
+        app.use(morgan(logger.validateMorganFormat(), logger.getMorganOptions()));
+      }
 
-  if (process.env.NODE_ENV === "development") {
-    // Disable views cache in dev
-    app.set("view cache", false);
-  } else if (process.env.NODE_ENV === "production") {
-    app.locals.cache = "memory";
-  }
+      if (process.env.NODE_ENV === "development") {
+        // Disable views cache in dev
+        app.set("view cache", false);
+      } else if (process.env.NODE_ENV === "production") {
+        app.locals.cache = "memory";
+      }
 
-  // Define the body parser
-  app.use(bodyParser.urlencoded({
-    extended: true
-  }));
-  app.use(bodyParser.json());
+      // Define the body parser
+      app.use(bodyParser.urlencoded({
+        extended: true
+      }));
+      app.use(bodyParser.json());
 
-  // Init Method Override
-  app.use(methodOverride());
+      // Init Method Override
+      app.use(methodOverride());
 
-  // Add the cookie parser
-  app.use(cookieParser());
+      // Add the cookie parser
+      app.use(cookieParser());
 
-  return Promise.resolve(app);
+      return Promise.resolve(app);
+    });
 };
 
 /**
@@ -225,71 +237,84 @@ function initModulesClientRoutes(app: express.Express): Promise<express.Express>
   // Route app's root to fetch static assets from the public folder
   app.use("/", express.static(path.resolve("./public")));
 
-  // Link each asset route to its folder, defined as the static path
-  config.folders.client.forEach((staticPath: string) => {
-    app.use(staticPath, express.static(path.resolve(`./${staticPath}`)));
-  });
+  return cfgPromise
+    .then((config: any) => {
+      // Link each asset route to its folder, defined as the static path
+      config.folders.client.forEach((staticPath: string) => {
+        app.use(staticPath, express.static(path.resolve(`./${staticPath}`)));
+      });
 
-  return Promise.resolve(app);
+      return Promise.resolve(app);
+    });
 };
 
 /*
  * Initialize modules' server configuration
  */
 function initModulesServerConfig(app: express.Express, db: any): Promise<express.Express> {
-  config.files.server.configs.forEach((configPath: string) => {
-    require(path.resolve(configPath))(app, db);
-  });
+  return cfgPromise
+    .then((config: any) => {
+      config.files.server.configs.forEach((configPath: string) => {
+        require(path.resolve(configPath))(app, db);
+      });
 
-  return Promise.resolve(app);
+      return Promise.resolve(app);
+    });
 };
 
 /**
  * Configure the modules ACL policies
  */
 function initModulesServerPolicies(app: express.Express): Promise<express.Express> {
+  return cfgPromise
+    .then((config: any) => {
+      config.files.server.policies.forEach((policyPath: string) => {
+        require(path.resolve(policyPath)).invokeRolesPolicies();
+      });
 
-  config.files.server.policies.forEach((policyPath: string) => {
-    require(path.resolve(policyPath)).invokeRolesPolicies();
-  });
-
-  return Promise.resolve(app);
+      return Promise.resolve(app);
+    });
 };
 
 /**
  * Configure the modules server routes
  */
 function initModulesServerRoutes(app: express.Express): Promise<express.Express> {
-  // Globbing routing files
-  config.files.server.routes.forEach((routePath: string) => {
-    require(path.resolve(routePath))(app);
-  });
+  return cfgPromise
+    .then((config: any) => {
+      config.files.server.routes.forEach((routePath: string) => {
+        require(path.resolve(routePath))(app);
+      });
 
-  return Promise.resolve(app);
+      return Promise.resolve(app);
+    });
 };
 
 /*
  * Initialize Express Session
  */
 function initSession(app: express.Express, db: any): Promise<express.Express> {
-  // Express MongoDB session storage
-  app.use(session({
-    cookie: {
-      maxAge: config.sessionCookie.maxAge,
-      httpOnly: config.sessionCookie.httpOnly,
-      secure: config.sessionCookie.secure && config.secure.ssl
-    },
-    name: config.sessionKey,
-    resave: true,
-    saveUninitialized: true,
-    secret: config.sessionSecret,
-    store: new MongoStore({
-      mongooseConnection: db.connection,
-      collection: config.sessionCollection
-    })
-  }));
+  return cfgPromise
+    .then((config: any) => {
+      // Express MongoDB session storage
+      app.use(session({
+        cookie: {
+          maxAge: config.sessionCookie.maxAge,
+          httpOnly: config.sessionCookie.httpOnly,
+          secure: config.sessionCookie.secure && config.secure.ssl
+        },
+        name: config.sessionKey,
+        resave: true,
+        saveUninitialized: true,
+        secret: config.sessionSecret,
+        store: new MongoStore({
+          mongooseConnection: db.connection,
+          collection: config.sessionCollection
+        })
+      }));
 
-  return Promise.resolve(app);
+      return Promise.resolve(app);
+    });
 };
 
 /*

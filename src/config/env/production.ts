@@ -14,10 +14,32 @@ module.exports = {
     credentials: {
       user: "",
       pass: ""
-    }
+    },
+    // Enable Mongoose Debug Mode
+    debug: process.env.MONGO_DEBUG || false
   },
   app: {
     title: "Zinfata App"
+  },
+  log: {
+    format: process.env.LOG_FORMAT || "combined",
+    fileLogger: {
+      directoryPath: process.env.LOG_DIR_PATH || process.cwd(),
+      filename: process.env.LOG_FILE || "zProd.log",
+      maxsize: 10485760,
+      maxFiles: 2,
+      json: false
+    }
+  },
+  mailer: {
+    from: process.env.MAILER_FROM || "MAILER_FROM",
+    options: {
+      service: process.env.MAILER_SERVICE_PROVIDER || "MAILER_SERVICE_PROVIDER",
+      auth: {
+        user: process.env.MAILER_EMAIL_ID || "MAILER_EMAIL_ID",
+        pass: process.env.MAILER_PASSWORD || "MAILER_PASSWORD"
+      }
+    }
   },
   facebook: {
     clientID: process.env.FACEBOOK_ID,

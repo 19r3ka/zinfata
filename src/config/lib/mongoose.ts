@@ -4,7 +4,15 @@ import * as chalk    from "chalk";
 import {Promise}     from "es6-promise";
 import * as mongoose from "mongoose";
 import * as path     from "path";
-import config = require("../config");
+import logger     =  require("./logger");
+import config     =  require("../config");
+
+// Hack to test functions
+// By pointing cfgPromise and to init's promise
+// like it is in non-test mode
+const cfgPromise = process.env.NODE_ENV === "testing" ? config.init() : config,
+      logPromise = process.env.NODE_ENV === "testing" ? config.init() : config;
+
 
 // Set Promise provider to es2015 native promise API
 mongoose.Promise = global.Promise;
@@ -19,23 +27,31 @@ interface MongooseLoader {
  * Opens a Mongoose connection
  */
 function connect(): Promise<mongoose.Connection> {
-  // Connect to Mongoose (Mongo DB driver)
-  mongoose.connect(config.db.uri);
+  // Use the logger instance trapped in a Promise
+  return Promise.all([cfgPromise, logPromise])
+    .then(([config, logger]) => {
 
-  // Get the Mongoose Connection instance to return
-  const db: mongoose.Connection = mongoose.connection;
+      // Connect to Mongoose (Mongo DB driver)
+      mongoose.connect(config.db.uri);
 
-  // On error, reject the promise
-  db.on("error", (err: mongoose.Error) => {
-    console.error(chalk.yellow(`Error: Could not connect to MongoDB: ${err}.`));
-  });
+      // Get the Mongoose Connection instance to return
+      const db: mongoose.Connection = mongoose.connection;
+      logger.inspect(`Mongoose connection: ${db}`);
 
-  // Once the connection is open, resolve
-  db.once("open", () => {
-    console.info(chalk.green(`Connection successful to MongoDB.`));
-  });
+      // On error, reject the promise
+      db.on("error", (err: mongoose.Error) => {
+        logger.error(chalk.yellow(`Error: Could not connect to MongoDB: ${err}.`));
+      });
 
-  return Promise.resolve(db);
+      // Once the connection is open, resolve
+      db.once("open", () => {
+        logger.inspect(chalk.green(`Connection successful to MongoDB.`));
+      });
+
+      logger.debug(typeof db);
+
+      return Promise.resolve(db);
+    });
 }
 
 /*
@@ -54,16 +70,22 @@ function disconnect(): Promise<string> {
 /*
  * Loads all modules' models
  */
-function loadModels(): void {
-  // Initialize models' mongoose models
-  config.files.server.models.forEach((modelPath: string) => {
-    require(path.resolve(modelPath));
-  });
+function loadModels(): Promise<void> {
+  return cfgPromise
+    .then((config: any) => {
+      // Initialize models' mongoose models
+      config.files.server.models.forEach((modelPath: string) => {
+        require(path.resolve(modelPath));
+      });
+    });
 }
 
 // TODO: export a MongooseLoader instance
-export = {
+
+let mongooseInstance: any = {
   connect,
   disconnect,
   loadModels
 };
+
+export = mongooseInstance;

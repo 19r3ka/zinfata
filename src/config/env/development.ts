@@ -13,6 +13,19 @@ module.exports = {
       pass: ""
     }
   },
+  // logging with Morgan - https://github.com/expressjs/morgan
+  log: {
+    format: "dev",
+    fileLogger: {
+      // save logs directly to the app root
+      directoryPath: process.cwd(),
+      filename: "zDev.log",
+      // At max, 2 files of 10MB
+      maxsize: 10485760,
+      maxFiles: 2,
+      json: false
+    }
+  },
   mailer: {
     from: process.env.MAILER_FROM || "Zinfata",
     options: {

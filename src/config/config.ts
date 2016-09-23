@@ -16,10 +16,10 @@ import * as request from "request";
 
 interface GlobalConfigurator {
   getPathFromGlob(globs: string | string[], excludes?: string | string[]): string[];
+  init(): Promise<{}>;
   initEnvVariables(environment?: string): Promise<Object>;
   initGlobalConfigFiles(config: any, assets: any): Promise<Object>;
   initGlobalConfigFolders(config: any, assets: any): Promise<Object>;
-  init(): Promise<{}>;
   loadAssets(environment: string): Promise<Object>;
   loadEnvVariables(environment: string): Promise<Object>;
   validateDomainIsSet(config: any): Promise<string>;
@@ -36,7 +36,7 @@ interface ConfigValidator {
   node_env?: string;
 };
 
-const initializer: GlobalConfigurator = {
+const initializer: any /*: GlobalConfigurator*/ = {
   getPathFromGlob,
   init,
   initEnvVariables,
@@ -104,7 +104,7 @@ function getPathFromGlob(globs: string | string[], excludes?: string | string[])
  * Initializes and returns the global config object
  */
 
-function init(): Promise<{}> {
+function init(): Promise<any> {
   validateFilesAndFolders()
     // let user know if something went wrong
     .catch((reasons) => {
@@ -112,8 +112,8 @@ function init(): Promise<{}> {
       console.log();
     });
 
-    // Config building promise chain
-    return validateEnvVariables(process.env.NODE_ENV)
+    // Config-building promise chain
+  return validateEnvVariables(process.env.NODE_ENV)
     // Notify if defaulting to dev
     .catch((reason) => {
       console.log(chalk.yellow(reason.message));
@@ -123,6 +123,7 @@ function init(): Promise<{}> {
       // Needed to configure/override public global env variables
       return initEnvVariables(process.env.NODE_ENV);
     })
+    .catch((error) => console.error(chalk.yellow(error)))
     .then(() => {
       // Load public env and assets environment-specific files
       return Promise.all([
@@ -168,9 +169,9 @@ function init(): Promise<{}> {
 
 /*
  * Loads environment-specific global variables
- * Return a promise containing process.env
+ * Return Promised process.env
  */
-function initEnvVariables(environment?: string): Promise<Object> {
+function initEnvVariables(environment?: string): Promise<any> {
   if (environment !== "production") {
     env.config();
   }
@@ -181,7 +182,7 @@ function initEnvVariables(environment?: string): Promise<Object> {
 /**
  * Initialize global configuration files
  */
-function initGlobalConfigFiles(config: any, assets: any): Promise<Object> {
+function initGlobalConfigFiles(config: any, assets: any): Promise<any> {
   // Appending files
   config.files = {
     server: {},
@@ -204,10 +205,10 @@ function initGlobalConfigFiles(config: any, assets: any): Promise<Object> {
   // config.files.server.sockets = getPathFromGlob(assets.server.sockets);
 
   // Setting Globbed css files
-  config.files.client.css = getPathFromGlob(assets.client.lib.css, "public/").concat(getPathFromGlob(assets.client.css, ["public/"]));
+  config.files.client.css = getPathFromGlob(assets.client.vendors.css, "public/").concat(getPathFromGlob(assets.client.css, ["public/"]));
 
   // Setting Globbed js files
-  config.files.client.js = getPathFromGlob(assets.client.lib.js, "public/").concat(getPathFromGlob(assets.client.js, ["public/"]));
+  config.files.client.js = getPathFromGlob(assets.client.vendors.js, "public/").concat(getPathFromGlob(assets.client.js, ["public/"]));
 
   // Setting Globbed test files
   config.files.client.tests = getPathFromGlob(assets.client.tests);
@@ -218,7 +219,7 @@ function initGlobalConfigFiles(config: any, assets: any): Promise<Object> {
 /**
  * Initialize global configuration files
  */
-function initGlobalConfigFolders(config: any, assets: any): Promise<Object> {
+function initGlobalConfigFolders(config: any, assets: any): Promise<any> {
   // Appending folder paths
   config.folders = {
     server: {},
@@ -234,7 +235,8 @@ function initGlobalConfigFolders(config: any, assets: any): Promise<Object> {
 /*
  * Loads global assets
  */
-function loadAssets(environment: string): Promise<Object> {
+function loadAssets(environment: string): Promise<any> {
+  // If there is no environment, no point in continuing
   if (!environment) {
     return Promise.reject("No environment specified!");
   }
@@ -329,6 +331,7 @@ function validateEnvVariables(environment: string): Promise<{}> {
  * Validates .env file and upload folders are present
  */
 function validateFilesAndFolders(): Promise<Object> {
+
   const audioFolder: string  = path.join(process.cwd(), "uploads/audio"),
         envFile: string      = path.join(process.cwd(), ".env"),
         imageFolder: string  = path.join(process.cwd(), "uploads/images"),
@@ -443,12 +446,6 @@ function spawnEnvFile(src: string, dest: string): Promise<Object> {
   });
 }
 
-let outsource: any;
-// exports the whole config object in dev for test purposes
-if (process.env.NODE_ENV === "production") {
-  outsource = initializer.init();
-} else {
-  outsource = initializer;
-}
-
-export = outsource;
+// exports the whole config object in testing environment only
+// Otherwise just the promise.
+export = (process.env.NODE_ENV === "testing") ? initializer : initializer.init();
