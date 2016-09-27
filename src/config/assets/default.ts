@@ -32,12 +32,13 @@ module.exports = {
   },
   server: {
     config: ["built/config/**/*.js"],
+    configs: ["built/modules/*/server/config/*.js"],
     gulpConfig: ["gulpfile.js"],
     jsfiles: ["built/config/**/*.js"],
     models: ["built/models/*.js"],
     routes: ["built/routes/*.js"],
-    policies: "modules/*/server/policies/*.js",
-    views: ["modules/*/server/views/*.jade"]
+    policies: "built/modules/*/server/policies/*.js",
+    views: ["src/modules/*/server/views/*.jade"]
   }
 };
 
