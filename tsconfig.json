@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "declaration": true,
+    "lib": ["es6/es2015"],
     "module": "commonjs",
     "noImplicitAny": true,
     "outDir": "built/",

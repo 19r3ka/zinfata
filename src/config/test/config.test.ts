@@ -4,7 +4,7 @@ import config = require("../config");
 
 import * as chai   from "chai";
 import * as chai_p from "chai-as-promised";
-import {Promise}   from "es6-promise";
+// import {Promise}   from "es6-promise";
 import * as fs     from "fs";
 import * as path   from "path";
 
