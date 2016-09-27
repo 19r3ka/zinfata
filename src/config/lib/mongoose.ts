@@ -10,9 +10,8 @@ import config     =  require("../config");
 // Hack to test functions
 // By pointing cfgPromise and to init's promise
 // like it is in non-test mode
-const cfgPromise = process.env.NODE_ENV === "testing" ? config.init() : config,
-      logPromise = process.env.NODE_ENV === "testing" ? config.init() : config;
-
+const cfgPromise: any = process.env.NODE_ENV === "testing" ? config.init() : config,
+      logPromise: any = process.env.NODE_ENV === "testing" ? logger.init() : logger;
 
 // Set Promise provider to es2015 native promise API
 mongoose.Promise = global.Promise;
@@ -31,26 +30,24 @@ function connect(): Promise<mongoose.Connection> {
   return Promise.all([cfgPromise, logPromise])
     .then(([config, logger]) => {
 
-      // Connect to Mongoose (Mongo DB driver)
-      mongoose.connect(config.db.uri);
+      // Promisify mongoose connect callback function
+      return new Promise((resolve, reject) => {
 
-      // Get the Mongoose Connection instance to return
-      const db: mongoose.Connection = mongoose.connection;
-      logger.inspect(`Mongoose connection: ${db}`);
+        // Connect to Mongoose (Mongo DB driver)
+        mongoose.connect(config.db.uri);
 
-      // On error, reject the promise
-      db.on("error", (err: mongoose.Error) => {
-        logger.error(chalk.yellow(`Error: Could not connect to MongoDB: ${err}.`));
+        // Get the Mongoose Connection instance to return
+        const db: mongoose.Connection = mongoose.connection;
+
+        logger.debug(db);
+
+        // On error, reject the promise
+        db.on("error", reject);
+
+        // Once the connection is open, resolve
+        db.once("open", () => resolve(db));
       });
 
-      // Once the connection is open, resolve
-      db.once("open", () => {
-        logger.inspect(chalk.green(`Connection successful to MongoDB.`));
-      });
-
-      logger.debug(typeof db);
-
-      return Promise.resolve(db);
     });
 }
 
@@ -60,7 +57,7 @@ function connect(): Promise<mongoose.Connection> {
 function disconnect(): Promise<string> {
   return mongoose.disconnect((err) => {
     if (err) {
-      return Promise.reject(`Error: Couldn't disconnect from MongoDB: ${err}.`);
+      return Promise.reject(err);
     }
 
     return Promise.resolve("Disconnected from database.");
