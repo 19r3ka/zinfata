@@ -27,7 +27,7 @@ let error: string,
 
 describe("Winston Logger", () => {
 
-  before((done) => {
+  before((done: MochaDone) => {
 
     // Ask for a global config promise before starting
     cfgPromise = globalConfig.init();
@@ -112,7 +112,7 @@ describe("Winston Logger", () => {
 
     it("Returns empty object if Winston doesn't expose stream writing.", () => {
 
-      logger.getMorganOptions({})
+      return logger.getMorganOptions({})
         .should.be.empty;
     });
 
@@ -128,11 +128,10 @@ describe("Winston Logger", () => {
 
   describe("#init()", () => {
 
-    it("Returns zinfata server logger instance", () => {
-      logger.init()
+    it.only("Returns zinfata server logger instance", () => {
+      return logger.init()
         .should.be.fulfilled
-        .and.eventually.contain.all.keys(defaultMethods)
-        .and.have.property("inspect");
+        .and.eventually.contain.all.keys(defaultMethods);
     });
   });
 
@@ -148,5 +147,5 @@ describe("Winston Logger", () => {
 
   describe.skip("#validateMorganFormat()", () => {
 
-  })
+  });
 });

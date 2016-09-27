@@ -48,7 +48,7 @@ const defaultOptions: {} = {
   colorize: true,
   handleExceptions: true,
   humanReadableUnhandledException: true,
-  json: true,
+  json: false,
   level: "debug",
   showLevel: true,
   tailable: true,
@@ -56,7 +56,7 @@ const defaultOptions: {} = {
 };
 
 // Default Winston file transport options
-const defaultFileOptions: {} = _.merge(defaultOptions, {
+const defaultFileOptions: {} = Object.assign({}, defaultOptions, {
   colorize: false,
   eol: "\n",
   level: "warn"
@@ -101,8 +101,7 @@ function enableStreamLogging(): any {
         logger.info(msg);
       }
     };
-
-    return Promise.resolve(logger);
+    return logger;
   };
 }
 
@@ -182,7 +181,7 @@ function init(): Promise<any> {
       logger.validateMorganFormat = validateMorganFormat;
 
       // Add debug module main function to logger
-      logger.inspect = debug("zinfata:server");
+      logger.debug = (debug("zinfata:server"));
 
       // Reassign the enhanced logger to original instance
       return logger;
@@ -204,7 +203,7 @@ function setupFileLogger(fileLoggerOptions: any,
       .then((configOptions: WinstonOptions) => {
 
         // Extend default file options with GlobalConfig FileLogger options
-        loggerOptions = _.merge(fileLoggerOptions, configOptions);
+        loggerOptions = Object.assign({}, fileLoggerOptions, configOptions);
 
         // Create new FileTransport instance with
         logger.add(winston.transports.File, loggerOptions);
@@ -218,20 +217,17 @@ function setupFileLogger(fileLoggerOptions: any,
 /*
  * Validate Morgan format
  */
-function validateMorganFormat(cfg: Promise<any>): Promise<{}> {
-  return cfg
-    .then((config: any) => {
-      // Get format from config, defaulting to combined
-      let format: MorganFormat = config.log && config.log.format ? config.log.format.toString() : "combined";
+function validateMorganFormat(config: any): string {
+  // Get format from config, defaulting to combined
+  let format: MorganFormat = config.log && config.log.format ? config.log.format.toString() : "combined";
 
-        // make sure we have a valid format
-        if (typeof format !== "MorganFormat") {
-          format = "combined";
-          Promise.reject(`Warning: Invalid Morgan format detected. Defaulted to ${format}`);
-        }
+  // make sure we have a valid format
+  if (typeof format !== "MorganFormat") {
+    format = "combined";
+    console.error(chalk.yellow(`Warning: Invalid Morgan format detected. Defaulted to "${format}"`));
+  }
 
-        return Promise.resolve(format);
-    });
+  return format;
 }
 
 // export the whole loggerInstance in test mode
