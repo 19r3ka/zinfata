@@ -67,32 +67,37 @@ export = {
  *  Creates and configures the Express Application
  *  Returns http server
  */
-function init(db: any): Promise<http.Server> {
-  // Define express app
-  const app: express.Express = express();
+function init(): any {
 
-  // Initialize local variables
-  return initLocalVariables(app)
-    // Initialize app's middleware
-    .then(initMiddleware())
-    // Enable header security
-    .then(initHelmetHeaders())
-    // Initialize view engine
-    .then(initViewEngine())
-    // Initialize modules' static client routes. Must be before session config!
-    .then(initModulesClientRoutes())
-    // Initialize session
-    .then(initSession(db))
-    // Configure modules once static assets are available
-    .then(initModulesServerConfig(db))
-    // Load Access Control Policies for modules' server access
-    .then(initModulesServerPolicies())
-    // Define routes once policies are set
-    .then(initModulesServerRoutes())
-    // Define error handling route and logic
-    .then(initErrorRoutes())
-    // Create http(s) server with express app
-    .then(server());
+  // Returns a promise thenable callback
+  return (db: any): Promise<http.Server> => {
+
+    // Define express app
+    const app: express.Express = express();
+
+    // Initialize local variables
+    return initLocalVariables(app)
+      // Initialize app's middleware
+      .then(initMiddleware())
+      // Enable header security
+      .then(initHelmetHeaders())
+      // Initialize view engine
+      .then(initViewEngine())
+      // Initialize modules' static client routes. Must be before session config!
+      .then(initModulesClientRoutes())
+      // Initialize session
+      .then(initSession(db))
+      // Configure modules once static assets are available
+      .then(initModulesServerConfig(db))
+      // Load Access Control Policies for modules' server access
+      .then(initModulesServerPolicies())
+      // Define routes once policies are set
+      .then(initModulesServerRoutes())
+      // Define error handling route and logic
+      .then(initErrorRoutes())
+      // Create http(s) server with express app
+      .then(server());
+  };
 }
 
 /**

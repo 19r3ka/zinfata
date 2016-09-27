@@ -21,7 +21,7 @@ chai.use(chai_p);
 const should: Chai.Should = chai.should();
 
 /*
-  init,
+  init, [done]
   initErrorRoutes, [done]
   initHelmetHeaders, [done]
   initLocalVariables, [done]
@@ -63,11 +63,11 @@ describe("Express", () => {
     done();
   });
 
-  describe.only("#init()", () => {
+  describe("#init()", () => {
     it("Initializes Express app and returns a http server", () => {
       return dbPromise
         .then((db: mongoose.Connection) => {
-          return zXpress.init(db)
+          return zXpress.init()(db)
             .should.be.fulfilled
             .and.eventually.itself.respondTo("listen"); // Test fails without the use of 'itself'
         });
