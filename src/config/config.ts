@@ -12,7 +12,6 @@ import * as fs      from "fs";
 import * as glob    from "glob";
 import * as path    from "path";
 import {Promise}    from "es6-promise";
-import * as request from "request";
 
 interface GlobalConfigurator {
   getPathFromGlob(globs: string | string[], excludes?: string | string[]): string[];
@@ -190,7 +189,7 @@ function initGlobalConfigFiles(config: any, assets: any): Promise<any> {
   };
 
   // Setting Globbed config files
-  config.files.server.configs = getPathFromGlob(assets.server.config);
+  config.files.server.configs = getPathFromGlob(assets.server.configs);
 
   // Setting Globbed model files
   config.files.server.models = getPathFromGlob(assets.server.models);
